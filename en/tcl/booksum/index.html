@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8">
+<meta name="author" content="aplsimple">
+<meta name="description" content="viewing Tcl books' examples in terminal and making their output summaries">
+<meta name="keywords" content="Tcl,code,examples,summary">
+<link rel="stylesheet" href="../../zoo/style.css">
+<link rel="icon" type="image/jpg" href="../../../zoo/favicon.jpg">
+</head>
+<body>
+<div id="wrapper">
+<div name="divd1" ALIGN="CENTER"> <FONT SIZE=5em color=#b01c20><B>
+<noscript>THIS PAGE IS NOT WORKING WITHOUT JAVASCRIPT!
+<BR>
+<BR>PLEASE, SWITCH ON JAVASCRIPT IN SETTINGS OF YOUR BROWSER AND RELOAD THE PAGE.
+</noscript>
+</B></FONT></div>
+
+<script src="../../../zoo/funcs.js"></script>
+<script src="../../zoo/this.js"></script>
+
+<section id=sec2>
+
+<title>booksum - summaries of Tcl code</title>
+</head>
+
+<div id="bodyContent" class="dokuwiki">
+<div id="dw__toc" class="dw__toc">
+<h3 class="toggle open" style="cursor: pointer;">Table of Contents</h3>
+<div aria-expanded="true" style="">
+
+<ul class="toc">
+<li class="level2"><div class="li"><a href="#intro">What is this</a></div></li>
+<li class="level2"><div class="li"><a href="#how">How to do this</a></div></li>
+<li class="level2"><div class="li"><a href="#tips">Tips and traps</a></div></li>
+<hr>
+<li class="level2"><div class="li"><a href="#download">Download</a></div></li>
+<li class="level2"><div class="li"><a href="#see_also">See also</a></div></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<br>
+
+<h2 id="intro">What is this</h2>
+<div class="level2">
+
+<p>
+The <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">booksum</a></span> allows to make summaries of Tcl code snippets cut from books.
+</p>
+<p>
+Perhaps, while reading Tcl texts you came across some code snippets like this "TclOO Tricks" one of <a href="https://wiki.tcl-lang.org" title="https://wiki.tcl-lang.org" rel="nofollow">wiki.tcl-lang.org</a>:
+<pre class="code">  ## Class Variables
+  % oo::class create foo {
+      self export varname
+      constructor {} {
+          my eval upvar [[self class] varname v] v
+          my eval upvar [[self class] varname w] w
+      }
+      method bar {} {
+          variable v
+          variable w
+          incr v
+          incr w 2
+          puts "v=$v, w=$w"
+      }
+  }
+  ## Demoing it...
+  % foo create x
+  % x bar
+  % x bar
+  % foo create y
+  % y bar</pre>
+... so that you might want to save such code snippets in a summary file, in order to review them afterwards for refreshing your memory
+<br>... or to test
+<br>... or to play.
+</p>
+<p>
+Most certainly, you'd like to save the code snippets along with their output, as they've been shown in a console:
+<pre class="code">    # Class Variables 
+    
+  % oo::class create foo {
+        self export varname
+        constructor {} {
+            my eval upvar [[self class] varname v] v
+            my eval upvar [[self class] varname w] w
+        }
+        method bar {} {
+            variable v
+            variable w
+            incr v
+            incr w 2
+            puts "v=$v, w=$w"
+        }
+    }
+    ==> ::foo
+    
+    # Demoing it... 
+    
+  % foo create x
+    ==> ::x
+    
+  % x bar
+v=1, w=2
+    
+  % x bar
+v=2, w=4
+    
+  % foo create y
+    ==> ::y
+    
+  % y bar
+v=3, w=6</pre>
+</p>
+... or you'd like to publish your own code snippets and results somewhere, e.g. in <a href="https://wiki.tcl-lang.org" title="https://wiki.tcl-lang.org" rel="nofollow">wiki.tcl-lang.org</a>.
+<p>
+</p>
+<p>
+If it is the case, probably you would appreciate the <a href="#" class="wikilink1" title="Table of Contents">booksum</a></span>.
+</p>
+
+<p>
+<br>
+
+</p>
+
+</div>
+
+<h2 id="how">How to do this</h2>
+<div class="level2">
+
+<p>
+Copy your code snippet and paste it into the <code>bundle</code> variable of <em>booksum.tcl</em>, in this manner:
+<pre class="code">  set bundle {
+    % oo::class create foo {
+      self export varname
+      constructor {} {
+        my eval upvar [[self class] varname v] v
+        my eval upvar [[self class] varname w] w
+      }
+      # ... rest of foo
+    }
+    # ... rest of bundle
+  }
+</pre>
+</p>
+<p>
+If you'd made some bundles, you may simply add a new <code>bundle</code> as the last:
+<pre class="code">  set bundle {
+    # ...code of 1st snippet
+  }
+  set bundle {
+    # ...code of 2nd snippet
+  }
+  set bundle {
+    # ...code of 3rd snippet
+  }
+  # ...
+  set bundle {
+    % oo::class create foo {
+      self export varname
+      constructor {} {
+        my eval upvar [[self class] varname v] v
+        my eval upvar [[self class] varname w] w
+      }
+      # ... rest of foo
+    }
+    # ... rest of bundle
+  }</pre>
+So that your last <code>bundle</code> would work alone, while others remain in a museum state.
+</p>
+<p>
+Well, after these manipulations you should only run the <em>booksum.tcl</em> in a console with one of the following commands:
+<pre class="code">  tclsh ./booksum.tcl
+  tclsh ./booksum.tcl > results.txt
+</pre>
+The second one would create <em>results.txt</em> containing the output of the command.
+</p>
+<p>
+That's all.
+</p>
+
+<p>
+<br>
+
+</p>
+
+</div>
+
+<h2 id="tips">Tips and traps</h2>
+<div class="level2">
+
+<p>
+All of your <code>bundle</code> would be evaluated and executed. If you want some command being visualized in a console, preface it with "% ".
+</p>
+<p>
+The commands prior to the first '% command' would be executed without showing in a console, so their result only would be printed. They are sort of initializers.
+</p>
+<p>
+All code lines between <b>'%'</b> are executed as <b>one block of code</b>. This means that the following <code>bundle</code> is erroneous:
+<pre class="code">  set bundle {
+    % oo::class create foo {
+        self export varname
+    % constructor {} {
+        my eval upvar [[self class] varname v] v
+        my eval upvar [[self class] varname w] w
+      }
+      # ... rest of foo
+    }
+    # ... rest of bundle
+  }</pre>
+</p>
+<p>
+because <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">booksum</a></span> will try to execute
+<pre class="code">  oo::class create foo {
+    self export varname</pre>
+as a single command block which results in <em>ERROR: missing close-brace</em>.
+</p>
+<p>
+As for comments, they are naturally skipped at the execution but, being included in <u>% (block-to-execute) %</u>, they are shown BEFORE the result of executed block. For example:
+<pre class="code">set bundle {
+  % set a 10
+  # increasing a
+  % incr a
+}</pre>
+</p>
+would results in the following output:
+<p>
+<pre class="code">  % set a 10
+    # increasing a
+    ==> 10
+    
+  % incr a
+    ==> 11</pre>
+
+</p>
+<p>
+There are two special commands concerning comments which fix this issue:
+ <ul>
+<li>** is a commenting command that prints its arguments as an uppercased message</li>
+<li>## is a commenting command that prints its arguments 'as is' with an initial '#'</li>
+</ul>
+Each of them composes a single "block of code" and as such cannot be used inside another block (e.g. in the body of <em>if, proc, foreach, while</em> and so on). These commands are nearly the same as
+<br> <code>&nbsp;&nbsp;% puts "comment"</code>
+</p>
+<p>
+For example, the following <code>bundle</code>:
+<pre class="code">  set bundle {
+    ** START
+  
+    % set a 10
+    ## increasing a
+    % incr a
+    **
+    ** FINISH
+  }</pre>
+would results in:
+</p>
+<p>
+<pre class="code">    START 
+    
+  % set a 10
+    ==> 10
+    
+    # increasing a 
+    
+  % incr a
+    ==> 11
+    
+    FINISH 
+</pre>
+</p>
+
+<p>
+<br>
+
+</p>
+
+</div>
+
+
+<h2 id="download">Download</h2>
+<div class="level2">
+
+<p>
+<span class="curid"><a href="#" class="wikilink1" title="Table of 
+Contents">booksum</a></span> stuff is available here:
+</p>
+
+<ul>
+<li class="level1"><div class="li"> 
+<a href="https://aplsimple.github.io/files/booksum.rar" title="booksum.rar" rel="nofollow">booksum.rar</a>
+</li>
+</ul>
+
+<p>
+Notice that <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">booksum</a></span> is still disposed to update. At least I would try and support its <a href="https://aplsimple.github.io/files/booksum.rar" title="booksum.rar" rel="nofollow">aplsimple.github.io</a> version in a working state.
+</p>
+
+<p>
+<br>
+
+</p>
+
+</div>
+
+<h2 id="see_also">See also</h2>
+<div class="level2">
+
+<p>
+The links about and around <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">booksum</a></span>:
+</p>
+
+<ul>
+<li class="level1"><div class="li"> <a 
+href="http://wiki.tcl.tk/21595" rel="nofollow">TclOO Tricks (Tcl wiki)</a></div>
+</li>
+</ul>
+
+<ul>
+<li class="level1"><div class="li"> <a 
+href="http://www.magicsplat.com/articles/oo.html" rel="nofollow">"Object Oriented Programming in Tcl" article by Ashok P. Nadkarni</a></div>
+</li>
+</ul>
+
+</div>
+</section>
+
+<script>
+  writeFooter('<a href="#" class="wikilink1" title="Table of Contents">booksum</a> - summaries of Tcl code cut from books');
+</script>
+
+</div>
+</body>
+</html>

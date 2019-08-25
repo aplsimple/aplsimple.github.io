@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8">
+<meta name="author" content="aplsimple">
+<meta name="description" content="doctest">
+<meta name="keywords" content="Tcl/Tk,testing,doctest">
+<link rel="stylesheet" href="../../zoo/style.css">
+<link rel="icon" type="image/jpg" href="../../../zoo/favicon.jpg">
+</head>
+<body>
+<div name="divd1" ALIGN="CENTER"> <FONT SIZE=5em color=#b01c20><B>
+<noscript>THIS PAGE IS NOT WORKING WITHOUT JAVASCRIPT!
+<BR>
+<BR>PLEASE, SWITCH ON JAVASCRIPT IN SETTINGS OF YOUR BROWSER AND RELOAD THE PAGE.
+</noscript>
+</B></FONT></div>
+<div id="wrapper">
+
+<script src="../../../zoo/funcs.js"></script>
+<script src="../../zoo/this.js"></script>
+
+<section id=sec2>
+
+<title>doctest for Tcl</title>
+</head>
+
+<div id="bodyContent" class="dokuwiki">
+<div id="dw__toc" class="dw__toc">
+<h3 class="toggle open" style="cursor: pointer;">Table of Contents</h3>
+<div aria-expanded="true" style="">
+
+<ul class="toc">
+<li class="level2"><div class="li"><a href="#intro">What is this</a></div></li>
+<li class="level2"><div class="li"><a href="#how">How to do this</a></div></li>
+<li class="level2"><div class="li"><a href="#usage">Usage</a></div></li>
+<ul class="toc">
+<li class="level3"><div class="li"><a href="#tke_usage">Usage in TKE</a></div></li>
+<li class="level3"><div class="li"><a href="#geany_usage">Usage in Geany</a></div></li>
+</ul>
+<li class="level2"><div class="li"><a href="#tips">Tips and traps</a></div></li>
+<li class="level2"><div class="li"><a href="#examples">Examples</a></div></li>
+<hr>
+<li class="level2"><div class="li"><a href="#download">Download</a></div></li>
+<li class="level2"><div class="li"><a href="#see_also">See also</a></div></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<br>
+
+<h2 id="intro">What is this</h2>
+<div class="level2">
+
+<p>
+This allows you to doctest Tcl scripts.
+</p>
+<p>
+
+To say shortly, the doctests are special comments inserted directly into a Tcl code. The doctest blocks are closely related to the code of module and used for testing and documenting it. You run this doctest on them and get the results of testing (OK or FAILED). Just so simple.
+</p>
+<p>
+This allows you to keep your code in a working state each time you modify it.
+</p>
+<p>
+The features of this doctest:
+<ul>
+<li class="level1"><div class="li">a full body of Tcl module can be used for doctesting</div></li>
+<li class="level1"><div class="li">selected named blocks can be used for doctesting</div></li>
+<li class="level1"><div class="li">several commands can produce one result to be checked</div></li>
+<li class="level1"><div class="li">the results and commands can be multi-lined (continued with \)</div></li>
+<li class="level1"><div class="li">the doctest blocks can contain several results to be checked</div></li>
+<li class="level1"><div class="li">the block result is estimated OK if all its results are OK</div></li>
+<li class="level1"><div class="li">the doctesting can be performed in safe/unsafe interpreter</div></li>
+<li class="level1"><div class="li">the outputs modes are verbose, short or silent</div></li>
+<li class="level1"><div class="li">only 'silent' output mode means 'hide OK, show FAILED if any'</div></li>
+</ul>
+</p>
+<p>
+<br>
+
+</p>
+
+</div>
+
+<h2 id="how">How to do this</h2>
+<div class="level2">
+
+<p>
+The test blocks include the test examples concerning the current script and are quoted with the following doctest-begin and doctest-end Tcl comments:
+<pre class="code">  #% doctest
+  ... (tested code) ...
+  #&gt; doctest</pre>
+</p>
+<p>
+The commands of ... (tested code) ... are marked with #% and are followed with their results that are marked with #&gt;. </p>
+<p>
+For example:
+<pre class="code">  # these two lines are a command and its result
+  #% somecommand
+  #&gt; "result of somecommand"</pre>
+</p>
+<p>
+So, we place the commands and their results between doctest quotes. Let us see how to do it:
+
+<pre class="code">  #% doctest (put here any title/name/number/comment)
+
+  ############ here we have two commands and their waited results
+  ############ (note how a command/result begins and ends)
+  #% command1
+  #&gt; result of command1
+  #% command2
+  #&gt; result of command2
+
+  ############ command33 needs command31, command32 to be run before
+  ############ (their results are ignored if not raising exceptions):
+  #% command31
+  #% command32
+  #% command33
+  #&gt; result of command33
+
+  ############ command4 returns a multiline result
+  ############ (in particular, you should use this when the test raises
+  ############ an exception so that you copy-paste it as the waited result)
+  #% command4
+  #&gt; 1st line of result of command4
+  #&gt; 2nd line of result of command4
+  #&gt; 3rd line of result of command4
+
+  ############ command may be continued with "\" as its last character.
+  #% command-so-loooooong - begin \
+  #% command-so-loooooong - cont. \
+  #% command-so-loooooong - cont. \
+  #% command-so-loooooong - end
+  #&gt; result of command-so-loooooong
+
+  #&gt; doctest</pre>
+</p>
+<p>
+You can have as many test blocks as you need. If there are no doctest quotes, all of the text is considered as a giant test block containing #% and #&gt; lines to be tested.
+</p>
+<p>
+The block is tested OK when all its test cases (#% through #&gt;) result in OK. The whole doctest is considered OK when all its blocks result in OK.
+</p>
+<p>
+Do not include into the test blocks the commands that cannot be run outside of their context (calls of external procedures etc.).
+</p>
+<p>
+The most fit <em>to doctest</em> are the procedures with more or less complex and error-prone algorithms of pure computing. The typical though trivial example is factorial (its example below).
+</p>
+<p>
+Note: This doctest was tested under Linux (Debian) and Windows. All bug fixes and corrections for other platforms would be appreciated.
+</p>
+
+<p>
+<br>
+
+</p>
+
+</div>
+
+<h2 id="usage">Usage</h2>
+<div class="level2">
+
+
+<p>
+To run the doctest, use the command:
+<pre class="code">  tclsh doctest.tcl ?options? filename</pre>
+</p>
+<p>
+where:
+<pre class="code">  filename - path to Tcl source file
+  options:
+    -s 1 | 0      - safe (default) | unsafe execution
+    -v 1 | 0 | -1 - verbose (default) | short | silent mode
+    -b block      - name of block to be tested
+    --            - switches options off (for filename)</pre>
+</p>
+<p>
+The -b option may be repeated. If -b omitted, all of the file is checked for the doctest blocks to execute.
+</p>
+<p>
+
+Examples:
+<pre class="code">  tclsh doctest.tcl ~/PG/projects/pave/paveme.tcl
+  tclsh doctest.tcl -v -1 ~/PG/projects/pave/paveme.tcl
+  tclsh doctest.tcl -s 0 -b 1 -b 2 ~/PG/projects/pave/paveme.tcl
+  tclsh doctest.tcl ~/PG/projects/doctest/README.md
+  tclsh doctest.tcl -b factorial ~/PG/projects/doctest/README.md</pre>
+
+<p>
+<br>
+
+</p>
+
+</div>
+
+<h3 id="tke_usage">Usage in TKE</h3>
+<div class="level2">
+
+<p>
+ <a href="https://sourceforge.net/projects/tke/" rel="nofollow">TKE editor</a> has its own <a href="https://sourceforge.net/p/tke/code/ci/default/tree/plugins/doctest" rel="nofollow">doctest plugin</a> that provides the additional facilities:
+
+<ul>
+<li class="level1"><div class="li">doctesting the selected lines of code</div></li>
+<li class="level1"><div class="li">inserting the doctest template into the code</div></li>
+<li class="level1"><div class="li">menu driven</div></li>
+<li class="level1"><div class="li">message boxes for results</div></li>
+<li class="level1"><div class="li">hotkeys for all operations</div></li>
+</ul>
+</p>
+<p>
+TKE presents a good sample how to employ the doctest while editing Tcl modules.
+</p>
+
+<p>
+<br>
+
+</p>
+
+</div>
+
+<h3 id="geany_usage">Usage in Geany</h3>
+<div class="level2">
+
+<p>
+<a 
+href="https://www.geany.org" title="Geany IDE">Geany IDE</a> can enable the <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">Tcl doctest</a></span> facilites by two ways:
+<ul>
+  <li class="level1">through <em>Build / Build Menu Commands</em> dialog</li>
+  <li class="level1">through <em>Edit / Preferences / Tools / Context action</em> dialog</li>
+</ul>
+In both cases, the command you set should run <a 
+href="../../../en/tcl/e_menu/index.html#introduction_to_e_menu" rel="nofollow">e_menu</a>.
+</p>
+<p>
+A nice feature of Geany is that its Build/Compile commands depend on a current file extension. Because of Tcl scripts have no need in building/compiling, we can set the Build/Compile commands to run <a 
+href="../../../en/tcl/e_menu/index.html#introduction_to_e_menu" rel="nofollow">e_menu</a> that would process a current edited file.
+</p>
+<p>
+On the other hand, the context action is rather restricted in <em>the official 
+Geany</em>, but this can be overcome with an <a 
+href="../../../en/tcl/e_menu/index.html#detailed_geany" title="how to mulster Geany">appropriate modification of it</a> which makes <a 
+href="../../../en/tcl/e_menu/index.html#introduction_to_e_menu" rel="nofollow">e_menu</a> independent on a file extension.
+</p>
+<p>
+Well, suppose we've set a command to run the <a 
+href="../../../en/tcl/e_menu/index.html#introduction_to_e_menu" rel="nofollow">e_menu</a>. Then we can run <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">doctest</a></span> as well, by the following menu path:
+
+<ul>
+<li class="level1">Main menu</li>
+<ul>
+<li class="level1">Utils</li>
+<ul>
+<li class="level1">Test1</li>
+<ul>
+  <li class="level1">Doctest Safe: <em>current file</em></li>
+  <li class="level1">Doctest Safe verbose: <em>current file</em></li>
+  <li class="level1">Doctest: <em>current file</em></li>
+  <li class="level1">Doctest verbose: <em>current file</em></li>
+</ul>
+</ul>
+</ul>
+</ul>
+Of course, you can edit the menus and move the doctest items to the main menu of <a 
+href="../../../en/tcl/e_menu/index.html#introduction_to_e_menu" rel="nofollow">e_menu</a>.
+</p>
+In contrast to TKE, you cannot doctest a selected text in Geany through its context command. So, the whole edited file can be only doctested.
+<p>
+
+</p>
+
+<p>
+</p>
+
+<p>
+</p>
+
+<p>
+<br>
+
+</p>
+
+</div>
+
+<h2 id="tips">Tips and traps</h2>
+<div class="level2">
+
+<p>
+PLEASE, NOTICE AGAIN: Do not include into the test blocks the commands that cannot be run or are unavailable (calls of external procedures etc.).
+</p>
+<p>
+If the whole of module should be spanned for doctesting, do not use #% doctest quotes. Use only docstrings (#% command, %> result) at that.
+</p>
+<p>
+If the last #% doctest quote isn't paired with lower #&gt; doctest quote, the test block continues to the end of text.
+</p>
+<p>
+The middle unpaired #% doctest and the unpaired #&gt; doctest are considered as errors making the test impossible.
+</p>
+<p>
+Results of commands are checked literally, though the starting and tailing spaces of #% and #&gt; lines are ignored.
+</p>
+<p>
+If a command's result should contain starting/tailing spaces, it should be quoted with double quotes. The following someformat command
+<pre class="code">  #% someformat 123
+  #&gt; "  123"</pre>
+</p>
+<p>
+should return
+
+<pre class="code">  "  123"</pre>
+</p>
+<p>
+for the test to be OK.
+</p>
+<p>
+The following two tests are identical and both return the empty string:
+<pre class="code">  #% set _ ""  ;# test #1
+  #&gt; ""
+  #% set _ ""  ;# test #2
+  #&gt;</pre>
+</p>
+<p>
+The absence of resulting #&gt; means that a result isn't important (e.g. for GUI tests) and no messages are displayed in non-verbose doctest. In such cases the & might be useful at the end of command:
+<pre class="code">  #% exec wish ./GUImodule.tcl arg1 arg2 &
+  # ------ no result is waited here ------</pre>
+</p>
+<p>
+This mode may be useful when applied inside an editor/IDE (e.g. doctest.tcl below, it's used in #ARGS lines, for TKE editor). Of course, "exec" and similar commands need executing the doctest in unsafe interpreter (the Usage section below).
+</p>
+<p>
+Also, it can be used as "a commented suite of commands". The successive #% commands form the suite with the result returned by the last command. So, the example of command31-32-33 suite above may be rewritten this way:
+<pre class="code">  ####### only result of command33 checked (command31, command32 being preparatory)
+  #% command31
+  ####### comments: result not checked here (even "invalid command name command31")
+  #% command32
+  ####### comments: result not checked here (even "invalid command name command32")
+  #% command33
+  #&gt; result of command33</pre>
+</p>
+<p>
+A tested command can throw an exception considered as its normal result under some conditions (the example of factorial proc below).
+</p>
+<p>
+You can run the doctest on this text to see how it works.
+</p>
+<p>
+<b>Note:</b> This thing might be helpful, namely: the doctest's usage isn't restricted to a code nor even to Tcl. Any text (data) file allowing #- or multi-line comments, might include the doctest strings for testing its contents, e.g. through something like:
+<pre class="code">  #% exec tclsh module.tcl this-data-file.txt</pre>
+... or
+<pre class="code">  #% exec My-Cool-Program.exe This-data-file.txt</pre>
+... or
+<pre class="code">  #% exec My-Cool-Program-Using-This-data-file.exe</pre>
+... so that, while editing this data file, you can periodically run the doctest on it to check if your data are OK.
+
+<p>
+<br>
+
+</p>
+
+</div>
+
+<h2 id="examples">Examples</h2>
+<div class="level2">
+
+<p>
+Though being trivial, the factorial procedure should check some conditions to return a proper result.
+<pre class="code">  #% doctest factorial
+
+  ############## Calculate factorial of integer N (1 * 2 * 3 * ... * N)
+  proc factorial {i} {
+    if {$i<0} {       ;# btw checks if i is a number
+      throw {ARITH {factorial expects a positive integer}} \
+      "expected positive integer but got \"$i\""
+    }
+    if {"$i" eq "0" || "$i" eq "1"} {return 1}
+    return [expr {$i * [factorial [incr i -1]]}] ;# btw checks if i is integer
+  }
+  #% factorial 0
+  #&gt; 1
+  #% factorial 1
+  #&gt; 1
+  #% factorial 10
+  #&gt; 3628800
+  #% factorial 50
+  #&gt; 30414093201713378043612608166064768844377641568960512000000000000
+  #
+  # (:=test for test:=)
+  #% expr 1*2*3*4*5*6*7*8*9*10*11*12*13*14*15*16*17*18*19*20* \
+  #%      21*22*23*24*25*26*27*28*29*30*31*32*33*34*35*36*37*38*39*40* \
+  #%      41*42*43*44*45*46*47*48*49*50
+  #&gt; 30414093201713378043612608166064768844377641568960512000000000000
+  #% expr [factorial 50] == \
+  #%      1*2*3*4*5*6*7*8*9*10*11*12*13*14*15*16*17*18*19*20* \
+  #%      21*22*23*24*25*26*27*28*29*30*31*32*33*34*35*36*37*38*39*40* \
+  #%      41*42*43*44*45*46*47*48*49*50
+  #&gt; 1
+  # (:=do not try factorial 1000, nevermore, the raven croaked:=)
+  #
+  #% factorial 1.1
+  #&gt; expected integer but got "1.1"
+  #% factorial 0.1
+  #&gt; expected integer but got "0.1"
+  #% factorial -1
+  #&gt; expected positive integer but got "-1"
+  #% factorial -1.1
+  #&gt; expected positive integer but got "-1.1"
+  #% factorial abc
+  #&gt; expected integer but got "abc"
+  #% factorial
+  #&gt; wrong # args: should be "factorial i"
+
+  #&gt; doctest</pre>
+</p>
+<p>
+Another example could make you smile:
+<pre class="code">  #% doctest 1
+  #%   set a "123 \\\\\\\\ 45"
+  #%   eval append b {*}$a   ;# guten Appetit
+  #&gt;   123\45
+  #&gt; doctest</pre>
+
+<p>
+<br>
+
+</p>
+
+</div>
+
+
+<h2 id="download">Download</h2>
+<div class="level2">
+
+<p>
+<span class="curid"><a href="#" class="wikilink1" title="Table of 
+Contents">doctest</a></span> stuff is available here:
+</p>
+
+<ul>
+<li class="level1"><div class="li"> 
+<a href="https://aplsimple.github.io/files/doctest.rar" title="https://aplsimple.github.io/files/doctest.rar" rel="nofollow">doctest.rar</a>
+</li>
+</ul>
+
+<p>
+Notice that <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">doctest</a></span> is still disposed to update. At least I would try and support its <a href="https://aplsimple.github.io/files/doctest.rar" title="https://aplsimple.github.io/files/doctest.rar" rel="nofollow">aplsimple.github.io</a> version in a working state.
+</p>
+
+<p>
+<br>
+
+</p>
+
+</div>
+
+<h2 id="see_also">See also</h2>
+<div class="level2">
+
+<p>
+The links about and around <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">doctest</a></span>:
+</p>
+
+<ul>
+<li class="level1"><div class="li"> <a 
+href="https://wiki.tcl-lang.org/page/Tcl+Equivalents+of+Python+Modules" rel="nofollow">Tcl Equivalents of Python Modules</a></div>
+</li>
+</ul>
+
+<ul>
+<li class="level1"><div class="li"> <a 
+href="https://sourceforge.net/projects/tke/" rel="nofollow">TKE editor</a></div>
+</li>
+</ul>
+
+<ul>
+<li class="level1"><div class="li"><a 
+href="https://www.geany.org" title="Geany IDE">Geany IDE</a> </div></li>
+<li class="level1"><div class="li"><a 
+href="../../../en/tcl/e_menu/index.html#detailed_geany" title="how to mulster Geany">mulstering Geany</a> </div></li>
+</ul>
+
+<ul>
+<li class="level1"><div class="li"> <a 
+href="https://aplsimple.github.io/en/tcl/e_menu/index.html#introduction_to_e_menu" rel="nofollow">e_menu</a></div>
+</li>
+</ul>
+
+</div>
+
+</section>
+
+<script>
+  writeFooter('<a href="#" class="wikilink1" title="Table of Contents">doctest for Tcl</a>');
+</script>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8">
+<meta name="author" content="aplsimple">
+<meta name="description" content="mulster, multi-line replacements in texts">
+<meta name="keywords" content="text,string,replacement,mulster">
+<link rel="stylesheet" href="../../zoo/style.css">
+<link rel="icon" type="image/jpg" href="../../../zoo/favicon.jpg">
+</head>
+<body>
+<div name="divd1" ALIGN="CENTER"> <FONT SIZE=5em color=#b01c20><B>
+<noscript>THIS PAGE IS NOT WORKING WITHOUT JAVASCRIPT!
+<BR>
+<BR>PLEASE, SWITCH ON JAVASCRIPT IN SETTINGS OF YOUR BROWSER AND RELOAD THE PAGE.
+</noscript>
+</B></FONT></div>
+<div id="wrapper">
+<script src="../../../zoo/funcs.js"></script>
+<script src="../../zoo/this.js"></script>
+
+<section id=sec2>
+
+<title>mulster</title>
+</head>
+
+<div id="bodyContent" class="dokuwiki">
+<div id="dw__toc" class="dw__toc">
+<h3 class="toggle open" style="cursor: pointer;">Table of Contents</h3>
+<div aria-expanded="true" style="">
+
+<ul class="toc">
+<li class="level2"><div class="li"><a href="#intro">What is this</a></div></li>
+<li class="level2"><div class="li"><a href="#usage">Usage</a></div></li>
+<li class="level2"><div class="li"><a href="#examples1">Examples</a></div></li>
+<li class="level2"><div class="li"><a href="#why">Why</a></div></li>
+<li class="level2"><div class="li"><a href="#source">Source</a></div></li>
+<hr>
+<li class="level2"><div class="li"><a href="#download">Download</a></div></li>
+<li class="level2"><div class="li"><a href="#see_also">See also</a></div></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<br>
+
+<h2 id="intro">What is this</h2>
+<div class="level2">
+<p>
+This little thing provides multi-line replacements in text files.
+Also, it provides in-memory replacements, on a list of strings.
+</p>
+<p>
+Although there are tons of similar utilities, maybe the <a href="#" class="wikilink1" title="Table of Contents">mulster</a></span> has its own goods.
+
+</p>
+<p>
+It would be useful when you need:
+<ol>
+<li class="level1"><div class="li">replace periodically some bunches of strings in some texts;</div></li>
+<li class="level1"><div class="li">modify periodically a snapshot of some software without its forking;</div></li>
+<li class="level1"><div class="li">share your little modifications with your colleagues, without resorting to those great GIT, MERCURIAL, FOSSIL etc.;</div></li>
+<li class="level1"><div class="li">use multi-line replacement functions in your software.</div></li>
+</ol>
+</p>
+
+<p>
+<br>
+
+</p>
+
+</div>
+
+<h2 id="usage">Usage</h2>
+<div class="level2">
+
+<p>
+The <a href="#" class="wikilink1" title="Table of Contents">mulster</a></span> is called this way:
+<pre class="code">tclsh mulster.tcl ?options? fileini</pre>
+</p>
+<p>
+where <em>fileini</em> is a name of file containing settings for replacements.
+</p>
+<p>
+The <em>fileini</em> has the following structure:
+<pre class="code">INFILE=input file name
+OUTFILE=output file name
+
+IN=BEGIN
+line #1 to find
+line #2 to find
+...
+line #N1 to find
+IN=END
+OUT=BEGIN
+line #1 of replacement
+line #2 of replacement
+...
+line #N2 of replacement
+OUT=END
+
+IN=BEGIN(r1,r2)
+....
+IN=END
+OUT=BEGIN
+...
+OUT=END
+...
+
+BACKUP=new backup dir
+EXACT=1
+KEEP=1
+INFILE=input file2 name
+OUTFILE=output file2 name
+...</pre>
+
+</p>
+<p>
+The <em>INFILE=</em> and <em>OUTFILE=</em> set the names of input & output files.
+</p>
+<p>
+If <em>input file name</em> is equal to <em>output file name</em>, all modifications are performed on the same file.
+</p>
+<p>
+All strings between current <em>IN=BEGIN</em> and <em>IN=END</em> are replaced with strings between next <em>OUT=BEGIN</em> and <em>OUT=END</em>. The sequence of <em>INFILE=, OUTFILE=, IN=, OUT=</em> is set for each processed file.
+</p>
+<p>
+The <em>IN=BEGIN(r1,r2)</em> form means that a range of found matches should be processed as follows:
+<pre class="code">IN=BEGIN(r1,r2) - r1-th match through r2-th one
+IN=BEGIN(r1,0)  - r1-th match through the last one
+IN=BEGIN(0,r2)  - the same as IN=BEGIN(1,r2)
+IN=BEGIN(1,1)   - first match only
+IN=BEGIN(0,0)   - all matches; the same as IN=BEGIN</pre>
+</p>
+<p>
+All strings outside of <em>INFILE=, OUTFILE=, IN=BEGIN through IN=END, OUT=BEGIN through OUT=END, BACKUP=, EXACT=, KEEP=</em> are ignored (being sort of comments).
+</p>
+<p>
+The options of <em>tclsh mulster.tcl ?options? fileini</em> are following:
+<ul>
+<li class="level1"><div class="li"> <em>-exact 1</em> means that IN-lines should be matched exactly, with all their leading/tailing spaces as specified in <em>IN=BEGIN</em> blocks; by default the lines are trimmed at finding their matches;</div></li>
+<li class="level1"><div class="li"><em>-backup </em> means that the original input files are backed up into the <em></em> directory;</div></li>
+<li class="level1"><div class="li"><em>-backup 0</em> means that the original input files are NOT backed up at all (by default they are backed up to <em>BAK</em> directory);</div></li>
+<li class="level1"><div class="li"><em>-keep 1</em> means that input files' attributes/times will be saved in output files; by default they are not kept;</div></li>
+<li class="level1"><div class="li"><em>--</em> switches options off (for <em>fileini</em>).</div></li>
+</ul>
+The <em>-exact, -backup</em> and <em>-keep</em> options can be redefined in <em>fileini</em>, e.g.
+<pre class="code">...
+BACKUP=BAK/new backup dir
+EXACT=1
+KEEP=1
+INFILE=input file2 name
+OUTFILE=output file2 name
+...</pre>
+so that these options can be individual for any file(s).
+</p>
+<p>
+<b>Note</b>: if the <a href="#" class="wikilink1" title="Table of Contents">mulster</a></span> comes across <em>BACKUP=, EXACT=, KEEP=</em> or <em>INFILE=</em> option in <em>fileini</em>, it flushes all collected changes to the current output file and begins a new collection of changes for a new input/output.
+</p>
+<p>
+So, the order of options is important:
+<ol>
+<li class="level1"><div class="li"><em>BACKUP=, EXACT=</em> or <em>KEEP=</em> go first if they are set at all</div></li>
+<li class="level1"><div class="li"><em>INFILE=</em> and <em>OUTFILE=</em> go next</div></li>
+<li class="level1"><div class="li"><em>IN=BEGIN</em> and <em>IN=END</em> go next</div></li>
+<li class="level1"><div class="li"><em>OUT=BEGIN</em> and <em>OUT=END</em> go next</div></li>
+<li class="level1"><div class="li">(3) through (4) can be repeated</div></li>
+<li class="level1"><div class="li">(1) through (5) can be repeated</div></li>
+</ol>
+</p>
+
+<p>
+<br>
+
+</p>
+
+</div>
+
+<h2 id="examples1">Examples</h2>
+<div class="level2">
+
+<p>
+For example, applying the following <em>fileini</em>:
+<pre class="code">INFILE=modul1.tcl
+OUTFILE=modul2.tcl
+IN=BEGIN
+proc1 $a $b
+proc2 $a2 $b2
+IN=END
+OUT=BEGIN
+proc3 $a $b $a2 $b2  ;# <=====REPLACED
+OUT=END</pre>
+</p>
+<p>
+... to the <em>modul1.tcl</em> containing:
+<pre class="code">1st-comm
+2nd-comm
+proc1 $a $b
+proc2 $a2 $b2
+next-comm
+#... other commands
+proc1 $a $b
+proc2 $a2 $b2</pre>
+</p>
+<p>
+... we get the <em>modul2.tcl</em> containing:
+<pre class="code">1st-comm
+2nd-comm
+proc3 $a $b $a2 $b2  ;# <=====REPLACED
+next-comm
+#... other commands
+proc3 $a $b $a2 $b2  ;# <=====REPLACED</pre>
+</p>
+<p>
+
+Examples of calling:
+<pre class="code">tclsh mulster.tcl mulster1_ini
+tclsh mulster.tcl -exact 1 mulster2_ini
+tclsh mulster.tcl -backup ~/BAK mulster3_ini
+tclsh mulster.tcl -exact 1 -backup 0 -keep 0 mulster4_ini</pre>
+</p>
+<p>
+While using the <em>-backup 0</em> option, please be careful. This mode is well suitable when:
+<ul>
+<li class="level1"><div class="li"> all your input files are not the same as output files;</div></li>
+<li class="level1"><div class="li"> you've made a backup beforehand;</div></li>
+<li class="level1"><div class="li"> you have a nice VCS and are not worried about any data loss.</div></li>
+</ul>
+Otherwise you would take risks of data loss.
+</p>
+<p>
+The <a href="#" class="wikilink1" title="Table of Contents">mulster</a></span> prints out a log of replacements made (as well as made not).
+
+<p>
+<br>
+
+</p>
+
+</div>
+
+<h2 id="why">Why</h2>
+<div class="level2">
+
+<p>
+I run into an appropriate case of 'mulstering' some time ago when it occured to me to enhance the context action of <a 
+href="https://www.geany.org" title="Geany IDE">Geany IDE</a>. Being not of Geany team nor of their contributors/fans, I couldn't insist on this enhancement with Github PR (though had tried, without success:) At that, forking/cloning Geany from Github to perform my home-made corrections would be an overkill and a waste of time, having in mind the future releases of Geany. Each time at releasing new Geany to do the same manipulations? I'm too lazy, so this scenario isn't for me.
+</p>
+<p>
+But now, with the <a href="#" class="wikilink1" title="Table of Contents">mulster</a></span> at hand, all I need is:
+<ol>
+<li class="level1"><div class="li">clone a current Geany;</div></li>
+<li class="level1"><div class="li">'mulster' some files of it to get the desirable facility;</div></li>
+<li class="level1"><div class="li">'make istall' Geany;</div></li>
+<li class="level1"><div class="li">repeat (1) through (3) at releasing new Geany versions, all those actions being easily automated with shell commands prepared beforehand (as well as 'fileini').</div></li>
+</ol>
+</p>
+<p>
+Nearly the same thing has repeated with <a href="https://sourceforge.net/p/tke" title="TKE editor">TKE editor</a>. I have its clone and work at it, but being only a contributor (the author is Trevor Williams) I cannot implement some of its features which are good for me and not acceptable for the author. So, I need these facilities being implemented 'on fly', after pulling TKE from its repository. Then that my changes made, the mulstered TKE code should be undoed before pushing my changes to SourceForge.
+</p>
+<p>
+These pull/push transactions and accompanying mulsterings are made with one click in a TKE plugin. I need only supervising a short log.
+</p>
+<p>
+The <a href="https://aplsimple.github.io/files/mulster.rar" title="https://aplsimple.github.io/files/mulster.rar" rel="nofollow">mulster.rar</a> archive contains <em>fileini</em> files (<em>tasks/mulster-geany</em> and <em>tasks/mulster-tke</em>) to make the appropriate changes in Geany and TKE.
+</p>
+
+<p>
+<br>
+
+</p>
+
+</div>
+
+<h2 id="source">Source</h2>
+<div class="level2">
+
+</p>
+<p>
+A bit about using the <em>mulster.tcl</em>. It's implemented as <em>oo::class</em> and has two useful methods declared as:
+</p>
+<p>
+<pre class="code">1) method mulster {fileini {exact 0} {backup BAK} {keep 0}}
+
+  where:
+    'fileini' is a file name for options
+    'exact' equals to:
+       0 - matches of trimmed lines are allowed
+       1 - only exact matches are allowed
+    'backup' equals to:
+       0     - no input files' backuping
+       "dir" - backuping to "dir" directory
+    'keep' if 1, keeps input files' attributes/times in output files
+
+  This method performs the above described operations.
+
+2) method mulster1 {lcont lin lout {r1 0} {r2 0} {exact 1}}
+
+  This method performs in-memory replacements in a list ('lcont')
+  according to a list of input lines ('lin') and a list of output
+  lines ('lout'), in a range of replacements set with 'r1' and 'r2'.
+  If 'exact' is 1, the lines are compared to be strongly equal,
+  otherwise their leading/tailing spaces are ignored at comparing.</pre>
+</p>
+<p>
+<br>
+
+</p>
+
+</div>
+
+
+<h2 id="download">Download</h2>
+<div class="level2">
+
+<p>
+<span class="curid"><a href="#" class="wikilink1" title="Table of 
+Contents">mulster</a></span> stuff is available here:
+</p>
+
+<ul>
+<li class="level1"><div class="li"> 
+<a href="https://aplsimple.github.io/files/mulster.rar" title="https://aplsimple.github.io/files/mulster.rar" rel="nofollow">mulster.rar</a>
+</li>
+</ul>
+
+<p>
+Notice that <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">mulster</a></span> is still disposed to update. At least I would try and support its <a href="https://aplsimple.github.io/files/mulster.rar" title="https://aplsimple.github.io/files/mulster.rar" rel="nofollow">aplsimple.github.io</a> version in a working state.
+</p>
+
+<p>
+<br>
+
+</p>
+
+</div>
+
+<h2 id="see_also">See also</h2>
+<div class="level2">
+
+<p>
+The links about and around <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">mulster</a></span>:
+</p>
+
+<ul>
+<li class="level1"><div class="li"><a href="https://wiki.tcl-lang.org/page/mulster%2C+multi-line+replacements+in+text" title="TKE editor">mulster on wiki.tcl-lang.org</a> </div></li>
+</ul>
+
+<ul>
+<li class="level1"><div class="li"><a href="https://sourceforge.net/p/tke" title="TKE editor">TKE editor</a> </div></li>
+</ul>
+
+<ul>
+<li class="level1"><div class="li"><a 
+href="https://www.geany.org" title="Geany IDE">Geany IDE</a> </div></li>
+<li class="level1"><div class="li"><a 
+href="../../../en/tcl/e_menu/index.html#detailed_geany" title="how to mulster Geany">mulstering Geany</a> </div></li>
+</ul>
+
+</div>
+
+</section>
+
+<script>
+  writeFooter('<a href="#" class="wikilink1" title="Table of Contents">mulster</a> - multi-line replacements in text files');
+</script>
+
+</div>
+</body>
+</html>
