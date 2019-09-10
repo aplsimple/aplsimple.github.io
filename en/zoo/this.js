@@ -7,14 +7,19 @@
 //---------------------------------------------
 // header of page
 function writeHeader() {
+  homeLINK = document.baseURI;
+  ilen = 19
+  ibase = homeLINK.indexOf('aplsimple.github');
+  if (ibase<0) { ibase = homeLINK.indexOf('aplsimple_github'); ilen += 10 };
+  if (ibase>=0) { homeLINK = homeLINK.substring(0,ibase+ilen) };
   document.write(' \
     <header> \
       <div id=nav> \
-        <a href="https://aplsimple.github.io" id=tohome title="Go home"><img id="flagimg" height=14 width=14 src="../../../zoo/favicon.jpg"> \
+        <a href='+homeLINK+'/index.html id=tohome title="Go home"><img id="flagimg" height=14 width=14 src="../../../zoo/favicon.jpg"> \
         <span id=flagcont>&nbsp;Home</span></a> \
         <a href="../../misc/news/news.html"  id=nav1   title="News and views">News</a> \
         <a href="../../misc/links/links.html" id=nav2   title="Some links">Links</a> \
-        <a href="https://aplsimple.github.io/ru" id=helpme title="Switch to Russian pages"> \
+        <a href='+homeLINK+'/ru/index.html id=helpme title="Switch to Russian pages"> \
         <img id="flagimg" height=14 width=14 src="../../zoo/ru.png"> \
         <span id=flagcont>&nbsp;to Russian</span></a> \
       </div> \
