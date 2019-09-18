@@ -12,6 +12,7 @@ function writeHeader(prntdir) {
   if (ibase<0) { ibase = homeLINK.indexOf('aplsimple_github'); ilen += 10 };
   if (ibase>=0) { homeLINK = homeLINK.substring(0,ibase+ilen) };
   document.write(' \
+    <head><meta name="viewport" content="initial-scale=1.0"></head> \
     <header> \
       <div id=nav> \
         <a href='+homeLINK+'/ru/index.html id=tohome title="до дому, до хаты"><img id="flagimg" height=14 width=14 src="../'+prntdir+'zoo/favicon.jpg"> \

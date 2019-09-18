@@ -13,6 +13,7 @@ function writeHeader() {
   if (ibase<0) { ibase = homeLINK.indexOf('aplsimple_github'); ilen += 10 };
   if (ibase>=0) { homeLINK = homeLINK.substring(0,ibase+ilen) };
   document.write(' \
+    <head><meta name="viewport" content="initial-scale=1.0"></head> \
     <header> \
       <div id=nav> \
         <a href='+homeLINK+'/index.html id=tohome title="Go home"><img id="flagimg" height=14 width=14 src="../../../zoo/favicon.jpg"> \
