@@ -619,10 +619,15 @@ The <span class="curid"><a href="http://tcl.tk/man/tcl8.7/TkCmd/pack.htm" class=
 		<tr><td class="col0"> <em>men*</em> </td><td class="col1"> menubar </td><td class="col2"> </td><td class="col3"> The menubar (containing the menubar items, see examples in <a href="#test2_pave">test2_pave.tcl</a>)</td></tr>
 		<tr><td class="col0"> <em>too*</em> </td><td class="col1"> toolbar </td><td class="col2"> </td><td class="col3"> The toolbar (containing images and commands, see examples in <a href="#test2_pave">test2_pave.tcl</a>)</td></tr>
 		<tr><td class="col0"> <em>sta*</em> </td><td class="col1"> statusbar </td><td class="col2"> </td><td class="col3"> The statusbar (containing fields for hints, see examples in <a href="#test2_pave">test2_pave.tcl</a>)</td></tr>
-		<tr><td class="col0"> <em>fco*</em> </td><td class="col1"> file content combobox </td><td class="col2"> </td><td class="col3">The file content combobox presents text file(s) content. Its <em>values</em> attribute is set like this:
+		<tr><td class="col0"> <em>fco*</em> </td><td class="col1"> file content combobox </td><td class="col2"> </td><td class="col3">The file content combobox presents text file(s) content. Its <em>-tvar</em> attribute sets a variable name for storing a result,
+    while <em>-values</em> attribute is set like this:
 <br>
-  &nbsp;&nbsp;&nbsp;-values {TEXT1 \@-div1 \" &lt;\" -div2 &gt; test1.txt\@ TEXT2 \@-pos 10 -len 20 test2.txt\@ ... TEXTN}
+  &nbsp;&nbsp;&nbsp;-values {TEXT1 /@-div1 \" &lt;\" -div2 &gt; test1.txt/@ TEXT2 /@-pos 10 -len 20 test2.txt/@ ... TEXTN}
     <br>See an example in <a href="#test2_pave">test2_pave.tcl</a>, the <em>General / Misc</em> tab.</td></tr>
+		<tr><td class="col0"> <em>flb*</em> </td><td class="col1"> file listbox </td><td class="col2"> </td><td class="col3">The file listbox presents text file(s) content. Its <em>-lvar</em> attribute sets a variable name for storing a result, while <em>-values</em> attribute is set like this:
+<br>
+  &nbsp;&nbsp;&nbsp;-values {TEXT1 /@-div1 \" &lt;\" -div2 &gt; test1.txt/@ TEXT2 /@-pos 10 -len 20 test2.txt/@ ... TEXTN}
+    <br>See an example in <a href="#test2_pave">test2_pave.tcl</a>, the <em>View</em> tab.</td></tr>
 	</tbody>
 </table>
 </div>
@@ -895,7 +900,7 @@ In ./tests directory of <a href="#download">downloaded pave.zip</a> there are al
 </div></li>
 <li><div class="li"><code>test_pavedialog.tcl</code> - a demo of dialogs using <code>PaveDialog</code> oo::class described <a href="#use_PaveDialog">below</a>.
 </div></li>
-<li><div class="li"><code>test_property.tcl</code> - a demo of <code>ObjectProperty</code> oo::class that may be mixined to the <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> objects.
+<li><div class="li"><code>test_property.tcl</code> - a demo of <code>ObjectProperty</code> oo::class that may be mixin'ed to the <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> objects.
 </div></li>
 </p>
 </div>
@@ -905,16 +910,25 @@ In ./tests directory of <a href="#download">downloaded pave.zip</a> there are al
 </p>
 
 <p>
-<img src="files/test2.png" class="media" alt="TKE plugin using pave">
+<img src="files/test2.png" class="media" alt="test2_pave.tcl">
 </p>
 
 <br>
-<p id=test2_pave>... and its themed version:
+<p>... and its themed version:
 </p>
 
 <p>
-<img src="files/test2t.png" class="media" alt="TKE plugin using pave">
+<img src="files/test2t.png" class="media" alt="test2_pave.tcl">
 </p>
+
+<br>
+<p>... and its themed non-ttk widgets:
+</p>
+
+<p>
+<img src="files/test2nt.png" class="media" alt="test2_pave.tcl">
+</p>
+
 <br>
 <p>
 ... and here is a video of it:<br>
@@ -1403,17 +1417,15 @@ In fact, the <em>PaveMe window</em> method can take as many "window/container & 
  <pre class="code">pobj window .win.fNB.nb.f1 {
   ...
 }
-after idle [list fillMenu_Binding_Etc $w]</pre>
+after idle [list ::NS::fillMenu_Binding_Etc $w]</pre>
  <p>
 However, the main menu bar can be made in a call of <em>PaveMe window</em>. See the example in <b>test2_pave.tcl</b>.
 </p>
 <p>
 
-<b>8.</b> The theming facility is enabled by <em>ObjectTheming oo::class</em> (of <em>obbit.tcl</em>).
+<b>8.</b> The theming facility is enabled by <em>ObjectTheming oo::class</em> (of <em>obbit.tcl</em>) that is mixin'ed into PaveMe oo::class.
  <br>For example, it's used in <b>test2_pave.tcl</b> as follows:
- <pre class="code">source [file join $pavedir obbit.tcl]
-...
-oo::define PaveMe {mixin ObjectTheming}
+ <pre class="code">
 PaveMe create pobj
 ...
 pobj themingWindow .win \
@@ -1437,7 +1449,7 @@ The theming colors are actual for ttk as well as non-ttk widgets. This is seen o
 </p>
 
 <p>
-<b>9.</b> A question is when to call the <em>pobj themingWindow</em>? You might consider the following ways:
+<b>9.</b> A question is when should <em>pobj themingWindow</em> be called? You might consider the following ways:
  <ul>
 <li>If it were called <u>before</u> <em>pobj window</em>, the theming would embrace only ttk widgets.</li>
 <li>If it were called <u>after</u> <em>pobj window</em>, the theming would embrace all widgets including the non-ttk.</li>
