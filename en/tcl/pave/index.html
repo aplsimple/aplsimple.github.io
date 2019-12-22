@@ -32,10 +32,29 @@
 <ul class="toc">
 <li class="level2"><div class="li"><a href="#intro">Introduction</a></div></li>
 <li class="level2"><div class="li"><a href="#introduction_to_Pave">Idea of Pave</a></div></li>
+<li class="level2"><div class="li"><a href="#example_Pave">Example</a></div></li>
 <li class="level2"><div class="li"><a href="#use_Pave">Use of Pave</a></div>
 <ul class="toc">
-<li class="level3"><div class="li"><a href="#example_Pave">Example</a></div></li>
-<li class="level3"><div class="li"><a href="#description_Pave">Description</a></div></li>
+<li class="level3"><div class="li"><a href="#use_Pave">PaveMe Object</a></div></li>
+<li class="level3"><div class="li"><a href="#WidList">Widget List</a></div></li>
+<li class="level3"><div class="li"><a href="#WidNames">Widget Names</a></div></li>
+<li class="level3"><div class="li"><a href="#MegaWid">Mega-Widgets</a></div>
+<ul>
+<li class="level4"><div class="li"><a href="#filWid">File picker</a></div>
+<li class="level4"><div class="li"><a href="#fisWid">Saved file picker</a></div>
+<li class="level4"><div class="li"><a href="#dirWid">Directory picker</a></div>
+<li class="level4"><div class="li"><a href="#fonWid">Font picker</a></div>
+<li class="level4"><div class="li"><a href="#clrWid">Color picker</a></div>
+<li class="level4"><div class="li"><a href="#datWid">Date picker</a></div>
+<li class="level4"><div class="li"><a href="#menWid">Menubar</a></div>
+<li class="level4"><div class="li"><a href="#tooWid">Toolbar</a></div>
+<li class="level4"><div class="li"><a href="#staWid">Statusbar</a></div>
+<li class="level4"><div class="li"><a href="#fcoWid">File combobox</a></div>
+<li class="level4"><div class="li"><a href="#flbWid">File listbox</a></div>
+<li class="level4"><div class="li"><a href="#ftxWid">File viewer/editor</a></div>
+</ul>
+</li>
+<li class="level3"><div class="li"><a href="#OptAbbr">Option Abbreviations</a></div></li>
 <li class="level3"><div class="li"><a href="#methods_Pave">Methods</a></div></li>
 <li class="level3"><div class="li"><a href="#examples_Pave">More Examples</a></div></li>
 </ul>
@@ -45,6 +64,7 @@
 <li class="level3"><div class="li"><a href="#PaveDialog_options">Options</a></div></li>
 <li class="level3"><div class="li"><a href="#PaveDialog_input">Input dialog</a></div></li>
 </ul>
+<li class="level2"><div class="li"><a href="#use_CLI">Use in shell / CLI</a></div>
 
 <li class="level2"><div class="li"><a href="#tips">Tips & Tricks</a></div></li>
 
@@ -67,58 +87,62 @@ The <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">
 </p>
 
 <p>
-The <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> isn't designed to replace the existing Tk geometry managers (Tk GMs). Rather it tries to simplify the window layout by using their best.
-</p>
-
-<p>
-  The Tk GMs have the following drawbacks:
+The <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> isn't designed to replace the existing Tk geometry managers (<span class="curid"><a href="http://tcl.tk/man/tcl8.7/TkCmd/place.htm" class="wikilink1" title="place GM">place</a></span>, <span class="curid"><a href="http://tcl.tk/man/tcl8.7/TkCmd/pack.htm" class="wikilink1" title="pack GM">pack</a></span>, <span class="curid"><a href="http://tcl.tk/man/tcl8.7/TkCmd/grid.htm" class="wikilink1" title="grid GM">grid</a></span>). Rather the <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> tries to simplify the window layout by using their best, by means of:
 <ul>
-<li class="level2"><div class="li"> The <span class="curid"><a href="http://tcl.tk/man/tcl8.7/TkCmd/place.htm" class="wikilink1" title="place GM">place</a></span> is very good when you need e.g. the overlapping popup messages. Still it is rarely used because of its complexity esp. when you need a resizable window of multiple widgets.
-</div></li>
-<li class="level2"><div class="li"> The <span class="curid"><a href="http://tcl.tk/man/tcl8.7/TkCmd/pack.htm" class="wikilink1" title="pack GM">pack</a></span> is very good for simple layouts. But if your layout is growing in  contents and complexity, its packs start being more and more tricky, sometimes even mystic.</div></li>
-<li class="level2"><div class="li"> The <span class="curid"><a href="http://tcl.tk/man/tcl8.7/TkCmd/grid.htm" class="wikilink1" title="grid GM">grid</a></span> is best of all. However it is tiresome and tricky at the modifications of existing layouts. The inserting/removing a cell can become a real torment with those recalculations of cells/rows and sticky/weight attributes. The usage of relative (- x ^) <span class="curid"><a href="http://tcl.tk/man/tcl8.7/TkCmd/grid.htm" class="wikilink1" title="grid GM">grid</a></span> is restricted with simple layouts of table type.
-</div></li>
-</ul>
-</p>
-
-<p>
-  All of the Tk GMs have the common drawback consisting in that the widgets' creation, configuration and layout are separated in space and time. In practice it means that to modify the layout you need look at the 2-3-4.. places of your code, namely the widgets creation / configuration / geometry management. You are happy if those separated places are spanned by your editor's screen.
-
-</p>
-<p>
-The proposed <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> allows you to get rid of these drawbacks by means of:
-<ul>
-<li class="level2"><div class="li"> uniting the creation of widgets (and mostly their configuration) with their layout
-</div></li>
-<li class="level2"><div class="li"> minimizing a coder's efforts at inserting/removing and naming/accessing widgets
-</div></li>
-<li class="level2"><div class="li"> using a batch of 'mega-widgets'
-</div></li>
 <li class="level2"><div class="li">joining the power of <span class="curid"><a href="http://tcl.tk/man/tcl8.7/TkCmd/grid.htm" class="wikilink1" title="grid GM">grid</a></span> and <span class="curid"><a href="http://tcl.tk/man/tcl8.7/TkCmd/pack.htm" class="wikilink1" title="pack GM">pack</a></span>
 </div></li>
+<li class="level2"><div class="li">uniting the creation of widgets with their layout (and mostly their configuration)
+</div></li>
+<li class="level2"><div class="li">minimizing a coder's efforts at creating / modifying / removing widgets
+</div></li>
+<li class="level2"><div class="li">theming both ttk and non-ttk widgets
+</div></li>
+<li class="level2"><div class="li">providing 'mega-widgets'
+</div></li>
 </ul>
 </p>
 
 <p>
-The <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> is implemented as <em>PaveMe oo::class</em>, so that you can enhance it with your own inherited class.
+The <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> is implemented as <em>PaveMe oo::class</em>, so that you can enhance it with your own inherited / mixin-ed class.
 </p>
 
 <p>
-Also, you can employ <em>PaveDialog oo::class</em> and <em>PaveInput oo::class</em> that allow you:
+While <em>PaveMe oo::class</em> allows to layout highly sophisticated windows, you can also employ its more 'earthy' descendants:
 <ul>
-<li class="level2"><div class="li"> to call the standard dialogs with a checkbox of "Don't show again" type
+<li>
+ <em>PaveDialog oo::class</em> and <em>PaveInput oo::class</em> that allow you:</li>
+<ul>
+<li class="level2"><div class="li"> to call a variety of dialogs, optionally using a "Don't show again" checkbox and a tagged text
 </div></li>
-<li class="level2"><div class="li"> to call the standard dialogs with tagged text
-</div></li>
-<li class="level2"><div class="li"> to call the input dialog using entry, combobox, text, spinbox, checkbutton, radiobutton, file / directory / color / font / date pickers
-</div></li>
-<li class="level2"><div class="li"> to use menubar, toolbar, statusbar and the mentioned pickers as 'mega-widgets'
+<li class="level2"><div class="li"> to use a variety of widgets in dialogs, including entry, text (incl. <a href=#specpaveAttr>readonly</a> and <a href="#ftxWid2">stand-alone</a>), combobox (incl. <a href="#fcoWid">file content</a>), spinbox, checkbutton, radiobutton and label.
 </div></li>
 <li class="level2"><div class="li"> to resize windows neatly (however strange, not done in Tk standard dialogs)
 </div></li>
 </ul>
+</ul>
+
 </p>
-<p>The theming facility of pave is enabled by <em>ObjectTheming oo::class</em> which embraces ttk as well as non-ttk widgets. This is seen on <a href="https://chiselapp.com/user/aplsimple/repository/aplsimple_github_io/uv/test2pave.mp4" class="wikilink1" title="Video of test2_pave.tcl">the demo video</a>.
+<p>The theming facility of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> is enabled by <em>ObjectTheming oo::class</em> which embraces both ttk and non-ttk widgets, as seen on <a href="https://chiselapp.com/user/aplsimple/repository/aplsimple_github_io/uv/test2pave-14.mp4" class="wikilink1" title="Video of test2_pave.tcl">demo video</a>.
+</p>
+<p>
+Along with <a href=#WidNames>standard widgets</a>, the mentioned <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> classes provide a batch of following 'mega-widgets':
+<ul>
+<li class="level2"><div class="li"><a href="#filWid">file picker</a></div></li>
+<li class="level2"><div class="li"><a href="#fisWid">saved file picker</a></div></li>
+<li class="level2"><div class="li"><a href="#dirWid">directory picker</a></div></li>
+<li class="level2"><div class="li"><a href="#fonWid">font picker</a></div></li>
+<li class="level2"><div class="li"><a href="#clrWid">color picker</a></div></li>
+<li class="level2"><div class="li"><a href="#datWid">date picker</a></div></li>
+<li class="level2"><div class="li"><a href="#menWid">menubar</a></div></li>
+<li class="level2"><div class="li"><a href="#tooWid">toolbar</a></div></li>
+<li class="level2"><div class="li"><a href="#staWid">statusbar</a></div></li>
+<li class="level2"><div class="li"><a href="#fcoWid">file combobox</a></div></li>
+<li class="level2"><div class="li"><a href="#flbWid">file listbox</a></div></li>
+<li class="level2"><div class="li"><a href="#ftxWid">file viewer/editor</a></div></li>
+</ul>
+</p>
+
+<p>At last, a <a href=#use_CLI>stand-alone dialog</a> allows not only to ask "OK/Cancel" or "Yes/No" returning 1/0 but also to set environment variables to use in shell scripts.
 </p>
 
 <p>
@@ -221,11 +245,9 @@ means the creation and the gridding a horizontal separator (sehC) and a button (
 
 </div>
 
-<h1 id="use_Pave">Use of Pave</h1>
-<br>
+<h1 id="example_Pave">Example of Use</h1>
 
-<h2 id="example_Pave">Example of Pave Usage</h2>
-<div class="level2">
+
 
 <p>
 Here we use the <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> to make the following dialog:
@@ -240,8 +262,8 @@ Here we use the <span class="curid"><a href="#" class="wikilink1" title="Table o
 
 <pre class="code">package require Tk
 ttk::style theme use clam
-source paveme.tcl
-PaveMe create pave
+package require pave
+pave::PaveMe create pave
 set win .win
 pave makeWindow $win.fra "Find and Replace"
 set v1 [set v2 1]
@@ -295,8 +317,8 @@ Below we'll consider this code line by line.
 The 1-2 lines are preparatory for using Tk widgets. The 3-6 lines initialize <code>pave</code> object that makes the <code>.win</code> window with "Find and Replace" title. The 7-9 lines initialize the variables used in the dialog. Still nothing special:
 <pre class="code">1  package require Tk
 2  ttk::style theme use clam
-3  source paveme.tcl
-4  PaveMe create pave
+3  package require pave
+4  pave::PaveMe create pave
 5  set win .win
 6  pave makeWindow $win.fra "Find and Replace"
 7  set v1 [set v2 1]
@@ -443,32 +465,34 @@ Note that we made only those modifications that are relevant indeed: inserting t
 
 </p>
 
-</div>
 
-<h2 id="description_Pave">Description of Pave</h2>
+<h1 id="use_Pave">Use of Pave</h1>
+<br>
 
 <br>
-<h3>Making PaveMe Object</h3>
+<h2>PaveMe Object</h2>
 <div class="level3">
-<p>The creation of a <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> object and a paved window are rather straightforward. Firstly we source the paveme.tcl, secondly we create the pave object, at last we make the window, this way:
+<p>The creation of a <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> object and a paved window are rather straightforward. Firstly we <em>package require pave</em>, secondly we create the pave object, at last we make the window, this way:
 <pre class="code">package require Tk
-source paveme.tcl
-PaveMe create pave
+package require pave
+pave::PaveMe create pave
 pave makeWindow $win $title</div>
 where <code>win</code> contains the window's path, <code>title</code> contains the window's title.
 </p>
+<p>To populate the window with widgets, the <code>window</code> method is called, as discussed below.
+</p>
 
-<p>
+<p id=WidList>
 <br>
 
 </p>
 
 </div>
-<h3>Widget Option List</h3>
+<h2>Widget List</h2>
 <div class="level3">
 
 <p>
-The widget option list is passed to <code>pane window</code> method as a second argument, this way:
+The widget option list is passed to <code>window</code> method as a second argument, this way:
 <pre class="code">pave window $win $widget_option_list</pre>
 The <code>widget_option_list</code> is a list of lists of the following structure:
 <p>
@@ -509,19 +533,23 @@ where:
 </p>
 
 <p>
-The last two facilities are rarely used. See examples of these in test2_pave.tcl (fra.pan.panL and .lfrT.pro widgets).
+The last two facilities are rarely used. See examples of these in <a href="#test2_pave">test2_pave.tcl</a> of downloaded <a href="#download">pave.zip</a> (fra.pan.panL and .lfrT.pro widgets).
 </p>
 
-<p>
+<p id=specpaveAttr>
 Some widget attributes are specific to <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span>, namely:
 <ul>
-<li class="level2"><div class="li"> <em>-title {title}</em> for fil*, fis*, dir*, fon*, clr*, dat* widgets (choosers)
+<li class="level2"><div class="li"> <code>-title {title}</code> for fil*, fis*, dir*, fon*, clr*, dat*, ftx* widgets (choosers)
   </div></li>
-<li class="level2"><div class="li"> <em>-dateformat format</em> for the date chooser
+<li class="level2"><div class="li"> <code>-dateformat format</code> for the date chooser
   </div></li>
-<li class="level2"><div class="li"> <em>-array {imagename {"command"} ...}</em> for the toolbar
+<li class="level2"><div class="li"> <code>-array {imagename {"command"} ...}</code> for the toolbar
   </div></li>
-<li class="level2"><div class="li"> <em>-array {{"prompt"} width ...}</em> for the statusbar
+<li class="level2"><div class="li"> <code>-array {{"prompt"} width ...}</code> for the statusbar
+  </div></li>
+<li class="level2"><div class="li"> <code>-readonly</code> for the text widget
+  </div></li>
+<li class="level2"><div class="li"> <code>-tooltip "tip message"</code> for most of widgets
   </div></li>
 </ul>
 </p>
@@ -533,13 +561,13 @@ The widgets are included in the list normally from top to bottom and from left t
 <p>The widgets should be previously defined in the list to use them as neighbors.
 </p>
 
-<p>
+<p id=WidNames>
 <br>
 
 </p>
 
 </div>
-<h3>Widget Names</h3>
+<h2>Widget Names</h2>
 <div class="level3">
 
 <p>In <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span>, the initial three letters of widget name define its type. This method (sort of <a href="https://en.wikipedia.org/wiki/Hungarian_notation">Hungarian notation</a>) saves a lot of keypressing.
@@ -591,17 +619,23 @@ The widget name patterns and their matters are presented in the table below.
 		<tr><td class="col0"> <em>raD*</em> </td><td class="col1"> radiobutton </td><td class="col2">  </td><td class="col3">  </td></tr>
 		<tr><td class="col0"> <em>sca*</em> </td><td class="col1"> ttk::scale </td><td class="col2">  </td><td class="col3">  </td></tr>
 		<tr><td class="col0"> <em>scA*</em> </td><td class="col1"> scale </td><td class="col2">  </td><td class="col3">  </td></tr>
-		<tr><td class="col0"> <em>sbh*</em> </td><td class="col1"> ttk::scrollbar -orient horizontal </td><td class="col2"> -st ew </td><td class="col3">  </td></tr>
-		<tr><td class="col0"> <em>sbH*</em> </td><td class="col1"> scrollbar -orient horizontal </td><td class="col2"> -st ew </td><td class="col3">  </td></tr>
+		<tr><td class="col0"> <em>sbh*</em> </td><td class="col1"> ttk::scrollbar -orient horizontal </td><td class="col2"> -st ew </td><td class="col3">
+The <span class="curid"><a href="http://tcl.tk/man/tcl8.7/TkCmd/pack.htm" class="wikilink1" title="pack GM">pack</a></span> GM is used for a scrollable text in a frame. Note also that no scrolling commands are set below.
+<br> The horizontal scrollbar "knows" that its top neighbor is a scrollable widget:
+<br> {frAT fra1 T 1 2 {-st nsew -rw 1 -pady 7}}
+<br> {frAT.textNT - - - - {pack -side left -expand 1 -fill both} {-h 11 -wrap none}}
+<br> {frAT.sbv frAT.textNT L - - {pack}}
+<br> {frAT.sbh frAT.textNT T - - {pack}}
+</td></tr>
+		<tr><td class="col0"> <em>sbH*</em> </td><td class="col1"> scrollbar -orient horizontal </td><td class="col2"> -st ew </td><td class="col3"> See <em>sbh*</em> above. </td></tr>
 		<tr><td class="col0"> <em>sbv*</em> </td><td class="col1"> ttk::scrollbar -orient vertical</td><td class="col2"> -st ns </td><td class="col3">
-The <span class="curid"><a href="http://tcl.tk/man/tcl8.7/TkCmd/pack.htm" class="wikilink1" title="pack GM">pack</a></span> GM is used for a scrollable text.
-<br> Note also that no scrolling commands are set below.
-<br> The vertical scrollbar "knows" that the left neighbor is a scrollable text:
+The <span class="curid"><a href="http://tcl.tk/man/tcl8.7/TkCmd/pack.htm" class="wikilink1" title="pack GM">pack</a></span> GM is used for a scrollable text. Note also that no scrolling commands are set below.
+<br> The vertical scrollbar "knows" that its left neighbor is a scrollable widget:
 <br> {fraD labD L 1 1 {-st nswe -padx 5} {}}
 <br> {fraD.texD - - 1 1 {pack -side left -expand 1 -fill both} {-h 8 -w 50 -wrap word}}
-<br>{fraD.sbvD fraD.texD L 1 1 {pack}}
+<br>{fraD.sbv fraD.texD L 1 1 {pack}}
   </td></tr>
-		<tr><td class="col0"> <em>sbV*</em> </td><td class="col1"> scrollbar -orient vertical </td><td class="col2"> -st ns </td><td class="col3">  </td></tr>
+		<tr><td class="col0"> <em>sbV*</em> </td><td class="col1"> scrollbar -orient vertical </td><td class="col2"> -st ns </td><td class="col3">  See <em>sbv*</em> above. </td></tr>
 		<tr><td class="col0"> <em>seh*</em> </td><td class="col1"> ttk::separator -orient horizontal</td><td class="col2"> -st ew </td><td class="col3">  </td></tr>
 		<tr><td class="col0"> <em>sev*</em> </td><td class="col1"> ttk::separator -orient vertical</td><td class="col2"> -st ns </td><td class="col3">  </td></tr>
 		<tr><td class="col0"> <em>siz*</em> </td><td class="col1"> ttk::sizegrip </td><td class="col2">  </td><td class="col3">  </td></tr>
@@ -611,50 +645,483 @@ The <span class="curid"><a href="http://tcl.tk/man/tcl8.7/TkCmd/pack.htm" class=
 		<tr><td class="col0"> <em>tre*</em> </td><td class="col1"> ttk::treeview </td><td class="col2">  </td><td class="col3">  </td></tr>
 		<tr><td class="col0"> <em>h_*</em> </td><td class="col1"> frame </td><td class="col2"> -st ew -csz 3 -padx 3 </td><td class="col3"> The horizontal spacer </td></tr>
 		<tr><td class="col0"> <em>v_*</em> </td><td class="col1"> frame </td><td class="col2"> -st ns -rsz 3 -pady 3 </td><td class="col3"> The vertical spacer </td></tr>
-		<tr><td class="col0"> <em>fil*</em> </td><td class="col1"> file picker </td><td class="col2"> </td><td class="col3"> The file picker (see examples <a href="#use_PaveDialog_for_input">below</a>)</td></tr>
-		<tr><td class="col0"> <em>fis*</em> </td><td class="col1"> 'file to save' picker </td><td class="col2"> </td><td class="col3"> The saved file picker (see examples <a href="#use_PaveDialog_for_input">below</a>)</td></tr>
-		<tr><td class="col0"> <em>dir*</em> </td><td class="col1"> directory picker </td><td class="col2"> </td><td class="col3"> The directory picker (see examples <a href="#use_PaveDialog_for_input">below</a>)</td></tr>
-		<tr><td class="col0"> <em>clr*</em> </td><td class="col1"> color picker </td><td class="col2"> </td><td class="col3"> The color picker (see examples <a href="#use_PaveDialog_for_input">below</a>)</td></tr>
-		<tr><td class="col0"> <em>dat*</em> </td><td class="col1"> date picker </td><td class="col2"> </td><td class="col3"> The date picker (i.e. calendar, see examples <a href="#use_PaveDialog_for_input">below</a>)</td></tr>
-		<tr><td class="col0"> <em>men*</em> </td><td class="col1"> menubar </td><td class="col2"> </td><td class="col3"> The menubar (containing the menubar items, see examples in <a href="#test2_pave">test2_pave.tcl</a>)</td></tr>
-		<tr><td class="col0"> <em>too*</em> </td><td class="col1"> toolbar </td><td class="col2"> </td><td class="col3"> The toolbar (containing images and commands, see examples in <a href="#test2_pave">test2_pave.tcl</a>)</td></tr>
-		<tr><td class="col0"> <em>sta*</em> </td><td class="col1"> statusbar </td><td class="col2"> </td><td class="col3"> The statusbar (containing fields for hints, see examples in <a href="#test2_pave">test2_pave.tcl</a>)</td></tr>
-		<tr><td class="col0"> <em>fco*</em> </td><td class="col1"> file content combobox </td><td class="col2"> </td><td class="col3">The file content combobox presents text file(s) content. Its <em>-tvar</em> attribute sets a variable name for storing a result,
-    while <em>-values</em> attribute is set like this:
-<br>
-  &nbsp;&nbsp;&nbsp;-values {TEXT1 /@-div1 \" &lt;\" -div2 &gt; test1.txt/@ TEXT2 /@-pos 10 -len 20 test2.txt/@ ... TEXTN}
-    <br>See an example in <a href="#test2_pave">test2_pave.tcl</a>, the <em>General / Misc</em> tab.</td></tr>
-		<tr><td class="col0"> <em>flb*</em> </td><td class="col1"> file listbox </td><td class="col2"> </td><td class="col3">The file listbox presents text file(s) content. Its <em>-lvar</em> attribute sets a variable name for storing a result, while <em>-values</em> attribute is set like this:
-<br>
-  &nbsp;&nbsp;&nbsp;-values {TEXT1 /@-div1 \" &lt;\" -div2 &gt; test1.txt/@ TEXT2 /@-pos 10 -len 20 test2.txt/@ ... TEXTN}
-    <br>See an example in <a href="#test2_pave">test2_pave.tcl</a>, the <em>View</em> tab.</td></tr>
+		<tr id=filwidName><td class="col0"> <em>fil*</em> </td><td class="col1"> file picker </td><td class="col2"> </td><td class="col3"> The file picker (see below in <a href="#filWid">Mega-Widgets</a>)</td></tr>
+		<tr><td class="col0"> <em>fis*</em> </td><td class="col1"> 'file to save' picker </td><td class="col2"> </td><td class="col3"> The saved file picker (see below in <a href="#fisWid">Mega-Widgets</a>)</td></tr>
+		<tr><td class="col0"> <em>dir*</em> </td><td class="col1"> directory picker </td><td class="col2"> </td><td class="col3"> The directory picker (see below in <a href="#dirWid">Mega-Widgets</a>)</td></tr>
+		<tr><td class="col0"> <em>fon*</em> </td><td class="col1"> font picker </td><td class="col2"> </td><td class="col3"> The font picker (see below in <a href="#fonWid">Mega-Widgets</a>)</td></tr>
+		<tr><td class="col0"> <em>clr*</em> </td><td class="col1"> color picker </td><td class="col2"> </td><td class="col3"> The color picker (see below in <a href="#clrWid">Mega-Widgets</a>)</td></tr>
+		<tr><td class="col0"> <em>dat*</em> </td><td class="col1"> date picker </td><td class="col2"> </td><td class="col3"> The date picker / calendar (see below in <a href="#datWid">Mega-Widgets</a>)</td></tr>
+		<tr><td class="col0"> <em>men*</em> </td><td class="col1"> menubar </td><td class="col2"> </td><td class="col3"> The menubar containing the menubar items (see below in <a href="#menWid">Mega-Widgets</a>)</td></tr>
+		<tr><td class="col0"> <em>too*</em> </td><td class="col1"> toolbar </td><td class="col2"> </td><td class="col3"> The toolbar containing images and commands (see below in <a href="#tooWid">Mega-Widgets</a>)</td></tr>
+		<tr><td class="col0"> <em>sta*</em> </td><td class="col1"> statusbar </td><td class="col2"> </td><td class="col3"> The statusbar containing fields for hints (see below in <a href="#staWid">Mega-Widgets</a>)</td></tr>
+		<tr><td class="col0"> <em>fco*</em> </td><td class="col1"> file combobox </td><td class="col2"> </td><td class="col3">
+    The file content combobox (see below in <a href="#fcoWid">Mega-Widgets</a>)</td></tr>
+		<tr><td class="col0"> <em>flb*</em> </td><td class="col1"> file listbox </td><td class="col2"> </td><td class="col3">
+    The file content listbox (see below in <a href="#flbWid">Mega-Widgets</a>)</td></tr>
+		<tr><td class="col0"> <em>ftx*</em> </td><td class="col1"> file viewer/editor </td><td class="col2"> </td><td class="col3">
+    The file content viewer/editor (see below in <a href="#ftxWid">Mega-Widgets</a>)</td></tr>
 	</tbody>
 </table>
 </div>
 </p>
 
 <p>
-Notice that <em>h_*</em> (spacer) and <em>sev*</em> (vertical separator) can be used in <em>-array</em> options of toolbar and statusbar widgets. In these cases the <em>h_*</em> and <em>sev*</em> are followed with widths. See examples in test2_pave.tcl illustrated <a href="#test2_pave">below</a>.
+Note that <em>h_*</em> (spacer) and <em>sev*</em> (vertical separator) can be used in <em>-array</em> options of toolbar and statusbar widgets. In these cases the <em>h_*</em> and <em>sev*</em> are followed with widths. See examples in <a href="#test2_pave">test2_pave.tcl</a> of downloaded <a href="#download">pave.zip</a>, as shown <a href="#test2_pave">below</a>.
 </p>
 
+<p id=MegaWid>
+<br>
+
+</p>
+
+</div>
+<h2>Mega-Widgets</h2>
+<div class="level3">
 <p>
+The <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> provides a batch of 'mega-wigets' which facilitates creating and using some dialogs and widgets.
+</p>
+<p>
+All of them are included in <a href=#WidList>a widget list</a> as usual, with names defining their type. The full list of mega-widget names is presented <a href=#filwidName>above</a>.
+</p>
+<p>Their screenshots below were taken on a localized Debian 10, while running <a href="#test2_pave">test2_pave.tcl</a> of downloaded <a href="#download">pave.zip</a> file.
+</p>
+<br>
+
+<br id=filWid>
+<h3>File Picker</h3>
+<div class="level4">
+<p>
+The <a href=#WidList>widget list</a> item for file picker is set as follows:
+<pre class="code">
+  {labfil1 - - - - {-st e} {-t "Pick a file:"}}
+  {fil1 labfil1 L 1 1 {} {-tvar ::fil1 -title {Pick a file}}}
+</pre>
+where:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>labfil1</code> - a prompt
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>fil1</code> - an entry to get a file name
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>::fil1</code> - a variable to store the file name
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>{Pick a file}</code> - a title of picker dialog
+</p>
+<p>
+The widget is shown above the picker dialog as:
+<br>
+<img src="files/widgfil.png" class="media" alt="File picker">
+</p>
+</div>
+
+<br id=fisWid>
+<h3>Saved File Picker</h3>
+<div class="level4">
+<p>
+The <a href=#WidList>widget list</a> item for 'saved as' file picker is set as follows:
+<pre class="code">
+  {labfis1 - - - - {-st e} {-t "Pick a file to save as:"}}
+  {fis1 labfis1 L 1 1 {} {-tvar ::fis1 -title {Save as}}}
+</pre>
+where:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>labfis1</code> - a prompt
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>fis1</code> - an entry to get a file name
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>::fis1</code> - a variable to store the file name
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>{Save as}</code> - a title of picker dialog
+</p>
+<p>
+The widget is shown above the picker dialog as:
+<br>
+<img src="files/widgfis.png" class="media" alt="Saved file picker">
+</p>
+</div>
+
+<br id=dirWid>
+<h3>Directory Picker</h3>
+<div class="level4">
+<p>
+The <a href=#WidList>widget list</a> item for directory picker is set as follows:
+<pre class="code">
+  {labdir1 - - - - {-st e} {-t "Pick a directory:"}}
+  {dir1 labdir1 L 1 1 {} {-tvar ::dir1 -title {Pick a directory}}}
+</pre>
+where:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>labdir1</code> - a prompt
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>dir1</code> - an entry to get a directory name
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>::dir1</code> - a variable to store the directory name
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>{Pick a directory}</code> - a title of picker dialog
+</p>
+<p>
+The widget is shown above the picker dialog as:
+<br>
+<img src="files/widgdir.png" class="media" alt="Directory picker">
+</p>
+</div>
+
+<br id=fonWid>
+<h3>Font Picker</h3>
+<div class="level4">
+<p>
+The <a href=#WidList>widget list</a> item for font picker is set as follows:
+<pre class="code">
+  {labfon1 - - - - {-st e} {-t "Pick a font:"}}
+  {fon1 labfon1 L 1 1 {} {-tvar ::fon1 -title {Pick a font}}}
+</pre>
+where:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>labfon1</code> - a prompt
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>fon1</code> - an entry to get a font
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>::fon1</code> - a variable to store the font
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>{Pick a font}</code> - a title of picker dialog
+</p>
+<p>
+The widget is shown above the picker dialog as:
+<br>
+<img src="files/widgfon.png" class="media" alt="Font picker">
+</p>
+</div>
+
+<br id=clrWid>
+<h3>Color Picker</h3>
+<div class="level4">
+<p>
+The <a href=#WidList>widget list</a> item for color picker is set as follows:
+<pre class="code">
+  {labclr1 - - - - {-st e} {-t "Pick a color:"}}
+  {clr1 labclr1 L 1 1 {} {-tvar ::clr1 -title {Pick a color}}}
+</pre>
+where:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>labclr1</code> - a prompt
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>clr1</code> - an entry to get a color
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>::clr1</code> - a variable to store the color
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>{Pick a color}</code> - a title of picker dialog
+</p>
+<p>
+The widget is shown above the picker dialog (a bit <a href="../tkcc/index.html" title="Description" rel="nofollow">modified</a>) as:
+<br>
+<img src="files/widgclr.png" class="media" alt="Color picker">
+</p>
+</div>
+
+<br id=datWid>
+<h3>Date Picker</h3>
+<div class="level4">
+<p>
+The <a href=#WidList>widget list</a> item for date picker is set as follows:
+<pre class="code">
+  {labdat1 - - - - {-st e} {-t "Pick a date:"}}
+  {dat1 labdat1 L 1 9 {} {-tvar ::dat1 -title {Pick a date} -dateformat %Y.%m.%d}}
+</pre>
+where:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>labdat1</code> - a prompt
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>dat1</code> - an entry to get a date
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>::dat1</code> - a variable to store the date
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>{Pick a date}</code> - a title of picker dialog
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>%Y.%m.%d</code> - a date format
+</p>
+<p>
+The widget is shown above the picker dialog as:
+<br>
+<img src="files/widgdat.png" class="media" alt="Date picker">
+</p>
+</div>
+
+<br id=menWid>
+<h3>Menubar</h3>
+<div class="level4">
+<p>
+The <a href=#WidList>widget list</a> item for menubar is set as follows:
+<pre class="code">
+  {Menu - - - - - {-array {
+    File "&File"
+    Edit &Edit
+    help "&{Help (wordy-fonty)} -state disabled -font {-slant italic -size 10} -menu .win.menu"
+   }}}
+</pre>
+where:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>Menu</code> - a menubar name
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>File, Edit, help</code> - its items' names which are set as <code>-array</code> pairs containing:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label (File, Edit, {Help (wordy-fonty)}
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;attributes (-state, -font etc.) with appropriate values
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>.win.menu</code> - a name of menubar the items are linked to
+</p>
+<p>
+The widget is shown as:
+<br>
+<img src="files/widgmen.png" class="media" alt="Menubar">
+</p>
+<p>
+<b>Note</b>: a menubar can be defined in any place of <a href=#WidList>widget list</a> because it is assigned to a whole window.
+</p>
+<p>
+<em>Menu</em>, <em>File</em> and <em>Edit</em> widget names are uppercased, while their full names are: <em>.win.menu, .win.menu.file, .win.menu.edit</em>.
+</p>
+<p>
+So, if the <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> object is <em>pobj</em>, then you can use the [pobj Widget] to get the full widget name, e.g. this way:
+<pre class="code">
+  [pobj Menu] entryconfigure 2 -font {-slant roman -size 10}
+  [pobj File] entryconfigure 2 -state [[pave BuT_Img4] cget -state]
+</pre>
+</p>
+<p>
+Also, for better performance you can fill the menu items after creating the window, using <em>after idle</em> command:
+<pre class="code">
+  proc ::NS::fillMenu {} {
+    set m [::NS::pobj File]
+    $m add command -label "Open..." -command \
+      {error "this is just a demo: no action for \"Open...\""}
+    $m add command -label "New" -command \
+      {error "this is just a demo: no for \"New...\""}
+    # ...
+  }
+  # ...
+  pobj window .win.fra {
+    # ...
+    # widget list
+    # ...
+  }
+  after idle [list ::NS::fillMenu]
+</pre>
+</p>
+</div>
+
+<br id=tooWid>
+<h3>Toolbar</h3>
+<div class="level4">
+<p>
+The <a href=#WidList>widget list</a> item for toolbar is set as follows:
+<pre class="code">
+  # create images for toolbar
+  foreach {I i} {i 1 i 2 I 3 I 4} {
+    image create photo ${I}mg$i -file "icon$i.png"
+  }
+  # ...
+  pobj window .win.fra {
+    {tooMain - - - - {pack -side top} {-array {
+          img1 {"::NS::toolButt 1"}
+          h_ 3
+          img2 {"::NS::toolButt 2"}
+          sev 7
+          Img3 {"::NS::toolButt 3" -state disabled}
+          h_ 1
+          Img4 {"::NS::toolButt 4"}
+    }}}
+  # ...
+  }
+</pre>
+where:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>tooMain</code> - a toolbar name
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>-array</code> pairs containing:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>img1, img2, Img3, Img4 </em> - <b>image names</b>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>h_, sev </em> -  spacers and separators (names need not to be unique), with their appropriate widths
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>{"::NS::toolButt 3" -state disabled}</em> - a command to handle clickings and additional attributes of buttons
+</p>
+<p>
+The widget is shown as:
+<br>
+<img src="files/widgtoo.png" class="media" alt="Toolbar">
+</p>
+<p>
+<b>Note</b>: in the toolbar item, the <em>image names</em> are listed, 
+<br>while their appropriate buttons' names have <code>BuT_</code> prefix and accessible through <code>[pobj BuT_img]</code>, this way:
+</p>
+<pre class="code">
+  [pobj BuT_Img3] configure -state normal
+  [pobj Menu] entryconfigure 2 -state [[pobj BuT_Img3] cget -state]
+</pre>
+<p>
+These constructs are used in the appropriate handlers (<em>::NS::toolButt</em> in the above example).
+</p>
+</div>
+
+<br id=staWid>
+<h3>Statusbar</h3>
+<div class="level4">
+<p>
+The <a href=#WidList>widget list</a> item for statusbar is set by the following template:
+<pre class="code">
+  {staMain - - - - {pack -side bottom} {-array {
+        {Row:  -foreground #004080 -background $::bgst -font {-slant italic -size 10}} 7
+        {" Column:"  -foreground #004080 -background $::bgst -font {-slant italic -size 10}} 5
+        {"" -foreground #004080 -background $::bgst -font {-slant italic -size 10}} 30
+  }}}
+</pre>
+where:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>staMain</code> - a statusbar name
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>-array</code> pairs containing:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>Row:, " Column:", "" </em> - prompts for cells, <em>-foreground #004080 -background...</em> - attributes of cells
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>7, 5, 30 </em> -  widths of cells
+</p>
+<p>
+The widget is shown as:
+<br>
+<img src="files/widgsta.png" class="media" alt="Statusbar">
+</p>
+<p>
+The prompts' names have <code>Lab_</code> prefix before the parent statusbar name, and index as suffix.
+<br> 
+The cells' names have <code>Lab</code> prefix before the parent statusbar name, and index as suffix.
+<br> So, you can use them in appropriate handlers this way:
+<pre class="code">
+  [pobj LabstaMain_1] configure -text "Height:"
+  [pobj LabstaMain_2] configure -text " Width:"
+  [pobj LabstaMain1] configure -text "1st"
+  [pobj LabstaMain2] configure -text "2nd"
+  [pobj LabstaMain3] configure -text "3d cell's content"
+</pre>
+</p>
+</div>
+
+<br id=fcoWid>
+<h3>File Content Combobox</h3>
+<div class="level4">
+<p>
+The file content combobox presents text file(s) content.
+The appropriate <a href=#WidList>widget list</a> item is set by the following template:
+<pre class="code">
+  {fcoMain - - - - {pack} {-tvar ::fcoVar -w 88 -values {
+  TEXT1 
+  /@-div1 \" (\" -div2 ) -ret true test1.txt/@
+  TEXT2
+  /@-pos 0 -len 7 -list {a b c} test2.txt/@
+  ...
+  TEXTN
+  }}}
+</pre>
+where:
+<br>&nbsp;&nbsp;<code>fcoMain</code> - a widget name
+<br>&nbsp;&nbsp;<code>-tvar ::fcoVar</code> - sets a variable for store a result
+<br>&nbsp;&nbsp;<code>TEXT1, TEXT2, ... TEXTN</code> - optional texts outside of /@.../@ data sets
+<br>&nbsp;&nbsp;<code>/@ ... /@</code> - data set for a file, containing the file name and (optionally) its preceding options:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<em>-div1, -div2</em> - dividers to cut substrings from file lines:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if -div1 omitted, from the beginning; if -div2 omitted, to the end of line
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<em>-pos, -len</em> - position and length of substring to cut:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if -pos omitted, -len characters from the beginning; if -len omitted, to the end of line
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<em>-list</em> - a list of items to put directly into the combobox
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<em>-ret</em> - if set to true, means that the field is returned instead of full string
+<br>&nbsp;&nbsp;If there is only a single data set and no TEXT, the /@ marks may be omitted.
+<br>&nbsp;&nbsp;The /@ edging marks may be configured with the configure method:
+<pre class="code">
+  pave configure edge "==="
+</pre>
+</p>
+<p>
+The following example is taken from <em>test2_pave.tcl</em> of <a href="#download">downloaded archive file</a>:
+<pre class="code">
+  {fco - - - - {pack} {-tvar t::cb3 -w 88 -values {COMMIT: /@
+    -div1 " \[" -div2 "\] " -ret true test2_fco.dat /@   INFO: /@
+    -pos 22 -list {{Content of test2_fco.dat} {another item} trunk DOC} 
+    test2_fco.dat/@
+  }}}
+</pre>
+</p>
+<p>
+The widget is shown as:
+<br>
+<img src="files/widgfco.png" class="media" alt="File content combobox">
+</p>
+</div>
+
+<br id=flbWid>
+<h3>File Content Listbox</h3>
+<div class="level4">
+<p>
+The file content listbox presents text file(s) content. Its <a href=#WidList>widget list</a> item is the same as for <a href=#fcoWid>file content combobox</a>, with the only difference:
+<br><em>-lvar</em> attribute sets a variable name for storing a result.
+</p>
+<p>
+The following example is taken from <em>test2_pave.tcl</em> of <a href="#download">downloaded archive file</a>:
+<pre class="code">
+  {flb - - - - {pack -side left -fill x -expand 1}
+    {-lvar ::t::lv1 -w 50 -values 
+    {/@-div1 " \[" -div2 "\] " test2_fco.dat/@   INFO: /@
+    -pos 22 -ret 1 -list {{Content of test2_fco.dat} {another item} trunk DOC}
+    test2_fco.dat/@
+  }}}
+</pre>
+</p>
+<p>
+The widget is shown as:
+<br>
+<img src="files/widgflb.png" class="media" alt="File content listbox">
+</p>
+</div>
+
+<br id=ftxWid>
+<h3>File Content Viewer/Editor</h3>
+<div class="level4">
+<p>
+The file content viewer/editor presents text file(s) content.</p>
+<p>
+The following example is taken from <em>test2_pave.tcl</em> of <a href="#download">downloaded archive file</a>:
+<pre class="code">
+  {
+    ftxMain labBftx1 L 1 9 {} {
+    -h 7 -ro 0 -tvar ::t::ftx1 -title {Pick a file to view}
+    -filetypes {{{Tcl scripts} .tcl} {{Text files} {.txt .test}}}
+    -wrap word}
+  }
+</pre>
+where:
+<br>&nbsp;&nbsp;<code>ftxMain</code> - a widget name
+<br>&nbsp;&nbsp;<code>-ro 0</code> - set <em>readonly</em> to false (making the text changeable)
+<br>&nbsp;&nbsp;<code>-tvar</code> - sets a variable containing a file name (<em>::t::ftx1</em>)
+<br>&nbsp;&nbsp;<code>-filetypes</code> - sets a list of file types for file picker
+</p>
+<p>
+The file name and the text may be changed by this widget, so that you can get both of them in an appropriate callback command:
+<pre class="code">
+  set file_name $::t::ftx1
+  set text_content [::pobj getTextContent ::t::ftx1]
+</pre>
+</p>
+<p>
+The widget is shown as:
+<br>
+<img src="files/widgftx.png" class="media" alt="File content viewer/editor">
+</p>
+<br id=ftxWid2>
+<p>
+Also <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span>
+allows to call a text viewer/editor as a stand-alone dialog, by use of:
+<pre class="code">
+  set res [pdlg editviewFile mytext.txt "" -w 80 -h 20 -rotext ::temp]
+  puts "Result: $res. Content of text:\n$::temp"
+  unset ::temp
+</pre>
+where:
+<br>&nbsp;&nbsp;<code>pdlg</code> - a <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> object (of <em>PaveInput</em> class)
+<br>&nbsp;&nbsp;<code>mytext.txt</code> - a file name
+<br>&nbsp;&nbsp;<code>""</code> - stands for icon (it might be <em>info, warn, err, ques</em> or "")
+<br>&nbsp;&nbsp;<code>-rotext</code>  - sets a temporary variable to hold the file content (<em>::temp</em>)
+</p>
+<p>By default <code>editviewFile</code> method works in <em>view</em> mode, but you can set <em>edit</em> mode by use of <em>-readonly false (-ro false)</em> argument.
+</p>
+<p>
+<b>Note</b>: you can only add <em>-w, -h, -readonly, -ro, -rotext</em> or font attributes, no other attributes are permitted:
+<pre class="code">
+  set res [pdlg editviewFile $filename "" -w 80 -h 20 -rotext ::temp -ro 0 -weight bold]
+</pre>
+</p>
+<p>
+The file viewer/editor (taken from <a href="#test2_pave">test2_pave.tcl</a> of downloaded <a href="#download">pave.zip</a>, with <em>-readonly false</em>) is shown as:
+<br>
+<img src="files/widgview.png" class="media" alt="File content viewer/editor">
+</p>
+</div>
+
+<p id=OptAbbr>
 <br>
 
 </p>
 
 </div>
 
-<h3>Option Abbreviations</h3>
+<h2>Option Abbreviations</h2>
 <div class="level3">
 <p>
-The <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> provides the option abbreviations to save the keypressing. That said, you can use the full options and be happy with them.
+The <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> provides the option abbreviations to save the keypressing. Naturally, you can use the full option names as well.
 <br>However, as for <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span>, you may use the abbreviations:
 </p>
 
 <div class="table sectionedit1"><table class="inline">
 	<thead>
 	<tr class="row0">
-		<th class="col0">Abbreviation</th><th class="col1">Option</th></tr>
+		<th class="col0">Abbreviation</th><th class="col1">Option / Command</th></tr>
 	</thead>
 	<tbody><tr class="row1"><td class="col0"><em> -st </em></td><td class="col1"> -sticky </td>
 	<tr class="row1">
@@ -826,24 +1293,24 @@ The picture below is the screenshot of <a href="http://tke.sourceforge.net/" cla
 The layout of this dialog is set by the code below. Run the code with <em>wish</em> and press <em>Exit</em> to exit.
 <br>The code works as a pure form. So it has no contents and its event handlers are actually handling the errors.
 <br>
-<pre class="code">source pavedialog.tcl
+<pre class="code">package require pave
 set win .win
-PaveDialog create pdlg
+pave::PaveDialog create pdlg
 pdlg makeWindow $win "Adding Shortcuts"
 set fontbold "-font \"-weight bold\""
 pdlg window $win {
   {frAU - - 1 6   {-st new} {-relief groove -borderwidth 1}}
   {frAU.v_00 - - 1 1}
-  {frAU.laB0 frAU.v_00 T 1 1 - {-t "This TKE plugin allows you to create the shortcuts bound to existing ones. Thus you can enable localized shortcuts."}}
-  {frAU.laB1 frAU.laB0 T 1 1 - {-t "You can also make a miscellany that contains: event handler(s), menu invoker(s), command caller(s)."}}
-  {frAU.laB2 frAU.laB1 T 1 1 - {-t "Press the shortcut in the ID field. Confirm your choice by pressing Enter / Return key."}}
+  {frAU.laB0 frAU.v_00 T 1 1 {} {-t "This TKE plugin allows you to create the shortcuts bound to existing ones. Thus you can enable localized shortcuts."}}
+  {frAU.laB1 frAU.laB0 T 1 1 {} {-t "You can also make a miscellany that contains: event handler(s), menu invoker(s), command caller(s)."}}
+  {frAU.laB2 frAU.laB1 T 1 1 {} {-t "Press the shortcut in the ID field. Confirm your choice by pressing Enter / Return key."}}
   {frAU.v_0 frAU.laB2 T 1 1}
   {v_0 frAU T 1 6}
-  {laB1 v_0 T 1 2 - {-t " Group info " $fontbold}}
+  {laB1 v_0 T 1 2 {} {-t " Group info " $fontbold}}
   {laB2 laB1 T 1 1 {-st e} {-t "Name:"}}
   {entOrig laB2 L 1 1 {-st we -padx 5 -cw 3} {-tvar adsh__No}}
   {v_1 laB2 T 1 2}
-  {laB3 v_1 T 1 1 - {-t " Shortcut info " $fontbold}}
+  {laB3 v_1 T 1 1 {} {-t " Shortcut info " $fontbold}}
   {laB4 laB3 T 1 1 {-st e} {-t "Name:"}}
   {entName laB4 L 1 1 {-st we -padx 5} {-tvar adsh__Na}}
   {laB5 laB4 T 1 1 {-st e} {-t "Shortcut ID:"}}
@@ -860,7 +1327,7 @@ pdlg window $win {
   {texDesc - - 1 1 {pack -side left -expand 1 -fill both -in $win.fraDesc} {-h 8 -w 50 -state disabled -wrap word}}
   {sbvDesc texDesc L 1 1 {pack -in $win.fraDesc}}
   {v_3 laB53 T 1 2}
-  {laBSort v_3 T 1 1 - {-t " Options " $fontbold}}
+  {laBSort v_3 T 1 1 {} {-t " Options " $fontbold}}
   {frAOpt laBSort L 1 1 {-st nsew}}
   {chBActive - - 1 1 {-in $win.frAOpt} {-t " Active " -var adsh__active}}
   {chBAuto chBActive L 1 1 {-in $win.frAOpt} {-t " AutoStart " -var adsh__auto}}
@@ -888,7 +1355,7 @@ pdlg showModal $win -focus $win.entOrig -geometry +100+100 -decor 1</pre>
 </p>
 
 <p><br>
-In ./tests directory of <a href="#download">downloaded pave.zip</a> there are also the following demo tests:
+In ./tests directory of downloaded <a href="#download">pave.zip</a> there are also the following demo tests:
 <ul>
 <li><div class="li"><code>test0_pave.tcl</code> - the "Find and Replace" dialog described <a href="#example_Pave">above</a>.
 </div></li>
@@ -906,7 +1373,7 @@ In ./tests directory of <a href="#download">downloaded pave.zip</a> there are al
 </div>
 
 
-<p id=test2_pave>Below is a screenshot of test2_pave.tcl:
+<p id=test2_pave>Below a screenshot of <a href="#test2_pave">test2_pave.tcl</a> of downloaded <a href="#download">pave.zip</a>:
 </p>
 
 <p>
@@ -932,7 +1399,7 @@ In ./tests directory of <a href="#download">downloaded pave.zip</a> there are al
 <br>
 <p>
 ... and here is a video of it:<br>
-<a href="https://chiselapp.com/user/aplsimple/repository/aplsimple_github_io/uv/test2pave.mp4" class="wikilink1" title="Video of test2_pave.tcl">test2pave.mp4</a>
+<a href="https://chiselapp.com/user/aplsimple/repository/aplsimple_github_io/uv/test2pave-14.mp4" class="wikilink1" title="Video of test2_pave.tcl">test2pave-14.mp4</a>
 </p>
 
 <p>
@@ -953,7 +1420,7 @@ The <code>PaveDialog</code> oo::class provides a batch of standard dialogs that 
 <p>Also, the <code>PaveDialog</code> oo::class provides the input facilities. You can call it, e.g., to edit a file or put the data. The plugin applications are most suitable for these facilities as they allow storing the dialogs in the form of data files.
 </p>
 <p>
-Assuming <code>dlg</code> is a PaveDialog object (except for <code>dlg input</code>), below there are several examples of using <code>PaveDialog</code> oo::class all taken from downloaded <a href="#download">test_pavedialog.tcl</a>.
+Below presented are several examples of using <code>PaveDialog</code> oo::class all taken from  <a href="#download">test_pavedialog.tcl</a> of downloaded <a href="#download">pave.zip</a>.
 </p>
 <p>
 
@@ -970,8 +1437,9 @@ Assuming <code>dlg</code> is a PaveDialog object (except for <code>dlg input</co
   <br><br>A geometry (+X+Y) and a checkbox (-ch) are set.
 </td>
     <td class="col1">
-<br><pre class="code">dlg ok info "Dialog OK"
-"Hey that Pushkin!\nHey that son of bitch!"
+<br><pre class="code">pave::PaveDialog create dlg
+dlg ok info "Dialog OK" \
+"Hey that Pushkin!\nHey that son of bitch!" \
 -g +200+200 -ch "Don't show this again"</pre>
     </td>
     <td class="col2">
@@ -984,10 +1452,11 @@ Assuming <code>dlg</code> is a PaveDialog object (except for <code>dlg input</co
      <br><br>The RETRY argument sets a focused button as the dialog opens.
     </td>
     <td class="col1">
-<br><pre class="code">dlg retrycancel err "Dialog RETRYCANCEL"
+<br><pre class="code">pave::PaveDialog create dlg
+dlg retrycancel err "Dialog RETRYCANCEL" \
 "Hey that Pushkin!\nHey that son of bitch!
 ---
-Retry the reading of Pushkin? Cancel if not."
+Retry the reading of Pushkin? Cancel if not." \
 RETRY -g +300+300 -ch "Don't show this again"</pre>
     </td>
     <td class="col2">
@@ -999,12 +1468,13 @@ RETRY -g +300+300 -ch "Don't show this again"</pre>
      <br>A yesnocancel question dialog.
     </td>
     <td class="col1">
-<br><pre class="code">dlg yesnocancel ques "Dialog YESNOCANCEL"
+<br><pre class="code">pave::PaveDialog create dlg
+dlg yesnocancel ques "Dialog YESNOCANCEL" \
 "Hey that Pushkin!\nHey that son of bitch!
 ---
 Do you agree?
 Or hate the question?
-(Choose Cancel in such case)"
+(Choose Cancel in such case)" \
 YES -g +275+275 -ch "Don't show this again"</pre>
     </td>
     <td class="col2">
@@ -1016,69 +1486,17 @@ YES -g +275+275 -ch "Don't show this again"</pre>
      <br>An abortretrycancel error dialog.
     </td>
     <td class="col1">
-<br><pre class="code">dlg abortretrycancel err
-"Dialog ABORTRETRYCANCEL"
+<br><pre class="code">pave::PaveDialog create dlg
+dlg abortretrycancel err \
+"Dialog ABORTRETRYCANCEL" \
 "Hey that Pushkin!\nHey that son of bitch!
 ---
 Abort or retry the reading of Pushkin? \
-Cancel if not sure." RETRY -g +325+325
+Cancel if not sure." RETRY -g +325+325 \
 -ch "Don't show this again"</pre>
     </td>
     <td class="col2">
 <img src="files/dialog4.png" class="media" vspace=16 alt="PaveDialog example 4">
-    </td></tr>
-
-  <tr class="row1">
-	  <td class="col0">
-     <br>An okcancel warning dialog.
-     <br><br>The message is shown as the text (-text 1) having the tags (-tags textTags).
-     <br><br>The width and the height (in characters and rows) are set. The text font options are set as "-weight bold -size 12 -bg white".
-    </td>
-    <td class="col1">
-<br><pre class="code">set textTags [list \
-[list b "-font {-weight bold -size 14}"] \
-[list i "-font {-slant italic -size 14}"] \
-[list red "-foreground red"]]
-
-dlg okcancel warn "Dialog OKCANCEL"
- "
- Hey that &lt;red&gt;&lt;b&gt; Pushkin &lt;/b&gt;&lt;/red&gt;!
- Hey that son of bitch!
- ---
- Do you agree? &lt;i&gt;Cancel&lt;/i&gt; if not.
- " OK -g +250+250 -width 30 -height 6 \
- -weight bold -size 12 -bg white \
- -text 1 -tags textTags</pre>
-    </td>
-    <td class="col2">
-<img src="files/dialog5.png" class="media" vspace=16 alt="PaveDialog example 5">
-    </td></tr>
-
-  <tr class="row1">
-	  <td class="col0">
-     <br>An okcancel warning dialog.
-     <br><br>The message is not read-only as default, due to the "-ro 0" (or "-readonly 0") attribute.
-     <br><br>If the focused button is TEXT and the text isn't read-only, the focus is set on the text of message.
-     <br><br>The changed text of message is returned by the dialog along with the pressed button.
-    </td>
-    <td class="col1">
-<br><pre class="code">set textTags [list \
-[list b "-font {-weight bold -size 14}"] \
-[list i "-font {-slant italic -size 14}"] \
-[list red "-foreground red"]]
-
-dlg okcancel warn "Dialog OKCANCEL"
- "
- Hey that &lt;red&gt;&lt;b&gt; Pushkin &lt;/b&gt;&lt;/red&gt;!
- Hey that son of bitch!
- ---
- Do you agree? &lt;i&gt;Cancel&lt;/i&gt; if not.
- " TEXT -width 30 -height 6 -weight bold \
- -size 12 -bg white -ro 0 -text 1 \
- -tags textTags</pre>
-    </td>
-    <td class="col2">
-<img src="files/dialog5ro.png" class="media" vspace=16 alt="PaveDialog example 5">
     </td></tr>
 
   <tr class="row1">
@@ -1088,7 +1506,9 @@ dlg okcancel warn "Dialog OKCANCEL"
        questions and answers as (reasonably) you want.
     </td>
     <td class="col1">
-<br><pre class="code">set retval [dlg misc info "Dialog MSC" \
+<br><pre class="code">
+pave::PaveDialog create dlg
+set retval [dlg misc info "Dialog MSC" \
  "\nAsk for HELLO\n" {Hello 1 {Bye baby} 2 \
  Misc3 3 Misc4 4 "Misc 5" 5 Cancel 0 } 2]</pre>
     </td>
@@ -1105,21 +1525,25 @@ dlg okcancel warn "Dialog OKCANCEL"
      <br><br>The return values can include the cursor position used for the next call of this editorling.
     </td>
     <td class="col1">
-<br><pre class="code">set textTags [list \
-[list b "-font {-weight bold -size 14}"] \
-[list i "-font {-slant italic -size 14}"] \
-[list red "-foreground red"]]
-
-set retval [dlg okcancel "" "Dialog OKCANCEL"
- "
- Hey that &lt;red&gt;&lt;b&gt; Pushkin &lt;/b&gt;&lt;/red&gt;!
+<br><pre class="code">
+pave::PaveDialog create dlg
+set textTags [list [list "dark" \
+  "-foreground black"] \
+  [list "b" "-font {-weight bold -size 14}"] \
+  [list "i" "-font {-slant italic -size 14}"]\
+  [list "red" "-foreground red"]]
+set res [dlg okcancel "" "Dialog OKCANCEL" \
+ " &lt;dark>Hey that &lt;red>&lt;b> Pushkin &lt;/b>&lt;/red>!
  Hey that son of bitch!
  ---
- Do you agree? &lt;i&gt;Cancel&lt;/i&gt; if not.
- " TEXT -width 30 -height 6 -weight bold \
- -size 12 -bg #ffffc4 -ro 0 -text 1 -tags \
- textTags -head "It's a changeable text \
- message.\nChange all you want."]</pre>
+ Do you agree? &lt;i>Cancel&lt;/i> if not.&lt;/dark>
+ " TEXT -g +250+250 -text 1 -tags textTags \
+ -width 30 -height 6 -bg white \
+ -head "When presented at first\nit's a \
+ \"changeable text message\"." \
+ -hsz "12 -slant italic -weight normal" \
+ -weight bold -size 12 -bg #ffffc4 -ro 0]
+</pre>
     </td>
     <td class="col2">
 <img src="files/dialog5rw.png" class="media" vspace=16 alt="PaveDialog example 5">
@@ -1133,7 +1557,7 @@ set retval [dlg okcancel "" "Dialog OKCANCEL"
      <br><br>After choosing "OK" the dialog would return the input values as a list.
     </td>
     <td class="col1">
-<br><pre class="code">PaveInput create dlg
+<br><pre class="code">pave::PaveInput create dlg
 set retval [dlg input "" "Dialog INPUT" \
 { seh1 {{} {-pady 9}} {}
   ent1 {{Enter general info........}} {}
@@ -1174,12 +1598,12 @@ multiline entry field aka
      <br><br>When the geometry is passed to a dialog, it returns [list answer geometry], so to get its answer the <code>lindex</code> command is used.
     </td>
     <td class="col1">
-<br><pre class="code">if {[lindex [dlg yesno warn \
-"UFF..." "\n Break the dance? \n" NO \
--g +350+350 -weight bold -size 22 \
--c {"ghost white"}] 0] == 1} {
-    break
-}</pre>
+<br><pre class="code">if {[lindex [ \
+  dlg yesno warn "UFF..." \
+  "\n Break the dance? \n" \
+  NO -g +350+350 -weight bold -size 22 \
+  -c "ghost white" \
+  ] 0] == 1} break</pre>
     </td>
     <td class="col2">
 <img src="files/dialog6.png" class="media" vspace=16 alt="PaveDialog example 6">
@@ -1304,10 +1728,13 @@ multiline entry field aka
     </li>
   </ul>
  </p>
- <p>
+<p>Note that because of PaveInput is inherited from PaveDialog which is in turn inherited from PaveMe, you can use the PaveInput object instead of (and along with) PaveDialog and PaveMe objects.
+</p>
+
+<p>
  Example:
  </p>
- <p>
+ <p id=dlgLogin>
  <pre class="code">PaveInput create dlg
 set res [dlg input ques "My site" {
   entLogin {{Login......}} {}
@@ -1320,7 +1747,8 @@ dlg destroy</pre>
  <img src="files/dlgexample.png" class="media" vspace=16 alt="Login dialog">
 </p>
 
-<p>Notice that because of PaveInput is inherited from PaveDialog which is in turn inherited from PaveMe, you can use the PaveInput object instead of (and along with) PaveDialog and PaveMe objects. In this case, <em>source paveinput.tcl</em> would be sufficient for all paved objects to enable.
+<p>
+The PaveInput class is heavily used in <a href="../e_menu/index.html">e_menu</a>'s dialogs and <a href=#use_CLI>pavecli.tcl</a> described below.
 </p>
 
 <p>
@@ -1329,10 +1757,127 @@ dlg destroy</pre>
 </p>
 
 </div>
-<h2 id="tips">Tips & Tricks</h2>
+
+<h1 id="use_CLI">Use in shell / CLI</h1>
+<div class="level1">
+<p>
+
+ This feature is implemented by <em>pavecli.tcl</em> that allows to run <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">pave</a></span> dialogs from shell / CLI.
+</p>
+<p>
+As a rule, the <em>pavecli.tcl</em> dialogs contain OK/Cancel (by default) or Yes/No buttons.
+After choosing OK or Yes, the dialog sets 1 as its result and writes its output to stdout.
+</p>
+<p>
+ The output of <em>pavecli.tcl</em> would be sort of:
+</p>
+<pre class="code">
+#!/bin/bash
+export var1='value 1'
+export var2='value 2'
+...
+export varN='value 3'
+</pre>
+<p>
+ The output may be redirected to a temporary file. After analizing the result of
+ dialog (1 if OK/Yes, otherwise 0), the temporary file may be sourced to
+ execute the "export ..." commands. So that the dialog's variable values
+ would be assigned to the environment variables <u>within the current shell</u>.
+</p>
+<p>
+ Example:
+<pre class="code">
+tclsh ~/UTILS/pave/pavecli.tcl ques "My site" \
+  { entLogin {"Login......"} {} \
+    entPassw {"Password..."  {} {-show *}} {} \
+  } -weight bold -head "\n Enter to register here:" \
+  -titleOK "Yes" -titleCANCEL "No" \
+  == LOGIN PASSW > tmp.sh
+if [ $? -eq 1 ]; then source tmp.sh; fi; rm tmp.sh
+echo "Login: $LOGIN"; echo "Password: $PASSW"
+</pre>
+</p>
+<p>
+The dialog would look like the <a href=#dlgLogin>above shown</a>. That's no wonder, because  the same <a href=#PaveDialog_input>PaveInput</a> interface is used here.
+</p>
+<p>
+The <code>-titleOK "Yes" -titleCANCEL "No"</code> arguments redefine buttons' labels. By default the buttons are labeled <em>OK</em> and <em>Cancel</em>.
+</p>
+<p>
+The <code> == LOGIN PASSW > tmp.sh</code> arguments define <em>LOGIN</em> and <em>PASSW</em> output variables and redirect
+ their assignment to <em>tmp.sh</em> file. After checking the command's result, the
+ <em>tmp.sh</em> file is executed by <code>source</code>. As a result, <em>LOGIN</em> and <em>PASSW</em> environment variables are set <u>within the current shell</u>. The <code>echo</code> command is one of many ways of their usage.
+</p>
+<p>
+Below is the dialog and its CLI command:
+<br>
+<img src="files/pavecli1.png" class="media" vspace=16 alt="pavecli dialog">
+</p>
+<p>
+... and the result of echo commands:
+<br>
+<img src="files/pavecli2.png" class="media" vspace=16 alt="pavecli dialog">
+</p>
+<p>
+If necessary, the dialog may only contain a message and OK/Cancel buttons, omitting any input:
+<pre class="code">
+tclsh ~/UTILS/pave/pavecli.tcl warn "Git rebase" {} -head \
+"Now we'll be git rebase.\nPress \"OK\" to continue..."
+</pre>
+</p>
+<p>
+...as seen below:
+<br>
+<img src="files/pavecli3.png" class="media" vspace=16 alt="pavecli dialog">
+</p>
+<p>
+If necessary, the Cancel button may be omitted by use of <code> -titleCANCEL ""</code>:
+<pre class="code">
+tclsh ~/UTILS/pave/pavecli.tcl warn "Git rebase" {} \
+-head "Now we'll be git rebase.\nPress \"OK\" to continue..." \
+-weight bold -titleCANCEL ""
+</pre>
+</p>
+<p>
+...as seen below:
+<br>
+<img src="files/pavecli4.png" class="media" vspace=16 alt="pavecli dialog">
+</p>
+<p>
+See also an example in comments of <em>pavecli.tcl</em> of <a href="#download">downloaded archive file</a>.
+</p>
+<p>
+<b>Note</b>: It would be convenient to have a symbolic link to <em>executable pavecli.tcl</em>. Thus, you can use e.g. <code>pavecli</code> instead of wordy 
+<code>tclsh ~/UTILS/pave/pavecli.tcl</code>.
+</p>
+<p>
+ This link should be located on your $PATH and have 'pave' subdirectory under it. Your directory tree may look like this:
+<pre class="code">
+ ~/UTILS             (dir on $PATH)
+   pavecli           (link)
+   pave              (subdir)
+     obbit.tcl
+     pavedialog.tcl
+     ...
+     pkgIndex.tcl
+</pre>
+
+ Or, to do it simply, you can make an executable <em>pavecli</em> shell script (on $PATH) to call:
+<pre class="code">  tclsh ~/SOME/WHERE/pave/pavecli.tcl "$@" </pre>
+ and use <code>pavecli ...</code> instead of  
+<code>tclsh ~/SOME/WHERE/pave/pavecli.tcl ...</code>. That's it.
+</p>
+
+<p>
+<br>
+
+</p>
+
+</div>
+<h1 id="tips">Tips & Tricks</h1>
 <div class="level2">
  <p>
-<em>The Tips & Tricks are mostly taken from <b>test2_pave.tcl</b> of  <a href="#download">downloaded archive file</a>.</em>
+<em>The Tips & Tricks are mostly taken from <em>test2_pave.tcl</em> of <a href="#download">downloaded archive file</a>.</em>
  </p>
  <p><b>1.</b> You can save your keypresses at paving a window by using "." as beginning character of widget name. This would mean that a widget name consists of a previous "normal" name + this name. For example:
  <pre class="code">...
@@ -1363,7 +1908,7 @@ dlg destroy</pre>
 <li>the real text widget is named as <em>...lfrB.text</em> (in <em>test2_pave.tcl</em>, its name is <em>.win.fNB.nb.f2.fra.pan.panR.lfrB.text</em> - a mess of notebook tabs, frames and panes) </li>
 <li>the Text method is created in paved object allowing to get the real name of widget through just <em>[pobj Text]</em></li>
 </ul>
-Also the image names of toolbar can be uppercased so that the corresponding buttons can be referred through e.g. <em>[pobj BuT_Img1]</em> instead of <em>.win.fNB.nb.f2.tool.buT_Img1</em>  (see <em>test2_pave.tcl</em>).
+Also the image names of toolbar can be uppercased so that the corresponding buttons can be referred through e.g. <em>[pobj BuT_Img1]</em> instead of <em>.win.fNB.nb.f2.tool.buT_Img1</em>  (see <a href="#test2_pave">test2_pave.tcl</a> of downloaded <a href="#download">pave.zip</a>).
 <br><br>
 Of course, the uppercased names must be unique for a paved object and be not overlapped by the object's methods.
 </p>
@@ -1419,12 +1964,12 @@ In fact, the <em>PaveMe window</em> method can take as many "window/container & 
 }
 after idle [list ::NS::fillMenu_Binding_Etc $w]</pre>
  <p>
-However, the main menu bar can be made in a call of <em>PaveMe window</em>. See the example in <b>test2_pave.tcl</b>.
+However, the main menu bar can be made in a call of <em>PaveMe window</em>. See the example in <a href="#test2_pave">test2_pave.tcl</a> of downloaded <a href="#download">pave.zip</a>.
 </p>
 <p>
 
 <b>8.</b> The theming facility is enabled by <em>ObjectTheming oo::class</em> (of <em>obbit.tcl</em>) that is mixin'ed into PaveMe oo::class.
- <br>For example, it's used in <b>test2_pave.tcl</b> as follows:
+ <br>For example, it's used in <a href="#test2_pave">test2_pave.tcl</a> of downloaded <a href="#download">pave.zip</a> as follows:
  <pre class="code">
 PaveMe create pobj
 ...
@@ -1445,7 +1990,7 @@ Here, the <em>themingWindow</em> method is receiving the following arguments:
 <br>
 See <a href="#test2_pave">above</a> the screenshot of it.
 <br>
-The theming colors are actual for ttk as well as non-ttk widgets. This is seen on <a href="https://chiselapp.com/user/aplsimple/repository/aplsimple_github_io/uv/test2pave.mp4">the video</a>.
+The theming colors are actual for ttk as well as non-ttk widgets. This is seen on <a href="https://chiselapp.com/user/aplsimple/repository/aplsimple_github_io/uv/test2pave-14.mp4">the video</a>.
 </p>
 
 <p>
