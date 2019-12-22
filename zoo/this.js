@@ -21,7 +21,7 @@ function writeHeader() {
         <a href="en/misc/links/links.html" id=nav2   title="Some links">Links</a> \
         <a href='+homeLINK+'/ru/index.html id=helpme title="Switch to Russian pages"> \
         <img id="flagimg" height=14 width=14 src="en/zoo/ru.png"> \
-        <span id=flagcont>&nbsp;Russian</span></a> \
+        <span id=flagcont>&nbsp;Rus</span></a> \
       </div> \
     </header>');
 }

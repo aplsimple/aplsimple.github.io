@@ -24,7 +24,7 @@ function writeHeader(prntdir) {
         <a href="'+prntdir+'misc/running/running.html" id=nav2   title="Бегу и прочей ерунде посвящается">Бег</a> \
         <a href='+homeLINK+'/index.html id=helpme title="Switch to English pages"> \
         <img id="flagimg" height=14 width=14 src="'+prntdir+'zoo/en.png"> \
-        <span id=flagcont>&nbsp;English</span></a> \
+        <span id=flagcont>&nbsp;Eng</span></a> \
       </div> \
     </header>');
 }
