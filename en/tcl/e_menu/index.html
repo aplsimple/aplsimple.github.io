@@ -77,11 +77,11 @@ href="#bash_scripts">Shell scripts</a></div></li>
 <ul class="toc">
 <li class="level3"><div class="li"><a href="#what_s_all_those_r_re_rw_s_se_sw_m_me_mw_mean">What's those R, RE, RW etc. mean?</a></div></li>
 <li class="level3"><div class="li"><a href="#changing_menus_look_and_feel">Look and feel</a></div></li>
+<li class="level3"><div class="li"><a href="#making_menus_project_sensitive">Project sensitive menu</a></div></li>
 <li class="level3"><div class="li"><a href="#warnings_of_menus">Warnings (Q command)</a></div></li>
 <li class="level3"><div class="li"><a href="#counting_and_timing_commands">Counting and timing</a></div></li>
 <li class="level3"><div class="li"><a href="#starting_menu_items_at_intervals">Running items at intervals</a></div></li>
 <li class="level3"><div class="li"><a href="#running_commands_at_start">Running items at start</a></div></li>
-<li class="level3"><div class="li"><a href="#making_menus_project_sensitive">Project sensitive menu</a></div></li>
 <li class="level3"><div class="li"><a href="#closing_all_menus">Destroying menus</a></div></li>
 <li class="level3"><div class="li"><a href="#sort_of_debugging">Debugging</a></div></li>
 </ul>
@@ -109,19 +109,6 @@ that raises a whole environment of commands & menus around the editor.
 </p>
 
 <p>
-Also, <span class="curid"><a href="#" class="wikilink1" title="Table of 
-Contents">e_menu</a></span> provides a context help on <a 
-href="http://www.tcl.tk/" title="http://www.tcl.tk" rel="nofollow">Tcl/Tk</a> 
-commands / keywords while editing a Tcl script. It means that you can set the 
-caret on desirable <a href="http://www.tcl.tk/" title="http://www.tcl.tk" 
-rel="nofollow">Tcl/Tk</a> command / keyword and press F1 key (if you 
-map F1 to call <span class="curid"><a href="#" class="wikilink1" 
-title="Table of Contents">e_menu</a></span>) and then get a help 
-page for the selected <a href="http://www.tcl.tk/" title="http://www.tcl.tk" 
-rel="nofollow">Tcl/Tk</a> command / keyword.
-</p>
-
-<p>
 By now <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> is implemented for
 <a href="https://sourceforge.net/p/tke/code/ci/default/tree/plugins/" 
 title="TKE's plugins">TKE editor</a>, <a href="https://www.geany.org" title="Geany IDE">Geany IDE</a>, <a href="http://www.wingware.com/" title="Wing Python IDE">Wing Python IDE</a> and <a href="https://www.jetbrains.com/pycharm/" title="PyCharm IDE">PyCharm IDE</a>. Though the usage of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> is mostly 
@@ -132,10 +119,23 @@ href="#detailed_geany" title="Geany IDE">Geany</a>, <a href="#detailed_wing" tit
 Also, <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> can be used in  <a href="#detailed_fm">file managers</a> that provide scripting facilities.
 </p>
 
+<p>
+For Tclers, <span class="curid"><a href="#" class="wikilink1" title="Table of 
+Contents">e_menu</a></span> provides a context help on <a 
+href="http://www.tcl.tk/" title="http://www.tcl.tk" rel="nofollow">Tcl/Tk</a> 
+commands / keywords while editing a Tcl script.
+</p>
+
+<p>
+The <a href="https://chiselapp.com/user/aplsimple/repository/aplsimple_github_io/uv/e_menu-1.41.mp4" 
+title="e_menu-1.41.mp4" 
+rel="nofollow">e_menu-1.41.mp4</a> is sort of demo just to glance at <a href="#" class="wikilink1" title="Table of Contents">e_menu</a>.
+</p>
+
 <br>
 
 <p>
-<span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> has the following features:
+In more details, <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> provides the following features:
 </p>
 <ul>
 <li class="level1"><div class="li"> calling a context help for <a 
@@ -324,12 +324,6 @@ rel="nofollow">minimizing binary overheads for sites managed by Mercurial SCM</a
 <li class="level1"><div class="li"> encoding of menus is utf-8</div>
 </li>
 </ul>
-
-<p>
-The <a href="https://chiselapp.com/user/aplsimple/repository/aplsimple_github_io/uv/e_menu.mp4" 
-title="e_menu.mp4" 
-rel="nofollow">e_menu.mp4</a> is available, sort of demo.
-</p>
 
 <p>
 <br>
@@ -2029,7 +2023,7 @@ This example produces the following picture:
 <img src="files/inputdata2.png" class="media" alt="">
 </p>
 
-<p>
+<p id=exREVFIL>
 <br>
 <b>3.</b>
 </p>
@@ -2070,7 +2064,7 @@ href="https://sourceforge.net/p/tke" title="TKE editor">TKE editor</a>:
 
 </div>
 
-<h3 id="variables">Usage of variables in menus</h3>
+<h3 id="variables">Usage of initializing code and variables in menus</h3>
 <div class="level3">
 
 <p>
@@ -2078,8 +2072,22 @@ In the examples above you've seen how to initialize variables for using in input
 </p>
 
 <p>
-If you want to have a set of variables used throughout the whole menu and 
-possibly saved between the menu sessions, you'd find it convenient to use [OPTIONS] section. Specifically, the previous example can be rewritten this way:
+If some initializing code is duplicated in a menu's items, it makes sense to move it into [OPTION] section, using %C wildcards in the same manner as described above. This %C Tcl code would be executed once on opening the menu. It may contain any number of Tcl commands devided by ";".
+</p>
+
+<p>
+For example, <em>fossil.mnu</em> uses this feature to discern two ways of its calling:
+
+<pre class="code">[OPTION]
+%C if {{%F}=={*} && ![info exist ::EMENUFILE]} {set ::EMENUFILE "*"}
+%C if {![info exist ::EMENUFILE]} {set ::EMENUFILE "%f"}
+</pre>
+
+</p>
+
+<p>
+Also, if you want to have a set of variables used throughout the whole menu and 
+ saved (possibly) between the menu sessions, you'd find it convenient to define them in [OPTIONS] section. Specifically, the <a href=#exREVFIL>example of previous section</a> can be rewritten this way:
 <pre class="code"> R: Differences of %F (hg extdiff) R: cd %d
  R: Differences of %F (hg extdiff) R: \
   %I "" "DIFFERENCES" { \
@@ -2143,6 +2151,24 @@ By this, you would provide a unique temporary file name per menu.
 <br>Second profit is that <span 
  class="curid"><a href="#" class="wikilink1" title="Table of 
  Contents">e_menu</a> at exiting would remove the *.tmp~ files from menus directory, so you need not worry about this clearance.
+</p>
+
+<p>
+The following color names may be useful in .mnu files, e.g. to set a message color (see e.g. <code>-hfg $::em::clrhotk</code> in fossil.mnu):
+<ul>
+<li><code>::em::clrhotk</code> - foreground of hot keys</li>
+<li><code>::em::clractf</code> - foreground of active item</li>
+<li><code>::em::clractb</code> - background of active item</li>
+<li><code>::em::clrinaf</code> - foreground of inactive item</li>
+<li><code>::em::clrinab</code> - background of inactive item</li>
+<li><code>::em::clrtitf</code> - foreground of title ("Use arrow...")</li>
+<li><code>::em::clrtitb</code> - background of title</li>
+<li><code>::em::clrhelp</code> - foreground of HELP/EXEC/SHELL</li>
+<li><code>::em::clrgrey</code> - background of greyed menu</li>
+</ul>
+</p>
+
+<p>
 </p>
 
 <p>
@@ -2753,6 +2779,14 @@ Any menu can be dragged on the screen if it's grasped by the top space.
 </li>
 </ul>
 <ul>
+<li class="level1"><div class="li"> <em>Alt+Up</em> to move a current line or a selected text up</div>
+</li>
+</ul>
+<ul>
+<li class="level1"><div class="li"> <em>Alt+Down</em> to move a current line or a selected text down</div>
+</li>
+</ul>
+<ul>
 <li class="level1"><div class="li"> <em>Ctrl+F</em> to find a first occurence of string</div>
 </li>
 </ul>
@@ -2773,9 +2807,10 @@ Any menu can be dragged on the screen if it's grasped by the top space.
 </li>
 </ul>
 <ul>
-<li class="level1"><div class="li"> <em>Esc</em> to exit</div>
+<li class="level1"><div class="li"> <em>Esc</em> to exit without saving</div>
 </li>
 </ul>
+<p>After saving menu or executing an <em>edited command</em> (grep, wget), an edit position is saved in [OPTIONS] so that it's restored at editing next time.</p>
 
 <p>
 <br>
@@ -3227,7 +3262,8 @@ Thus, <a href="#" class="wikilink1" title="Table of Contents">e_menu</a> is avai
 </p>
 
 <p>
-Note that when "On top" mode is on, no exit is performed after RE: and SE: commands.
+Note that when "On top" mode is on, no exit is performed after RE:, SE: and ME:
+commands.
 </p>
 
 <p>
@@ -3281,12 +3317,12 @@ The following call options of <span class="curid"><a href="#" class="wikilink1" 
 </li>
 </ul>
 <ul>
-<li class="level1"><div class="li"> c=0   - sets an index of color scheme; 0 is default.</div>
+<li class="level1"><div class="li"> c=0   - sets an index of color scheme; 12 is default.</div>
 </li>
 </ul>
 
 <p>
-The following colors are available from c=0 to c=12:
+The following colors are available from c=0 to c=15:
 </p>
 
 <p>
@@ -3302,8 +3338,8 @@ The following colors are available from c=0 to c=12:
 <img src="files/c9.png" class="media" alt="" width="70">
 <img src="files/c10.png" class="media" alt="" width="70">
 <img src="files/c11.png" class="media" alt="" width="70">
-<img src="files/c12.png" class="media" alt="" width="70">
 <img src="files/c13.png" class="media" alt="" width="70">
+<img src="files/c12.png" class="media" alt="" width="70">
 <img src="files/c3.png" class="media" alt="" width="70">
 <img src="files/c15.png" class="media" alt="" width="70">
 </p>
@@ -3347,7 +3383,126 @@ Before their calls, you can set a terrible warning, sort of:
 <p>
 <img src="files/danger2.png" class="media" alt="">
 </p>
+<p>If <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span>'s colors aren't good for you (say, you want them fit your IDE), you can pass <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span>
+ the following arguments:
+<ul>
+<li><code>fg=</code> foreground</li>
+<li><code>bg=</code> background</li>
+<li><code>fI=</code> active item foreground</li>
+<li><code>bI=</code> active item background</li>
+<li><code>ht=</code> hotkey foreground</li>
+<li><code>gr=</code> grey background</li>
+<li><code>fE=</code> edit foreground</li>
+<li><code>bE=</code> edit background</li>
+<li><code>fS=</code> edit selection foreground</li>
+<li><code>bS=</code> edit selection background</li>
+<li><code>cc=</code> edit caret background</li>
+</ul>
+For example:
+<pre class="code">
+ tclsh "~/PG/e_menu/e_menu.tcl" "md=~/PG/e_menu_MNU" m=menu.mnu \
+  fg=#d2d2d2 bg=#364c64 fI=#d2d2d2 bI=#1F2D3F ht=#FFA500 gr=grey \
+  fE=#aeaeae bE=#161717 fS=#d2d2d2 bS=#14416A cc=#00ffff
+</pre>
+</p>
+<p>
+<br>
 
+</p>
+
+</div>
+
+<h3 id="making_menus_project_sensitive">Making menus 'project sensitive'</h3>
+<div class="level3">
+
+
+<br>
+<p>
+<b>1. %PN wildcard.</b>
+</p>
+<p>
+The <span class="curid"><a href="#" class="wikilink1" title="Table of 
+Contents">e_menu</a></span> allows to use a tail of working directory path as 'project name'.
+</p>
+
+<p>
+E.g. if you started a project like this:
+</p>
+<pre class="code">  cd /home/me/PG/projects/my_best_project
+  wish /home/me/UTILS/e_menu.tcl ... (run common menus)
+  geany ...                     (run Geany IDE)</pre>
+
+<p>
+then 'my_best_project' will be 'project name'.
+</p>
+
+<p>
+This name can be used as %PN wildcard in the calling string of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> as well as in the menu commands.
+</p>
+<pre class="code">  Note: you should use %%PN instead of %PN in Windows' command line.</pre>
+
+<p>
+So, you can have a lot of menus in “%PN” subdirectory of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> that are specific for your current project and the one and only <abbr title="A fast and lightweight IDE">Geany</abbr> context command for all projects like this:
+</p>
+<pre class="code">  wish /home/me/UTILS/e_menu.tcl "s=%s" "m=%PN/main.mnu" ...</pre>
+
+<p>
+It would open the main menu of your current project as <abbr title="A fast and lightweight IDE">Geany</abbr>'s context command.
+</p>
+
+<p>
+Also you can set in the calling string of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> “PN=projectname” argument that would override a value of %PN wildcard taken from a working directory. It may be suitable when your different projects are named equally (e.g. /…/Java/Project1 and /…/JavaScript/Project1).
+</p>
+
+<br>
+<p>
+<b>2. %PD wildcard.</b>
+</p>
+
+<p>
+In the menus, the %PD wildcard is often used. It is defined as "a directory of current project". If you work with one project, you can rightly set the "PD=" argument of e_menu as "PD=your-project-dir".
+</p>
+
+<p>
+But what if your edited files are from various projects (hence various directories)? In such case you may define PD= argument as a name of file containing the list of project directory names.
+</p>
+<p>
+For example, you pass to e_menu the "PD=/home/me/PD-dirs.txt" argument where the PD-dirs.txt contains for example:
+</p>
+<p>
+<pre class="code">
+  # list of project directories for e_menu
+
+  # directory of various projects
+  /home/me/PG/Tcl-Tk/projects/me_proj1
+  /home/me/PG/Tcl-Tk/projects/me_proj2
+  /home/me/PG/Tcl-Tk/projects/me_proj3
+
+  # directory of TKE clone
+  /home/me/TKE-clone/TKE-clone
+
+  # directory of TKE data (incl. iplugins, plugins, themes)
+  /home/me/.tke </pre>
+</p>
+<p>
+
+The blank lines and the # comments are ignored. All other lines are considered to be directory names of your projects.
+</p>
+<p>
+
+When your edited file is located in one of those directories (or its 
+subdirectory), the corresponding directory name is used as %PD wildcard of menu.
+</p>
+<p>
+<b>While editing a file you would not be uneasy</b>, sort of <em>"what a project 
+is open? which project this file is of? is its project open? may I open files 
+from other projects?"</em> and so on. The 
+main thing is the registration of projects' directories in PD-dirs.txt 
+or whatever it's named. The <span class="curid"><a href="#" class="wikilink1" 
+title="Table of Contents">e_menu</a></span> would know the project 
+your file is from and as such it would perform the commands related to your file and 
+its project.
+</p>
 
 <p>
 <br>
@@ -3725,100 +3880,6 @@ That's all. Minus a special start of <abbr title="A fast and lightweight IDE">Ge
 
 </div>
 
-<h3 id="making_menus_project_sensitive">Making menus 'project sensitive'</h3>
-<div class="level3">
-
-
-<p>
-<b>1.</b> <span class="curid"><a href="#" class="wikilink1" title="Table of 
-Contents">e_menu</a></span> allows to use a tail of working directory path as 'project name'.
-</p>
-
-<p>
-E.g. if you started a project like this:
-</p>
-<pre class="code">  cd /home/me/PG/projects/my_best_project
-  wish /home/me/UTILS/e_menu.tcl ... (run common menus)
-  geany ...                     (run Geany IDE)</pre>
-
-<p>
-then 'my_best_project' will be 'project name'.
-</p>
-
-<p>
-This name can be used as %PN wildcard in the calling string of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> as well as in the menu commands.
-</p>
-<pre class="code">  Note: you should use %%PN instead of %PN in Windows' command line.</pre>
-
-<p>
-So, you can have a lot of menus in “%PN” subdirectory of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> that are specific for your current project and the one and only <abbr title="A fast and lightweight IDE">Geany</abbr> context command for all projects like this:
-</p>
-<pre class="code">  wish /home/me/UTILS/e_menu.tcl "s=%s" "m=%PN/main.mnu" ...</pre>
-
-<p>
-It would open the main menu of your current project as <abbr title="A fast and lightweight IDE">Geany</abbr>'s context command.
-</p>
-
-<p>
-Also you can set in the calling string of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> “PN=projectname” argument that would override a value of %PN wildcard taken from a working directory. It may be suitable when your different projects are named equally (e.g. /…/Java/Project1 and /…/JavaScript/Project1).
-</p>
-
-<p>
-<b>2.</b> The following consideration would be universally helpful as well.
-</p>
-
-<p>
-In the menus, the %PD wildcard is often used. It is defined as "a directory of current project". If you work with one project, you can rightly set the "PD=" argument of e_menu as "PD=your-project-dir".
-</p>
-
-<p>
-But what if your edited files are from various projects (hence various directories)? In such case you may define PD= argument as a name of file containing the list of project directory names.
-</p>
-<p>
-For example, you pass to e_menu the "PD=/home/me/PD-dirs.txt" argument where the PD-dirs.txt contains for example:
-</p>
-<p>
-<pre class="code">
-  # list of project directories for e_menu
-
-  # directory of various projects
-  /home/me/PG/Tcl-Tk/projects/me_proj1
-  /home/me/PG/Tcl-Tk/projects/me_proj2
-  /home/me/PG/Tcl-Tk/projects/me_proj3
-
-  # directory of TKE clone
-  /home/me/TKE-clone/TKE-clone
-
-  # directory of TKE data (incl. iplugins, plugins, themes)
-  /home/me/.tke </pre>
-</p>
-<p>
-
-The blank lines and the # comments are ignored. All other lines are considered to be directory names of your projects.
-</p>
-<p>
-
-When your edited file is located in one of those directories (or its 
-subdirectory), the corresponding directory name is used as %PD wildcard of menu.
-</p>
-<p>
-<b>While editing a file you would not be uneasy</b>, sort of <em>"what a project 
-is open? which project this file is of? is its project open? may I open files 
-from other projects?"</em> and so on. The 
-main thing is the registration of projects' directories in PD-dirs.txt 
-or whatever it's named. The <span class="curid"><a href="#" class="wikilink1" 
-title="Table of Contents">e_menu</a></span> would know the project 
-your file is from and as such it would perform the commands related to your file and 
-its project.
-</p>
-
-<p>
-<br>
-
-</p>
-
-</div>
-
 <h3 id="closing_all_menus">Closing all menus</h3>
 <div class="level3">
 
@@ -3903,8 +3964,8 @@ Contents">e_menu</a></span> stuff is available here:
 
 <ul>
 <li class="level1"><div class="li"> 
-<a href="https://chiselapp.com/user/aplsimple/repository/aplsimple_github_io/uv/e_menu.mp4" 
-title="e_menu.mp4" rel="nofollow">e_menu.mp4</a> 
+<a href="https://chiselapp.com/user/aplsimple/repository/aplsimple_github_io/uv/e_menu-1.41.mp4" 
+title="e_menu-1.41.mp4" rel="nofollow">e_menu-1.41.mp4</a> 
 </li>
 </ul>
 
@@ -3933,8 +3994,13 @@ href="https://sourceforge.net/p/tke/code/ci/default/tree/plugins/e_menu/" rel="n
 </ul>
 
 <ul>
+<li class="level1"><div class="li"> <a href="../pave/index.html" title="Description of pave" rel="nofollow">pave docs</a></div>
+</li>
+</ul>
+
+<ul>
 <li class="level1"><div class="li"> <a 
-href="https://wiki.tcl-lang.org/page/mulster%2C+multi-line+replacements+in+text" rel="nofollow">mulster wiki</a></div>
+href="https://wiki.tcl-lang.org/page/mulster%2C+multi-line+replacements+in+text" title="Description of mulster" rel="nofollow">mulster wiki</a></div>
 </li>
 </ul>
 
