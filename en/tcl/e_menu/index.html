@@ -50,6 +50,7 @@ href="#setting_options_in_a_menu_file">Options in menu files</a></div></li>
 <li class="level3"><div class="li"><a href="#wildcards_in_menu_names_and_commands">Wildcards</a></div></li>
 <li class="level3"><div class="li"><a href="#processing_wildcards">Processing wildcards</a></div></li>
 <li class="level3"><div class="li"><a href="#input_dialogs">Input dialogs</a></div></li>
+<li class="level3"><div class="li"><a href="#warnings_of_menus">Warnings (Q command)</a></div></li>
 <li class="level3"><div class="li"><a href="#variables">Variables</a></div></li>
 <li class="level3"><div class="li"><a 
 href="#bash_scripts">Shell scripts</a></div></li>
@@ -71,14 +72,19 @@ href="#bash_scripts">Shell scripts</a></div></li>
 <li class="level2"><div class="li"><a href="#detailed_wing">in Wing IDE</a></div></li>
 <li class="level2"><div class="li"><a href="#detailed_pycharm">in PyCharm IDE</a></div></li>
 <li class="level2"><div class="li"><a href="#detailed_fm">in file managers</a></div></li>
+<ul>
+<li class="level3"><div class="li"><a href="#caja_fm">Caja</a></div></li>
+<li class="level3"><div class="li"><a href="#nautilus_fm">Nautilus</a></div></li>
+<li class="level3"><div class="li"><a href="#nemo_fm">Nemo</a></div></li>
+<li class="level3"><div class="li"><a href="#thunar_fm">Thunar</a></div></li>
+</ul>
 </ul>
 <hr>
 <li class="level2"><div class="li"><a href="#tips_and_hints">Tips and hints</a></div>
 <ul class="toc">
 <li class="level3"><div class="li"><a href="#what_s_all_those_r_re_rw_s_se_sw_m_me_mw_mean">What's those R, RE, RW etc. mean?</a></div></li>
-<li class="level3"><div class="li"><a href="#changing_menus_look_and_feel">Look and feel</a></div></li>
 <li class="level3"><div class="li"><a href="#making_menus_project_sensitive">Project sensitive menu</a></div></li>
-<li class="level3"><div class="li"><a href="#warnings_of_menus">Warnings (Q command)</a></div></li>
+<li class="level3"><div class="li"><a href="#changing_menus_look_and_feel">Look and feel</a></div></li>
 <li class="level3"><div class="li"><a href="#counting_and_timing_commands">Counting and timing</a></div></li>
 <li class="level3"><div class="li"><a href="#starting_menu_items_at_intervals">Running items at intervals</a></div></li>
 <li class="level3"><div class="li"><a href="#running_commands_at_start">Running items at start</a></div></li>
@@ -2065,6 +2071,71 @@ href="https://sourceforge.net/p/tke" title="TKE editor">TKE editor</a>:
 
 </div>
 
+<h3 id="warnings_of_menus">Warnings of menus (Q command)</h3>
+<div class="level3">
+
+<p>
+The Q command can be used in menus as a part of <a href=#C_wildcard>%C</a> wildcard's content. The <a href=#Q_wildcard>%Q</a> wildcard uses the same syntax.
+</p>
+
+<p>
+The <a href=#C_wildcard>%C Q</a> and <a href=#Q_wildcard>%Q</a> both display warning dialogs.
+</p>
+
+<p>
+Syntax:
+<pre class="code">
+%C Q ttl mes {typ okcancel} {icon warn} {defb OK} args
+%Q ttl mes {typ okcancel} {icon warn} {defb OK} args
+</pre>
+where:
+<br>&nbsp;&nbsp;&nbsp;<em>ttl</em> - title of query
+<br>&nbsp;&nbsp;&nbsp;<em>mess</em> - message of query
+<br>others may be omitted:
+<br>&nbsp;&nbsp;&nbsp;<em>typ</em> - type of dialog: one of <code>okcancel</code> (default), <code>yesno</code> or <code>yesnocancel</code>
+<br>&nbsp;&nbsp;&nbsp;<em>icon</em> - type of icon: one of <code>warn</code> (default), <code>info</code>, <code>ques</code> or <code>err</code>
+<br>&nbsp;&nbsp;&nbsp;<em>defb</em> - selected default button: one of <code>OK</code> (default), <code>CANCEL</code>, <code>YES</code> or <code>NO</code>
+<br>&nbsp;&nbsp;&nbsp;<em>args</em> - additional arguments for <a 
+	href="https://aplsimple.github.io/pave">pave</a>, e.g. <code>-t 1</code> (to stay on top), <code>-w 80</code> (width), <code>-fg white</code> (foreground color), <code>-bg red</code> (background color)
+</p>
+
+<p>
+The <a href=#Q_wildcard>%Q</a> wildcard used in menus has the same syntax.
+</p>
+
+<p>
+Using <em>a1=</em> call argument, you can warn a user about potential risks of an open menu, e.g.:
+</p>
+<pre class="code">  MW: Dangerous MW: m=git2.mnu w= bd=7 fs=50 c=5 "a1=if {![Q {DANGER!} \
+    {These commands are dangerous\nand can set the world on fire! \
+    \n\nContinue?}]} exit"</pre>
+
+<p>
+Here the Tcl commands are used to exit and close the dangerous menu possibly open by mistake. Q is a query with “head” and “message” that can contain the above mentioned wildcards. Q returns 'false' if answered 'Cancel' so that 'exit' Tcl command closes the menu.
+</p>
+
+<p>
+When calling a menu item, you can use <em>%Q “head” “message”</em> in a command batch. It's the same query with the difference that <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> stops the batch of commands after answering 'Cancel'. For example:
+</p>
+<pre class="code">  R:git reset --hard HEAD R: %Q "RESET" \
+    "This cancels the last uncommitted changes and resets \
+    \nto the last commited state!\n\nDo you want to RESET ? \
+    \n\n(VERY LIKELY IT'S CANNOT BE UNDONE)"
+  R:git reset --hard HEAD R: cd %PD
+  S:git reset --hard HEAD S: git reset --hard HEAD</pre>
+
+<p>
+- here the cancelled commands are 'cd' and 'git reset'.
+</p>
+
+
+<p>
+<br>
+
+</p>
+
+</div>
+
 <h3 id="variables">Usage of initializing code and variables in menus</h3>
 <div class="level3">
 
@@ -2743,16 +2814,20 @@ The <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">
 </li>
 </ul>
 <ul>
-<li class="level1"><div class="li"> <em>Ctrl+Right</em> to increase a menu width</div>
+<li class="level1"><div class="li"> <em>Ctrl+Right</em> to increase a menu's width</div>
 </li>
 </ul>
 <ul>
-<li class="level1"><div class="li"> <em>Ctrl+Left</em> to decrease a menu width</div>
+<li class="level1"><div class="li"> <em>Ctrl+Left</em> to decrease a menu's width</div>
+</li>
+</ul>
+<ul>
+<li class="level1"><div class="li"> <em>Ctrl+G</em> to set/view a menu's geometry</div>
 </li>
 </ul>
 
 <p>
-If not redefined in the menu F1 calls this wiki page.
+If not redefined in the menu, F1 calls 'About' dialog where 'Help' button displays this wiki.
 </p>
 
 <p>
@@ -3181,8 +3256,9 @@ By the way, I didn't find the "current word under caret" among PyCharm's macros.
 <h2 id="detailed_fm">Usage in file managers</h2>
 <div class="level2">
 <p>
-There are at least three file managers that allow to run <a href="#" class="wikilink1" title="Table of Contents">e_menu</a> and apply its commands to files and directories.
+There are at least four file managers that allow to run <a href="#" class="wikilink1" title="Table of Contents">e_menu</a> and apply its commands to files and directories.
 </p>
+<br id=caja_fm>
 <p>
 <b>1.</b> The <a href="https://github.com/mate-desktop/caja" title="Caja file manager">Caja</a> file manager stores its scripts in the <em>~/.config/caja/scripts</em> directory. Put there the following script:
 <pre class="code">#! /bin/bash
@@ -3198,7 +3274,7 @@ Thus, <a href="#" class="wikilink1" title="Table of Contents">e_menu</a> is avai
 <br>
 <img src="files/em-caja.png" class="media" alt="e_menu called from Caja file manager">
 </p>
-<br>
+<br id=nautilus_fm>
 <p>
 <b>2.</b> The <a href="https://github.com/GNOME/nautilus" title="Nautilus file manager">Nautilus</a> file manager stores its scripts in the <em>~/.local/share/nautilus/scripts</em> directory. Put there the following script:
 <pre class="code">#! /bin/bash
@@ -3214,7 +3290,7 @@ Thus, <a href="#" class="wikilink1" title="Table of Contents">e_menu</a> is avai
 <br>
 <img src="files/em-nautilus.png" class="media" alt="e_menu called from Nautilus file manager">
 </p>
-<br>
+<br id=nemo_fm>
 <p>
 <b>3.</b> The <a href="https://github.com/linuxmint/nemo" title="Nemo file manager">Nemo</a> file manager stores its scripts in the <em>~/.local/share/nemo/scripts</em> directory. Put there the following script:
 <pre class="code">#! /bin/bash
@@ -3233,6 +3309,40 @@ Thus, <a href="#" class="wikilink1" title="Table of Contents">e_menu</a> is avai
 <br>
 <img src="files/em-nemo.png" class="media" alt="e_menu called from Nemo file manager">
 </p>
+<br id=thunar_fm>
+<p>
+<b>4.</b> The <a href="https://docs.xfce.org/xfce/thunar/start" title="Thunar file manager">Thunar</a> file manager allows you to have the custom actions that are called with popup menu or with hotkeys.
+<p>
+</p>
+You can enter the <a href="#" class="wikilink1" title="Table of Contents">e_menu</a> action by this way:
+<ul>
+<li class="level1"><div class="li"> choose "Edit / Configure custom actions..." <a href="https://docs.xfce.org/xfce/thunar/start" title="Thunar file manager">Thunar</a> menu item</div></li>
+<li class="level1"><div class="li"> choose "Add a new custom action" (<code>+</code> button) </div></li>
+</li>
+<li class="level1"><div class="li"> enter the data of <a href="#" class="wikilink1" title="Table of Contents">e_menu</a>:</div>
+<ul>
+<li class="level1"><div class="li"> <em>Name</em>: <code>e___menu</code> (enter three "_" to view one)</div></li>
+<li class="level1"><div class="li"> <em>Description</em>: <code>any info</code></div></li>
+<li class="level1"><div class="li"> <em>Command</em>: something like<br> <code> wish "~/PG/github/e_menu/e_menu.tcl" m=menu.mnu "f=%f" "d=%d" md=~/PG/e_menu/MNU/menus PD=~/PG/e_menu/PD.txt</code></div></li>
+<li class="level1"><div class="li"> <em>Keyboard shortcut</em>: press any keys in this field, e.g. <code>Alt+M</code></div></li>
+<li class="level1"><div class="li"> <em>Icon</em>: choose <code>src/e_menu.png</code> from <a href="#" class="wikilink1" title="Table of Contents">e_menu</a> directory</div></li>
+<li class="level1"><div class="li"> <b>Appearance Conditions</b> tab: check all checkboxes for opening <a href="#" class="wikilink1" title="Table of Contents">e_menu</a> on any files</div></li>
+</ul>
+</li>
+</ul>
+
+<p>
+<b>Note</b>: you should write the correct pathes in the above <a href="#" class="wikilink1" title="Table of Contents">e_menu</a> command, specifically for <em>e_menu.tcl</em> as well as <em>md=</em> and <em>PD=</em> arguments explained in <a href="#calling_e_menu">Calling e_menu</a>.
+</p>
+<p>
+As you can see from the picture below, <a href="https://docs.xfce.org/xfce/thunar/start" title="Thunar file manager">Thunar</a> passes a file name in %f single-quoted. This peculiarity of <a href="https://docs.xfce.org/xfce/thunar/start" title="Thunar file manager">Thunar</a> is correctly handled in <a href="#" class="wikilink1" title="Table of Contents">e_menu</a> v1.43 or later.
+</p>
+<p>
+Thus, <a href="#" class="wikilink1" title="Table of Contents">e_menu</a> is available in <a href="https://docs.xfce.org/xfce/thunar/start" title="Thunar file manager">Thunar</a> file manager:
+<br>
+<img src="files/em-thunar.png" class="media" alt="e_menu in Thunar file manager">
+</p>
+<br>
 
 <p><br></p></div>
 
@@ -3265,6 +3375,104 @@ Thus, <a href="#" class="wikilink1" title="Table of Contents">e_menu</a> is avai
 <p>
 Note that when "On top" mode is on, no exit is performed after RE:, SE: and ME:
 commands.
+</p>
+
+<p>
+<br>
+
+</p>
+
+</div>
+<h3 id="making_menus_project_sensitive">Making menus 'project sensitive'</h3>
+<div class="level3">
+
+
+<br>
+<p>
+<b>1. %PN wildcard.</b>
+</p>
+<p>
+The <span class="curid"><a href="#" class="wikilink1" title="Table of 
+Contents">e_menu</a></span> allows to use a tail of working directory path as 'project name'.
+</p>
+
+<p>
+E.g. if you started a project like this:
+</p>
+<pre class="code">  cd /home/me/PG/projects/my_best_project
+  wish /home/me/UTILS/e_menu.tcl ... (run common menus)
+  geany ...                     (run Geany IDE)</pre>
+
+<p>
+then 'my_best_project' will be 'project name'.
+</p>
+
+<p>
+This name can be used as %PN wildcard in the calling string of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> as well as in the menu commands.
+</p>
+<pre class="code">  Note: you should use %%PN instead of %PN in Windows' command line.</pre>
+
+<p>
+So, you can have a lot of menus in “%PN” subdirectory of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> that are specific for your current project and the one and only <abbr title="A fast and lightweight IDE">Geany</abbr> context command for all projects like this:
+</p>
+<pre class="code">  wish /home/me/UTILS/e_menu.tcl "s=%s" "m=%PN/main.mnu" ...</pre>
+
+<p>
+It would open the main menu of your current project as <abbr title="A fast and lightweight IDE">Geany</abbr>'s context command.
+</p>
+
+<p>
+Also you can set in the calling string of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> “PN=projectname” argument that would override a value of %PN wildcard taken from a working directory. It may be suitable when your different projects are named equally (e.g. /…/Java/Project1 and /…/JavaScript/Project1).
+</p>
+
+<br>
+<p>
+<b>2. %PD wildcard.</b>
+</p>
+
+<p>
+In the menus, the %PD wildcard is often used. It is defined as "a directory of current project". If you work with one project, you can rightly set the "PD=" argument of e_menu as "PD=your-project-dir".
+</p>
+
+<p>
+But what if your edited files are from various projects (hence various directories)? In such case you may define PD= argument as a name of file containing the list of project directory names.
+</p>
+<p>
+For example, you pass to e_menu the "PD=/home/me/PD-dirs.txt" argument where the PD-dirs.txt contains for example:
+</p>
+<p>
+<pre class="code">
+  # list of project directories for e_menu
+
+  # directory of various projects
+  /home/me/PG/Tcl-Tk/projects/me_proj1
+  /home/me/PG/Tcl-Tk/projects/me_proj2
+  /home/me/PG/Tcl-Tk/projects/me_proj3
+
+  # directory of TKE clone
+  /home/me/TKE-clone/TKE-clone
+
+  # directory of TKE data (incl. iplugins, plugins, themes)
+  /home/me/.tke </pre>
+</p>
+<p>
+
+The blank lines and the # comments are ignored. All other lines are considered to be directory names of your projects.
+</p>
+<p>
+
+When your edited file is located in one of those directories (or its 
+subdirectory), the corresponding directory name is used as %PD wildcard of menu.
+</p>
+<p>
+<b>While editing a file you would not be uneasy</b>, sort of <em>"what a project 
+is open? which project this file is of? is its project open? may I open files 
+from other projects?"</em> and so on. The 
+main thing is the registration of projects' directories in PD-dirs.txt 
+or whatever it's named. The <span class="curid"><a href="#" class="wikilink1" 
+title="Table of Contents">e_menu</a></span> would know the project 
+your file is from and as such it would perform the commands related to your file and 
+its project.
 </p>
 
 <p>
@@ -3406,165 +3614,6 @@ For example:
   fE=#aeaeae bE=#161717 fS=#d2d2d2 bS=#14416A cc=#00ffff
 </pre>
 </p>
-<p>
-<br>
-
-</p>
-
-</div>
-
-<h3 id="making_menus_project_sensitive">Making menus 'project sensitive'</h3>
-<div class="level3">
-
-
-<br>
-<p>
-<b>1. %PN wildcard.</b>
-</p>
-<p>
-The <span class="curid"><a href="#" class="wikilink1" title="Table of 
-Contents">e_menu</a></span> allows to use a tail of working directory path as 'project name'.
-</p>
-
-<p>
-E.g. if you started a project like this:
-</p>
-<pre class="code">  cd /home/me/PG/projects/my_best_project
-  wish /home/me/UTILS/e_menu.tcl ... (run common menus)
-  geany ...                     (run Geany IDE)</pre>
-
-<p>
-then 'my_best_project' will be 'project name'.
-</p>
-
-<p>
-This name can be used as %PN wildcard in the calling string of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> as well as in the menu commands.
-</p>
-<pre class="code">  Note: you should use %%PN instead of %PN in Windows' command line.</pre>
-
-<p>
-So, you can have a lot of menus in “%PN” subdirectory of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> that are specific for your current project and the one and only <abbr title="A fast and lightweight IDE">Geany</abbr> context command for all projects like this:
-</p>
-<pre class="code">  wish /home/me/UTILS/e_menu.tcl "s=%s" "m=%PN/main.mnu" ...</pre>
-
-<p>
-It would open the main menu of your current project as <abbr title="A fast and lightweight IDE">Geany</abbr>'s context command.
-</p>
-
-<p>
-Also you can set in the calling string of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> “PN=projectname” argument that would override a value of %PN wildcard taken from a working directory. It may be suitable when your different projects are named equally (e.g. /…/Java/Project1 and /…/JavaScript/Project1).
-</p>
-
-<br>
-<p>
-<b>2. %PD wildcard.</b>
-</p>
-
-<p>
-In the menus, the %PD wildcard is often used. It is defined as "a directory of current project". If you work with one project, you can rightly set the "PD=" argument of e_menu as "PD=your-project-dir".
-</p>
-
-<p>
-But what if your edited files are from various projects (hence various directories)? In such case you may define PD= argument as a name of file containing the list of project directory names.
-</p>
-<p>
-For example, you pass to e_menu the "PD=/home/me/PD-dirs.txt" argument where the PD-dirs.txt contains for example:
-</p>
-<p>
-<pre class="code">
-  # list of project directories for e_menu
-
-  # directory of various projects
-  /home/me/PG/Tcl-Tk/projects/me_proj1
-  /home/me/PG/Tcl-Tk/projects/me_proj2
-  /home/me/PG/Tcl-Tk/projects/me_proj3
-
-  # directory of TKE clone
-  /home/me/TKE-clone/TKE-clone
-
-  # directory of TKE data (incl. iplugins, plugins, themes)
-  /home/me/.tke </pre>
-</p>
-<p>
-
-The blank lines and the # comments are ignored. All other lines are considered to be directory names of your projects.
-</p>
-<p>
-
-When your edited file is located in one of those directories (or its 
-subdirectory), the corresponding directory name is used as %PD wildcard of menu.
-</p>
-<p>
-<b>While editing a file you would not be uneasy</b>, sort of <em>"what a project 
-is open? which project this file is of? is its project open? may I open files 
-from other projects?"</em> and so on. The 
-main thing is the registration of projects' directories in PD-dirs.txt 
-or whatever it's named. The <span class="curid"><a href="#" class="wikilink1" 
-title="Table of Contents">e_menu</a></span> would know the project 
-your file is from and as such it would perform the commands related to your file and 
-its project.
-</p>
-
-<p>
-<br>
-
-</p>
-
-</div>
-
-<h3 id="warnings_of_menus">Warnings of menus (Q command)</h3>
-<div class="level3">
-
-<p>
-The Q command can be used in menus as a part of <a href=#C_wildcard>%C</a> wildcard's content. The <a href=#Q_wildcard>%Q</a> wildcard uses the same syntax.
-</p>
-
-<p>
-The syntax of Q command:
-<pre class="code">
-Q ttl mes {typ okcancel} {icon warn} {defb OK} args
-</pre>
-where:
-<br>&nbsp;&nbsp;&nbsp;<em>ttl</em> - title of query
-<br>&nbsp;&nbsp;&nbsp;<em>mess</em> - message of query
-<br>others may be omitted:
-<br>&nbsp;&nbsp;&nbsp;<em>typ</em> - type of dialog: one of <code>okcancel</code> (default), <code>yesno</code> or <code>yesnocancel</code>
-<br>&nbsp;&nbsp;&nbsp;<em>icon</em> - type of icon: one of <code>warn</code> (default), <code>info</code>, <code>ques</code> or <code>err</code>
-<br>&nbsp;&nbsp;&nbsp;<em>defb</em> - selected default button: one of <code>OK</code> (default), <code>CANCEL</code>, <code>YES</code> or <code>NO</code>
-<br>&nbsp;&nbsp;&nbsp;<em>args</em> - additional arguments for <a 
-	href="https://aplsimple.github.io/pave">pave</a>, e.g. <code>-t 1</code> (to stay on top), <code>-w 80</code> (width), <code>-fg white</code> (foreground color), <code>-bg red</code> (background color)
-</p>
-
-<p>
-The <a href=#Q_wildcard>%Q</a> wildcard used in menus has the same syntax.
-</p>
-
-<p>
-Using <em>a1=</em> call argument, you can warn a user about potential risks of an open menu, e.g.:
-</p>
-<pre class="code">  MW: Dangerous MW: m=git2.mnu w= bd=7 fs=50 c=5 "a1=if {![Q {DANGER!} \
-    {These commands are dangerous\nand can set the world on fire! \
-    \n\nContinue?}]} exit"</pre>
-
-<p>
-Here the Tcl commands are used to exit and close the dangerous menu possibly open by mistake. Q is a query with “head” and “message” that can contain the above mentioned wildcards. Q returns 'false' if answered 'Cancel' so that 'exit' Tcl command closes the menu.
-</p>
-
-<p>
-When calling a menu item, you can use <em>%Q “head” “message”</em> in a command batch. It's the same query with the difference that <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">e_menu</a></span> stops the batch of commands after answering 'Cancel'. For example:
-</p>
-<pre class="code">  R:git reset --hard HEAD R: %Q "RESET" \
-    "This cancels the last uncommitted changes and resets \
-    \nto the last commited state!\n\nDo you want to RESET ? \
-    \n\n(VERY LIKELY IT'S CANNOT BE UNDONE)"
-  R:git reset --hard HEAD R: cd %PD
-  S:git reset --hard HEAD S: git reset --hard HEAD</pre>
-
-<p>
-- here the cancelled commands are 'cd' and 'git reset'.
-</p>
-
-
 <p>
 <br>
 
