@@ -60,6 +60,7 @@ function isNewLine(out) {
 // prepare collapsible elements
 function prepCollapsible() {
   var coll = document.getElementsByClassName("collapsible");
+  if (!coll.length) {coll = document.getElementsByClassName("collapsible2");}
   var i;
   for (i = 0; i < coll.length; i++) {
     coll[i].addEventListener("click", function() {
