@@ -54,6 +54,7 @@ href="#setting_options_in_a_menu_file">Options in menu files</a></div></li>
 <li class="level3"><div class="li"><a href="#variables">Variables</a></div></li>
 <li class="level3"><div class="li"><a 
 href="#bash_scripts">Shell scripts</a></div></li>
+<li class="level3"><div class="li"><a href="#macros">Macros</a></div></li>
 <li class="level3"><div class="li"><a href="#examples1">Examples</a></div></li>
 </ul>
 </li>
@@ -2367,6 +2368,72 @@ done</pre>
 <p>
 This item of <em>test1.mnu</em> is available through "Menu / Utils / Test1 / Shell script-2".
 <br>See also another example in <em>grep.mnu</em> available through "Menu / Search All / GREP TEMPLATE".
+</p>
+
+<p>
+<br>
+
+</p>
+
+</div>
+
+<h3 id="macros">Macros</h3>
+<div class="level3">
+<p>
+The macros provide a way to get rid of repetitions in .mnu files.
+</p>
+<p>
+If some code is presented in several places of menu, it would be a good candidate for a macro. For example, let our menu code be as follows:
+<pre class="code">
+ R:fossil forget $::FILETAIL R: %I {} "FORGET FILE" { \
+   v_ {{} {-pady 4} {}} {} \
+   fil1 {{   File:} {} {-w 70}} {"$::EMENUFILE"} \
+   } -head {\n This will forget a file in the Fossil repository. \
+   \n Use wildcards to forget a few.} -hfg $::em::clrhotk -weight bold == ::EMENUFILE
+ S:fossil forget $::FILETAIL S: fossil forget $::EMENUFILE
+ S:fossil forget $::FILETAIL S: %U
+</pre>
+... and it's repeated for some <em>fossil</em> commands (<em>forget, revert, add, remove</em> etc.). The only differences are: 1) title 2) message 3) command.
+</p>
+<p>
+Then, we can build <em>%M1</em> macro like this:
+<pre class="code">
+%M1 TITLE %M1 MESSAGE %M1 COMMAND
+%M1 R: %I {} "$TITLE" { \
+   v_ {{} {-pady 4} {}} {} \
+   fil1 {{   File:} {} {-w 70}} {"$::EMENUFILE"} \
+   } -head {\n $MESSAGE} -hfg $::em::clrhotk -weight bold == ::EMENUFILE
+%M1 S: fossil $COMMAND $::EMENUFILE
+%M1 S: %U
+</pre>
+</p>
+<p>
+Thus, for <em>forget, revert, remove, add</em> commands, we can use the code:
+<pre class="code">
+ R:fossil forget $::FILETAIL R: %M1 FOSSIL FORGET %M1 This will forget a file... %M1 forget
+
+ R:fossil revert $::FILETAIL R: %M1 FOSSIL REVERT %M1 This will revert a file... %M1 revert
+
+ R:fossil remove $::FILETAIL R: %M1 FOSSIL REMOVE %M1 This will remove a file... %M1 remove
+
+ R:fossil add    $::FILETAIL R: %M1 FOSSIL ADD %M1 This will add a file... %M1 add
+</pre>
+</p>
+<p>
+The first <code>%M1 TITLE %M1 MESSAGE %M1 COMMAND</code> line sets the macro's parameters used in its body (<em>$TITLE, $MESSAGE, $COMMAND</em>). The corresponding arguments are set at the macro evaluation, e.g. this way: <code>%M1 FOSSIL FORGET %M1 This will forget a file... %M1 forget</code>.
+</p>
+<p>
+ This first line of macro may be empty (<code>%M1</code>), but it should go first in the macro code, all the same.
+</p>
+<p>
+Other lines of macro should contain:
+<ul>
+<li>macro name of <em>%M?</em> form (<em>%M0</em> through <em>%M9</em>, <em>%Ma</em> through <em>%Mz</em>, <em>%MA</em> through <em>%MZ, %M~, %M!, %M@, %M#</em> and so on)</li>
+<li>type of line (R:, S:, RE:, SW: and so on)</li>
+<li>content of line (any stuff used in menu's lines, including "\" as a continuation mark)</li>
+</ul>
+</p>
+<p>
 </p>
 
 <p>
