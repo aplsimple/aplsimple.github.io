@@ -1676,7 +1676,7 @@ multiline entry field aka
 <h2 id="APaveDialog_input">Input dialog</h2>
 <div class="level2">
  <p>
-   To call the input dialog, use the following format:
+   To call the input dialog, use the following syntax:
  </p>
  <p>
    <b>APaveInput create dlg
@@ -1694,48 +1694,50 @@ multiline entry field aka
    <em><b>title</b></em> is a title of dialog window
     </li>
     <li id="footer-info-lastmod">
-   <em><b>widgets</b></em> is a list of the following structure:
-    <ul>
+   <em><b>widgets</b></em> is a list of three elements:
+    <ol>
       <li>
        <em>name of field</em> is a widget name that also sets its type:
        <ul>
-        <em>seh</em> - horizontal separator
-        <br><em>ent</em> - entry
-        <br><em>fil</em> - file chooser (to read)
-        <br><em>fis</em> - file chooser (to save)
-        <br><em>dir</em> - directory chooser
-        <br><em>clr</em> - color chooser
-        <br><em>dat</em> - date chooser
-        <br><em>chb</em> - checkbox
-        <br><em>rad</em> - radiobutton
-        <br><em>spx</em> - spinbox
-        <br><em>cbx</em> - combobox
-        <br><em>fco</em> - file content combobox
-        <br><em>tex</em> - text
+        <li><em>seh</em> - horizontal separator</li>
+        <li><em>lab</em> - label</li>
+        <li><em>ent</em> - entry</li>
+        <li><em>fil</em> - file chooser (to read)</li>
+        <li><em>fis</em> - file chooser (to save)</li>
+        <li><em>dir</em> - directory chooser</li>
+        <li><em>clr</em> - color chooser</li>
+        <li><em>dat</em> - date chooser</li>
+        <li><em>chb</em> - checkbox</li>
+        <li><em>rad</em> - radiobutton</li>
+        <li><em>spx</em> - spinbox</li>
+        <li><em>cbx</em> - combobox</li>
+        <li><em>fco</em> - file content combobox</li>
+        <li><em>tex</em> - text</li>
         </ul>
       </li>
       <li>
-       <em>prompt and options</em> are the following:
+       <em>prompt and options</em> is a list of three (or less) elements:
         <ul>
-        <em>prompt</em> - a prompt for the field or {}, e.g. "Login:"
-        <br><em>grid options</em> - grid options of the field or {}, e.g. "-pady 5"
-        <br><em>attributes</em> - attributes of the field or {}, e.g. "-h 4 -w 40"
+        <li><em>prompt</em> - a prompt for the field or {}, e.g. "Login:"</li>
+        <li><em>grid options</em> - grid options of the field or {}, e.g. "-pady 5"</li>
+        <li><em>attributes</em> - attributes of the field, e.g. "-h 4 -w 40"</li>
         </ul>
       </li>
       <li>
-       <em>values' options</em> depend on the type of widget:
+       <em>values' options</em> is a list that depends on the type of widget:
         <ul>
-        for <em>ent</em> - a current value of entry
-        <br>for <em>chb</em> - a current value of checkbox
-        <br>for <em>tex</em> - a current content of text (\n to be newlines)
-        <br>for <em>cbx</em> - a current value and choices, e.g.
-          <code>"{in file} {in file} {in session} {in directory}"</code>
-        <br>for <em>rad</em> - a current value and choices, e.g.
-          <code>"Exact Exact Glob {RE  }"</code>
-        <br>for <em>fco</em> - a content of <em>-values</em> option
+        <li>for <em>ent</em> - a current value of entry</li>
+        <li>for <em>chb</em> - a current value of checkbox</li>
+        <li>for <em>tex</em> - a current content of text (\n to be newlines)</li>
+        <li>for <em>cbx</em> - a current value and choices, e.g.
+          <code>"{in file} {in file} {in session} {in directory}"</code></li>
+        <li>for <em>rad</em> - a current value and choices, e.g.
+          <code>"Exact Exact Glob {RE  }"</code></li>
+        <li>for <em>fco</em> - a content of <em>-values</em> option</li>
+        <li>for <em>others</em> - a current value</li>
         </ul>
       </li>
-    </ul>
+    </ol>
     </li>
     <li id="footer-info-lastmod">
    <em><b>dialog options</b></em> are options used by APaveDialog dialogs (see above)
@@ -1747,8 +1749,14 @@ multiline entry field aka
 The APaveInput dialog returns a list containing:
 <ul>
 <li>main result (1 for OK, 0 for Cancel)</li>
-<li>input values, according to the widget list</li>
+<li>others values, depending on a call syntax</li>
 </ul>
+</p>
+<p>
+To get the variables' values, use <em>valueInput</em> method, this way:
+<pre class="code">
+lassign [dlg valueInput] varname1 varname2 varname3 ...
+</pre>
 </p>
 
 <p>Note that because of APaveInput is inherited from APaveDialog which is in turn inherited from APave, you can use the APaveInput object instead of (and along with) APaveDialog and APave objects.
@@ -1758,17 +1766,20 @@ The APaveInput dialog returns a list containing:
  Example:
  </p>
  <p id=dlgLogin>
- <pre class="code">APaveInput create dlg
-set ::login "aplsimple"
-set res [dlg input ques "My site" {
-  entLogin {{Login......}} "{$::login}"
-  entPassw {{Password...} {} {-show *}} {}
-} -weight bold -head "\n Enter to register here:"]
-dlg destroy</pre>
+ <pre class="code">
+set res [dlg input ques "My site" [list \
+  entLogin {{Login......}} aplsimple \
+  entPassw {{Password...} {} {-show *}} {} \
+] -weight bold -head "\n Enter to register here:"]
+if {[lindex $res 0]} {lassign [dlg valueInput] login password}</pre>
  </p>
  This code would result in something like:
  <br>
  <img src="files/dlgexample.png" class="media" vspace=16 alt="Login dialog">
+</p>
+
+<p>
+For a detailed example, see <em>tests/test_pavedialog.tcl</em> of downloaded <a href="#download">pave.zip</a>.
 </p>
 
 <p>
