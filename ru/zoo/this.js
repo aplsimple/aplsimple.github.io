@@ -18,10 +18,10 @@ function writeHeader(prntdir) {
         <a href='+homeLINK+'/ru/index.html id=tohome title="до дому, до хаты"><img id="flagimg" height=14 width=14 src="../'+prntdir+'zoo/favicon.jpg"> \
         <span id=flagcont>&nbsp;Домой</span></a> \
         <a href="'+prntdir+'misc/news/news.html"       id=nav1   title="Вести с полей">Новости</a> \
-        <a href="'+prntdir+'misc/links/links.html"     id=nav2   title="Авторские сайты">Авторство</a> \
+        <a href="'+prntdir+'misc/links/links.html"     id=nav2   title="Авторские сайты">Авторы</a> \
         <a href="'+prntdir+'misc/self/self.html"       id=nav2   title="Я пиит... от слова \'пить\'">Отсебятина</a> \
         <a href="'+prntdir+'misc/stream/stream.html"   id=nav2   title="Типа бложика">Стремнина</a> \
-        <a href="'+prntdir+'misc/running/running.html" id=nav2   title="Бегу и прочей ерунде посвящается">Бег</a> \
+        <a href="'+prntdir+'misc/running/running.html" id=nav2   title="Бегу и прочей ерунде посвящается">etc.</a> \
         <a href='+homeLINK+'/index.html id=helpme title="Switch to English pages"> \
         <img id="flagimg" height=14 width=14 src="'+prntdir+'zoo/en.png"> \
         <span id=flagcont>&nbsp;En</span></a> \
