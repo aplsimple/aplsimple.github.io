@@ -33,9 +33,9 @@ function writeHeader(prntdir) {
 //---------------------------------------------
 // footer of page
 function writeFooter(pageinfo) {
-  document.write('<footer><div id=spr>by aplsimple at ');
+  document.write('<footer><div id=spr>&nbsp;');
   writeDocTime();
-  document.write(' &nbsp;<div id=liam></div></div><div>');
+  document.write(' <div id=liam></div></div><div>');
   document.write('&nbsp; <span id=spr2>'+pageinfo);
   document.write('&nbsp;</span></div></footer>');
   prepCollapsible();
