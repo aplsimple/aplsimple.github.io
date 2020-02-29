@@ -110,13 +110,33 @@ OUT=END
 BACKUP=new backup dir
 EXACT=1
 KEEP=1
+CHARSET=charset
+LINEEND=line ending
 INFILE=input file2 name
 OUTFILE=output file2 name
+SINGLE=1
 ...</pre>
 
 </p>
 <p>
 The <em>INFILE=</em> and <em>OUTFILE=</em> set the names of input & output files.
+</p>
+<p>
+The names can be glob patterns, but <em>OUTFILE=</em> can contain only "*"
+that would be replaced with an appropriate <em>INFILE=</em> file name, e.g.:
+</p>
+<p>
+<pre class="code">
+INFILE=~/DOCS/HTML/*.html
+OUTFILE=~/DOCS/HTML/GENERATED/gen_*.html
+</pre>
+</p>
+<p>
+so that the input <code>~/DOCS/HTML/name1.html</code> would result in the output
+<code>~/DOCS/HTML/GENERATED/gen_name1.html</code>.
+</p>
+<p>
+If <em>INFILE=</em> and <em>OUTFILE=</em> are glob patterns, the <em>INFILE=</em> directories are scanned recursively for files matching the input pattern. All output files would be created in appropriate subdirectories of <em>OUTFILE=</em> root directory.
 </p>
 <p>
 If <em>input file name</em> is equal to <em>output file name</em>, all modifications are performed on the same file.
@@ -133,7 +153,7 @@ IN=BEGIN(1,1)   - first match only
 IN=BEGIN(0,0)   - all matches; the same as IN=BEGIN</pre>
 </p>
 <p>
-All strings outside of <em>INFILE=, OUTFILE=, IN=BEGIN through IN=END, OUT=BEGIN through OUT=END, BACKUP=, EXACT=, KEEP=</em> are ignored (being sort of comments).
+All strings outside of <em>INFILE=, OUTFILE=, IN=BEGIN through IN=END, OUT=BEGIN through OUT=END, BACKUP=, EXACT=, KEEP=, CHARSET=, LINEEND=, SINGLE=</em> are ignored (being sort of comments).
 </p>
 <p>
 The options of <em>tclsh mulster.tcl ?options? fileini</em> are following:
@@ -142,30 +162,37 @@ The options of <em>tclsh mulster.tcl ?options? fileini</em> are following:
 <li class="level1"><div class="li"><em>-backup </em> means that the original input files are backed up into the <em></em> directory;</div></li>
 <li class="level1"><div class="li"><em>-backup 0</em> means that the original input files are NOT backed up at all (by default they are backed up to <em>BAK</em> directory);</div></li>
 <li class="level1"><div class="li"><em>-keep 1</em> means that input files' attributes/times will be saved in output files; by default they are not kept;</div></li>
+<li class="level1"><div class="li"><em>-single 1</em> means standard 'one string for one string' replacements;</div></li>
+<li class="level1"><div class="li"><em>-charset charset</em> sets a charset of input files, e.g. cp1251;</div></li>
+<li class="level1"><div class="li"><em>-lineend lineend</em> sets a line ending of input files, e.g. \r\n (by default, \n);</div></li>
 <li class="level1"><div class="li"><em>--</em> switches options off (for <em>fileini</em>).</div></li>
 </ul>
-The <em>-exact, -backup</em> and <em>-keep</em> options can be redefined in <em>fileini</em>, e.g.
+The <em>-exact, -backup, -keep, -single, -charset</em> and <em>-lineend</em> options can be redefined in <em>fileini</em>, e.g.
 <pre class="code">...
 BACKUP=BAK/new backup dir
 EXACT=1
 KEEP=1
+CHARSET=cp1251
+LINEEND=\r\n
 INFILE=input file2 name
 OUTFILE=output file2 name
+SINGLE=1
 ...</pre>
 so that these options can be individual for any file(s).
 </p>
 <p>
-<b>Note</b>: if the <a href="#" class="wikilink1" title="Table of Contents">mulster</a></span> comes across <em>BACKUP=, EXACT=, KEEP=</em> or <em>INFILE=</em> option in <em>fileini</em>, it flushes all collected changes to the current output file and begins a new collection of changes for a new input/output.
+<b>Note</b>: if the <a href="#" class="wikilink1" title="Table of Contents">mulster</a></span> comes across <em>BACKUP=, EXACT=, KEEP=, CHARSET=, LINEEND=</em> or <em>INFILE=</em> option in <em>fileini</em>, it flushes all collected changes to the current output file and begins a new collection of changes for a new input/output. The SINGLE= option operates for the next IN=, OUT= blocks.
 </p>
 <p>
 So, the order of options is important:
 <ol>
-<li class="level1"><div class="li"><em>BACKUP=, EXACT=</em> or <em>KEEP=</em> go first if they are set at all</div></li>
+<li class="level1"><div class="li"><em>BACKUP=, EXACT=, KEEP=, CHARSET=, LINEEND=</em> go first if they are set at all</div></li>
 <li class="level1"><div class="li"><em>INFILE=</em> and <em>OUTFILE=</em> go next</div></li>
+<li class="level1"><div class="li"><em>SINGLE=</em> go next if any (defined for every next IN=,OUT= blocks)</div></li>
 <li class="level1"><div class="li"><em>IN=BEGIN</em> and <em>IN=END</em> go next</div></li>
 <li class="level1"><div class="li"><em>OUT=BEGIN</em> and <em>OUT=END</em> go next</div></li>
-<li class="level1"><div class="li">(3) through (4) can be repeated</div></li>
-<li class="level1"><div class="li">(1) through (5) can be repeated</div></li>
+<li class="level1"><div class="li">(3) through (5) can be repeated</div></li>
+<li class="level1"><div class="li">(1) through (6) can be repeated</div></li>
 </ol>
 </p>
 
@@ -261,7 +288,10 @@ Nearly the same thing has repeated with <a href="https://sourceforge.net/p/tke" 
 These pull/push transactions and accompanying mulsterings are made with one click in a TKE plugin. I need only supervising a short log.
 </p>
 <p>
-The <a href="https://chiselapp.com/user/aplsimple/repository/aplsimple_github_io/uv/mulster.rar" title="mulster.rar" rel="nofollow">mulster.rar</a> archive contains <em>fileini</em> files (<em>tasks/mulster-geany</em> and <em>tasks/mulster-tke</em>) to make the appropriate changes in Geany and TKE.
+There is a whole class of <em>mulster</em> use cases, namely using it for a fine tuning of generated documents. This way, e.g., <a href="../trimmer/trimmer.html" title="trimmer.html" rel="nofollow">trimmer.html</a> had been created initially by <a href="https://ruff.magicsplat.com" title="trimmer.html" rel="nofollow">Ruff!</a> documentation generator to be processed by <em>mulster</em> afterwards.
+</p>
+<p>
+The <a href="https://chiselapp.com/user/aplsimple/repository/aplsimple_github_io/uv/mulster.rar" title="mulster.rar" rel="nofollow">mulster.rar</a> archive contains <em>fileini</em> files (<em>tasks/mulster-geany, tasks/mulster-tke, tasks/mulster-ruff</em>) to make the appropriate changes in Geany, TKE and trimmer.html.
 </p>
 
 <p>
@@ -276,10 +306,10 @@ The <a href="https://chiselapp.com/user/aplsimple/repository/aplsimple_github_io
 
 </p>
 <p>
-A bit about using the <em>mulster.tcl</em>. It's implemented as <em>oo::class</em> and has two useful methods declared as:
+A little talk about using the <em>mulster.tcl</em>. It's implemented as <em>oo::class</em> and has two useful methods declared as:
 </p>
 <p>
-<pre class="code">1) method mulster {fileini {exact 0} {backup BAK} {keep 0}}
+<pre class="code">1) method mulster {fileini {exact 0} {backup BAK} {keep 0} {single 0} {charset ""} {lineend ""}}
 
   where:
     'fileini' is a file name for options
@@ -290,16 +320,19 @@ A bit about using the <em>mulster.tcl</em>. It's implemented as <em>oo::class</e
        0     - no input files' backuping
        "dir" - backuping to "dir" directory
     'keep' if 1, keeps input files' attributes/times in output files
+    'single' if 1, standard 'one string for one string' replacements
+    'charset' sets a charset of input files (e.g. cp1251)
+    'lineend' sets a line ending of input files (e.g. \r\n)
 
   This method performs the above described operations.
 
-2) method mulster1 {lcont lin lout {r1 0} {r2 0} {exact 1}}
+2) method mulster1 {lcont lin lout {r1 0} {r2 0} {exact 1} {single 0} {charset ""} {lineend ""}}
 
   This method performs in-memory replacements in a list ('lcont')
   according to a list of input lines ('lin') and a list of output
   lines ('lout'), in a range of replacements set with 'r1' and 'r2'.
-  If 'exact' is 1, the lines are compared to be strongly equal,
-  otherwise their leading/tailing spaces are ignored at comparing.</pre>
+  The 'exact', 'single', 'charset', 'lineend' are the same as described
+  for 'mulster' method above.</pre>
 </p>
 <p>
 <br>
