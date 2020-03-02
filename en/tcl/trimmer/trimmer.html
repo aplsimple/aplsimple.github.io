@@ -321,13 +321,13 @@ filter: none;
 <br><h2 class='ruff'><a name='::trimmer-Usage'></a>Usage<span class='tinylink'><a href='#::trimmer'>trimmer</a>, <a href='#top'>Top</a></span></h2>
 <div style='clear:both;'></div>
 <pre class='ruff'>
-tclsh trim.tcl ?-i idir|ifile? ?-o odir? ?-r? ?-f? ?-n? ?--? ?app args?
+tclsh trim.tcl [-i idir|ifile] [-o odir] [-r] [-f] [-n] [--] [app args]
 </pre>
-<p class='ruff'>where &quot;?&quot; means <em>optional argument</em> and the arguments are:</p>
+<p class='ruff'>where:</p>
 <table class='ruff_deflist'>
-<tr><td class='ruff_defitem'>idir</td><td class='ruff_defitem'>a directory of files to process (by default <em>idir</em> is .)</td></tr>
-<tr><td class='ruff_defitem'>ifile</td><td class='ruff_defitem'>a file listing .tcl files       (# / empty lines are skipped)</td></tr>
-<tr><td class='ruff_defitem'>odir</td><td class='ruff_defitem'>a directory of resulting files  (by default <em>odir</em> is ../release)</td></tr>
+<tr><td class='ruff_defitem'>idir</td><td class='ruff_defitem'>a directory of files to process (by default ./)</td></tr>
+<tr><td class='ruff_defitem'>ifile</td><td class='ruff_defitem'>a file listing .tcl files       (#-comments disregarded)</td></tr>
+<tr><td class='ruff_defitem'>odir</td><td class='ruff_defitem'>a directory of resulting files  (by default ../release)</td></tr>
 <tr><td class='ruff_defitem'>app</td><td class='ruff_defitem'>an application to be run after trimming</td></tr>
 <tr><td class='ruff_defitem'>args</td><td class='ruff_defitem'>optional arguments of <em>app</em></td></tr>
 </table>
@@ -338,38 +338,40 @@ tclsh trim.tcl ?-i idir|ifile? ?-o odir? ?-r? ?-f? ?-n? ?--? ?app args?
 <p class='ruff'>The <em>trim.tcl</em> by no means changes the input file(s).</p>
 <p class='ruff'>Example:</p>
 <pre class='ruff'>
-tclsh trim.tcl -i ./lib -o ./bin tclsh ./bin/main.tcl arg1 &quot;arg 2&quot;
+tclsh trim.tcl -i ./lib -o ./bin tclsh -f ./bin/main.tcl arg1 &quot;arg 2&quot;
 </pre>
 <br><h2 class='ruff'><a name='::trimmer-Limitations'></a>Limitations<span class='tinylink'><a href='#::trimmer'>trimmer</a>, <a href='#top'>Top</a></span></h2>
 <div style='clear:both;'></div>
 <p class='ruff'>The <em>trim.tcl</em> sets the following limitations for the code processed:</p>
-<p class='ruff'><strong>1.</strong> Multi-line strings should be double-quoted (not braced), because the braced strings would be trimmed, e.g.</p>
+<p class='ruff'><strong>1.</strong> In general, multi-line strings should be double-quoted (not braced), because the braced strings would be trimmed. But there are two important exceptions: when <em>set</em> and <em>variable</em> commands use a braced string, it is not trimmed, e.g.</p>
 <pre class='ruff'>
-set str1 &quot;
-   Correct&quot;      ;# equals to &quot;\n    Correct&quot;
-set str2 {
-    Not correct}  ;# equals to &quot;Not correct&quot;
+set str1 {
+   Correct}       ;# equals to set str1 &quot;\n    Correct&quot;
+variable str2 {
+   Correct}       ;# equals to variable str2 &quot;\n    Correct&quot;
+puts {
+    Not correct}  ;# equals to puts &quot;Not correct&quot;
 </pre>
 <p class='ruff'><strong>2.</strong> Comments after &quot;{&quot; should begin with &quot;;#&quot;, e.g.</p>
 <pre class='ruff'>
 while {true} {  ;# infinite cycle
 }
 </pre>
-<p class='ruff'><strong>3.</strong> <em>List</em> or <em>switch</em> commands can contain comments (lines beginning with # or ;#) which are not considered to be meaningful items, e.g.</p>
+<p class='ruff'><strong>3.</strong> <em>List</em> or <em>switch</em> commands can contain comments which are not considered to be meaningful items, e.g.</p>
 <pre class='ruff'>
 switch $option {
-   ;# it's a comment (and the error in standard Tcl switch)
+   # it's a comment (and the error in standard Tcl switch)
    -opt1 {
      puts &quot;-opt1 processed&quot;
    }
-   -opt2 {
-     puts &quot;-opt2 processed&quot;
-   }
+   # ...
 }
 </pre>
 <p class='ruff'>The 1st limitation is rarely encountered and easily overcome with \n escape sequences.</p>
-<p class='ruff'>The last two limitations are actually the advantages of the utility. The 2nd requires a bit more discipline of coders. The 3rd eliminates Tcl comment freaks.</p>
-<p class='ruff'>For example, compare the behavior of <em>trim.tcl</em> and <em>trim_test.tcl</em>:</p>
+<p class='ruff'>The last two limitations are actually the advantages of the utility.</p>
+<p class='ruff'>The 2nd requires a bit more discipline of coders.</p>
+<p class='ruff'>The 3rd eliminates Tcl comment freaks.</p>
+<p class='ruff'>The <em>trim.tcl</em> and <em>trim_test.tcl</em> set examples of this in action:</p>
 <pre class='ruff'>
 tclsh trim.tcl -f -o trimmed
 
@@ -423,18 +425,20 @@ tclsh trimmed/trim_test.tcl -f -o trimmed
 </div><br><h4 class='ruffproc'><a name='::trimmer::trimFile'>trimFile</a><span class='ns_scope'> [<a href="#::trimmer" title="::trimmer" class='ruff_cmd'>::trimmer</a>]</span><span class='tinylink'><a href='#::trimmer'>trimmer</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Trims an input file and writes a result to an output file.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>trimFile</span> <span class='ruff_arg'>finp fout</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>trimFile</span> <span class='ruff_arg'>finp fout ?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code>finp</code></td><td class='ruff_defitem'>input file name</td></tr>
 <tr><td class='ruff_defitem'><code>fout</code></td><td class='ruff_defitem'>output file name</td></tr>
+<tr><td class='ruff_defitem'><code>args</code></td><td class='ruff_defitem'>additional parameters (so far not used)</td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_2' href="javascript:toggleSource('2')">Show source</a></p>
-<div id='2' class='ruff_dyn_src'><pre>proc ::trimmer::trimFile {finp fout} {
+<div id='2' class='ruff_dyn_src'><pre>proc ::trimmer::trimFile {finp fout args} {
 
 
     # Trims an input file and writes a result to an output file.
     #   finp - input file name
     #   fout - output file name
+    #   args - additional parameters (so far not used)
 
     if { [catch {set chani [open &quot;$finp&quot; &quot;r&quot;]} e] } {
       batchio::onError $e 0
@@ -446,11 +450,27 @@ tclsh trimmed/trim_test.tcl -f -o trimmed
       return
     }
     set brace -1
-    set nquote 0
+    set nquote [set sbrc [set clines 0]]
     while {[gets $chani line] &gt;= 0} {
       if {$nquote} {
         set ic -1
       } else {
+        if {!$sbrc} { ;# find string braced
+          foreach cmd {set variable} {
+            if {[set sbrc [regexp &quot;^\\s*$cmd\\s+\\S+\\s+\{&quot; $line]]} {
+              set line [string trimleft $line]
+              puts $chano &quot;&quot;
+              set cbrc 0
+              break
+            }
+          }
+        }
+        if {$sbrc} {
+          incr cbrc [expr { [trimmer::countChar $line \{] -  [trimmer::countChar $line \}] }]
+          if {$cbrc&lt;=0} { set sbrc 0 }
+          puts $chano $line
+          continue
+        }
         set line [string trimleft $line]
         if {$brace&gt;=0 &amp;&amp; ($line==&quot;&quot; || [string range $line 0 0]==&quot;#&quot;)} continue
         set ic [string first &quot;;#&quot; $line]
@@ -491,21 +511,20 @@ tclsh trimmed/trim_test.tcl -f -o trimmed
 }</pre></div>
 </div><br><br><h1 class='ruff'><a name='::trimmer::batchio'></a>::trimmer::batchio<span class='tinylink'><a href='#top'>Top</a></span></h1>
 <div style='clear:both;'></div>
-<p class='ruff'>Processes a batch of input files to make appropriate output files.</p>
+<p class='ruff'>Processing a batch of input files to make appropriate output files.</p>
 <br><h2 class='ruff'><a name='::trimmer::batchio-Usage'></a>Usage<span class='tinylink'><a href='#::trimmer::batchio'>batchio</a>, <a href='#top'>Top</a></span></h2>
 <div style='clear:both;'></div>
 <pre class='ruff'>
-tclsh script.tcl ?-i idir|ifile? ?-o odir? ?-r? ?-f? ?-n? ?--? ?app args?
+tclsh script.tcl [-i idir|ifile] [-o odir] [-r] [-f] [-n] [--] [app args]
 </pre>
 <p class='ruff'>where</p>
 <p class='ruff'><em>script.tcl</em> is a Tcl script sourcing <em>batchio.tcl</em> to call its 'main' proc</p>
-<p class='ruff'>&quot;?&quot; means <em>optional argument</em></p>
 <p class='ruff'>arguments are:</p>
 <table class='ruff_deflist'>
-<tr><td class='ruff_defitem'>idir</td><td class='ruff_defitem'>a directory of files to be processed (by default <em>idir</em> is .)</td></tr>
-<tr><td class='ruff_defitem'>ifile</td><td class='ruff_defitem'>a file listing files to be processed (# / empty lines are skipped)</td></tr>
-<tr><td class='ruff_defitem'>odir</td><td class='ruff_defitem'>a directory of resulting files  (by default <em>odir</em> is ../release)</td></tr>
-<tr><td class='ruff_defitem'>app</td><td class='ruff_defitem'>an application to be run after processing</td></tr>
+<tr><td class='ruff_defitem'>idir</td><td class='ruff_defitem'>a directory of files to process (by default ./)</td></tr>
+<tr><td class='ruff_defitem'>ifile</td><td class='ruff_defitem'>a file listing .tcl files       (#-comments disregarded)</td></tr>
+<tr><td class='ruff_defitem'>odir</td><td class='ruff_defitem'>a directory of resulting files  (by default ../release)</td></tr>
+<tr><td class='ruff_defitem'>app</td><td class='ruff_defitem'>an application to be run after trimming</td></tr>
 <tr><td class='ruff_defitem'>args</td><td class='ruff_defitem'>optional arguments of <em>app</em></td></tr>
 </table>
 <p class='ruff'>The -i (or --input) can be multiple, -o (or --output) can not.</p>
@@ -514,7 +533,7 @@ tclsh script.tcl ?-i idir|ifile? ?-o odir? ?-r? ?-f? ?-n? ?--? ?app args?
 <p class='ruff'>If -n (or --no) is set, no real changes made, supposed changes shown only.</p>
 <p class='ruff'>Example:</p>
 <pre class='ruff'>
-tclsh trim.tcl -i ./lib -o ./bin tclsh ./bin/main.tcl arg1 &quot;arg 2&quot;
+tclsh trim.tcl -i ./lib -o ./bin tclsh -f ./bin/main.tcl arg1 &quot;arg 2&quot;
 </pre>
 <br><h2 class='ruff'><a name='::trimmer::batchio-License'></a>License<span class='tinylink'><a href='#::trimmer::batchio'>batchio</a>, <a href='#top'>Top</a></span></h2>
 <div style='clear:both;'></div>
@@ -523,33 +542,35 @@ tclsh trim.tcl -i ./lib -o ./bin tclsh ./bin/main.tcl arg1 &quot;arg 2&quot;
 <div style='clear:both;'></div>
 <br><h4 class='ruffproc'><a name='::trimmer::batchio::doFile'>doFile</a><span class='ns_scope'> [<a href="#::trimmer::batchio" title="::trimmer::batchio" class='ruff_cmd'>::trimmer::batchio</a>]</span><span class='tinylink'><a href='#::trimmer::batchio'>batchio</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
-<p class='ruff'>Processes an input file, writes a result to an output file.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>doFile</span> <span class='ruff_arg'>mainProc noact pdirN root finp odir rm</span></div>
+<p class='ruff'>Prepares and does a call of procedure to process two files.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>doFile</span> <span class='ruff_arg'>procN noact pdirN root finp odir rm ?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td class='ruff_defitem'><code>mainProc</code></td><td class='ruff_defitem'>procedure to process an input file to make an output file</td></tr>
+<tr><td class='ruff_defitem'><code>procN</code></td><td class='ruff_defitem'>name of procedure to process two files</td></tr>
 <tr><td class='ruff_defitem'><code>noact</code></td><td class='ruff_defitem'>if true, no output file</td></tr>
 <tr><td class='ruff_defitem'><code>pdirN</code></td><td class='ruff_defitem'>variable's name of previous input directory</td></tr>
 <tr><td class='ruff_defitem'><code>root</code></td><td class='ruff_defitem'>root of input directory</td></tr>
 <tr><td class='ruff_defitem'><code>finp</code></td><td class='ruff_defitem'>input file</td></tr>
 <tr><td class='ruff_defitem'><code>odir</code></td><td class='ruff_defitem'>output directory</td></tr>
 <tr><td class='ruff_defitem'><code>rm</code></td><td class='ruff_defitem'>flag 'rewrite the existing output file or not'</td></tr>
+<tr><td class='ruff_defitem'><code>args</code></td><td class='ruff_defitem'>other arguments</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>If <em>noact</em> is true, no outputs are actually made (to show only).</p>
 <p class='ruff'>The <em>pdirN</em> is used to show an input directory when changed. It needs only to be initialized with &quot;&quot;.</p>
 <p class='ruff'>The <em>root</em> is a root name of input directory that is used to make the output path from the <em>odir</em> and a relative (to <em>root</em>) part of <em>finp</em>.</p>
 <p class='ruff'>If <em>root</em> is empty, an input file is set instead of a directory, so the output path has no relative part.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_3' href="javascript:toggleSource('3')">Show source</a></p>
-<div id='3' class='ruff_dyn_src'><pre>proc ::trimmer::batchio::doFile {mainProc noact pdirN root finp odir rm} {
+<div id='3' class='ruff_dyn_src'><pre>proc ::trimmer::batchio::doFile {procN noact pdirN root finp odir rm args} {
 
 
-    # Processes an input file, writes a result to an output file.
-    #   mainProc - procedure to process an input file to make an output file
+    # Prepares and does a call of procedure to process two files.
+    #   procN - name of procedure to process two files
     #   noact - if true, no output file
     #   pdirN - variable's name of previous input directory
     #   root  - root of input directory
     #   finp  - input file
     #   odir  - output directory
     #   rm    - flag 'rewrite the existing output file or not'
+    #   args  - other arguments
     #
     # If *noact* is true, no outputs are actually made (to show only).
     #
@@ -593,7 +614,7 @@ tclsh trim.tcl -i ./lib -o ./bin tclsh ./bin/main.tcl arg1 &quot;arg 2&quot;
     puts &quot;&quot;
     if {$noact} return
     catch {file mkdir [file dirname $fout]}
-    $mainProc $finp $fout
+    $procN $finp $fout {*}$args
 }</pre></div>
 </div><br><h4 class='ruffproc'><a name='::trimmer::batchio::getInputFilesList'>getInputFilesList</a><span class='ns_scope'> [<a href="#::trimmer::batchio" title="::trimmer::batchio" class='ruff_cmd'>::trimmer::batchio</a>]</span><span class='tinylink'><a href='#::trimmer::batchio'>batchio</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -672,10 +693,11 @@ tclsh trim.tcl -i ./lib -o ./bin tclsh ./bin/main.tcl arg1 &quot;arg 2&quot;
 </div><br><h4 class='ruffproc'><a name='::trimmer::batchio::main'>main</a><span class='ns_scope'> [<a href="#::trimmer::batchio" title="::trimmer::batchio" class='ruff_cmd'>::trimmer::batchio</a>]</span><span class='tinylink'><a href='#::trimmer::batchio'>batchio</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Main procedure of batchio.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>main</span> <span class='ruff_arg'>mainProc globPatt ?args?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>main</span> <span class='ruff_arg'>procN globPatt options ?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td class='ruff_defitem'><code>mainProc</code></td><td class='ruff_defitem'>procedure to process an input file to make an output file</td></tr>
+<tr><td class='ruff_defitem'><code>procN</code></td><td class='ruff_defitem'>name of procedure to process two files</td></tr>
 <tr><td class='ruff_defitem'><code>globPatt</code></td><td class='ruff_defitem'>glob pattern for files to be processed</td></tr>
+<tr><td class='ruff_defitem'><code>options</code></td><td class='ruff_defitem'>list of {opt optshort}, additional options</td></tr>
 <tr><td class='ruff_defitem'><code>args</code></td><td class='ruff_defitem'>arguments passed to script.tcl, containing switches and values:</td></tr>
 <tr><td class='ruff_defitem'><code>--</code></td><td class='ruff_defitem'>to end the switches and begin a command to run</td></tr>
 <tr><td class='ruff_defitem'><code>-f</code></td><td class='ruff_defitem'>(or --force) a flag to rewrite existing output files</td></tr>
@@ -686,12 +708,13 @@ tclsh trim.tcl -i ./lib -o ./bin tclsh ./bin/main.tcl arg1 &quot;arg 2&quot;
 <tr><td class='ruff_defitem'><code>rest</code></td><td class='ruff_defitem'>resting arguments are a command to run and its arguments</td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_5' href="javascript:toggleSource('5')">Show source</a></p>
-<div id='5' class='ruff_dyn_src'><pre>proc ::trimmer::batchio::main {mainProc globPatt args} {
+<div id='5' class='ruff_dyn_src'><pre>proc ::trimmer::batchio::main {procN globPatt options args} {
 
 
     # Main procedure of batchio.
-    #   mainProc - procedure to process an input file to make an output file
+    #   procN - name of procedure to process two files
     #   globPatt - glob pattern for files to be processed
+    #   options  - list of {opt optshort}, additional options
     #   args - arguments passed to script.tcl, containing switches and values:
     #   -i   - (or --input) input directory or file of processed list
     #   -o   - (or --output) output directory
@@ -709,7 +732,7 @@ tclsh trim.tcl -i ./lib -o ./bin tclsh ./bin/main.tcl arg1 &quot;arg 2&quot;
     # get arguments and check if the arguments are correct
     set mydir [file dirname [info script]]
     set err [set remove [set recursive [set noact false]]]
-    lassign &quot;&quot; iopt odir mfile margs
+    lassign &quot;&quot; iopt odir mfile margs addargs
     for {set i 0} {$i&lt;$ac} {incr i} {
       lassign [lrange $args $i end] opt val
       if {$opt eq &quot;--&quot;} {
@@ -740,11 +763,25 @@ tclsh trim.tcl -i ./lib -o ./bin tclsh ./bin/main.tcl arg1 &quot;arg 2&quot;
              if {$noact} { onError &quot;--no argument duplicated&quot; }
              set noact true
              }
-          default { set mfile $opt }
+          default {
+            set isapp true
+            set i2 0
+            foreach {o osh} $options {
+              if {$opt in &quot;$o $osh&quot;} {
+                set isapp false
+                lset options $i2 {}
+                lappend addargs $val
+                incr i
+                break
+              }
+              incr i2
+            }
+            if {$isapp} { set mfile $opt }
+          }
         }
       }
     }
-    if {$iopt eq &quot;&quot;} { set iopt . }
+    if {$iopt eq &quot;&quot;} { set iopt ./ }
     if {$odir eq &quot;&quot;} { set odir ../release }
     set odir [file normalize $odir]
     if {[file isfile $odir]} { onError &quot;\&quot;$odir\&quot; is not a directory.&quot; }
@@ -769,22 +806,26 @@ tclsh trim.tcl -i ./lib -o ./bin tclsh ./bin/main.tcl arg1 &quot;arg 2&quot;
       if {$rt ne &quot;&quot;} { set root $rt }
       set fin [file normalize $fin]
       if {[file isfile $fin]} {
-        doFile $mainProc $noact pdir $root $fin $odir $remove
+        doFile $procN $noact pdir $root $fin $odir $remove {*}$addargs
       }
     }
     underLine
 
     # run a command if set
-    if {$mfile ne &quot;&quot;} {
-      set dispargs &quot;&quot;
-      foreach a $margs {
-        if {[llength $a]&gt;1} {set a &quot;\&quot;$a\&quot;&quot;}
-        append dispargs &quot;$a &quot;
+    set dispargs &quot;&quot;
+    foreach a $margs {
+      if {[llength $a]&gt;1} {set a &quot;\&quot;$a\&quot;&quot;}
+      append dispargs &quot;$a &quot;
+    }
+    if {$noact} {
+      puts &quot; Supposed run: \&quot;$mfile\&quot; $dispargs&quot;
+    } elseif {$mfile ne &quot;&quot;} {
+      set err &quot;&quot;
+      if {[set comm [auto_execok $mfile]] eq &quot;&quot;} {
+        set err &quot; Not found: $mfile&quot;
       }
-      if {$noact} {
-        puts &quot; Supposed run: \&quot;$mfile\&quot; $dispargs&quot;
-      } elseif {[catch {exec {*}[auto_execok $mfile] {*}$margs }]} {
-        onError &quot;Can't execute:\n   \&quot;$mfile\&quot; $dispargs&quot; 0
+      if {$err ne &quot;&quot; || [catch {exec {*}$comm {*}$margs } err]} {
+        onError &quot;Run:\n   \&quot;$mfile\&quot; $dispargs\n$err&quot; 0
       }
     }
 }</pre></div>
@@ -860,12 +901,11 @@ tclsh trim.tcl -i ./lib -o ./bin tclsh ./bin/main.tcl arg1 &quot;arg 2&quot;
 
     variable SynShown
     if {$SynShown} exit {set SynShown true}
-    if {[info exist [namespace parent]::_ruff_preamble]} {
-      puts [set [namespace parent]::_ruff_preamble]
-    } else {
-      variable _ruff_preamble
-      puts $_ruff_preamble
+    set preamble [namespace parent]::_ruff_preamble
+    if {![info exist $preamble]} {
+      set preamble [namespace current]::_ruff_preamble
     }
+    puts [string map [list \\\{ \{] [set $preamble]]\n
 }</pre></div>
 </div><br><h4 class='ruffproc'><a name='::trimmer::batchio::underLine'>underLine</a><span class='ns_scope'> [<a href="#::trimmer::batchio" title="::trimmer::batchio" class='ruff_cmd'>::trimmer::batchio</a>]</span><span class='tinylink'><a href='#::trimmer::batchio'>batchio</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -881,7 +921,7 @@ tclsh trim.tcl -i ./lib -o ./bin tclsh ./bin/main.tcl arg1 &quot;arg 2&quot;
 }</pre></div>
 </div></div></div><div class='yui-b navbox'><h1><a href='#::trimmer'>trimmer</a></h1><h2><a href='#::trimmer-Usage'>Usage</a></h2><h2><a href='#::trimmer-Limitations'>Limitations</a></h2><h2><a href='#::trimmer-License'>License</a></h2><h2><a href='#::trimmer-Commands'>Commands</a></h2><h4 class='tooltip'><a href='#::trimmer::countChar'>countChar</a><span class='tooltiptext'>Counts a character in a string.
 </span></h4><h4 class='tooltip'><a href='#::trimmer::trimFile'>trimFile</a><span class='tooltiptext'>Trims an input file and writes a result to an output file.
-</span></h4><h1><a href='#::trimmer::batchio'>trimmer::batchio</a></h1><h2><a href='#::trimmer::batchio-Usage'>Usage</a></h2><h2><a href='#::trimmer::batchio-License'>License</a></h2><h2><a href='#::trimmer::batchio-Commands'>Commands</a></h2><h4 class='tooltip'><a href='#::trimmer::batchio::doFile'>doFile</a><span class='tooltiptext'>Processes an input file, writes a result to an output file.
+</span></h4><h1><a href='#::trimmer::batchio'>trimmer::batchio</a></h1><h2><a href='#::trimmer::batchio-Usage'>Usage</a></h2><h2><a href='#::trimmer::batchio-License'>License</a></h2><h2><a href='#::trimmer::batchio-Commands'>Commands</a></h2><h4 class='tooltip'><a href='#::trimmer::batchio::doFile'>doFile</a><span class='tooltiptext'>Prepares and does a call of procedure to process two files.
 </span></h4><h4 class='tooltip'><a href='#::trimmer::batchio::getInputFilesList'>getInputFilesList</a><span class='tooltiptext'>Gets a list of input files.
 </span></h4><h4 class='tooltip'><a href='#::trimmer::batchio::main'>main</a><span class='tooltiptext'>Main procedure of batchio.
 </span></h4><h4 class='tooltip'><a href='#::trimmer::batchio::onError'>onError</a><span class='tooltiptext'>Shows an error and optionally performs <em>exit</em>.
