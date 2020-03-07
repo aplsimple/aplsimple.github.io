@@ -449,55 +449,49 @@ tclsh trimmed/trim_test.tcl -f -o trimmed
       batchio::onError $e 0
       return
     }
-    set brace -1
-    set nquote [set sbrc [set clines 0]]
+    set brace [set braceST -1]
+    set nquote 0
     while {[gets $chani line] &gt;= 0} {
       if {$nquote} {
-        set ic -1
+        set ic -1  ;# multi-line quoted string
       } else {
-        if {!$sbrc} { ;# find string braced
+        if {$braceST&lt;1} {  ;# check a braced string at some important commands
           foreach cmd {set variable} {
-            if {[set sbrc [regexp &quot;^\\s*$cmd\\s+\\S+\\s+\{&quot; $line]]} {
-              set line [string trimleft $line]
-              puts $chano &quot;&quot;
+            if {[set braceST [regexp &quot;^\\s*$cmd\\s+\\S+\\s+\{&quot; $line]]} {
+              set line &quot;\n[string trimleft $line]&quot;
               set cbrc 0
               break
             }
           }
         }
-        if {$sbrc} {
-          incr cbrc [expr { [trimmer::countChar $line \{] -  [trimmer::countChar $line \}] }]
-          if {$cbrc&lt;=0} { set sbrc 0 }
-          puts $chano $line
-          continue
+        if {$braceST&gt;0} {  ;# check matching left/right braces
+          incr cbrc [expr {[countChar $line \{] - [countChar $line \}]}]
+          if {$cbrc&lt;=0} {
+            set brace [set braceST -1]
+          } else {
+            puts $chano $line
+            continue
+          }
         }
-        set line [string trimleft $line]
-        if {$brace&gt;=0 &amp;&amp; ($line==&quot;&quot; || [string range $line 0 0]==&quot;#&quot;)} continue
-        set ic [string first &quot;;#&quot; $line]
-        if {[trimmer::countChar [string range $line 0 $ic] \&quot;] % 2} {
-          set ic -1  ;# the &quot;;#&quot; occurs in 1st string: don't look at the rest
-        }
+        set line [string trimleft $line &quot; \t&quot;]
+        if {$brace&gt;=0 &amp;&amp; [string index $line 0] in {&quot;&quot; &quot;#&quot;}} continue
+        set ic [string first &quot;;#&quot; $line]   ;# if ;# in string, ignore the rest
+        if {[countChar [string range $line 0 $ic] \&quot;] % 2} { set ic -1 }
       }
-      if {$ic==0} continue
+      if {$ic==0} continue  ;# for comments beginning with &quot;;#&quot;
       if {$ic&gt;0} { set line [string range $line 0 [expr {$ic-1}]] }
       set line [string trimright $line]
       set prevbrace $brace
-      if {$line==&quot;\}&quot;} {set brace 1} {set brace 0}
-      if {$prevbrace!=-1 &amp;&amp; (($prevbrace==1 &amp;&amp; !$brace) ||
-      (!$prevbrace &amp;&amp; !$brace)) } {
-        puts $chano &quot;&quot;
+      set brace [expr {$line eq &quot;\}&quot; ? 1 : 0}]
+      if {($prevbrace==1 || $prevbrace==0) &amp;&amp; !$brace} { puts $chano &quot;&quot; }
+      if {[set _ [expr {[countChar $line \&quot;] % 2}]]} {
+        set nquote [expr {!$nquote}]
       }
-      if {[set nqtmp [expr {[trimmer::countChar $line \&quot;] % 2}]] &amp;&amp; !$nquote} {
-        set nquote 1
-      } elseif {$nqtmp &amp;&amp; $nquote} {
-        set nquote 0
-      }
-      set eos [string range $line end end]
-      if {$eos==&quot;\{&quot;} {
-        set brace 2
-      } elseif {$eos==&quot;\\&quot;} {
-        set brace 2
-        if {$nquote} {
+      if {[set _ [string index $line end]] eq &quot;\{&quot;} {
+        set brace 2           ;# line ending with \{ will join with next line
+      } elseif {$_ eq &quot;\\&quot;} {
+        set brace 2           ;# line ending with \ will join with next line
+        if {$nquote} {        ;# but &quot;\&quot; should be removed
           set line [string range $line 0 end-1]
         } else {
           set line &quot;[string trimright [string range $line 0 end-1]] &quot;
@@ -505,7 +499,7 @@ tclsh trimmed/trim_test.tcl -f -o trimmed
       }
       puts -nonewline $chano $line
     }
-    puts $chano &quot;\n#trimmed&quot;
+    puts $chano &quot;\n#by trimmer&quot;
     close $chani
     close $chano
 }</pre></div>
