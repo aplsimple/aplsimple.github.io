@@ -325,16 +325,19 @@ tclsh trim.tcl [-i idir|ifile] [-o odir] [-r] [-f] [-n] [--] [app args]
 </pre>
 <p class='ruff'>where:</p>
 <table class='ruff_deflist'>
-<tr><td class='ruff_defitem'><code>idir</code></td><td class='ruff_defitem'>a directory of files to process (by default ./)</td></tr>
-<tr><td class='ruff_defitem'><code>ifile</code></td><td class='ruff_defitem'>a file listing .tcl files       (#-comments disregarded)</td></tr>
-<tr><td class='ruff_defitem'><code>odir</code></td><td class='ruff_defitem'>a directory of resulting files  (by default ../release)</td></tr>
+<tr><td class='ruff_defitem'><code>-i idir</code></td><td class='ruff_defitem'>a directory of files to process (by default ./)</td></tr>
+<tr><td class='ruff_defitem'><code>-i ifile</code></td><td class='ruff_defitem'>a file listing .tcl files (#-comments disregarded)</td></tr>
+<tr><td class='ruff_defitem'><code>-o odir</code></td><td class='ruff_defitem'>a directory of resulting files (by default ../release)</td></tr>
 <tr><td class='ruff_defitem'><code>app</code></td><td class='ruff_defitem'>an application to be run after trimming</td></tr>
 <tr><td class='ruff_defitem'><code>args</code></td><td class='ruff_defitem'>optional arguments of <em>app</em></td></tr>
 </table>
-<p class='ruff'>The -i (or --input) can be multiple, -o (or --output) can not.</p>
-<p class='ruff'>If -r (or --recursive) is set, the input directories are processed recursively. By default, they are processed non-recursively.</p>
-<p class='ruff'>If -f (or --force) is set, the existing output file(s) will be rewritten. By default, the trim.tcl doesn't rewrite the existing file(s).</p>
-<p class='ruff'>If -n (or --no) is set, no real changes made, supposed changes shown only.</p>
+<p class='ruff'>The <code>-i</code> (or <code>--input</code>) can be multiple, <code>-o</code> (or <code>--output</code>) can not.</p>
+<p class='ruff'>The command switches mean:</p>
+<ul class='ruff'>
+<li>If <code>-r</code> (or <code>--recursive</code>) is set, the input directories are processed recursively. By default, they are processed non-recursively.</li>
+<li>If <code>-f</code> (or <code>--force</code>) is set, the existing output file(s) will be rewritten. By default, the <em>trim.tcl</em> doesn't rewrite the existing file(s).</li>
+<li>If <code>-n</code> (or <code>--no</code>) is set, no real changes made, supposed changes shown only.</li>
+</ul>
 <p class='ruff'>The <em>trim.tcl</em> by no means changes the input file(s).</p>
 <p class='ruff'>Example:</p>
 <pre class='ruff'>
@@ -345,12 +348,18 @@ tclsh trim.tcl -i ./lib -o ./bin tclsh -f ./bin/main.tcl arg1 &quot;arg 2&quot;
 <p class='ruff'>The <em>trim.tcl</em> sets the following limitations for the code processed:</p>
 <p class='ruff'><strong>1.</strong> In general, multi-line strings should be double-quoted (not braced), because the braced strings would be trimmed. But there are two important exceptions: when <em>set</em> and <em>variable</em> commands use a braced string, it is not trimmed, e.g.</p>
 <pre class='ruff'>
+set str1 &quot;
+   Correct&quot;       ;# equals to set str1 &quot;\n   Correct&quot;
 set str1 {
-   Correct}       ;# equals to set str1 &quot;\n    Correct&quot;
+   Correct}       ;# equals to set str1 &quot;\n   Correct&quot;
+variable str2 &quot;
+   Correct&quot;       ;# equals to variable str2 &quot;\n   Correct&quot;
 variable str2 {
-   Correct}       ;# equals to variable str2 &quot;\n    Correct&quot;
+   Correct}       ;# equals to variable str2 &quot;\n   Correct&quot;
+puts &quot;
+   Correct&quot;       ;# equals to puts &quot;\n   Correct&quot;
 puts {
-    Not correct}  ;# equals to puts &quot;Not correct&quot;
+    NOT CORRECT}  ;# equals to puts &quot;NOT CORRECT&quot;
 </pre>
 <p class='ruff'><strong>2.</strong> Comments after &quot;{&quot; should begin with &quot;;#&quot;, e.g.</p>
 <pre class='ruff'>
@@ -515,16 +524,19 @@ tclsh script.tcl [-i idir|ifile] [-o odir] [-r] [-f] [-n] [--] [app args]
 <p class='ruff'><em>script.tcl</em> is a Tcl script sourcing <em>batchio.tcl</em> to call its 'main' proc</p>
 <p class='ruff'>arguments are:</p>
 <table class='ruff_deflist'>
-<tr><td class='ruff_defitem'><code>idir</code></td><td class='ruff_defitem'>a directory of files to process (by default ./)</td></tr>
-<tr><td class='ruff_defitem'><code>ifile</code></td><td class='ruff_defitem'>a file listing .tcl files       (#-comments disregarded)</td></tr>
-<tr><td class='ruff_defitem'><code>odir</code></td><td class='ruff_defitem'>a directory of resulting files  (by default ../release)</td></tr>
+<tr><td class='ruff_defitem'><code>-i idir</code></td><td class='ruff_defitem'>a directory of files to process (by default ./)</td></tr>
+<tr><td class='ruff_defitem'><code>-i ifile</code></td><td class='ruff_defitem'>a file listing .tcl files (#-comments disregarded)</td></tr>
+<tr><td class='ruff_defitem'><code>-o odir</code></td><td class='ruff_defitem'>a directory of resulting files (by default ../release)</td></tr>
 <tr><td class='ruff_defitem'><code>app</code></td><td class='ruff_defitem'>an application to be run after trimming</td></tr>
 <tr><td class='ruff_defitem'><code>args</code></td><td class='ruff_defitem'>optional arguments of <em>app</em></td></tr>
 </table>
-<p class='ruff'>The -i (or --input) can be multiple, -o (or --output) can not.</p>
-<p class='ruff'>If -r (or --recursive) is set, the input directories are processed recursively. By default, they are processed non-recursively.</p>
-<p class='ruff'>If -f (or --force) is set, the existing output file(s) will be rewritten. By default, the script.tcl doesn't rewrite the existing file(s).</p>
-<p class='ruff'>If -n (or --no) is set, no real changes made, supposed changes shown only.</p>
+<p class='ruff'>The <code>-i</code> (or <code>--input</code>) can be multiple, <code>-o</code> (or <code>--output</code>) can not.</p>
+<p class='ruff'>The command switches mean:</p>
+<ul class='ruff'>
+<li>If <code>-r</code> (or <code>--recursive</code>) is set, the input directories are processed recursively. By default, they are processed non-recursively.</li>
+<li>If <code>-f</code> (or <code>--force</code>) is set, the existing output file(s) will be rewritten. By default, the <em>trim.tcl</em> doesn't rewrite the existing file(s).</li>
+<li>If <code>-n</code> (or <code>--no</code>) is set, no real changes made, supposed changes shown only.</li>
+</ul>
 <p class='ruff'>Example:</p>
 <pre class='ruff'>
 tclsh trim.tcl -i ./lib -o ./bin tclsh -f ./bin/main.tcl arg1 &quot;arg 2&quot;
