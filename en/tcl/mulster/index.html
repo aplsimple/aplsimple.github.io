@@ -98,25 +98,32 @@ where
 <li class="level1"><div class="li"> <code>-infile input-file-name</code> means 
  a name of input file to be processed;</div></li>
 <li class="level1"><div class="li"> <code>-outfile output-file-name</code> means a name of output file; if <code>-outfile</code> is omitted, <code>output-file-name</code> equals to <code>input-file-name</code>;</div></li>
-<li class="level1"><div class="li"> <code>-exact 1</code> means that IN-lines should be matched exactly, with all their leading/tailing spaces as specified in <em>IN=BEGIN</em> blocks; by default the lines are trimmed at finding their matches;</div></li>
 <li class="level1"><div class="li"><code>-backup BAK</code> means that the original input files are backed up into the <em>BAK</em> directory;</div></li>
 <li class="level1"><div class="li"><code>-backup 0</code> means that the original input files are not backed up;</div></li>
 <li class="level1"><div class="li"><code>-keep 1</code> means that input files' attributes/times will be saved in output files; by default they are not kept;</div></li>
-<li class="level1"><div class="li"><code>-single 1</code> means standard 'one string for one string' replacements;</div></li>
 <li class="level1"><div class="li"><code>-charset charset</code> sets a charset of input files, e.g. cp1251;</div></li>
 <li class="level1"><div class="li"><code>-lineend lineend</code> sets a line ending of input files, e.g. \r\n (by default, \n);</div></li>
+<li class="level1"><div class="li"><code>-single 1</code> means standard 'one string for one string' replacements;</div></li>
+<li class="level1"><div class="li"> <code>-mode</code> means the mode of matching:</div>
+<ul>
+<li class="level1"><div class="li"><code>-mode 0</code> (or <code>exact0</code> or <code>EXACT0</code>) to match exact, without leading/tailing spaces</div></li>
+<li class="level1"><div class="li"><code>-mode 1</code> (or <code>exact</code> or <code>EXACT</code>), default, to match exact, with all their leading/tailing spaces</div></li>
+<li class="level1"><div class="li"><code>-mode 2</code> (or <code>glob</code> or <code>GLOB</code>) to match glob pattern</div></li>
+<li class="level1"><div class="li"><code>-mode 3</code> (or <code>regexp</code> or <code>re</code> or <code>REGEXP</code> or <code>RE</code>) to match regexp pattern</div></li>
+</ul>
+</li>
 <li class="level1"><div class="li"><code>--</code> switches options off (for <em>fileini</em>).</div></li>
 </ul>
-The <em>-infile, -outfile, -exact, -backup, -keep, -single, -charset</em> and <em>-lineend</em> options can be redefined in <em>fileini</em>, e.g.
+The <em>-infile, -outfile, -mode, -backup, -keep, -single, -charset</em> and <em>-lineend</em> options can be redefined in <em>fileini</em>, e.g.
 <pre class="code">...
 BACKUP=BAK/new backup dir
-EXACT=1
 KEEP=1
 CHARSET=cp1251
 LINEEND=\r\n
 INFILE=input file2 name
 OUTFILE=output file2 name
 SINGLE=1
+MODE=re
 ...</pre>
 so that these options can be individual for any file(s).
 </p>
@@ -147,13 +154,13 @@ OUT=END
 ...
 
 BACKUP=new backup dir
-EXACT=1
 KEEP=1
 CHARSET=charset
 LINEEND=line ending
 INFILE=input file2 name
 OUTFILE=output file2 name
 SINGLE=1
+MODE=regexp
 ...</pre>
 
 </p>
@@ -192,17 +199,17 @@ IN=BEGIN(1,1)   - first match only
 IN=BEGIN(0,0)   - all matches; the same as IN=BEGIN</pre>
 </p>
 <p>
-All strings outside of <em>INFILE=, OUTFILE=, IN=BEGIN through IN=END, OUT=BEGIN through OUT=END, BACKUP=, EXACT=, KEEP=, CHARSET=, LINEEND=, SINGLE=</em> are ignored (being sort of comments).
+All strings outside of <em>INFILE=, OUTFILE=, IN=BEGIN through IN=END, OUT=BEGIN through OUT=END, BACKUP=, KEEP=, CHARSET=, LINEEND=, SINGLE=, MODE=</em> are ignored (being sort of comments).
 </p>
 <p>
-<b>Note</b>: if the <a href="#" class="wikilink1" title="Table of Contents">mulster</a></span> comes across <em>BACKUP=, EXACT=, KEEP=, CHARSET=, LINEEND=</em> or <em>INFILE=</em> option in <em>fileini</em>, it flushes all collected changes to the current output file and begins a new collection of changes for a new input/output. The SINGLE= option operates for the next IN=, OUT= blocks.
+<b>Note</b>: if the <a href="#" class="wikilink1" title="Table of Contents">mulster</a></span> comes across <em>BACKUP=, KEEP=, CHARSET=, LINEEND=</em> or <em>INFILE=</em> option in <em>fileini</em>, it flushes all collected changes to the current output file and begins a new collection of changes for a new input/output. The SINGLE= and MODE= options operate for the next IN=, OUT= blocks.
 </p>
 <p>
 So, the order of options is important:
 <ol>
-<li class="level1"><div class="li"><em>BACKUP=, EXACT=, KEEP=, CHARSET=, LINEEND=</em> go first if they are set at all</div></li>
+<li class="level1"><div class="li"><em>BACKUP=, KEEP=, CHARSET=, LINEEND=</em> go first if they are set at all</div></li>
 <li class="level1"><div class="li"><em>INFILE=</em> and <em>OUTFILE=</em> go next</div></li>
-<li class="level1"><div class="li"><em>SINGLE=</em> go next if any (defined for the following IN=,OUT= blocks)</div></li>
+<li class="level1"><div class="li"><em>SINGLE=</em> and <em>MODE=</em> go next if any (defined for the following IN=,OUT= blocks)</div></li>
 <li class="level1"><div class="li"><em>IN=BEGIN</em> and <em>IN=END</em> go next</div></li>
 <li class="level1"><div class="li"><em>OUT=BEGIN</em> and <em>OUT=END</em> go next</div></li>
 <li class="level1"><div class="li">(3) through (5) can be repeated</div></li>
@@ -256,9 +263,9 @@ proc3 $a $b $a2 $b2  ;# <=====REPLACED</pre>
 
 Examples of calling:
 <pre class="code">tclsh mulster.tcl mulster1_ini
-tclsh mulster.tcl -exact 1 mulster2_ini
+tclsh mulster.tcl -mode 0 mulster2_ini
 tclsh mulster.tcl -backup ~/BAK mulster3_ini
-tclsh mulster.tcl -exact 1 -backup 0 -keep 0 mulster4_ini</pre>
+tclsh mulster.tcl -mode glob -backup 0 -keep 0 mulster4_ini</pre>
 </p>
 <p>
 While using the <em>-backup 0</em> option, please be careful. This mode is well suitable when:
@@ -323,13 +330,14 @@ The <a href="https://chiselapp.com/user/aplsimple/repository/mulster/download" t
 A little talk about using the <em>mulster.tcl</em>. It's implemented as <em>oo::class</em> and has two useful methods declared as:
 </p>
 <p>
-<pre class="code">1) method mulster {fileini {exact 0} {backup BAK} {keep 0} {single 0} {charset ""} {lineend ""}}
+<pre class="code">1) method mulster {fileini {mode 1} {backup BAK} {keep 0} {single 0} {charset ""} {lineend ""}}
 
   where:
     'fileini' is a file name for options
-    'exact' equals to:
-       0 - matches of trimmed lines are allowed
-       1 - only exact matches are allowed
+    'mode' = 0 (exact0 / EXACT0) to match exact, without leading/tailing spaces
+    'mode' = 1 (exact / EXACT) to match exact, with all their leading/tailing spaces
+    'mode' = 2 (glob / GLOB) to match glob pattern
+    'mode' = 3 (regexp / re / REGEXP / RE) to match regexp pattern
     'backup' equals to:
        0     - no input files' backuping
        "dir" - backuping to "dir" directory
@@ -340,13 +348,13 @@ A little talk about using the <em>mulster.tcl</em>. It's implemented as <em>oo::
 
   This method performs the above described operations.
 
-2) method mulster1 {lcont lin lout {r1 0} {r2 0} {exact 1} {single 0} {charset ""} {lineend ""}}
+2) method mulster1 {lcont lin lout {r1 0} {r2 0} {mode 1} {single 0}}
 
   This method performs in-memory replacements in a list ('lcont')
   according to a list of input lines ('lin') and a list of output
   lines ('lout'), in a range of replacements set with 'r1' and 'r2'.
-  The 'exact', 'single', 'charset', 'lineend' are the same as described
-  for 'mulster' method above.</pre>
+  The range is described in IN=BEGIN(r1,r2) above. The 'mode' and
+  'single' are described in mulster method above.</pre>
 </p>
 <p>
 <br>
@@ -401,6 +409,10 @@ The links about and around <span class="curid"><a href="#" class="wikilink1" tit
 href="https://www.geany.org" title="Geany IDE">Geany IDE</a> </div></li>
 <li class="level1"><div class="li"><a 
 href="../../../en/tcl/e_menu/index.html#detailed_geany" title="how to mulster Geany">mulstering Geany</a> </div></li>
+</ul>
+
+<ul>
+<li class="level1"><div class="li"><a href="../trimmer/trimmer.html" title="trimmer.html">trimmer.html</a>, a page generated by <a href="https://ruff.magicsplat.com">Ruff!</a> and then mulstered</div></li>
 </ul>
 
 </div>
