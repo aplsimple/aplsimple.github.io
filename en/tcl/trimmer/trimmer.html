@@ -472,7 +472,7 @@ tclsh trimmed/trim_test.tcl -f -o trimmed
           }
         }
         if {$braceST&gt;0} {  ;# check matching left/right braces
-          incr cbrc [expr {[countCh $line &quot;\{&quot;] - [countCh $line &quot;\}&quot;]}]
+          incr cbrc [ expr {[countCh $line &quot;\{&quot;] - [countCh $line &quot;\}&quot;]} ]
           if {$cbrc&lt;=0} {
             set brace [set braceST -1]
           } else {
@@ -481,7 +481,7 @@ tclsh trimmed/trim_test.tcl -f -o trimmed
           }
         }
         if {[regexp &quot;^\\s*;*#&quot; $line] || $ccmnt} {
-          set cc [expr {[string index $line end] eq &quot;\\&quot;}]
+          set cc [ expr {[string index $line end] eq &quot;\\&quot;} ]
           if {($ccmnt || $cc) &amp;&amp; $brace&lt;-1} { puts $chano $line }
           set ccmnt $cc  ;# comments continued
           continue
@@ -489,19 +489,25 @@ tclsh trimmed/trim_test.tcl -f -o trimmed
         set line [string trimleft $line &quot;\t\ &quot;]
         if {$line eq &quot;&quot;} continue
         foreach s [regexp -all -inline -indices &quot;;#&quot; $line] {
-          if {![countCh [string range $line 0 [set _ [lindex $s 0]]] &quot;\&quot;&quot;]%2} {
-            set ic $_   ;# if &quot;;#&quot; not in string, it begins a comment
-            break
+          if {[countCh  [set _ [string range $line 0 [lindex $s 0]-1]]  &quot;\&quot;&quot;] % 2 == 0} { ;# example of continued command
+            set ccmnt [ expr {[string index $line end] eq &quot;\\&quot;} ]
+            set line [ string trimright $_ ]
+            break   ;# the ending &quot;;#&quot; is a comment
           }
+        }
+        if {$ccmnt} {
+          set brace [set braceST -1]
+          puts $chano &quot;\n$line&quot;  ;# the ending &quot;;#&quot; is a comment continued  (example of continued comment)  (end of example)
+          continue
         }
       }
       if {$ic==0} continue  ;# for comments beginning with &quot;;#&quot;
       if {$ic&gt;0} { set line [string range $line 0 $ic-1] }
       set line [string trimright $line]
       set prevbrace $brace
-      set brace [expr {$line eq &quot;\}&quot; ? 1 : 0}]
+      set brace [ expr {$line eq &quot;\}&quot; ? 1 : 0} ]
       if {$prevbrace in {1 0} &amp;&amp; !$brace} { puts $chano &quot;&quot; }
-      if {[countCh $line &quot;\&quot;&quot;]%2} { set quoted [expr {!$quoted}] }
+      if {[countCh $line &quot;\&quot;&quot;]%2} { set quoted [ expr {!$quoted} ] }
       if {[set _ [string index $line end]] eq &quot;\{&quot;} {
         set brace 2           ;# line ending with \{ will join with next line
       } elseif {$_ eq &quot;\\&quot;} {
