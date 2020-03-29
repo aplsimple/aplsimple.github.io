@@ -88,33 +88,45 @@ It would be useful when you need:
 
 <p>
 The <a href="#" class="wikilink1" title="Table of Contents">mulster</a> is called this way:
-<pre class="code">tclsh mulster.tcl ?options? fileini</pre>
+<pre class="code">tclsh mulster.tcl [options] fileini</pre>
 </p>
 <p>
 where
 <br><br> <em>fileini</em> is a name of file containing settings for replacements
-<br><br> <em>options</em> are:
+<br><br> <code>options</code> are:
 <ul>
 <li class="level1"><div class="li"> <code>-infile input-file-name</code> means 
  a name of input file to be processed;</div></li>
 <li class="level1"><div class="li"> <code>-outfile output-file-name</code> means a name of output file; if <code>-outfile</code> is omitted, <code>output-file-name</code> equals to <code>input-file-name</code>;</div></li>
-<li class="level1"><div class="li"><code>-backup BAK</code> means that the original input files are backed up into the <em>BAK</em> directory;</div></li>
-<li class="level1"><div class="li"><code>-backup 0</code> means that the original input files are not backed up;</div></li>
+<li class="level1"><div class="li"><code>-backup BAK</code> means the original input files to be backed up to the <code>BAK</code> directory (which is default behavior);</div></li>
+<li class="level1"><div class="li"><code>-backup 0</code> means the original input files to be not backed up;</div></li>
 <li class="level1"><div class="li"><code>-keep 1</code> means that input files' attributes/times will be saved in output files; by default they are not kept;</div></li>
 <li class="level1"><div class="li"><code>-charset charset</code> sets a charset of input files, e.g. cp1251;</div></li>
 <li class="level1"><div class="li"><code>-lineend lineend</code> sets a line ending of input files, e.g. \r\n (by default, \n);</div></li>
 <li class="level1"><div class="li"><code>-single 1</code> means standard 'one string for one string' replacements;</div></li>
-<li class="level1"><div class="li"> <code>-mode</code> means the mode of matching:</div>
+<li class="level1"><div class="li"> <code>-mode</code> means the mode of matching input against output strings:</div>
 <ul>
 <li class="level1"><div class="li"><code>-mode 0</code> (or <code>exact0</code> or <code>EXACT0</code>) to match exact, without leading/tailing spaces</div></li>
 <li class="level1"><div class="li"><code>-mode 1</code> (or <code>exact</code> or <code>EXACT</code>), default, to match exact, with all their leading/tailing spaces</div></li>
 <li class="level1"><div class="li"><code>-mode 2</code> (or <code>glob</code> or <code>GLOB</code>) to match glob pattern</div></li>
-<li class="level1"><div class="li"><code>-mode 3</code> (or <code>regexp</code> or <code>re</code> or <code>REGEXP</code> or <code>RE</code>) to match regexp pattern</div></li>
+
+<li class="level1"><div class="li"><code>-mode 3</code> (<code>regexp, re, REGEXP, RE</code>) to match regexp pattern</div></li>
+
+<li class="level1"><div class="li"><code>-mode regexp--</code> to match regexp pattern and call <code>regsub</code></div></li>
+
+<li class="level1"><div class="li"><code>-mode regexp-all</code> to match regexp pattern and call <code>regsub -all</code></div></li>
+
+<li class="level1"><div class="li"><code>-mode regexp-nocase</code> to match regexp pattern and call <code>regsub -nocase</code></div></li>
+
+<li class="level1"><div class="li"><code>-mode regexp-expanded</code> to match regexp pattern and call <code>regsub -expanded</code></div></li>
+
+<li class="level1"><div class="li"><code>-mode regexp</code> can be combined, e.g. <code>-mode regexp-all-nocase</code></div></li>
+
 </ul>
 </li>
 <li class="level1"><div class="li"><code>--</code> switches options off (for <em>fileini</em>).</div></li>
 </ul>
-The <em>-infile, -outfile, -mode, -backup, -keep, -single, -charset</em> and <em>-lineend</em> options can be redefined in <em>fileini</em>, e.g.
+The <code>-infile, -outfile, -mode, -backup, -keep, -single, -charset</code> and <code>-lineend</code> options can be redefined in <code>fileini</code>, e.g.
 <pre class="code">...
 BACKUP=BAK/new backup dir
 KEEP=1
@@ -157,19 +169,21 @@ BACKUP=new backup dir
 KEEP=1
 CHARSET=charset
 LINEEND=line ending
+
 INFILE=input file2 name
 OUTFILE=output file2 name
+
 SINGLE=1
 MODE=regexp
 ...</pre>
 
 </p>
 <p>
-The <em>INFILE=</em> and <em>OUTFILE=</em> set the names of input and output files.
+The <code>INFILE=</code> and <code>OUTFILE=</code> set the names of input and output files.
 </p>
 <p>
-The names can be glob patterns, but <em>OUTFILE=</em> can contain only "*"
-that would be replaced with an appropriate <em>INFILE=</em> file name, e.g.:
+The <code>INFILE=</code> names can be glob patterns, but <code>OUTFILE=</code> can contain only "*"
+that would be replaced with an appropriate <code>INFILE=</code> file name, e.g.:
 </p>
 <p>
 <pre class="code">
@@ -178,20 +192,20 @@ OUTFILE=~/DOCS/HTML/GENERATED/gen_*.html
 </pre>
 </p>
 <p>
-so that the input <code>~/DOCS/HTML/name1.html</code> would result in the output
-<code>~/DOCS/HTML/GENERATED/gen_name1.html</code>.
+so that the input <em>~/DOCS/HTML/name1.html</em> would result in the output
+<em>~/DOCS/HTML/GENERATED/gen_name1.html</em>.
 </p>
 <p>
-If <em>INFILE=</em> and <em>OUTFILE=</em> are glob patterns, the <em>INFILE=</em> directories are scanned recursively for files matching the input pattern. All output files would be created in appropriate subdirectories of <em>OUTFILE=</em> root directory.
+If <code>INFILE=</code> and <code>OUTFILE=</code> are glob patterns, the <code>INFILE=</code> directories are scanned recursively for files matching the input pattern. All output files would be created in appropriate subdirectories of <code>OUTFILE=</code> root directory.
 </p>
 <p>
 If <em>input file name</em> is equal to <em>output file name</em>, all modifications are performed on the same file.
 </p>
 <p>
-All strings between current <em>IN=BEGIN</em> and <em>IN=END</em> are replaced with strings between next <em>OUT=BEGIN</em> and <em>OUT=END</em>. The sequence of <em>INFILE=, OUTFILE=, IN=, OUT=</em> is set for each processed file.
+All strings between current <code>IN=BEGIN</code> and <code>IN=END</code> are replaced with strings between next <code>OUT=BEGIN</code> and <code>OUT=END</code>. The sequence of <code>INFILE=, OUTFILE=, IN=, OUT=</code> is set for each processed file.
 </p>
 <p>
-The <em>IN=BEGIN(r1,r2)</em> form means that a range of found matches should be processed as follows:
+The <code>IN=BEGIN(r1,r2)</code> form means that a range of found matches should be processed as follows:
 <pre class="code">IN=BEGIN(r1,r2) - r1-th match through r2-th one
 IN=BEGIN(r1,0)  - r1-th match through the last one
 IN=BEGIN(0,r2)  - the same as IN=BEGIN(1,r2)
@@ -199,19 +213,19 @@ IN=BEGIN(1,1)   - first match only
 IN=BEGIN(0,0)   - all matches; the same as IN=BEGIN</pre>
 </p>
 <p>
-All strings outside of <em>INFILE=, OUTFILE=, IN=BEGIN through IN=END, OUT=BEGIN through OUT=END, BACKUP=, KEEP=, CHARSET=, LINEEND=, SINGLE=, MODE=</em> are ignored (being sort of comments).
+All strings outside of <code>INFILE=, OUTFILE=, IN=BEGIN through IN=END, OUT=BEGIN through OUT=END, BACKUP=, KEEP=, CHARSET=, LINEEND=, SINGLE=, MODE=</code> are ignored (being sort of comments).
 </p>
 <p>
-<b>Note</b>: if the <a href="#" class="wikilink1" title="Table of Contents">mulster</a> comes across <em>BACKUP=, KEEP=, CHARSET=, LINEEND=</em> or <em>INFILE=</em> option in <em>fileini</em>, it flushes all collected changes to the current output file and begins a new collection of changes for a new input/output. The SINGLE= and MODE= options operate for the next IN=, OUT= blocks.
+<b>Note</b>: if the <a href="#" class="wikilink1" title="Table of Contents">mulster</a> comes across <code>BACKUP=, KEEP=, CHARSET=, LINEEND=</code> or <code>INFILE=</code> option in <em>fileini</em>, it flushes all collected changes to the current output file and begins a new collection of changes for a new input/output. The SINGLE= and MODE= options operate for the next IN=, OUT= blocks.
 </p>
 <p>
 So, the order of options is important:
 <ol>
-<li class="level1"><div class="li"><em>BACKUP=, KEEP=, CHARSET=, LINEEND=</em> go first if they are set at all</div></li>
-<li class="level1"><div class="li"><em>INFILE=</em> and <em>OUTFILE=</em> go next</div></li>
-<li class="level1"><div class="li"><em>SINGLE=</em> and <em>MODE=</em> go next if any (defined for the following IN=,OUT= blocks)</div></li>
-<li class="level1"><div class="li"><em>IN=BEGIN</em> and <em>IN=END</em> go next</div></li>
-<li class="level1"><div class="li"><em>OUT=BEGIN</em> and <em>OUT=END</em> go next</div></li>
+<li class="level1"><div class="li"><code>BACKUP=, KEEP=, CHARSET=, LINEEND=</code> go first if any</div></li>
+<li class="level1"><div class="li"><code>INFILE=</code> and <code>OUTFILE=</code> go next</div></li>
+<li class="level1"><div class="li"><code>SINGLE=</code> and <code>MODE=</code> go next if any (defined for the following IN=,OUT= blocks)</div></li>
+<li class="level1"><div class="li"><code>IN=BEGIN</code> and <code>IN=END</code> go next</div></li>
+<li class="level1"><div class="li"><code>OUT=BEGIN</code> and <code>OUT=END</code> go next</div></li>
 <li class="level1"><div class="li">(3) through (5) can be repeated</div></li>
 <li class="level1"><div class="li">(1) through (6) can be repeated</div></li>
 </ol>
@@ -268,7 +282,7 @@ tclsh mulster.tcl -backup ~/BAK mulster3_ini
 tclsh mulster.tcl -mode glob -backup 0 -keep 0 mulster4_ini</pre>
 </p>
 <p>
-While using the <em>-backup 0</em> option, please be careful. This mode is well suitable when:
+While using the <code>-backup 0</code> option, please be careful. This mode is well suitable when:
 <ul>
 <li class="level1"><div class="li"> all your input files are not the same as output files;</div></li>
 <li class="level1"><div class="li"> you've made a backup beforehand;</div></li>
@@ -278,6 +292,13 @@ Otherwise you would take risks of data loss.
 </p>
 <p>
 The <a href="#" class="wikilink1" title="Table of Contents">mulster</a> prints out a log of replacements made (as well as made not).
+</p>
+<p>
+The #-comments of <em>fileini</em> are printed as well. It's good for debugging.
+</p>
+<p>
+Also in <em>fileini</em>, you can set <code>MODE=debug</code> to print the current modes. Use <code>MODE=exit</code> to stop the processing.
+</p>
 
 <p>
 <br>
@@ -309,10 +330,10 @@ Nearly the same thing has repeated with <a href="https://sourceforge.net/p/tke" 
 These pull/push transactions and accompanying mulsterings are made with one click in a TKE plugin. I need only supervising a short log.
 </p>
 <p>
-There is a whole class of <a href="#" class="wikilink1" title="Table of Contents">mulster</a> use cases, namely using it for a fine tuning of generated documents. This way, e.g., <a href="../trimmer/trimmer.html" title="trimmer.html" rel="nofollow">trimmer.html</a> had been created initially by <a href="https://ruff.magicsplat.com" title="trimmer.html" rel="nofollow">Ruff!</a> documentation generator to be processed by <a href="#" class="wikilink1" title="Table of Contents">mulster</a> afterwards.
+There is a whole class of <a href="#" class="wikilink1" title="Table of Contents">mulster</a> use cases, namely using it for a fine tuning of generated documents. This way, e.g., <a href="../trimmer/trimmer.html" title="trimmer.html" rel="nofollow">trimmer.html</a> and <a href="mulster.html" title="mulster.html">mulster.html</a> had been created initially by <a href="https://ruff.magicsplat.com" title="trimmer.html" rel="nofollow">Ruff!</a> documentation generator to be processed by <a href="#" class="wikilink1" title="Table of Contents">mulster</a> afterwards.
 </p>
 <p>
-The <a href="https://chiselapp.com/user/aplsimple/repository/mulster/download" title="mulster.zip" rel="nofollow">mulster.zip</a> archive contains <em>fileini</em> files (<em>tasks/mulster-geany, tasks/mulster-tke, tasks/mulster-ruff</em>) to make the appropriate changes in Geany, TKE and trimmer.html.
+The <a href="https://chiselapp.com/user/aplsimple/repository/mulster/download" title="mulster.zip" rel="nofollow">mulster.zip</a> archive contains <em>fileini</em> files (<em>tasks/mulster-geany, tasks/mulster-tke, tasks/mulster-ruff</em>) to make the appropriate changes in Geany, TKE and generated html documents.
 </p>
 
 <p>
@@ -327,34 +348,8 @@ The <a href="https://chiselapp.com/user/aplsimple/repository/mulster/download" t
 
 </p>
 <p>
-A little talk about using the <a href="#" class="wikilink1" title="Table of Contents">mulster</a>. It's implemented as <em>oo::class</em> and has two useful methods declared as:
-</p>
-<p>
-<pre class="code">1) method mulster {fileini {mode 1} {backup BAK} {keep 0} {single 0} {charset ""} {lineend ""}}
-
-  where:
-    'fileini' is a file name for options
-    'mode' = 0 (exact0 / EXACT0) to match exact, without leading/tailing spaces
-    'mode' = 1 (exact / EXACT) to match exact, with all their leading/tailing spaces
-    'mode' = 2 (glob / GLOB) to match glob pattern
-    'mode' = 3 (regexp / re / REGEXP / RE) to match regexp pattern
-    'backup' equals to:
-       0     - no input files' backuping
-       "dir" - backuping to "dir" directory
-    'keep' if 1, keeps input files' attributes/times in output files
-    'single' if 1, standard 'one string for one string' replacements
-    'charset' sets a charset of input files (e.g. cp1251)
-    'lineend' sets a line ending of input files (e.g. \r\n)
-
-  This method performs the above described operations.
-
-2) method mulster1 {lcont lin lout {r1 0} {r2 0} {mode 1} {single 0}}
-
-  This method performs in-memory replacements in a list ('lcont')
-  according to a list of input lines ('lin') and a list of output
-  lines ('lout'), in a range of replacements set with 'r1' and 'r2'.
-  The range is described in IN=BEGIN(r1,r2) above. The 'mode' and
-  'single' are described in mulster method above.</pre>
+The source of the mulster utility is described at <a href="mulster.html" title="Description of mulster's source">mulster.html</a> generated by <a 
+href="https://ruff.magicsplat.com">Ruff!</a> &amp; <a href="https://chiselapp.com/user/aplsimple/repository/mulster/download" title="mulster.zip" rel="nofollow">mulster</a>.
 </p>
 <p>
 <br>
@@ -368,8 +363,7 @@ A little talk about using the <a href="#" class="wikilink1" title="Table of Cont
 <div class="level2">
 
 <p>
-<span class="curid"><a href="#" class="wikilink1" title="Table of 
-Contents">mulster</a></span> stuff is available here:
+The source of the mulster utility is available here:
 </p>
 
 <ul>
