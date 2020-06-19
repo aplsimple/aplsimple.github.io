@@ -38,7 +38,7 @@
 <li class="level3"><div class="li"><a href="#use_Pave">APave Object</a></div></li>
 <li class="level3"><div class="li"><a href="#WidList">Widget List</a></div></li>
 <li class="level3"><div class="li"><a href="#WidNames">Widget Names</a></div></li>
-<li class="level3"><div class="li"><a href="#WidAttrs">Widget Attributes</a></div></li>
+<li class="level3"><div class="li"><a href="#WidAttrs">Mega-Attributes</a></div></li>
 <li class="level3"><div class="li"><a href="#MegaWid">Mega-Widgets</a></div>
 <ul>
 <li class="level4"><div class="li"><a href="#filWid">File picker</a></div>
@@ -54,10 +54,12 @@
 <li class="level4"><div class="li"><a href="#flbWid">File listbox</a></div>
 <li class="level4"><div class="li"><a href="#ftxWid">File viewer/editor</a></div>
 <li class="level4"><div class="li"><a href="#opcWid">Option cascade</a></div>
+<li class="level4"><div class="li"><a href="#emWid">e_menu</a></div>
 </ul>
 </li>
 <li class="level3"><div class="li"><a href="#OptAbbr">Option Abbreviations</a></div></li>
 <li class="level3"><div class="li"><a href="#methods_Pave">Methods</a></div></li>
+<li class="level3"><div class="li"><a href="#theming_Pave">Theming</a></div></li>
 <li class="level3"><div class="li"><a href="#examples_Pave">More Examples</a></div></li>
 </ul>
 </li>
@@ -93,12 +95,16 @@ The <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">
 <ul>
 <li class="level2"><div class="li">joining the power of <span class="curid"><a href="http://tcl.tk/man/tcl8.7/TkCmd/grid.htm" class="wikilink1" title="grid GM">grid</a></span> and <span class="curid"><a href="http://tcl.tk/man/tcl8.7/TkCmd/pack.htm" class="wikilink1" title="pack GM">pack</a></span>
 </div></li>
-<li class="level2"><div class="li">uniting the creation of widgets with their layout (and mostly their configuration)
+<li class="level2"><div class="li">uniting a creation of widgets with their layout (and mostly their configuration)
 </div></li>
 <li class="level2"><div class="li">minimizing a coder's efforts at creating / modifying / removing widgets
 <li class="level2"><div class="li">setting a natural tab order of widgets
 </div></li>
 <li class="level2"><div class="li">theming both ttk and non-ttk widgets
+</div></li>
+<li class="level2"><div class="li">centralizing things like icons or popup menus
+</div></li>
+<li class="level2"><div class="li">providing 'mega-attributes', right up to the user-defined ones
 </div></li>
 <li class="level2"><div class="li">providing 'mega-widgets'
 </div></li>
@@ -117,7 +123,7 @@ While <em>APave oo::class</em> allows to layout highly sophisticated windows, yo
 <ul>
 <li class="level2"><div class="li"> to call a variety of dialogs, optionally using a "Don't show again" checkbox and a tagged text
 </div></li>
-<li class="level2"><div class="li"> to use a variety of widgets in dialogs, with entry, text (incl. <a href=#specpaveAttr>readonly</a> and <a href="#ftxWid2">stand-alone</a>), combobox (incl. <a href="#fcoWid">file content</a>), spinbox, listbox, file listbox, option cascade, checkbutton, radiobutton and label (incl. title).
+<li class="level2"><div class="li"> to use a variety of widgets in dialogs, with entry, text (incl. <a href=#specpaveAttr>readonly</a> and <a href="#ftxWid2">stand-alone</a>), combobox (incl. <a href="#fcoWid">file content</a>), spinbox, listbox, file listbox, tablelist, option cascade, checkbutton, radiobutton and label (incl. title label).
 </div></li>
 <li class="level2"><div class="li"> to resize windows neatly (however strange, not done in Tk standard dialogs)
 </div></li>
@@ -125,7 +131,7 @@ While <em>APave oo::class</em> allows to layout highly sophisticated windows, yo
 </ul>
 
 </p>
-<p>The theming facility of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">apave</a></span> is enabled by <em>ObjectTheming oo::class</em> which embraces both ttk and non-ttk widgets, as seen on <A href="https://github.com/aplsimple/aplsimple.github.io/releases/download/demo_apave_v2.8/test2pave-28.mp4">Demo (20.3 Mb)</A>.
+<p>The theming facility of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">apave</a></span> is enabled by <em>ObjectTheming oo::class</em> which embraces both ttk and non-ttk widgets, as seen on <A href="https://github.com/aplsimple/aplsimple.github.io/releases/download/demo_apave_v2.9.2/test2pave-292.mp4">Demo (31 Mb)</A>.
 </p>
 <p>
 Along with <a href=#WidNames>standard widgets</a>, the mentioned <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">apave</a></span> classes provide a batch of following 'mega-widgets':
@@ -143,6 +149,7 @@ Along with <a href=#WidNames>standard widgets</a>, the mentioned <span class="cu
 <li class="level2"><div class="li"><a href="#flbWid">file listbox</a></div></li>
 <li class="level2"><div class="li"><a href="#ftxWid">file viewer/editor</a></div></li>
 <li class="level2"><div class="li"><a href="#opcWid">option cascade</a></div></li>
+<li class="level2"><div class="li"><a href="#emWid">e_menu</a></div></li>
 </ul>
 </p>
 
@@ -165,11 +172,11 @@ The <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">
 <div class="level1">
 
 <p>
-The main idea of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">apave</a></span> is that while inserting or removing a cell you need to have in mind only its neighborhood. This way of thinking is applicable to the creation as well as to the modification of layout.
+The main idea of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">apave</a></span> is that while inserting or removing a cell you need to have in mind only its neighborhood. This way of thinking is applicable to a creation as well as to a modification of layout.
 </p>
 
 <p>
-For example, while adding a new widget cell to layout you need to have in mind only its top (T) or left (L) neighbor, this way:
+For example, while adding a new widget cell to the layout you need to have in mind only its top (T) or left (L) neighbor, this way:
 </p>
 
 <p>
@@ -193,7 +200,7 @@ The second idea of <span class="curid"><a href="#" class="wikilink1" title="Tabl
 </div></li>
 <li class="level2"><div class="li"> default settings of most popular options (perhaps the scroll options are most odious)
 </div></li>
-<li class="level2"><div class="li"> providing the popular pickers (file, directory, color) as widgets
+<li class="level2"><div class="li"> providing the popular pickers (file, directory, color etc.) as 'mega-widgets'
 </div></li>
 </ul>
 </p>
@@ -254,7 +261,11 @@ means the creation and the gridding a horizontal separator (sehC) and a button (
 
 
 <p>
-Here we use the <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">apave</a></span> to make the following dialog:
+A detailed example of using <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">apave</a></span> is presented by <a href="#test2_pave">test2_pave.tcl</a> of downloaded <a href="#download">pave.zip</a>. It covers most facilities of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">apave</a></span> and can be used as a source of code templates.
+</p>
+
+<p>
+Here we use the <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">apave</a></span> to make the following trivial dialog:
 </p>
 
 <p>
@@ -652,6 +663,20 @@ The <span class="curid"><a href="http://tcl.tk/man/tcl8.7/TkCmd/pack.htm" class=
     The file content listbox (see below in <a href="#flbWid">Mega-Widgets</a>)</td></tr>
 		<tr><td class="col0"> <em>ftx*</em> </td><td class="col1"> file viewer/editor </td><td class="col2"> </td><td class="col3">
     The file content viewer/editor (see below in <a href="#ftxWid">Mega-Widgets</a>)</td></tr>
+		<tr><td class="col0"> <em>tcl</em> </td><td class="col1">Tcl code to add items<br> to a widget list </td><td class="col2"> </td><td class="col3">
+    The "tcl" type can be used to make a list of similar widgets.
+  <br>The <code>%C</code> wildcard is a placeholder for <code>lappend lwidgets</code> command. Example:
+    <br>  {tcl {
+    <br>  set prt BuT
+    <br>  for {set i 0} {$i<43} {incr i} {
+    <br>  &nbsp;&nbsp;   set cur "BuT$i"
+    <br>  &nbsp;&nbsp;    if {$i%4} {set n $pr; set p L} {set n $prt; set p T; set prt $cur}
+    <br>  &nbsp;&nbsp;    set pr $cur
+    <br>  &nbsp;&nbsp;    set lwid "$cur $n $p 1 1 {-st nsew -rw 1 -cw 1} {-t \"Button-$i\"}"
+    <br>  &nbsp;&nbsp;    %C $lwid
+    <br>    }}}
+    <br>See <a href="#test2_pave">test2_pave.tcl</a> of <a href="#download">pave.zip</a> where "tcl" fills Color schemes tab.
+    </td></tr>
 	</tbody>
 </table>
 </div>
@@ -667,7 +692,7 @@ Note that <em>h_*</em> (spacer) and <em>sev*</em> (vertical separator) can be us
 </p>
 
 </div>
-<h2>Widget Attributes</h2>
+<h2>Mega-Attributes</h2>
 <div class="level3">
 
 <p id=specpaveAttr>
@@ -685,7 +710,7 @@ Some widget attributes are specific to <span class="curid"><a href="#" class="wi
   </div></li>
 <li class="level2"><div class="li"> <code>-rotext varname</code> sets a variable to hold the text widget content (varname); sets the text widget readonly if there is no "-readonly 0"
   </div></li>
-<li class="level2"><div class="li"> <code>-tabnext widgpath</code> for the text widget: sets a next widget to be focused by Tab key
+<li class="level2"><div class="li"> <code>-tabnext widgpath</code> sets a next widget to be focused by Tab key (btw., disabling tabs for a text widget)
   </div></li>
 <li class="level2"><div class="li"> <code>-cbxsel "value"</code> for the combobox and file combobox widgets: sets a selection to a line beginning with "value"
 </div></li>
@@ -693,7 +718,28 @@ Some widget attributes are specific to <span class="curid"><a href="#" class="wi
 </div></li>
 <li class="level2"><div class="li"> <code>-tooltip "tip message"</code> for most of widgets
   </div></li>
+<li class="level2"><div class="li"> <code>-myown {command %w}</code> sets a command to be performed after a creation of widget 
+  </div></li>
 </ul>
+
+<p>The last <code>-myown {command %w}</code> attribute is most interesting. The <code>%w</code> corresponds to the widget's path. The <code>command</code> may be set directly, like this:
+<pre class="code">
+-myown {%w configure -bg yellow -font {-weight bold}}
+</pre>
+</p>
+<p>Or the <code>-myown</code> command(s) may be defined globally to apply to all appropriate widgets:
+<pre class="code">
+-myown {::NS::ATTR_THIS %w}
+-myown {::NS::ATTR_THAT %w}
+</pre>
+so that they might be identified and named as "my own" attributes.
+</p>
+<p>
+See also:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#OptAbbr">Option Abbreviations</a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#APaveDialog_options">Options of APaveDialog dialogs</a>
+</p>
+
 </p>
 
 <p id=MegaWid>
@@ -730,6 +776,9 @@ where:
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<code>{Pick a file}</code> - a title of picker dialog
 </p>
 <p>
+The F2 hotkey is provided to call the picker.
+</p>
+<p>
 The widget is shown like this:
 <br>
 <img src="files/widgfil.png" class="media" alt="File picker">
@@ -750,6 +799,9 @@ where:
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<code>fis1</code> - an entry to get a file name
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<code>::fis1</code> - a variable to store the file name
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<code>{Save as}</code> - a title of picker dialog
+</p>
+<p>
+The F2 hotkey is provided to call the picker.
 </p>
 <p>
 The widget is shown like this:
@@ -774,6 +826,9 @@ where:
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<code>{Pick a directory}</code> - a title of picker dialog
 </p>
 <p>
+The F2 hotkey is provided to call the picker.
+</p>
+<p>
 The widget is shown like this:
 <br>
 <img src="files/widgdir.png" class="media" alt="Directory picker">
@@ -796,6 +851,9 @@ where:
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<code>{Pick a font}</code> - a title of picker dialog
 </p>
 <p>
+The F2 hotkey is provided to call the picker.
+</p>
+<p>
 The widget is shown like this:
 <br>
 <img src="files/widgfon.png" class="media" alt="Font picker">
@@ -816,6 +874,9 @@ where:
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<code>clr1</code> - an entry to get a color
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<code>::clr1</code> - a variable to store the color
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<code>{Pick a color}</code> - a title of picker dialog
+</p>
+<p>
+The F2 hotkey is provided to call the picker.
 </p>
 <p>
 The widget is shown like this:
@@ -841,6 +902,9 @@ where:
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<code>%Y.%m.%d</code> - a date format
 </p>
 <p>
+The F2 hotkey is provided to call the picker.
+</p>
+<p>
 The widget is shown like this:
 <br>
 <img src="files/widgdat.png" class="media" alt="Date picker">
@@ -856,15 +920,14 @@ The <a href=#WidList>widget list</a> item for menubar is set as follows:
   {Menu - - - - - {-array {
     File "&File"
     Edit &Edit
-    help "&{Help (wordy-fonty)} -state disabled -font {-slant italic -size 10} -menu .win.menu"
+    help "&{Help (wordy)} -state normal -menu .win.menu"
    }}}
 </pre>
 where:
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<code>Menu</code> - a menubar name
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>File, Edit, help</code> - its items' names which are set as <code>-array</code> pairs containing:
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label (File, Edit, {Help (wordy-fonty)}
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;attributes (-state, -font etc.) with appropriate values
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>.win.menu</code> - a name of menubar the items are linked to
+<br>&nbsp;&nbsp;&nbsp;&nbsp;the menubar items are set as <code>-array</code> pairs of:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;menu item's name (<code>File, Edit, help</code>)
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;menu item's label (<code>File, Edit, {Help (wordy)}</code> and possible attributes (-state, -menu etc.) with appropriate values
 </p>
 <p>
 The widget is shown like this:
@@ -881,7 +944,7 @@ The widget is shown like this:
 So, if the <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">apave</a></span> object is <em>pobj</em>, then you can use the [pobj Widget] to get the full widget name, e.g. this way:
 <pre class="code">
   [pobj Menu] entryconfigure 2 -font {-slant roman -size 10}
-  [pobj File] entryconfigure 2 -state [[pave BuT_Img4] cget -state]
+  [pobj File] entryconfigure 2 -state disabled
 </pre>
 </p>
 <p>
@@ -910,32 +973,46 @@ Also, for better performance you can fill the menu items after creating the wind
 <h3>Toolbar</h3>
 <div class="level4">
 <p>
-The <a href=#WidList>widget list</a> item for toolbar is set as follows:
+The <a href=#WidList>widget list</a> item for toolbar is set as follows (taken from <a href="#test2_pave">test2_pave.tcl</a> of downloaded <a href="#download">pave.zip</a> file):
 <pre class="code">
   # create images for toolbar
-  foreach {I i} {i 1 i 2 I 3 I 4} {
-    image create photo ${I}mg$i -file "icon$i.png"
+  foreach {i icon} {0 retry 1 add 2 delete 3 undo 4 redo 5 run} {
+    image create photo Img$i -data [::apave::iconData $icon]
   }
   # ...
   pobj window .win.fra {
-    {tooMain - - - - {pack -side top} {-array {
-          img1 {"::NS::toolButt 1"}
-          h_ 3
-          img2 {"::NS::toolButt 2"}
-          sev 7
-          Img3 {"::NS::toolButt 3" -state disabled}
-          h_ 1
-          Img4 {"::NS::toolButt 4"}
+    {tool - - - - {pack -side top} {-array {
+      Img1 {{::t::toolBut 1} -tooltip "Start progress" -state disabled}
+      h_ 3
+      Img2 {{::t::toolBut 2} -tooltip "Stop progress"}
+      sev 7
+      h_ 1
+      Img5 {{::t::e_menu} -tooltip "Run e_menu"}
+      sev 7
+      h_ 1
+      Img3 {{::t::toolBut 3 \[set ::t::prevcs\]}}
+      h_ 1
+      opcTool {::t::opcc ::t::opcColors {-width 20} {t::opcToolPre %a} -command t::opcToolPost -tooltip "Current color scheme"}
+      h_ 1
+      Img4 {{::t::toolBut 4 \[set ::t::nextcs\]}}
+      h_ 4
+      ChbRestart {-var ::t::restart -t "Restart" -tooltip "To restart test2\nif CS changes"}
+      sev 8
+      h_ 1
+      spX  {-tvar ::t::fontsz -command {::t::toolBut 4 -3} -from 9 -to 12 -w 3 -justify center -tooltip "Font size 9..12" -myown {
+        puts "\nA local/global configuration may be set with -myown attribute, e.g.\
+        \n  %w configure -bg yellow -font {-weight bold}\
+        \n  ::NS::GLOBAL_CONFIG %w"}}
     }}}
   # ...
   }
 </pre>
 where:
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>tooMain</code> - a toolbar name
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>tool</code> - a toolbar name
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<code>-array</code> pairs containing:
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>img1, img2, Img3, Img4 </em> - <b>image names</b>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>Img1, Img2, Img3, Img4, Img5 </em> - <b>image names</b>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>h_, sev </em> -  spacers and separators (names need not to be unique), with their appropriate widths
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>{"::NS::toolButt 3" -state disabled}</em> - a command to handle clickings and additional attributes of buttons
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>{{::t::toolBut 1} -tooltip "Start progress" -state disabled}</em> - a command to handle clickings and additional attributes of buttons
 </p>
 <p>
 The widget is shown like this:
@@ -944,14 +1021,13 @@ The widget is shown like this:
 </p>
 <p>
 <b>Note</b>: in the toolbar item, the <em>image names</em> are listed, 
-<br>while their appropriate buttons' names have <code>BuT_</code> prefix and accessible through <code>[pobj BuT_img]</code>, this way:
+ while their appropriate buttons' names have <code>BuT_</code> prefix and accessible through <code>[pobj BuT_img]</code>, this way:
 </p>
 <pre class="code">
   [pobj BuT_Img3] configure -state normal
-  [pobj Menu] entryconfigure 2 -state [[pobj BuT_Img3] cget -state]
 </pre>
 <p>
-These constructs are used in the appropriate handlers (<em>::NS::toolButt</em> in the above example).
+These constructs are used in the appropriate handlers (<em>::t::toolBut</em> in the above example).
 </p>
 </div>
 
@@ -1020,14 +1096,25 @@ where:
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if -pos omitted, -len characters from the beginning; if -len omitted, to the end of line
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<em>-list</em> - a list of items to put directly into the combobox
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<em>-ret</em> - if set to true, means that the field is returned instead of full string
-<br>&nbsp;&nbsp;If there is only a single data set and no TEXT, the /@ marks may be omitted.
-<br>&nbsp;&nbsp;The /@ edging marks may be configured with the configure method:
+</p>
+<p>
+If there is only a single data set and no TEXT, the /@ marks may be omitted.
+</p>
+<p>
+The <code>regexp</code> conditions may be used to filter lines. For example:
 <pre class="code">
-  pave configure edge "==="
+  /@-RE {^(\s*)([^#]+)$} ./test2_pave.tcl/@
+</pre>
+- this data set would deliver non-commented lines of <em>./test2_pave.tcl</em> only. If <code>-RE</code> result is empty, the whole <em>fco</em> line is skipped, not regarding what other data sets result in.
+</p>
+<p>
+The /@ edging marks may be configured with the configure method:
+<pre class="code">
+  pobj configure edge "@@"
 </pre>
 </p>
 <p>
-The following example is taken from <em>test2_pave.tcl</em> of <a href="#download">downloaded archive file</a>:
+The following example is taken from <em>test2_pave.tcl</em> of downloaded <a href="#download">pave.zip</a>:
 <pre class="code">
   {fco - - - - {pack} {-tvar t::cb3 -w 88 -values {COMMIT: /@
     -div1 " \[" -div2 "\] " -ret true test2_fco.dat /@   INFO: /@
@@ -1051,7 +1138,7 @@ The file content listbox presents text file(s) content. Its <a href=#WidList>wid
 <br><em>-lvar</em> attribute sets a variable name for storing a result.
 </p>
 <p>
-The following example is taken from <em>test2_pave.tcl</em> of <a href="#download">downloaded archive file</a>:
+The following example is taken from <em>test2_pave.tcl</em> of downloaded <a href="#download">pave.zip</a>:
 <pre class="code">
   {flb - - - - {pack -side left -fill x -expand 1}
     {-lvar ::t::lv1 -w 50 -values 
@@ -1074,7 +1161,7 @@ The widget is shown like this:
 <p>
 The file content viewer/editor presents text file(s) content.</p>
 <p>
-The following example is taken from <em>test2_pave.tcl</em> of <a href="#download">downloaded archive file</a>:
+The following example is taken from <em>test2_pave.tcl</em> of downloaded <a href="#download">pave.zip</a>:
 <pre class="code">
   {
     ftxMain labBftx1 L 1 9 {} {
@@ -1097,6 +1184,9 @@ The file name and the text may be changed by this widget, so that you can get bo
 </pre>
 </p>
 <p>
+The F2 hotkey is provided to call the file picker.
+</p>
+<p>
 The widget is shown like this:
 <br>
 <img src="files/widgftx.png" class="media" alt="File content viewer/editor">
@@ -1106,23 +1196,55 @@ The widget is shown like this:
 Also <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">apave</a></span>
 allows to call a text viewer/editor as a stand-alone dialog, by use of:
 <pre class="code">
-  set res [pdlg vieweditFile mytext.txt "" -w 80 -h 20 -rotext ::temp]
+  set res [pdlg vieweditFile mytext.txt "" -w 80 -h 24 -rotext ::temp]
   puts "Result: $res. Content of text:\n$::temp"
   unset ::temp
 </pre>
 where:
 <br>&nbsp;&nbsp;<code>pdlg</code> - a <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">apave</a></span> object (of <em>APaveInput</em> class)
 <br>&nbsp;&nbsp;<code>mytext.txt</code> - a file name
-<br>&nbsp;&nbsp;<code>""</code> - stands for icon (it might be <em>info, warn, err, ques</em> or "")
+<br>&nbsp;&nbsp;<code>""</code> - stands for <em>prepost</em> command which is performed before opening and before closing the dialog
 <br>&nbsp;&nbsp;<code>-rotext</code>  - sets a temporary variable to hold the file content (<em>::temp</em>)
 </p>
 <p>By default <code>vieweditFile</code> method works in <em>view</em> mode, but you can set <em>edit</em> mode by use of <em>-readonly false (-ro false)</em> argument.
 </p>
 <p>
-<b>Note</b>: you can only add <em>-w, -h, -readonly, -ro, -rotext</em> or font attributes, no other attributes are permitted:
+<b>Note</b>: you can only add <em>-w, -h, -readonly, -ro, -rotext, -pos, -centerme, -myown</em> or font attributes, no other attributes are permitted:
 <pre class="code">
-  set res [pdlg vieweditFile $filename "" -w 80 -h 20 -rotext ::temp -ro 0 -weight bold]
+  set res [pdlg vieweditFile $filename "" -w 80 -h 20 -rotext ::temp -ro 0 -pos 10.0  -centerme .win -myown {puts %w} -weight bold]
 </pre>
+</p>
+<p>
+The optional <em>prepost</em> command is useful when you need some actions to be performed on the text without its reading/writing. The widget itself reads and writes the text, so it can provide its contents to pre/post-process at the reading/writing.
+</p>
+<p>
+Also, at the pre-processing you can add your own attributes for the text, depending on its contents. For testing, try <code>-myown {puts %w}</code>.
+</p>
+<p>
+The <em>prepost</em> command should be declared as follows:
+<pre class="code">
+proc ::NS::prepost_edit {dataName {wtxt ""}} {
+  upvar 1 $dataName data
+  # ... code ...
+  if {$wtxt eq ""} {
+    # it's PRE code ...
+  } else {
+    # it's POST code ...
+  }
+}
+</pre>
+where:
+<br>&nbsp;&nbsp;<code>dataName</code> - a variable name for a contents of text widget
+<br>&nbsp;&nbsp;<code>wtxt</code> - a name of text widget
+</p>
+The 'pre-processing' code serves to prepare the initial contents of the text widget. This code returns a string containing additional attributes for a text widget, e.g. "-pos nl.nc" for a cursor position.
+</p>
+<p>
+ The 'post-processing' code serves to prepare the final contents of the text widget. It deals with <code>wtext</code> widget's path to access its contents.
+</p>
+<p>
+The <em>prepost</em> command is used in <a href="../e_menu/index.html">e_menu utility</a> to edit its menus.
+<p>
 </p>
 <p>
 The file viewer/editor (taken from <a href="#test2_pave">test2_pave.tcl</a> of downloaded <a href="#download">pave.zip</a>, with <em>-readonly false</em>) is shown like this:
@@ -1135,10 +1257,13 @@ The file viewer/editor (taken from <a href="#test2_pave">test2_pave.tcl</a> of d
 <h3>Option Cascade</h3>
 <div class="level4">
 <p>
-The option cascade (opc) widget has originated from <a href="https://wiki.tcl-lang.org/page/tk_optionCascade" title="https://wiki.tcl-lang.org" rel="nofollow">tk_optionCascade widget made by Richard Suchenwirth</a>.
+The option cascade (opc) widget has originated from <a href="https://wiki.tcl-lang.org/page/tk_optionCascade" title="https://wiki.tcl-lang.org" rel="nofollow">tk_optionCascade widget made by Richard Suchenwirth</a>. The link is good to follow before using the widget.
 </p>
 <p>
-The following example is taken from <em>test2_pave.tcl</em> of <a href="#download">downloaded archive file</a>:
+The <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">apave</a></span> uses a bit modified version of original <a href="https://wiki.tcl-lang.org/page/tk_optionCascade" title="https://wiki.tcl-lang.org" rel="nofollow">tk_optionCascade</a> widget. 
+</p>
+<p>
+The following example is taken from <em>test2_pave.tcl</em> of downloaded <a href="#download">pave.zip</a>:
 <pre class="code">
   set ::t::opcItems [list {{Color list} red green blue -- {colored yellow magenta cyan
     | #52CB2F #FFA500 #CB2F6A | #FFC0CB #90EE90 #8B6914}} \
@@ -1154,6 +1279,37 @@ The following example is taken from <em>test2_pave.tcl</em> of <a href="#downloa
 The widget is shown like this:
 <br>
 <img src="files/widgopc.png" class="media" alt="Option cascade">
+</p>
+</div>
+
+<br id=emWid>
+<h3>The e_menu Widget</h3>
+<div class="level4">
+<p>
+The e_menu widget has originated from <A href="../e_menu/index.html">e_menu utility</a>. This pair, <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">apave</a></span> and <A href="../e_menu/index.html">e_menu</a>, has influenced each other a lot. Like Tcl and Tk :)
+</p>
+<p>
+The  <A href="../e_menu/index.html">e_menu</a> widget creates a stand-alone menu system containing any external commands to be executed in the OS environment, using any arguments which a caller program would like to process.
+</p>
+<p>
+To include the <A href="../e_menu/index.html">e_menu</a> widget into your Tcl code, use the following syntax:
+<pre class="code">
+set emdir "some-location-of-e_menu-utility"
+source [file join $::emdir e_menu.tcl]
+# ...
+::em::main -prior 1 -modal 1 -remain 1 {*}$e_menu_args
+</pre>
+where:
+<br>&nbsp;&nbsp;<code>-prior</code> - a boolean option that means "use previous (if any) settings"; it's useful at repeated calls of <A href="../e_menu/index.html">e_menu</a> widget to restore a color scheme etc.; <em>default is</em> <code>0</code>
+<br>&nbsp;&nbsp;<code>-modal</code> - a boolean option that means "open e_menu as a modal window"; <em>default is</em> <code>0</code>
+<br>&nbsp;&nbsp;<code>-remain</code> - a boolean option that means "do not close menus until a manual closing"; any commands/menus of RE/SE/ME type would not close a current <A href="../e_menu/index.html">e_menu</a>'s window so that it would stay on the screen; <em>default is</em> <code>0</code>
+<br>&nbsp;&nbsp;<code>e_menu_args</code> - arguments of <A href="../e_menu/index.html">e_menu utility</a>
+
+</p>
+<p>
+The widget is shown like this:
+<br>
+<img src="files/widgem.png" class="media" alt="e_menu widget">
 </p>
 </div>
 
@@ -1327,6 +1483,132 @@ For example:
 </p>
 
 </div>
+<h2 id="theming_Pave">Theming of APave</h2>
+<div class="level2">
+
+<p>
+The theming facility is enabled with procedures and methods as follows.
+</p>
+<p>
+<b>1. </b> <code>apave::initWM</code> - a procedure that initializes a work with a window manager.
+</p>
+<p>
+It is separated from APave in order to do without any theming, i.e. in a default Tk environment. In that case, you just don't call <code>apave::initWM</code>.
+</p>
+<p>Syntax:
+<pre class="code">
+  apave::initWM
+</pre>
+</p>
+
+<p>
+<b>2.</b> The <em>APave</em> constructor of object allows to set a (otherwise optional) <code>cs</code> color scheme. The <em>APaveDialog</em> and <em>APaveInput</em> constructors have "win" and "cs" arguments.
+</p>
+<p>Syntax:
+<pre class="code">
+  APave create pobj $cs
+  APaveDialog create pdlg $win $cs
+  APaveInput create pinp $win $cs
+</pre>
+</p>
+<p>
+The color schemes (CS) are indexed from -1 to 43.
+</p>
+<p>
+The <code>-1</code> CS is very similar to the default Tk theme. Thus it isn't so much of theme and as such called "basic". Other CSs have their own names too.
+</p>
+<p>
+You can change CSs in a session. However, the best appearance would be achieved when you set CS in the beginning and never change it afterwards in the current session. If a CS should be changed, save it in a config file and restart your application with the new CS.
+</p>
+<p>
+Though each CS has its own pluses and minuses, CSs of <em>APave</em> are rather numerous and might satisfy most of tastes.
+</p>
+<p> The full list of CSs is best viewed in <em>test2_pave.tcl</em> of downloaded <a href="#download">pave.zip</a>.
+</p>
+
+<p>
+<b>3. </b> If no <em>APave</em> CS can satisfy your taste, you can provide your own CS for <em>APave</em>.
+</p>
+<p>
+For this, the <code>themeWindow</code> method is used. Syntax:
+ <pre class="code">
+  pobj themeWindow win fg1 bg1 fg2 bg2 fgS bgS fgD bgD cur bclr hlp fgI bgI fgM bgM isCS args
+</pre>
+</p>
+<p>
+where:
+<br>&nbsp;&nbsp;&nbsp;<em>win</em> - window's name
+<br>&nbsp;&nbsp;&nbsp;<em>fg1</em> - foreground for themed widgets (main stock)
+<br>&nbsp;&nbsp;&nbsp;<em>bg1</em> - background for themed widgets (main stock)
+<br>&nbsp;&nbsp;&nbsp;<em>fg2</em> - foreground for themed widgets (enter data stock)
+<br>&nbsp;&nbsp;&nbsp;<em>bg2</em> - background for themed widgets (enter data stock)
+<br>&nbsp;&nbsp;&nbsp;<em>fgS</em> - foreground for selection
+<br>&nbsp;&nbsp;&nbsp;<em>bgS</em> - background for selection
+<br>&nbsp;&nbsp;&nbsp;<em>fgD</em> - foreground for disabled themed widgets
+<br>&nbsp;&nbsp;&nbsp;<em>bgD</em> - background for disabled themed widgets
+<br>&nbsp;&nbsp;&nbsp;<em>cur</em> - insertion cursor color
+<br>&nbsp;&nbsp;&nbsp;<em>bclr</em> - hotkey/border color
+<br>&nbsp;&nbsp;&nbsp;<em>hlp</em> - help color (for external use)
+<br>&nbsp;&nbsp;&nbsp;<em>fgI</em> - foreground (for external use)
+<br>&nbsp;&nbsp;&nbsp;<em>bgI</em> - background (for external use)
+<br>&nbsp;&nbsp;&nbsp;<em>fgM</em> - foreground for menus
+<br>&nbsp;&nbsp;&nbsp;<em>bgM</em> - background for menus
+<br>&nbsp;&nbsp;&nbsp;<em>isCS</em> - use "false" for it, as "true" means that the colors are taken from a APave CS
+<br>&nbsp;&nbsp;&nbsp;<em>args</em> - optional arguments
+</p>
+<p>
+The <em>hlp, fgI, bgI</em> colors might be used in your own application. E.g. the <a href="../e_menu/index.html">e_menu utility</a> employs them as "header foreground" and "menu items' fb/bg".
+</p>
+<p>
+The <em>args</em> refers to arguments of <code>ttk::style map</code>. For example, <code>args</code> might be equal to <code>"TButton -foreground {focus black} TButton -background {focus white}"</code>.
+</p>
+<p>
+A question is when should <em>pobj themeWindow</em> be called? You might consider the following ways:
+ <ul>
+<li>If it were called <u>before</u> <em>pobj window</em>, the theming would embrace only ttk widgets.</li>
+<li>If it were called <u>after</u> <em>pobj window</em>, the theming would embrace all widgets including the non-ttk.</li>
+<li>If, just after creating pave object, you call <em>pobj themeWindow </em> with "." <u>as window path</u>, you would provide the theming for all widgets of this <em>pobj</em> each time you would call <em>pobj showModal</em>.</li>
+</ul>
+The last way is preferable. In this case you don't need to repeat the <em>pobj themeWindow</em> for this pobj and all its future layouted windows.
+<br><br>For example:
+ <pre class="code">
+  pobj themeWindow . white #364c64 #d2d2d2 #292a2a white #4a6984 grey #364c64 #02ffff #00a0f0
+  ...
+  pobj showModal .win1 -geometry +300+80 -decor 1 -onclose ::ns::exitWin1
+  ...
+  pobj showModal .win2 -geometry +400+80 -decor 1 -onclose ::ns::exitWin2
+  ...
+</pre>
+</p>
+
+<p>
+<b>4. </b> If you want to get/set a default font size for your widgets, you can use the <code>basicFontSize</code> method. Syntax:
+<pre class="code">
+  set fs [pobj basicFontSize]  ;# to get a current font size
+  pobj basicFontSize $fs       ;# to set a new font size
+</pre>
+</p>
+<p>
+For the best appearance, it's recommended to call this method at starting your application. 
+</p>
+<p>
+You need not even create a <em>APave</em> object for this. Use <code>apave::paveObj</code> procedure to call any APave method:
+<pre class="code">
+  set fs [apave::paveObj basicFontSize]  ;# to get a current font size
+  apave::paveObj basicFontSize $fs       ;# to set a new font size
+</pre>
+</p>
+
+<p>
+<b>5. </b> There are also other procedures and methods of <em>APave</em> theming. They are described in <a href="apave.html">::apave reference</a>.
+</p>
+
+<p>
+<br>
+
+</p>
+
+</div>
 <h2 id="examples_Pave">More Examples of APave</h2>
 <div class="level2">
 <p>
@@ -1452,7 +1734,7 @@ In ./tests directory of downloaded <a href="#download">pave.zip</a> there are al
 <br>
 <p>
 ... and here is a video of it:<br>
-<A href="https://github.com/aplsimple/aplsimple.github.io/releases/download/demo_apave_v2.8/test2pave-28.mp4">Demo (20.3 Mb)</A>
+<A href="https://github.com/aplsimple/aplsimple.github.io/releases/download/demo_apave_v2.9.2/test2pave-292.mp4">Demo (31 Mb)</A>
 </p>
 
 <p>
@@ -1687,51 +1969,78 @@ lassign [dlg valueInput] \
 <h2 id="APaveDialog_options">Options of APaveDialog dialogs</h2>
 <div class="level2">
 
-    <p>
-      <b>-ch, -checkbox</b> sets a checkbox message
-    </p>
-    <p>
-      <b>-g, -geometry</b> sets a geometry (+X+Y) of dialog
-    </p>
-    <p>
-      <b>-c, -color</b> sets a foreground color for labels
-    </p>
-    <p>
-      <b> -t 1, -text 1</b> sets a text widget instead of labels
-    </p>
-    <p>
-      <b>-H, -head</b> sets a heading of text
-    </p>
-    <p>
-      <b>-tags</b> sets a tags list for text font
-    </p>
-    <p>
-      <b>-ro 0, -readonly 0</b> makes the text editable
-    </p>
-    <p>
-      <b>-w, -width</b> sets a width of text in characters
-    </p>
-    <p>
-      <b>-h, -height</b> sets a height of text in lines
-    </p>
-    <p>
-      <b>-fg</b> sets a foreground color for text
-    </p>
-    <p>
-      <b>-bg </b> sets a background color for text
-    </p>
-    <p>
-      <b>-cc</b> sets a cursor color for text
-    </p>
-    <p>
-      <b>-pos</b> sets a cursor position for text
-    </p>
-    <p>
-      <b>-root</b> sets a root window (to center the dialog)
-    </p>
-    <p>
-      <b>-focus</b> focuses on a widget at opening the input dialog
-    </p>
+<p>
+Below is a list of <em>APaveDialog</em> options, with their short / full names. Any option outside the list is considered to be an attribute of the message font.
+</p>
+<p>
+  <b>-ch </b>/<b> -checkbox value</b> sets a checkbox message
+</p>
+<p>
+  <b>-g </b>/<b> -geometry +X+Y</b> sets a geometry of dialog
+</p>
+<p>
+  <b>-c </b>/<b> -color value</b> sets a foreground color for labels
+</p>
+<p>
+  <b> -t </b>/<b> -text 1</b> sets a text widget instead of labels
+</p>
+<p>
+  <b>-H </b>/<b> -head value</b> sets a header
+</p>
+<p>
+  <b>-tags value</b> sets a tags list for text
+</p>
+<p>
+  <b>-ro </b>/<b> -readonly 0</b> makes the text editable
+</p>
+<p>
+  <b>-w </b>/<b> -width value</b> sets a width of text in characters
+</p>
+<p>
+  <b>-h </b>/<b> -height value</b> sets a height of text in lines
+</p>
+<p>
+  <b>-fg value</b> sets a foreground color for text
+</p>
+<p>
+  <b>-bg value</b> sets a background color for text
+</p>
+<p>
+  <b>-fgS value</b> sets a selection foreground color for text
+</p>
+<p>
+  <b>-bgS value</b> sets a selection background color for text
+</p>
+<p>
+  <b>-hfg value</b> sets a foreground color for header
+</p>
+<p>
+  <b>-hbg value</b> sets a background color for header
+</p>
+<p>
+  <b>-hsz value</b> sets a font size color for header
+</p>
+<p>
+  <b>-cc value</b> sets a cursor color for text
+</p>
+<p>
+  <b>-pos nl.nc</b> sets a cursor position for text
+</p>
+<p>
+  <b>-root w</b> sets a root window (to center the dialog)
+</p>
+<p>
+  <b>-ontop 1</b> sets the dialog on the top of the screen
+</p>
+<p>
+  <b>-timeout {sec wbut}</b> sets a timeout in seconds, to invoke <em>wbut</em> button's command
+</p>
+<p>
+  <b>-focus w</b> focuses on a widget at opening the input dialog
+</p>
+<p>
+  <b>-my </b>/<b> -myown {command %w}</b> sets a command to provide additional attributes
+</p>
 
 <p>
 <br>
@@ -1777,6 +2086,8 @@ lassign [dlg valueInput] \
         <li><em>rad</em> - radiobutton</li>
         <li><em>spx</em> - spinbox</li>
         <li><em>lbx</em> - listbox</li>
+        <li><em>tbl</em> - tablelist</li>
+        <li><em>opc</em> - tk_OptionCascade</li>
         <li><em>cbx</em> - combobox</li>
         <li><em>fco</em> - file content combobox</li>
         <li><em>tex</em> - text</li>
@@ -1793,13 +2104,9 @@ lassign [dlg valueInput] \
       <li>
        <em>values' options</em> is a list that depends on the type of widget:
         <ul>
-        <li>for <em>ent</em> - a current value of entry</li>
-        <li>for <em>chb</em> - a current value of checkbox</li>
-        <li>for <em>tex</em> - a current content of text (\n to be newlines)</li>
-        <li>for <em>lbx, cbx</em> - a current value and choices, e.g.
+        <li>for <em>tex</em> - a current content of text (\n to be newlines, \t tabs)</li>
+        <li>for <em>lbx, cbx, rad, tbl, opc</em> - a current value and a list of items, e.g.
           <code>"{in file} {in file} {in session} {in directory}"</code></li>
-        <li>for <em>rad</em> - a current value and choices, e.g.
-          <code>"Exact Exact Glob {RE  }"</code></li>
         <li>for <em>fco</em> - a content of <em>-values</em> option</li>
         <li>for <em>others</em> - a current value</li>
         </ul>
@@ -1807,7 +2114,7 @@ lassign [dlg valueInput] \
     </ol>
     </li>
     <li id="footer-info-lastmod">
-   <em><b>dialog options</b></em> are options used by APaveDialog dialogs (see above)
+   <em><b>dialog options</b></em> are options used by APaveDialog dialogs (described <a href="#APaveDialog_options">above</a>)
     </li>
   </ul>
  </p>
@@ -1946,7 +2253,7 @@ tclsh ~/UTILS/pave/apavecli.tcl warn "Git rebase" {} \
 <img src="files/pavecli4.png" class="media" vspace=16 alt="apavecli dialog">
 </p>
 <p>
-See also an example in comments of <em>apavecli.tcl</em> of <a href="#download">downloaded archive file</a>.
+See also an example in comments of <em>apavecli.tcl</em> of downloaded <a href="#download">pave.zip</a>.
 </p>
 <p>
 <b>Note</b>: It would be convenient to have a symbolic link to <em>executable apavecli.tcl</em>. Thus, you can use e.g. <code>apavecli</code> instead of wordy 
@@ -1979,7 +2286,7 @@ See also an example in comments of <em>apavecli.tcl</em> of <a href="#download">
 <h1 id="tips">Tips & Tricks</h1>
 <div class="level2">
  <p>
-<em>The Tips & Tricks are mostly taken from <em>test2_pave.tcl</em> of <a href="#download">downloaded archive file</a>.</em>
+<em>The Tips & Tricks</em> are mostly taken from <em>test2_pave.tcl</em> of downloaded <a href="#download">pave.zip</a>.
  </p>
  <p><b>1.</b> You can save your keypresses at paving a window by using "." as beginning character of widget name. This would mean that a widget name consists of a previous "normal" name + this name. For example:
  <pre class="code">...
@@ -2010,7 +2317,7 @@ See also an example in comments of <em>apavecli.tcl</em> of <a href="#download">
 <li>the real text widget is named as <em>...lfrB.text</em> (in <em>test2_pave.tcl</em>, its name is <em>.win.fNB.nb.f2.fra.pan.panR.lfrB.text</em> - a mess of notebook tabs, frames and panes) </li>
 <li>the Text method is created in paved object allowing to get the real name of widget through just <em>[pobj Text]</em></li>
 </ul>
-Also the image names of toolbar can be uppercased so that the corresponding buttons can be referred through e.g. <em>[pobj BuT_Img1]</em> instead of <em>.win.fNB.nb.f2.tool.buT_Img1</em>  (see <a href="#test2_pave">test2_pave.tcl</a> of downloaded <a href="#download">pave.zip</a>).
+Also the image names of toolbar can be uppercased so that the corresponding buttons can be referred through e.g. <em>[pobj BuT_Img1]</em> instead of <em>.win.fNB.nb.f2.tool.buT_Img1</em>.
 <br><br>
 Of course, the uppercased names must be unique for a paved object and be not overlapped by the object's methods.
 </p>
@@ -2038,7 +2345,9 @@ In fact, the <em>APave window</em> method can take as many "window/container & i
 
 <p>
 <b>5.</b> The widget list passed to  <em>pobj window</em> can include comments. They are recognized by the "#" as first symbol of widget name. After the "#" you can include multiline comments as well as just "###...###" to underline any blocks.
-<br>For example:
+<br><br>
+The comments are useful when you need temporarily hide this or that widget of the list.
+<br><br>For example:
 <pre class="code">pobj window .win {
    ###<----it's-a-comment-(being-a-record-of-one-continuous-string)
    #
@@ -2066,51 +2375,8 @@ In fact, the <em>APave window</em> method can take as many "window/container & i
 }
 after idle [list ::NS::fillMenu_Binding_Etc $w]</pre>
  <p>
-However, the main menu bar can be made in a call of <em>APave window</em>. See the example in <a href="#test2_pave">test2_pave.tcl</a> of downloaded <a href="#download">pave.zip</a>.
+However, the main menu bar can be made in a call of <em>APave window</em>.
 </p>
-<p>
-
-<b>8.</b> The theming facility is enabled by <em>ObjectTheming oo::class</em> (of <em>obbit.tcl</em>) that is mixin'ed into APave oo::class.
- <br>For example, it's used in <a href="#test2_pave">test2_pave.tcl</a> of downloaded <a href="#download">pave.zip</a> as follows:
- <pre class="code">
-apave::APave create pobj
-...
-pobj themingWindow .win \
-  white #364c64 #d2d2d2 #292a2a white #4a6984 grey #364c64 #02ffff #00a0f0 \
-  TButton -foreground focus black \
-  TButton -background focus white</pre>
- <p>
-Here, the <em>themingWindow</em> method is receiving the following arguments:
-<br>&nbsp;&nbsp;&nbsp;<em>.win</em> - window path
-<br>&nbsp;&nbsp;&nbsp;<em>white #364c64</em> - main colors (fore- and background)
-<br>&nbsp;&nbsp;&nbsp;<em>#d2d2d2 #292a2a</em> - input colors
-<br>&nbsp;&nbsp;&nbsp;<em>white #4a6984</em> - selection colors
-<br>&nbsp;&nbsp;&nbsp;<em>grey #364c64</em> - disabling colors
-<br>&nbsp;&nbsp;&nbsp;<em>#02ffff</em> - cursor color
-<br>&nbsp;&nbsp;&nbsp;<em>#00a0f0</em> - current widget's border color
-<br>&nbsp;&nbsp;&nbsp;<em>TButton -foreground focus black ...</em> - additional style options (here not necessary)
-<br>
-See <a href="#test2_pave">above</a> the screenshot of it.
-<br>
-The theming colors are actual for ttk as well as non-ttk widgets. This is seen on <A href="https://github.com/aplsimple/aplsimple.github.io/releases/download/demo_apave_v2.8/test2pave-28.mp4">Demo (20.3 Mb)</A>.
-</p>
-
-<p>
-<b>9.</b> A question is when should <em>pobj themingWindow</em> be called? You might consider the following ways:
- <ul>
-<li>If it were called <u>before</u> <em>pobj window</em>, the theming would embrace only ttk widgets.</li>
-<li>If it were called <u>after</u> <em>pobj window</em>, the theming would embrace all widgets including the non-ttk.</li>
-<li>If, just after creating pave object, you call <em>pobj themingWindow </em> with "." <u>as window path</u>, you would provide the theming for all widgets of this <em>pobj</em> each time you would call <em>pobj showModal</em>.</li>
-</ul>
-The last way is preferable. In this case you don't need to repeat the <em>pobj themingWindow</em> for this pobj and all its future layouted windows.
-<br>For example:
- <pre class="code">pobj themingWindow . white #364c64 #d2d2d2 #292a2a white #4a6984 grey #364c64 #02ffff #00a0f0
-...
-pobj showModal .win1 -geometry +300+80 -decor 1 -onclose ::ns::exitWin1
-...
-pobj showModal .win2 -geometry +400+80 -decor 1 -onclose ::ns::exitWin2
-...</pre>
- </p>
 
 <p>
 <br>
@@ -2136,7 +2402,13 @@ Contents">apave</a></span> stuff is available here:
 
 <ul>
 <li class="level1"><div class="li"> 
-<A href="https://github.com/aplsimple/aplsimple.github.io/releases/download/demo_apave_v2.8/test2pave-28.mp4">Demo (20.3 Mb)</A>
+<a href="apave.html" title="Reference" rel="nofollow">::apave reference</a>
+</li>
+</ul>
+
+<ul>
+<li class="level1"><div class="li"> 
+<A href="https://github.com/aplsimple/aplsimple.github.io/releases/download/demo_apave_v2.9.2/test2pave-292.mp4">demo (31 Mb)</A>
 </li>
 </ul>
 
