@@ -355,6 +355,7 @@ OUT=END
 -backup 0 | &lt;dir&gt;
 -keep 0 | 1 | false | true
 -single 0 | 1 | false | true
+-files 0 | 1 | false | true
 -charset charsetName (e.g. cp1251)
 -lineend lineEnding (e.g. \r\n)
 --
@@ -363,7 +364,7 @@ OUT=END
 <p class='ruff'>The <code>mulster::Mulster</code> class provides two methods to be called from Tcl module.</p>
 <p class='ruff'>1. The <code>main</code> method performs the multi-line replacements. Declared as:</p>
 <pre class='ruff'><code class="tcl">
-method main {fileini {mode 1} {backup BAK} {keep 0} {single 0} {charset &quot;&quot;} {lineend &quot;&quot;}}
+method main {fileini {mode 1} {backup BAK} {keep 0} {single 0} {charset &quot;&quot;} {lineend &quot;&quot;} {files 0}}
 <br></code></pre>
 <p class='ruff'>where:</p>
 <p class='ruff'><code>fileini</code> is a file name of options</p>
@@ -387,16 +388,19 @@ method main {fileini {mode 1} {backup BAK} {keep 0} {single 0} {charset &quot;&q
 <p class='ruff'><code>single</code> if 1, sets a standard string-for-string replacements</p>
 <p class='ruff'><code>charset</code> is a charset of input files, e.g. cp1251</p>
 <p class='ruff'><code>lineend</code> sets characters to end lines, e.g. \r\n (by default \n)</p>
+<p class='ruff'><code>files</code> if 1, OUT= lines to be file names to take the lines from</p>
 <p class='ruff'>2. The <code>mulsterList</code> method performs in-memory replacements in a list. Declared as:</p>
 <pre class='ruff'><code class="tcl">
-method mulsterList {lcont lin lout {r1 0} {r2 0} {mode 1} {single 0}}
+method mulsterList {lcont lin lout {r1 0} {r2 0} {mode 1} {single 0} {files 0}}
 <br></code></pre>
 <p class='ruff'>where:</p>
 <p class='ruff'><code>lcont</code> is a list to be processed</p>
 <p class='ruff'><code>lin</code> is a list of input lines (replaced)</p>
 <p class='ruff'><code>lout</code> is a list of output lines (replacing)</p>
 <p class='ruff'><code>r1</code> and <code>r2</code> set a range of replacements</p>
-<p class='ruff'><code>mode</code> and <code>single</code> are described in <code>main</code> method above.</p>
+<p class='ruff'><code>mode</code> is a search mode (as defined in getSearchMode method)</p>
+<p class='ruff'><code>single</code> if true, means a standard 'string for string' replacements</p>
+<p class='ruff'><code>files</code>  if true, output lines are taken from files</p>
 <p class='ruff'>The <code>mulsterList</code> method returns a list processed.</p>
 <br><h2 class='ruff'><a name='::mulster-Commands'></a>Commands<span class='tinylink'><a href='mulster.html#::mulster'>mulster</a>, <a href='#top'>Top</a></span></h2>
 <div style='clear:both;'></div>
@@ -540,6 +544,7 @@ method mulsterList {lcont lin lout {r1 0} {r2 0} {mode 1} {single 0}}
   set _MMM(SINGLE)    SINGLE=   ;# pattern for single mode
   set _MMM(CHARSET)   CHARSET=  ;# pattern for charset mode
   set _MMM(LINEEND)   LINEEND=  ;# pattern for lineend mode
+  set _MMM(FILES)     FILES=    ;# pattern for files
   set _MMM(GRP1) {(.+)}           ;# RE group for a file name
   set _MMM(GRP2) {\((.+),(.+)\)}  ;# RE groups for range
   set _MMM(DEBUG) false         ;# DEBUG mode
@@ -550,7 +555,7 @@ method mulsterList {lcont lin lout {r1 0} {r2 0} {mode 1} {single 0}}
 </div><br><br><h4 class='ruffmethod'><a name='::mulster::Mulster::main'>main</a><span class='ns_scope'> [<a href="mulster.html#::mulster::Mulster" title="::mulster::Mulster" class='ruff_cmd'>::mulster::Mulster</a>]</span><span class='tinylink'><a href='mulster.html#::mulster::Mulster'>Mulster</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Processes files according to the options of 'fileini' file.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT main</span> <span class='ruff_arg'>fileini ?mode? ?backup? ?keep? ?single? ?charset? ?lineend?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT main</span> <span class='ruff_arg'>fileini ?mode? ?backup? ?keep? ?single? ?charset? ?lineend? ?files?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>fileini</code></code></td><td class='ruff_defitem'>options file name</td></tr>
 <tr><td class='ruff_defitem'><code><code>mode</code></code></td><td class='ruff_defitem'>a search mode (as defined in getSearchMode method); <i>optional, default</i> <code>1</code></td></tr>
@@ -559,10 +564,11 @@ method mulsterList {lcont lin lout {r1 0} {r2 0} {mode 1} {single 0}}
 <tr><td class='ruff_defitem'><code><code>single</code></code></td><td class='ruff_defitem'>if 1, standard 'one string for one string' replacements; <i>optional, default</i> <code>0</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>charset</code></code></td><td class='ruff_defitem'>a charset of input files (e.g. cp1251); <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>lineend</code></code></td><td class='ruff_defitem'>a line ending of input files (e.g. \r\n); <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>files</code></code></td><td class='ruff_defitem'>if 1, output lines are taken from files; <i>optional, default</i> <code>0</code></td></tr>
 </table>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="mulster.html#::mulster::Mulster::getSearchMode" title="getSearchMode" class='ruff_cmd'>getSearchMode</a></p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_5' href="javascript:toggleSource('5')">Show source</a></p>
-<div id='5' class='ruff_dyn_src'><pre><code class="tcl"><br>method main {fileini {mode 1} {backup BAK} {keep 0} {single 0} {charset {}} {lineend {}}} {
+<div id='5' class='ruff_dyn_src'><pre><code class="tcl"><br>method main {fileini {mode 1} {backup BAK} {keep 0} {single 0} {charset {}} {lineend {}} {files 0}} {
 
   # Processes files according to the options of 'fileini' file.
   #
@@ -573,6 +579,7 @@ method mulsterList {lcont lin lout {r1 0} {r2 0} {mode 1} {single 0}}
   #   single - if 1, standard 'one string for one string' replacements
   #   charset - a charset of input files (e.g. cp1251)
   #   lineend - a line ending of input files (e.g. \r\n)
+  #   files - if 1, output lines are taken from files
   #
   # See also:
   #   getSearchMode
@@ -580,6 +587,7 @@ method mulsterList {lcont lin lout {r1 0} {r2 0} {mode 1} {single 0}}
   set mode [my getSearchMode $mode]
   set keep [my getBoolean $keep]
   set single [my getBoolean $single]
+  set fileon [my getBoolean $files]
   if {!($_MMM(fin) + $_MMM(fout))} { my InitIO }
   set state NONE
   set _MMM(st) [set comments &quot;&quot;]
@@ -621,6 +629,9 @@ method mulsterList {lcont lin lout {r1 0} {r2 0} {mode 1} {single 0}}
         # check for single state
         } elseif {[my OptionIs $_MMM(SINGLE) $_MMM(GRP1)]} {
           set single [my getBoolean $_MMM(match1)]
+        # check for fileon state
+        } elseif {[my OptionIs $_MMM(FILES) $_MMM(GRP1)]} {
+          set fileon [my getBoolean $_MMM(match1)]
         # check for input file
         } elseif {[my OptionIs $_MMM(IN_FILE) $_MMM(GRP1)]} {
           my FlushOut $mode $keep $charset $lineend $backup
@@ -635,7 +646,7 @@ method mulsterList {lcont lin lout {r1 0} {r2 0} {mode 1} {single 0}}
         } elseif {[my OptionIs $_MMM(IN_BEGIN)] ||  [my OptionIs $_MMM(IN_BEGIN) $_MMM(GRP2)]} {
           my CheckFiles 1
           my CheckFiles 2
-          lappend _MMM(inlist) [list $_MMM(match1) $_MMM(match2)  $single $charset $lineend $mode $comments]
+          lappend _MMM(inlist) [list $_MMM(match1) $_MMM(match2)  $single $fileon $charset $lineend $mode $comments]
           set comments &quot;&quot;
           set state IN
         # check for output lines beginning
@@ -677,7 +688,7 @@ method mulsterList {lcont lin lout {r1 0} {r2 0} {mode 1} {single 0}}
 </div><br><br><h4 class='ruffmethod'><a name='::mulster::Mulster::mulsterList'>mulsterList</a><span class='ns_scope'> [<a href="mulster.html#::mulster::Mulster" title="::mulster::Mulster" class='ruff_cmd'>::mulster::Mulster</a>]</span><span class='tinylink'><a href='mulster.html#::mulster::Mulster'>Mulster</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Performs replacements in a list.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT mulsterList</span> <span class='ruff_arg'>lcont lin lout ?r1? ?r2? ?mode? ?single?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT mulsterList</span> <span class='ruff_arg'>lcont lin lout ?r1? ?r2? ?mode? ?single? ?files?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>lcont</code></code></td><td class='ruff_defitem'>a list to be processed</td></tr>
 <tr><td class='ruff_defitem'><code><code>lin</code></code></td><td class='ruff_defitem'>input lines' list</td></tr>
@@ -686,10 +697,11 @@ method mulsterList {lcont lin lout {r1 0} {r2 0} {mode 1} {single 0}}
 <tr><td class='ruff_defitem'><code><code>r2</code></code></td><td class='ruff_defitem'>last index of replacements to do; <i>optional, default</i> <code>0</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>mode</code></code></td><td class='ruff_defitem'>a search mode (as defined in getSearchMode method); <i>optional, default</i> <code>1</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>single</code></code></td><td class='ruff_defitem'>if true, means a standard 'string for string' replacements; <i>optional, default</i> <code>0</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>files</code></code></td><td class='ruff_defitem'>if true, output lines are taken from files; <i>optional, default</i> <code>0</code></td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a list with replacements made.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_6' href="javascript:toggleSource('6')">Show source</a></p>
-<div id='6' class='ruff_dyn_src'><pre><code class="tcl"><br>method mulsterList {lcont lin lout {r1 0} {r2 0} {mode 1} {single 0}} {
+<div id='6' class='ruff_dyn_src'><pre><code class="tcl"><br>method mulsterList {lcont lin lout {r1 0} {r2 0} {mode 1} {single 0} {files 0}} {
 
   # Performs replacements in a list.
   #
@@ -700,6 +712,7 @@ method mulsterList {lcont lin lout {r1 0} {r2 0} {mode 1} {single 0}}
   #   r2 - last index of replacements to do
   #   mode - a search mode (as defined in getSearchMode method)
   #   single - if true, means a standard 'string for string' replacements
+  #   files - if true, output lines are taken from files
   #
   # Returns a list with replacements made.
 
@@ -711,6 +724,7 @@ method mulsterList {lcont lin lout {r1 0} {r2 0} {mode 1} {single 0}}
   set lres [list]  ;# resulting list
   set sti0 [lindex $lin 0]
   if {$mode==0} {set sti0 [string trim $sti0]} ;# for a quick 1st check
+  if {$files} {set lout [my FilesContents $lout]}
   set leno [llength $lout]
   set lenc [llength $lcont]
   set ic [set ifnd 0]

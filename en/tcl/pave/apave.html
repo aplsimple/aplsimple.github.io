@@ -1133,8 +1133,8 @@ set optvalue [::apave::getOption -tooltip {*}$options]
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>w</code></code></td><td class='ruff_defitem'>button's path</td></tr>
 <tr><td class='ruff_defitem'><code><code>tmo</code></code></td><td class='ruff_defitem'>timeout in sec.</td></tr>
-<tr><td class='ruff_defitem'><code><code>lbl</code></code></td><td class='ruff_defitem'>optional label, where seconds to wait are displayed</td></tr>
-<tr><td class='ruff_defitem'><code><code>lbltext</code></code></td><td class='ruff_defitem'>Not documented; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>lbl</code></code></td><td class='ruff_defitem'>label widget, where seconds to wait are displayed</td></tr>
+<tr><td class='ruff_defitem'><code><code>lbltext</code></code></td><td class='ruff_defitem'>original text of label; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_23' href="javascript:toggleSource('23')">Show source</a></p>
 <div id='23' class='ruff_dyn_src'><pre><code class="tcl"><br>method checkTimeoutButton {w tmo lbl {lbltext {}}} {
@@ -1142,7 +1142,8 @@ set optvalue [::apave::getOption -tooltip {*}$options]
   # Checks if the timeout button is alive &amp; focused; if not, cancels the timeout.
   #   w - button's path
   #   tmo - timeout in sec.
-  #   lbl - optional label, where seconds to wait are displayed
+  #   lbl - label widget, where seconds to wait are displayed
+  #   lbltext - original text of label
 
   if {[winfo exists $lbl]} {
     if {[focus] in [list $w &quot;&quot;]} {
@@ -1883,7 +1884,7 @@ pobj configure edge &quot;@@&quot;
 <tr><td class='ruff_defitem'><code>options</code></td><td class='ruff_defitem'>grid/pack options</td></tr>
 <tr><td class='ruff_defitem'><code>attrs</code></td><td class='ruff_defitem'>attributes of widget</td></tr>
 <tr><td class='ruff_defitem'><code>add</code></td><td class='ruff_defitem'>if set, replaces grid/pack with &quot;add&quot; command</td></tr>
-<tr><td class='ruff_defitem'><code>comm</code></td><td class='ruff_defitem'>a command executed after the creation of widget (&quot;~&quot; is its name)</td></tr>
+<tr><td class='ruff_defitem'><code>comm</code></td><td class='ruff_defitem'>a command executed after the creation of widget (&quot;%w&quot; is its name)</td></tr>
 </table>
 <p class='ruff'>First 3 items are mandatory, others are set at need.</p>
 <p class='ruff'>This method calls <em>paveWindow</em> in a cycle, to process a current &quot;win / lwidgets&quot; pair.</p>
@@ -1905,7 +1906,7 @@ pobj configure edge &quot;@@&quot;
   #   options - grid/pack options
   #   attrs - attributes of widget
   #   add - if set, replaces grid/pack with &quot;add&quot; command
-  #   comm - a command executed after the creation of widget (&quot;~&quot; is its name)
+  #   comm - a command executed after the creation of widget (&quot;%w&quot; is its name)
   # First 3 items are mandatory, others are set at need.
   #
   # This method calls *paveWindow* in a cycle, to process a current
@@ -1987,6 +1988,7 @@ pobj configure edge &quot;@@&quot;
   #
   # Returns a value of variable that controls an event cycle.
 
+  if {[winfo exists $win.dia]} {set win $win.dia}
   if {$result == &quot;get&quot;} {
     return [set ${_pav(ns)}PN::AR($win)]
   }
@@ -2146,8 +2148,8 @@ pobj configure edge &quot;@@&quot;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>w</code></code></td><td class='ruff_defitem'>button's path</td></tr>
 <tr><td class='ruff_defitem'><code><code>tmo</code></code></td><td class='ruff_defitem'>timeout in sec.</td></tr>
-<tr><td class='ruff_defitem'><code><code>lbl</code></code></td><td class='ruff_defitem'>optional label, where seconds to wait are displayed</td></tr>
-<tr><td class='ruff_defitem'><code><code>lbltext</code></code></td><td class='ruff_defitem'>Not documented; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>lbl</code></code></td><td class='ruff_defitem'>label widget, where seconds to wait are displayed</td></tr>
+<tr><td class='ruff_defitem'><code><code>lbltext</code></code></td><td class='ruff_defitem'>original text of label; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_45' href="javascript:toggleSource('45')">Show source</a></p>
 <div id='45' class='ruff_dyn_src'><pre><code class="tcl"><br>method timeoutButton {w tmo lbl {lbltext {}}} {
@@ -2155,7 +2157,8 @@ pobj configure edge &quot;@@&quot;
   # Invokes a button's action after a timeout.
   #   w - button's path
   #   tmo - timeout in sec.
-  #   lbl - optional label, where seconds to wait are displayed
+  #   lbl - label widget, where seconds to wait are displayed
+  #   lbltext - original text of label
 
   if {$tmo&gt;0} {
     catch {set lbl [my $lbl]}
@@ -2874,6 +2877,7 @@ pobj configure edge &quot;@@&quot;
   }
   lappend inopts [list fraM + T 1 98 &quot;-st nsew $pady -rw 1&quot;]
   set savedvv [list]
+  set frameprev &quot;&quot;
   foreach {name prompt valopts} $iopts {
     if {$name eq &quot;&quot;} continue
     lassign $prompt prompt gopts attrs
@@ -2883,6 +2887,8 @@ pobj configure edge &quot;@@&quot;
       lappend inopts [list fraM.$name - - - - &quot;pack -fill x $gopts&quot;]
       continue
     }
+    set toprev [::apave::getOption -toprev {*}$attrs]
+    set attrs [::apave::removeOptions $attrs -toprev]
     set tvar &quot;-tvar&quot;
     switch -- $typ {
       ch { set tvar &quot;-var&quot; }
@@ -2893,15 +2899,17 @@ pobj configure edge &quot;@@&quot;
     } else {
       set Mfont TkFixedFont ;#&quot;Courier&quot;
     }
+    set framename fraM.fra$name
     if {$typ in {lb te tb}} {  ;# the widgets sized vertically
-      lappend inopts [list fraM.fra$name - - - - &quot;pack -expand 1 -fill both&quot;]
+      lappend inopts [list $framename - - - - &quot;pack -expand 1 -fill both&quot;]
     } else {
-      lappend inopts [list fraM.fra$name - - - - &quot;pack -fill x&quot;]
+      lappend inopts [list $framename - - - - &quot;pack -fill x&quot;]
     }
     set vv [my VarName $name]
     set ff [my FieldName $name]
-    if {$typ ne &quot;la&quot;} {
-      if {$focusopt eq &quot;&quot;} {
+    if {$typ ne &quot;la&quot; &amp;&amp; $toprev eq &quot;&quot;} {
+      set takfoc [::apave::parseOptions $attrs -takefocus 1]
+      if {$focusopt eq &quot;&quot; &amp;&amp; $takfoc} {
         if {$typ in {fi di cl fo da}} {
           set _ en*$name  ;# 'entry-like mega-widgets'
         } elseif {$typ eq &quot;ft&quot;} {
@@ -2947,7 +2955,7 @@ pobj configure edge &quot;@@&quot;
       }
       fc {
         if {![info exist $vv]} {catch {set $vv &quot;&quot;}}
-        lappend inopts [list $ff - - - - &quot;pack -fill x $gopts&quot; &quot;-tvar $vv -values \{$valopts\} $attrs&quot;]
+        lappend inopts [list $ff - - - - &quot;pack -side left -expand 1 -fill x $gopts&quot; &quot;-tvar $vv -values \{$valopts\} $attrs&quot;]
       }
       op {
         set $vv $vsel
@@ -2982,8 +2990,24 @@ pobj configure edge &quot;@@&quot;
         lappend inopts [list $ff - - - - &quot;pack $gopts&quot; &quot;$prompt$attrs&quot;]
         continue
       }
+      bu - ch {
+        set prompt &quot;&quot;
+        if {$toprev eq &quot;&quot;} {
+          lappend inopts [list $ff - - - -  &quot;pack -side left -expand 1 -fill both $gopts&quot; &quot;$tvar $vv $attrs&quot;]
+        } else {
+          lappend inopts [list $frameprev.$name - - - -  &quot;pack -side left $gopts&quot; &quot;$tvar $vv $attrs&quot;]
+        }
+        if {$vv ne &quot;&quot;} {
+          if {![info exist $vv]} {
+            catch {
+              if {$vsel eq &quot;&quot;} {set vsel 0}
+              set $vv $vsel
+            }
+          }
+        }
+      }
       default {
-        lappend inopts [list $ff - - - - &quot;pack -side right -expand 1 -fill x $gopts&quot; &quot;$tvar $vv $attrs&quot;]
+        lappend inopts [list $ff - - - -  &quot;pack -side left -expand 1 -fill x $gopts&quot; &quot;$tvar $vv $attrs&quot;]
         if {$vv ne &quot;&quot;} {
           if {![info exist $vv]} {catch {set $vv $vsel}}
         }
@@ -2993,10 +3017,11 @@ pobj configure edge &quot;@@&quot;
       lassign $msgLab lab msg
       set lab [my parentWName [lindex $inopts end 0]].$lab
       if {$msg ne &quot;&quot;} {set msg &quot;-t {$msg}&quot;}
-      lappend inopts [list $lab - - - - &quot;pack -side right -expand 1 -fill x&quot; $msg]
+      lappend inopts [list $lab - - - - &quot;pack -side left -expand 1 -fill x&quot; $msg]
     }
     if {![info exist $vv]} {set $vv &quot;&quot;}
     lappend _savedvv $vv [set $vv]
+    set frameprev $framename
   }
   lassign [::apave::parseOptions $args -titleOK OK -titleCANCEL Cancel  -centerme &quot;&quot;] titleOK titleCANCEL centerme
   if {$titleCANCEL eq &quot;&quot;} {
@@ -3011,7 +3036,11 @@ pobj configure edge &quot;@@&quot;
   }
   set args [::apave::removeOptions $args -titleOK -titleCANCEL -centerme]
   lappend args {*}$focusopt
-  set res [my Query $icon $ttl {} &quot;butOK $titleOK 1 $butCancel&quot; butOK  $inopts [my PrepArgs $args] &quot;&quot; {*}$centerme]
+  if {[catch {  set res [my Query $icon $ttl {} &quot;butOK $titleOK 1 $butCancel&quot; butOK  $inopts [my PrepArgs $args] &quot;&quot; {*}$centerme]} e]} {
+    catch {destroy $_pdg(win).dia}  ;# Query's window
+    ::apave::paveObj ok err &quot;ERROR&quot; &quot;\n$e\n&quot;  -t 1 -head &quot;\nAPaveInput returned an error: \n&quot; -hfg red -weight bold
+    return 0
+  }
   if {[lindex $res 0]!=1} {  ;# restore old values if OK not chosen
     foreach {vn vv} $_savedvv {
       # tk_optionCascade (destroyed now) was tracing its variable =&gt; catch
@@ -3641,6 +3670,9 @@ pobj configure edge &quot;@@&quot;
       my Ttk_style map $ts -foreground [list disabled $tfgD readonly $tfgD selected $tfgS]
       my Ttk_style map $ts -background [list disabled $tbgD readonly $tbgD selected $tbgS]
     }
+  }
+  foreach ts {TRadiobutton TCheckbutton} {
+    ttk::style map $ts -background [list focus $tbg2 !focus $tbg1]
   }
   # non-themed widgets of button and entry types
   foreach ts [my NonThemedWidgets button] {
