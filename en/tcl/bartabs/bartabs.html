@@ -350,17 +350,18 @@ padding: 0%;
 <p class='ruff'>However, only the <em>Bars</em> class is used to create bars along with tabs. It can be also used to deal with any bars and tabs, providing all necessary interface.</p>
 <p class='ruff'>The <em>Bar</em> does not create a real TclOO object, rather it provides <em>syntax sugar</em> for a convenient access to the bar methods.</p>
 <p class='ruff'>The <em>Tab</em> does not create a real TclOO object as well. It serves actually for structuring <em>bartabs</em> code as for tab methods. Thus, its methods are accessible through the <em>Bars</em> (&quot;real&quot; TclOO) and <em>Bar</em> (&quot;sugar&quot;) objects.</p>
+<p class='ruff'><hr></p>
 <p class='ruff'>A common work flow with <em>bartabs</em> looks like this:</p>
-<p class='ruff'>1) Firstly, we create a <em>Bars</em> object, e.g.</p>
+<p class='ruff'>Firstly, we create a <em>Bars</em> object, e.g.</p>
 <p class='ruff'><code>bartabs::Bars create NS::bars</code></p>
-<p class='ruff'>2) Then we create a <em>Bar</em> object, e.g.</p>
+<p class='ruff'>Then we create a <em>Bar</em> object, e.g.</p>
 <p class='ruff'><code>NS::bars create NS::bar $barOptions</code></p>
-<p class='ruff'>3) If a tab of the bar should be displayed (with its possible contents), we show the bar and select the current tab:</p>
+<p class='ruff'>If a tab of the bar should be displayed (with its possible contents), we show the bar and select the current tab:</p>
 <p class='ruff'><code>set TID [NS::bar tabID &quot;tab label&quot;]  ;# get the tab's ID by its label</code></p>
 <p class='ruff'><code>NS::bar $TID show  ;# show the bar and select the tab</code></p>
 <p class='ruff'>or just draw the bar without mind-breaking about a tab:</p>
 <p class='ruff'><code>NS::bar draw  ;# show the bar without selecting a tab</code></p>
-<p class='ruff'>4) The rest actions include:</p>
+<p class='ruff'>The rest actions include:</p>
 <ul class='ruff'>
 <li>responses to a selection of tab (through <code>-csel command</code> option of <em>Bar</em> object)</li>
 <li>responses to a deletion of tab (through <code>-cdel command</code> option of <em>Bar</em> object)</li>
@@ -407,11 +408,9 @@ padding: 0%;
 <p class='ruff'>instead of</p>
 <p class='ruff'><code>NS::bar [NS::bar tabID &quot;some tab&quot;] show ;# find and show the tab by its name</code></p>
 <p class='ruff'><hr></p>
-<p class='ruff'>Further details:</p>
-<ul class='ruff'>
-<li><a href="https://aplsimple.github.io/en/tcl/bartabs/index.html" >Documentation</a></li>
-<li><a href="https://aplsimple.github.io/en/tcl/bartabs/bartabs.html" >Reference</a></li>
-</ul>
+<p class='ruff'>More details:</p>
+<p class='ruff'><a href="https://aplsimple.github.io/en/tcl/bartabs" >Documentation</a></p>
+<p class='ruff'><a href="https://aplsimple.github.io/en/tcl/bartabs/bartabs.html" >Reference</a></p>
 <br><h2 class='ruff'><a name='::bartabs-Commands'></a>Commands<span class='tinylink'><a href='bartabs.html#::bartabs'>bartabs</a>, <a href='#top'>Top</a></span></h2>
 <div style='clear:both;'></div>
 <br><br><br><h4 class='ruffproc'><a name='::bartabs::drawAll'>drawAll</a><span class='ns_scope'> [<a href="bartabs.html#::bartabs" title="::bartabs" class='ruff_cmd'>::bartabs</a>]</span><span class='tinylink'><a href='bartabs.html#::bartabs'>bartabs</a>, <a href='#top'>Top</a></span></h4>
@@ -422,7 +421,7 @@ padding: 0%;
 <div id='1' class='ruff_dyn_src'><pre><code class="tcl"><br>proc ::bartabs::drawAll {} {
 
   # Draws all bars. Used at updating themes etc.
-  foreach bar $bartabs::BarList {[lindex $bar 1] drawAll}
+  foreach bars $bartabs::BarsList {$bars drawAll}
 }<br><br></code></pre></div>
 </div><br><h2 class='ruff'><a name='::bartabs-Classes'></a>Classes<span class='tinylink'><a href='bartabs.html#::bartabs'>bartabs</a>, <a href='#top'>Top</a></span></h2>
 <div style='clear:both;'></div>
@@ -678,8 +677,6 @@ padding: 0%;
       if {[set bc [my $BID cget -BARCOM]] ne &quot;&quot;} {catch {rename $bc &quot;&quot;}}
       foreach tc [my $BID cget -TABCOM] {catch {rename [lindex $tc 1] &quot;&quot;}}
       dict unset btData $BID
-      set i [lsearch -index 0 $bartabs::BarList $BID]
-      set bartabs::BarList [lreplace $bartabs::BarList $i $i]
       return yes
     }
     return no
@@ -812,6 +809,7 @@ padding: 0%;
   set btData [dict create]
   if {[llength [self next]]} { next {*}$args }
   oo::objdefine [self] &quot;method tab-1 {args} {return {-1}}&quot;
+  lappend bartabs::BarsList [self]
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::bartabs::Bars::destructor'>destructor</a><span class='ns_scope'> [<a href="bartabs.html#::bartabs::Bars" title="::bartabs::Bars" class='ruff_cmd'>::bartabs::Bars</a>]</span><span class='tinylink'><a href='bartabs.html#::bartabs::Bars'>Bars</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -821,6 +819,8 @@ padding: 0%;
 
   my removeAll
   unset btData
+  set i [lsearch -exact $bartabs::BarsList [self]]
+  set bartabs::BarsList [lreplace $bartabs::BarsList $i $i]
   if {[llength [self next]]} next
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::bartabs::Bars::create'>create</a><span class='ns_scope'> [<a href="bartabs.html#::bartabs::Bars" title="::bartabs::Bars" class='ruff_cmd'>::bartabs::Bars</a>]</span><span class='tinylink'><a href='bartabs.html#::bartabs::Bars'>Bars</a>, <a href='#top'>Top</a></span></h4>
@@ -867,7 +867,6 @@ padding: 0%;
       proc $barCom {args} &quot;return \[[self] $BID {*}\$args\]&quot;
       my $BID configure -BARCOM $barCom
     }
-    lappend bartabs::BarList [list $BID [self]]
     return $BID
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::bartabs::Bars::disableTab'>disableTab</a><span class='ns_scope'> [<a href="bartabs.html#::bartabs::Bars" title="::bartabs::Bars" class='ruff_cmd'>::bartabs::Bars</a>]</span><span class='tinylink'><a href='bartabs.html#::bartabs::Bars'>Bars</a>, <a href='#top'>Top</a></span></h4>
