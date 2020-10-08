@@ -1437,12 +1437,28 @@ padding: 0%;
   <font color=#4A181B>$w</font> replace 1.0 end <font color=#4A181B>$disptext</font>
   <b><font color=#923B23>foreach</font></b> tagi <font color=#4A181B>$tags</font> {
     <b><font color=#923B23>lassign</font></b> <font color=#4A181B>$tagi</font> tag opts
-    <font color=#4A181B>$w</font> tag config <font color=#4A181B>$tag</font> {*}<font color=#4A181B>$opts</font>
+    <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>string</font></b> match <font color=#035103>&quot;link*&quot;</font> <font color=#4A181B>$tag</font>]} {
+      <font color=#4A181B>$w</font> tag config <font color=#4A181B>$tag</font> {*}<font color=#4A181B>$opts</font>
+    }
   }
-  <b><font color=#923B23>foreach</font></b> tagli <font color=#4A181B>$taglist</font> {
+  <b><font color=#923B23>lassign</font></b> [<b><font color=#A106A1>my</font></b> csGet] fg fg2 bg bg2
+  <b><font color=#923B23>set</font></b> lfont [<font color=#4A181B>$w</font> cget <font color=#463e11>-font</font>]
+  <b><font color=#923B23>dict</font></b> set lfont <font color=#463e11>-underline</font> 1
+  <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> it [<b><font color=#923B23>llength</font></b> <font color=#4A181B>$taglist</font>]} {[<b><font color=#923B23>incr</font></b> it -1]&gt;=0} {} {
+    <b><font color=#923B23>set</font></b> tagli [<b><font color=#923B23>lindex</font></b> <font color=#4A181B>$taglist</font> <font color=#4A181B>$it</font>]
     <b><font color=#923B23>lassign</font></b> <font color=#4A181B>$tagli</font> i p1 p2
     <b><font color=#923B23>lassign</font></b> [<b><font color=#923B23>lindex</font></b> <font color=#4A181B>$tags</font> <font color=#4A181B>$i</font>] tag opts
-    <font color=#4A181B>$w</font> tag add <font color=#4A181B>$tag</font> <font color=#4A181B>$p1</font> <font color=#4A181B>$p2</font>
+    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>string</font></b> match <font color=#035103>&quot;link*&quot;</font> <font color=#4A181B>$tag</font>] &&  [<b><font color=#923B23>set</font></b> ist [<b><font color=#923B23>lsearch</font></b> <font color=#463e11>-exact</font> <font color=#463e11>-index</font> 0 <font color=#4A181B>$tags</font> <font color=#4A181B>$tag</font>]]&gt;=0} {
+      <b><font color=#923B23>set</font></b> txt [<font color=#4A181B>$w</font> get <font color=#4A181B>$p1</font> <font color=#4A181B>$p2</font>]
+      <b><font color=#923B23>set</font></b> lab <font color=#4A181B>$w</font>[<b><font color=#923B23>incr</font></b> ::apave::__linklab__]
+      <b><font color=#7A040E>ttk::label</font></b> <font color=#4A181B>$lab</font> <font color=#463e11>-text</font> <font color=#4A181B>$txt</font> <font color=#463e11>-font</font> <font color=#4A181B>$lfont</font> <font color=#463e11>-foreground</font> <font color=#4A181B>$fg</font> <font color=#463e11>-background</font> <font color=#4A181B>$bg</font>
+      <font color=#4A181B>$w</font> delete <font color=#4A181B>$p1</font> <font color=#4A181B>$p2</font>
+      <font color=#4A181B>$w</font> window create <font color=#4A181B>$p1</font> <font color=#463e11>-window</font> <font color=#4A181B>$lab</font>
+      <b><font color=#923B23>set</font></b> v [<b><font color=#923B23>lindex</font></b> <font color=#4A181B>$tags</font> <font color=#4A181B>$ist</font> 1]
+      <b><font color=#A106A1>my</font></b> MakeLabelLinked <font color=#4A181B>$lab</font> <font color=#4A181B>$v</font> <font color=#4A181B>$fg</font> <font color=#4A181B>$bg</font> <font color=#4A181B>$fg2</font> <font color=#4A181B>$bg2</font>
+    } <b><font color=#923B23>else</font></b> {
+      <font color=#4A181B>$w</font> tag add <font color=#4A181B>$tag</font> <font color=#4A181B>$p1</font> <font color=#4A181B>$p2</font>
+    }
   }
   <font color=#4A181B>$w</font> edit reset; <font color=#4A181B>$w</font> edit modified no
   <b><font color=#923B23>if</font></b> { <font color=#4A181B>$state</font> ne <font color=#035103>&quot;normal&quot;</font> } { <font color=#4A181B>$w</font> configure <font color=#463e11>-state</font> <font color=#4A181B>$state</font> }
