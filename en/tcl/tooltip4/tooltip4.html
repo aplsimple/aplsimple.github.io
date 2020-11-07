@@ -336,7 +336,7 @@ padding: 0%;
 <li>be displayed at the screen's edges</li>
 <li>be displayed with given opacity</li>
 <li>be displayed as a stand-alone balloon message at given coordinates</li>
-<li>have configure/cget/destroy wrapped in Tcl ensemble for convenience</li>
+<li>have configure/cget etc. wrapped in Tcl ensemble for convenience</li>
 </ul>
 <p class='ruff'>Below are several pictures just to glance at the <em>tooltip4</em>.</p>
 <p class='ruff'><em>Bold welcome</em>. The tooltip's font is configured to be &quot;-weight bold -size 11&quot;.</p>
@@ -355,36 +355,58 @@ padding: 0%;
 <pre class='ruff'><br><code class="tcl">  <b><font color=#923B23>lappend</font></b> auto_path <font color=#035103>&quot;dir_of_tooltip4&quot;</font>
   <b><font color=#923B23>package</font></b> require tooltip4
 <br></code></pre>
-<p class='ruff'>Then we set tooltips with <code>::tooltip4::tooltip</code> command for each appropriate widget.</p>
-<p class='ruff'>For example, having a button <em>.win.button1</em>, we can set its tooltip this way:</p>
-<pre class='ruff'><br><code class="tcl">  ::tooltip4::tooltip .win.button1 <font color=#035103>&quot;It's .win.button1's tooltip\nAnother line of the tip.&quot;</font>
+<p class='ruff'>Then we set tooltips with <code>::tooltip4::tooltip</code> command for each appropriate widget:</p>
+<pre class='ruff'><br><code class="tcl">  ::tooltip4::tooltip widgetpath text ?<font color=#463e11>-option</font> value?
+  <i><font color=#646464># or this way:</font></i>
+  ::tooltip4 tooltip widgetpath text ?<font color=#463e11>-option</font> value?
 <br></code></pre>
-<p class='ruff'>The <em>tooltip4</em> is configurable. Its options are listed below.</p>
-<p class='ruff'>To get its default options, use the command:</p>
-<pre class='ruff'><br><code class="tcl">  <b><font color=#923B23>set</font></b> defaults [::tooltip4::cget]
+<p class='ruff'>For example, having a button <em>.win.but1</em>, we can set its tooltip this way:</p>
+<pre class='ruff'><br><code class="tcl">  ::tooltip4 tooltip .win.but1 <font color=#035103>&quot;It's a tooltip.\n2nd line of it.\n3rd.&quot;</font>
 <br></code></pre>
-<p class='ruff'>To get a specific option's value, use the command:</p>
-<pre class='ruff'><br><code class="tcl">  <b><font color=#923B23>set</font></b> option [::tooltip4::cget <font color=#463e11>-option</font>]
+<p class='ruff'>To get all or specific settings <em>tooltip4</em> settings:</p>
+<pre class='ruff'><br><code class="tcl">  ::tooltip4::cget
+  ::tooltip4::cget <font color=#463e11>-option</font> ?<font color=#463e11>-option</font>?
+  <i><font color=#646464># or this way:</font></i>
+  ::tooltip4 cget
+  ::tooltip4 cget <font color=#463e11>-option</font> ?<font color=#463e11>-option</font>?
 <br></code></pre>
-<p class='ruff'>To set some options, use the command:</p>
+<p class='ruff'>To set some options:</p>
 <pre class='ruff'><br><code class="tcl">  ::tooltip4::configure <font color=#463e11>-option</font> value ?<font color=#463e11>-option</font> value?
   <i><font color=#646464># or this way:</font></i>
   ::tooltip4 config <font color=#463e11>-option</font> value ?<font color=#463e11>-option</font> value?
 <br></code></pre>
-<p class='ruff'>You may combine <code>tooltip</code> and <code>configure</code> in one command:</p>
-<pre class='ruff'><br><code class="tcl">  ::tooltip4::tooltip .win.button1 <font color=#035103>&quot;It's .win.button1's tooltip&quot;</font>  <font color=#463e11>-pause</font> 1000 <font color=#463e11>-font</font> {<font color=#463e11>-size</font> 16}
+<p class='ruff'><strong>Note</strong>: the options set with <code>configure</code> command are <em>global</em>, i.e. active for all tooltips. The options set with <code>tooltip</code> command are <em>local</em>, i.e. active for the specific tooltip.</p>
+<p class='ruff'>To make all (or specific) tooltips use the global settings:</p>
+<pre class='ruff'><br><code class="tcl">  ::tooltip4::update ?widgetpath?
 <br></code></pre>
-<p class='ruff'><strong>Note</strong>: the options set with <code>tooltip</code> and <code>configure</code> commands are active for all tooltips.</p>
-<p class='ruff'>A balloon feature of <em>tooltip4</em> is available through <code>-geometry</code> option. For example:</p>
+<p class='ruff'>To disable all tooltips:</p>
+<pre class='ruff'><br><code class="tcl">  ::tooltip4::configure <font color=#463e11>-on</font> false
+<br></code></pre>
+<p class='ruff'>To disable some specific tooltip:</p>
+<pre class='ruff'><br><code class="tcl">  ::tooltip4::tooltip widgetpath <font color=#035103>&quot;&quot;</font>
+  <i><font color=#646464># or this way:</font></i>
+  ::tooltip4::tooltip widgetpath <font color=#035103>&quot;old tooltip&quot;</font> <font color=#463e11>-on</font> false
+<br></code></pre>
+<p class='ruff'>To hide some specific (suspended) tooltip forcedly:</p>
+<pre class='ruff'><br><code class="tcl">  ::tooltip4::hide widgetpath
+<br></code></pre>
+<p class='ruff'>When you click on a widget with tooltip being displayed, the tooltip is hidden. It is the default behavior of <em>tooltip4</em>, but sometimes you need to re-display the hidden tooltip. If the widget is a button, you can include the following command in <code>-command</code> of the button:</p>
+<pre class='ruff'><br><code class="tcl">  ::tooltip4::repaint widgetpath
+<br></code></pre>
+<br><h2 class='ruff'><a name='::tooltip4-Balloon'></a>Balloon<span class='tinylink'><a href='tooltip4.html#::tooltip4'>tooltip4</a>, <a href='#top'>Top</a></span></h2>
+<div style='clear:both;'></div>
+<p class='ruff'>The <em>normal</em> tooltip has no <code>-geometry</code> option because it's calculated by <em>tooltip4</em>.</p>
+<p class='ruff'>So, with <code>-geometry</code> option you get a balloon message unrelated to any visible widget (it's made on the toplevel window). The <code>-geometry</code> option has +X+Y form where X and Y are coordinates of the balloon.</p>
+<p class='ruff'>For example:</p>
 <pre class='ruff'><br><code class="tcl">  ::tooltip4::tooltip .win <font color=#035103>&quot;It's a balloon at +1+100 (+X+Y) coordinates&quot;</font>  <font color=#463e11>-geometry</font> +1+100 <font color=#463e11>-font</font> {<font color=#463e11>-weight</font> bold <font color=#463e11>-size</font> 12}  <font color=#463e11>-alpha</font> 0.8 <font color=#463e11>-fg</font> white <font color=#463e11>-bg</font> black <font color=#463e11>-per10</font> 3000 <font color=#463e11>-pause</font> 1500 <font color=#463e11>-fade</font> 1500
 <br></code></pre>
-<p class='ruff'><strong>Note</strong>: the options set with the <em>-geometry</em> call are active only for the specific <em>balloon</em>.</p>
+<p class='ruff'>The <code>-pause</code> and <code>-fade</code> options make the balloon fade at appearing and disappearing. The <code>-per10</code> option defines the balloon's duration: the more the longer.</p>
 <p class='ruff'>The <code>-geometry</code> value can include <code>W</code> and <code>H</code> <em>wildcards</em> meaning the width and the height of the balloon. This may be useful when you need to show a balloon at a window's edge and should use the balloon's dimensions which are available only after its creation. The X and Y coordinates are calculated by <em>tooltip4</em> as normal expressions. Of course, they should not include the &quot;+&quot; divider, but this restriction (if any) is easily overcome.</p>
 <p class='ruff'>For example:</p>
 <pre class='ruff'><br><code class="tcl">  <b><font color=#923B23>lassign</font></b> [<b><font color=#923B23>split</font></b> [<b><font color=#7A040E>winfo</font></b> geometry .win] x+] w h x y
-  <b><font color=#923B23>set</font></b> geo <font color=#035103>&quot;+<font color=#4A181B>[</font>expr <font color=#4A181B>{$</font>w+<font color=#4A181B>$</font>x<font color=#4A181B>}]</font>-W-4+<font color=#4A181B>$</font>y&quot;</font>
-  <b><font color=#923B23>set</font></b> text <font color=#035103>&quot;A balloon at the right edge of the window&quot;</font>
-  ::tooltip4 too .win <font color=#4A181B>$text</font> <font color=#463e11>-geometry</font> <font color=#4A181B>$geo</font>
+  <b><font color=#923B23>set</font></b> geom <font color=#035103>&quot;+(<font color=#4A181B>[</font>expr <font color=#4A181B>{$</font>w+<font color=#4A181B>$</font>x<font color=#4A181B>}]</font>-W-4)+<font color=#4A181B>$</font>y&quot;</font>
+  <b><font color=#923B23>set</font></b> text <font color=#035103>&quot;The balloon at the right edge of the window&quot;</font>
+  ::tooltip4 too .win <font color=#4A181B>$text</font> <font color=#463e11>-geometry</font> <font color=#4A181B>$geom</font> <font color=#463e11>-pause</font> 2000 <font color=#463e11>-fade</font> 2000
 <br></code></pre>
 <p class='ruff'>As seen in the above examples, the <em>tooltip4</em> can be used as Tcl ensemble, so that the commands may be shortened.</p>
 <br><h2 class='ruff'><a name='::tooltip4-Options'></a>Options<span class='tinylink'><a href='tooltip4.html#::tooltip4'>tooltip4</a>, <a href='#top'>Top</a></span></h2>
@@ -416,7 +438,7 @@ padding: 0%;
 <ul class='ruff'>
 <li><a href="https://chiselapp.com/user/aplsimple/repository/pave/download" >apave package</a> (pave.zip)</li>
 </ul>
-<p class='ruff'>Note that <a href="https://chiselapp.com/user/aplsimple/repository/tooltip4/download" >tooltip4</a> is still disposed to update.</p>
+<p class='ruff'>Note that <a href="https://chiselapp.com/user/aplsimple/repository/tooltip4/download" >tooltip4</a> is still disposed to updating, e.g. for now it doesn't provide the menu item tooltip as the tooltip of tklib does.</p>
 <br><h2 class='ruff'><a name='::tooltip4-Commands'></a>Commands<span class='tinylink'><a href='tooltip4.html#::tooltip4'>tooltip4</a>, <a href='#top'>Top</a></span></h2>
 <div style='clear:both;'></div>
 <br><br><br><h4 class='ruffproc'><a name='::tooltip4::cget'>cget</a><span class='ns_scope'> [<a href="tooltip4.html#::tooltip4" title="::tooltip4" class='ruff_cmd'>::tooltip4</a>]</span><span class='tinylink'><a href='tooltip4.html#::tooltip4'>tooltip4</a>, <a href='#top'>Top</a></span></h4>
@@ -435,7 +457,7 @@ padding: 0%;
   <i><font color=#646464># Returns a list of &quot;name value&quot; pairs.</font></i>
 
   <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>llength</font></b> <font color=#4A181B>$args</font>]} {
-    <b><font color=#923B23>lappend</font></b> args <font color=#463e11>-on</font> <font color=#463e11>-per10</font> <font color=#463e11>-fade</font> <font color=#463e11>-pause</font> <font color=#463e11>-fg</font> <font color=#463e11>-bg</font> <font color=#463e11>-bd</font> <font color=#463e11>-padx</font> <font color=#463e11>-pady</font> <font color=#463e11>-padding</font> <font color=#463e11>-font</font> <font color=#463e11>-alpha</font>
+    <b><font color=#923B23>lappend</font></b> args <font color=#463e11>-on</font> <font color=#463e11>-per10</font> <font color=#463e11>-fade</font> <font color=#463e11>-pause</font> <font color=#463e11>-fg</font> <font color=#463e11>-bg</font> <font color=#463e11>-bd</font> <font color=#463e11>-padx</font> <font color=#463e11>-pady</font> <font color=#463e11>-padding</font>  <font color=#463e11>-font</font> <font color=#463e11>-alpha</font> <font color=#463e11>-text</font>
   }
   <b><font color=#923B23>set</font></b> res [<b><font color=#923B23>list</font></b>]
   <b><font color=#923B23>foreach</font></b> n <font color=#4A181B>$args</font> {
@@ -497,7 +519,7 @@ padding: 0%;
   <b><font color=#923B23>set</font></b> geo <font color=#035103>&quot;&quot;</font>
   <b><font color=#923B23>foreach</font></b> {n v} <font color=#4A181B>$args</font> {
     <b><font color=#923B23>switch</font></b> <font color=#463e11>-glob</font> -- <font color=#4A181B>$n</font> {
-      <font color=#463e11>-on</font> - <font color=#463e11>-per10</font> - <font color=#463e11>-fade</font> - <font color=#463e11>-pause</font> - <font color=#463e11>-fg</font> - <font color=#463e11>-bg</font> - <font color=#463e11>-bd</font> - <font color=#463e11>-alpha</font> -  <font color=#463e11>-padx</font> - <font color=#463e11>-pady</font> - <font color=#463e11>-padding</font> {<b><font color=#923B23>set</font></b> my::ttdata([<b><font color=#923B23>string</font></b> range <font color=#4A181B>$n</font> 1 end]) <font color=#4A181B>$v</font>}
+      <font color=#463e11>-on</font> - <font color=#463e11>-per10</font> - <font color=#463e11>-fade</font> - <font color=#463e11>-pause</font> - <font color=#463e11>-fg</font> - <font color=#463e11>-bg</font> - <font color=#463e11>-bd</font> - <font color=#463e11>-alpha</font> - <font color=#463e11>-text</font> -  <font color=#463e11>-padx</font> - <font color=#463e11>-pady</font> - <font color=#463e11>-padding</font> {<b><font color=#923B23>set</font></b> my::ttdata([<b><font color=#923B23>string</font></b> range <font color=#4A181B>$n</font> 1 end]) <font color=#4A181B>$v</font>}
       <font color=#463e11>-font</font> {<b><font color=#923B23>foreach</font></b> {k v} <font color=#4A181B>$v</font> {<b><font color=#923B23>dict</font></b> set my::ttdata(font) <font color=#4A181B>$k</font> <font color=#4A181B>$v</font>}}
       <font color=#463e11>-force</font> {<b><font color=#923B23>set</font></b> force <font color=#4A181B>$v</font>}
       <font color=#463e11>-geometry</font> {<b><font color=#923B23>set</font></b> geo <font color=#4A181B>$v</font>}
@@ -506,21 +528,38 @@ padding: 0%;
   }
   <b><font color=#A106A1>return</font></b> [<b><font color=#923B23>list</font></b> <font color=#4A181B>$force</font> <font color=#4A181B>$geo</font>]
 }<br><br></code></pre></div>
-</div><br><br><br><h4 class='ruffproc'><a name='::tooltip4::destroytooltip'>destroytooltip</a><span class='ns_scope'> [<a href="tooltip4.html#::tooltip4" title="::tooltip4" class='ruff_cmd'>::tooltip4</a>]</span><span class='tinylink'><a href='tooltip4.html#::tooltip4'>tooltip4</a>, <a href='#top'>Top</a></span></h4>
+</div><br><br><br><h4 class='ruffproc'><a name='::tooltip4::hide'>hide</a><span class='ns_scope'> [<a href="tooltip4.html#::tooltip4" title="::tooltip4" class='ruff_cmd'>::tooltip4</a>]</span><span class='tinylink'><a href='tooltip4.html#::tooltip4'>tooltip4</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Destroys the tooltip's window.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>destroytooltip</span> <span class='ruff_arg'>?w?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>hide</span> <span class='ruff_arg'>?w?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>w</code></code></td><td class='ruff_defitem'>the tooltip's parent window; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_3' href="javascript:toggleSource('3')">Show source</a></p>
-<div id='3' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::tooltip4::destroytooltip {{w {}}} {
+<div id='3' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::tooltip4::hide {{w {}}} {
 
   <i><font color=#646464># Destroys the tooltip's window.</font></i>
   <i><font color=#646464>#   w - the tooltip's parent window</font></i>
 
   <b><font color=#923B23>if</font></b> {[<b><font color=#7A040E>winfo</font></b> exists <font color=#4A181B>$w</font>] || <font color=#4A181B>$w</font> eq <font color=#035103>&quot;&quot;</font>} {
     <b><font color=#923B23>catch</font></b> {<b><font color=#7A040E>destroy</font></b> <font color=#4A181B>$w</font>.<font color=#4A181B>$my::ttdata(wttip)</font>}
+  }
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::tooltip4::repaint'>repaint</a><span class='ns_scope'> [<a href="tooltip4.html#::tooltip4" title="::tooltip4" class='ruff_cmd'>::tooltip4</a>]</span><span class='tinylink'><a href='tooltip4.html#::tooltip4'>tooltip4</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Repaints a tooltip immediately.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>repaint</span> <span class='ruff_arg'>w</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>w</code></code></td><td class='ruff_defitem'>widget's path</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_4' href="javascript:toggleSource('4')">Show source</a></p>
+<div id='4' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::tooltip4::repaint {w} {
+
+  <i><font color=#646464># Repaints a tooltip immediately.</font></i>
+  <i><font color=#646464>#   w - widget's path</font></i>
+
+  <b><font color=#923B23>if</font></b> {[<b><font color=#7A040E>winfo</font></b> exists <font color=#4A181B>$w</font>] && [<b><font color=#923B23>info</font></b> exists my::ttdata(optvals,<font color=#4A181B>$w)</font>]} {
+    ::tooltip4::my::Show <font color=#4A181B>$w</font> [<b><font color=#923B23>dict</font></b> get <font color=#4A181B>$my::ttdata(optvals</font>,<font color=#4A181B>$w)</font> text] yes  {} <font color=#4A181B>$my::ttdata(optvals</font>,<font color=#4A181B>$w)</font>
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::tooltip4::tooltip'>tooltip</a><span class='ns_scope'> [<a href="tooltip4.html#::tooltip4" title="::tooltip4" class='ruff_cmd'>::tooltip4</a>]</span><span class='tinylink'><a href='tooltip4.html#::tooltip4'>tooltip4</a>, <a href='#top'>Top</a></span></h4>
@@ -532,8 +571,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>text</code></code></td><td class='ruff_defitem'>the tooltip text</td></tr>
 <tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>options (&quot;name value&quot; pairs)</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_4' href="javascript:toggleSource('4')">Show source</a></p>
-<div id='4' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::tooltip4::tooltip {w text args} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_5' href="javascript:toggleSource('5')">Show source</a></p>
+<div id='5' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::tooltip4::tooltip {w text args} {
 
   <i><font color=#646464># Creates a tooltip for a widget.</font></i>
   <i><font color=#646464>#   w - the parent widget's path</font></i>
@@ -542,9 +581,14 @@ padding: 0%;
 
   <b><font color=#923B23>if</font></b> {[<b><font color=#7A040E>winfo</font></b> exists <font color=#4A181B>$w</font>] || <font color=#4A181B>$w</font> eq <font color=#035103>&quot;&quot;</font>} {
     <b><font color=#923B23>set</font></b> arrsaved [<b><font color=#923B23>array</font></b> get my::ttdata]
-    <b><font color=#923B23>lassign</font></b> [configure {*}<font color=#4A181B>$args</font>] forced geo
-    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$text</font> != <font color=#035103>&quot;&quot;</font>} {
-      <b><font color=#923B23>if</font></b> {<font color=#4A181B>$forced</font> || <font color=#4A181B>$geo</font> ne <font color=#035103>&quot;&quot;</font>} {::tooltip4::my::Show <font color=#4A181B>$w</font> <font color=#4A181B>$text</font> yes <font color=#4A181B>$geo</font>}
+    <b><font color=#923B23>set</font></b> optvals [::tooltip4::my::CGet {*}<font color=#4A181B>$args</font>]
+    <b><font color=#923B23>lassign</font></b> <font color=#4A181B>$optvals</font> forced geo
+    <b><font color=#923B23>set</font></b> optvals [<b><font color=#923B23>lrange</font></b> <font color=#4A181B>$optvals</font> 2 end]
+    <b><font color=#923B23>set</font></b> my::ttdata(optvals,<font color=#4A181B>$w)</font> [<b><font color=#923B23>dict</font></b> set optvals text <font color=#4A181B>$text</font>]
+    <b><font color=#923B23>set</font></b> my::ttdata(on,<font color=#4A181B>$w)</font> [<b><font color=#923B23>expr</font></b> {[<b><font color=#923B23>string</font></b> length <font color=#4A181B>$text</font>]}]
+    <b><font color=#923B23>set</font></b> my::ttdata(global,<font color=#4A181B>$w)</font> no
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$text</font> ne <font color=#035103>&quot;&quot;</font>} {
+      <b><font color=#923B23>if</font></b> {<font color=#4A181B>$forced</font> || <font color=#4A181B>$geo</font> ne <font color=#035103>&quot;&quot;</font>} {::tooltip4::my::Show <font color=#4A181B>$w</font> <font color=#4A181B>$text</font> yes <font color=#4A181B>$geo</font> <font color=#4A181B>$optvals</font>}
       <b><font color=#923B23>if</font></b> {<font color=#4A181B>$geo</font> ne <font color=#035103>&quot;&quot;</font>} {
         <b><font color=#923B23>array</font></b> set my::ttdata <font color=#4A181B>$arrsaved</font>  ;<i><font color=#646464># balloon popup</font></i>
       } <b><font color=#923B23>else</font></b> {
@@ -552,13 +596,34 @@ padding: 0%;
         <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>lsearch</font></b> <font color=#463e11>-exact</font> <font color=#4A181B>$tags</font> <font color=#035103>&quot;Tooltip<font color=#4A181B>$</font>w&quot;</font>] == -1} {
           <b><font color=#7A040E>bindtags</font></b> <font color=#4A181B>$w</font> [<b><font color=#923B23>linsert</font></b> <font color=#4A181B>$tags</font> end <font color=#035103>&quot;Tooltip<font color=#4A181B>$</font>w&quot;</font>]
         }
-        <b><font color=#7A040E>bind</font></b> Tooltip<font color=#4A181B>$w</font> &lt;Enter&gt;        [<b><font color=#923B23>list</font></b> ::tooltip4::my::Show %W <font color=#4A181B>$text</font> no <font color=#4A181B>$geo</font>]
-        <b><font color=#7A040E>bind</font></b> Tooltip<font color=#4A181B>$w</font> &lt;Any<font color=#463e11>-Leave</font>&gt;    [<b><font color=#923B23>list</font></b> ::tooltip4::destroytooltip <font color=#4A181B>$w</font>]
-        <b><font color=#7A040E>bind</font></b> Tooltip<font color=#4A181B>$w</font> &lt;Any<font color=#463e11>-KeyPress</font>&gt; [<b><font color=#923B23>list</font></b> ::tooltip4::destroytooltip <font color=#4A181B>$w</font>]
-        <b><font color=#7A040E>bind</font></b> Tooltip<font color=#4A181B>$w</font> &lt;Any<font color=#463e11>-Button</font>&gt;   [<b><font color=#923B23>list</font></b> ::tooltip4::destroytooltip <font color=#4A181B>$w</font>]
+        <b><font color=#7A040E>bind</font></b> Tooltip<font color=#4A181B>$w</font> &lt;Enter&gt;        [<b><font color=#923B23>list</font></b> ::tooltip4::my::Show %W <font color=#4A181B>$text</font> no <font color=#4A181B>$geo</font> <font color=#4A181B>$optvals</font>]
+        <b><font color=#7A040E>bind</font></b> Tooltip<font color=#4A181B>$w</font> &lt;Any<font color=#463e11>-Leave</font>&gt;    [<b><font color=#923B23>list</font></b> ::tooltip4::hide <font color=#4A181B>$w</font>]
+        <b><font color=#7A040E>bind</font></b> Tooltip<font color=#4A181B>$w</font> &lt;Any<font color=#463e11>-KeyPress</font>&gt; [<b><font color=#923B23>list</font></b> ::tooltip4::hide <font color=#4A181B>$w</font>]
+        <b><font color=#7A040E>bind</font></b> Tooltip<font color=#4A181B>$w</font> &lt;Any<font color=#463e11>-Button</font>&gt;   [<b><font color=#923B23>list</font></b> ::tooltip4::hide <font color=#4A181B>$w</font>]
       }
     }
-    <b><font color=#923B23>set</font></b> my::ttdata(on,<font color=#4A181B>$w)</font> [<b><font color=#923B23>expr</font></b> {[<b><font color=#923B23>string</font></b> length <font color=#4A181B>$text</font>]}]
+  }
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::tooltip4::update'>update</a><span class='ns_scope'> [<a href="tooltip4.html#::tooltip4" title="::tooltip4" class='ruff_cmd'>::tooltip4</a>]</span><span class='tinylink'><a href='tooltip4.html#::tooltip4'>tooltip4</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Updates tooltips' settings according to the global settings.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>update</span> <span class='ruff_arg'>?w?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>w</code></code></td><td class='ruff_defitem'>widget's path (if omitted, updates all widgets' tooltips); <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_6' href="javascript:toggleSource('6')">Show source</a></p>
+<div id='6' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::tooltip4::update {{w {}}} {
+
+  <i><font color=#646464># Updates tooltips' settings according to the global settings.</font></i>
+  <i><font color=#646464>#   w - widget's path (if omitted, updates all widgets' tooltips)</font></i>
+
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$w</font> eq <font color=#035103>&quot;&quot;</font>} {
+    <b><font color=#923B23>foreach</font></b> k [<b><font color=#923B23>array</font></b> names my::ttdata <font color=#463e11>-glob</font> on,*] {
+      <b><font color=#923B23>set</font></b> w [<b><font color=#923B23>lindex</font></b> [<b><font color=#923B23>split</font></b> <font color=#4A181B>$k</font> ,] 1]
+      <b><font color=#923B23>set</font></b> my::ttdata(global,<font color=#4A181B>$w)</font> yes
+    }
+  } <b><font color=#923B23>else</font></b> {
+    <b><font color=#923B23>set</font></b> my::ttdata(global,<font color=#4A181B>$w)</font> yes
   }
 }<br><br></code></pre></div>
 </div><br><br><h1 class='ruff'><a name='::tooltip4::my'></a>::tooltip4::my<span class='tinylink'><a href='#top'>Top</a></span></h1>
@@ -567,7 +632,31 @@ padding: 0%;
 <p class='ruff'>All of them are upper-cased, in contrast with the UI procedures of <code>tooltip4</code> namespace.</p>
 <br><h2 class='ruff'><a name='::tooltip4::my-Commands'></a>Commands<span class='tinylink'><a href='tooltip4.html#::tooltip4::my'>my</a>, <a href='#top'>Top</a></span></h2>
 <div style='clear:both;'></div>
-<br><br><br><h4 class='ruffproc'><a name='::tooltip4::my::Fade'>Fade</a><span class='ns_scope'> [<a href="tooltip4.html#::tooltip4::my" title="::tooltip4::my" class='ruff_cmd'>::tooltip4::my</a>]</span><span class='tinylink'><a href='tooltip4.html#::tooltip4::my'>my</a>, <a href='#top'>Top</a></span></h4>
+<br><br><br><h4 class='ruffproc'><a name='::tooltip4::my::CGet'>CGet</a><span class='ns_scope'> [<a href="tooltip4.html#::tooltip4::my" title="::tooltip4::my" class='ruff_cmd'>::tooltip4::my</a>]</span><span class='tinylink'><a href='tooltip4.html#::tooltip4::my'>my</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Gets options' values, using local (args) and global (ttdata) settings.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>CGet</span> <span class='ruff_arg'>?args?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>local settings (&quot;name value&quot; pairs)</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Returns the full list of settings (&quot;name value&quot; pairs, &quot;name&quot; without &quot;-&quot;)  in which -force and -geometry option values go first.</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_7' href="javascript:toggleSource('7')">Show source</a></p>
+<div id='7' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::tooltip4::my::CGet {args} {
+
+  <i><font color=#646464># Gets options' values, using local (args) and global (ttdata) settings.</font></i>
+  <i><font color=#646464>#   args - local settings (&quot;name value&quot; pairs)</font></i>
+  <i><font color=#646464># Returns the full list of settings (&quot;name value&quot; pairs, &quot;name&quot; without &quot;-&quot;)  in which -force and -geometry option values go first.</font></i>
+
+  <b><font color=#923B23>variable</font></b> ttdata
+  <b><font color=#923B23>set</font></b> saved [<b><font color=#923B23>array</font></b> get ttdata]
+  <b><font color=#923B23>set</font></b> res [::tooltip4::configure {*}<font color=#4A181B>$args</font>]
+  <b><font color=#923B23>foreach</font></b> {o v} [::tooltip4::cget] {
+    <b><font color=#923B23>lappend</font></b> res [<b><font color=#923B23>string</font></b> range <font color=#4A181B>$o</font> 1 end] <font color=#4A181B>$v</font>
+  }
+  <b><font color=#923B23>array</font></b> set ttdata <font color=#4A181B>$saved</font>
+  <b><font color=#A106A1>return</font></b> <font color=#4A181B>$res</font>
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::tooltip4::my::Fade'>Fade</a><span class='ns_scope'> [<a href="tooltip4.html#::tooltip4::my" title="::tooltip4::my" class='ruff_cmd'>::tooltip4::my</a>]</span><span class='tinylink'><a href='tooltip4.html#::tooltip4::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Fades/unfades the tooltip's window.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>Fade</span> <span class='ruff_arg'>w aint fint icount Un alpha geo show</span></div>
@@ -582,8 +671,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>show</code></code></td><td class='ruff_defitem'>flag &quot;show the window&quot;</td></tr>
 </table>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="tooltip4.html#::tooltip4::my::FadeNext" title="FadeNext" class='ruff_cmd'>FadeNext</a>, <a href="tooltip4.html#::tooltip4::my::UnFadeNext" title="UnFadeNext" class='ruff_cmd'>UnFadeNext</a></p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_5' href="javascript:toggleSource('5')">Show source</a></p>
-<div id='5' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::tooltip4::my::Fade {w aint fint icount Un alpha geo show} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_8' href="javascript:toggleSource('8')">Show source</a></p>
+<div id='8' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::tooltip4::my::Fade {w aint fint icount Un alpha geo show} {
 
   <i><font color=#646464># Fades/unfades the tooltip's window.</font></i>
   <i><font color=#646464>#   w - the tooltip's window</font></i>
@@ -596,7 +685,6 @@ padding: 0%;
   <i><font color=#646464>#   show - flag &quot;show the window&quot;</font></i>
   <i><font color=#646464># See also: FadeNext, UnFadeNext</font></i>
 
-  <b><font color=#923B23>variable</font></b> ttdata
   <b><font color=#923B23>update</font></b>
   <b><font color=#923B23>if</font></b> {[<b><font color=#7A040E>winfo</font></b> exists <font color=#4A181B>$w</font>]} {
     <b><font color=#923B23>after</font></b> idle [<b><font color=#923B23>list</font></b> after <font color=#4A181B>$aint</font>  [<b><font color=#923B23>list</font></b> ::tooltip4::my::<font color=#4A181B>${Un}</font>FadeNext <font color=#4A181B>$w</font> <font color=#4A181B>$aint</font> <font color=#4A181B>$fint</font> <font color=#4A181B>$icount</font> <font color=#4A181B>$alpha</font> <font color=#4A181B>$geo</font> <font color=#4A181B>$show</font>]]
@@ -616,8 +704,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>show</code></code></td><td class='ruff_defitem'>flag &quot;show the window&quot;</td></tr>
 </table>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="tooltip4.html#::tooltip4::my::Fade" title="Fade" class='ruff_cmd'>Fade</a></p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_6' href="javascript:toggleSource('6')">Show source</a></p>
-<div id='6' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::tooltip4::my::FadeNext {w aint fint icount alpha geo show} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_9' href="javascript:toggleSource('9')">Show source</a></p>
+<div id='9' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::tooltip4::my::FadeNext {w aint fint icount alpha geo show} {
 
   <i><font color=#646464># A step to fade the tooltip's window.</font></i>
   <i><font color=#646464>#   w - the tooltip's window</font></i>
@@ -649,58 +737,67 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::tooltip4::my::Show'>Show</a><span class='ns_scope'> [<a href="tooltip4.html#::tooltip4::my" title="::tooltip4::my" class='ruff_cmd'>::tooltip4::my</a>]</span><span class='tinylink'><a href='tooltip4.html#::tooltip4::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Creates and shows the tooltip's window.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>Show</span> <span class='ruff_arg'>w text ?force? ?geo?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>Show</span> <span class='ruff_arg'>w text force geo optvals</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>w</code></code></td><td class='ruff_defitem'>the parent widget's path</td></tr>
 <tr><td class='ruff_defitem'><code><code>text</code></code></td><td class='ruff_defitem'>the tooltip text</td></tr>
-<tr><td class='ruff_defitem'><code><code>force</code></code></td><td class='ruff_defitem'>if true, re-displays the existing tooltip; <i>optional, default</i> <code>no</code></td></tr>
-<tr><td class='ruff_defitem'><code><code>geo</code></code></td><td class='ruff_defitem'>being +X+Y, sets the tooltip coordinates; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>force</code></code></td><td class='ruff_defitem'>if true, re-displays the existing tooltip</td></tr>
+<tr><td class='ruff_defitem'><code><code>geo</code></code></td><td class='ruff_defitem'>being +X+Y, sets the tooltip coordinates</td></tr>
+<tr><td class='ruff_defitem'><code><code>optvals</code></code></td><td class='ruff_defitem'>settings (&quot;option value&quot; pairs)</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_7' href="javascript:toggleSource('7')">Show source</a></p>
-<div id='7' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::tooltip4::my::Show {w text {force no} {geo {}}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_10' href="javascript:toggleSource('10')">Show source</a></p>
+<div id='10' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::tooltip4::my::Show {w text force geo optvals} {
 
   <i><font color=#646464># Creates and shows the tooltip's window.</font></i>
   <i><font color=#646464>#   w - the parent widget's path</font></i>
   <i><font color=#646464>#   text - the tooltip text</font></i>
   <i><font color=#646464>#   force - if true, re-displays the existing tooltip</font></i>
   <i><font color=#646464>#   geo - being +X+Y, sets the tooltip coordinates</font></i>
+  <i><font color=#646464>#   optvals - settings (&quot;option value&quot; pairs)</font></i>
 
   <b><font color=#923B23>variable</font></b> ttdata
   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$w</font> ne <font color=#035103>&quot;&quot;</font> && ![<b><font color=#7A040E>winfo</font></b> exists <font color=#4A181B>$w</font>]} <b><font color=#A106A1>return</font></b>
   <b><font color=#923B23>set</font></b> win <font color=#4A181B>$w</font>.<font color=#4A181B>$ttdata(wttip)</font>
   <b><font color=#923B23>set</font></b> px [<b><font color=#7A040E>winfo</font></b> pointerx .]
   <b><font color=#923B23>set</font></b> py [<b><font color=#7A040E>winfo</font></b> pointery .]
-  <b><font color=#923B23>if</font></b> {!<font color=#4A181B>$force</font> && <font color=#4A181B>$geo</font> eq <font color=#035103>&quot;&quot;</font> && ([<b><font color=#7A040E>winfo</font></b> exists <font color=#4A181B>$win</font>] ||  ![<b><font color=#923B23>string</font></b> match <font color=#4A181B>$w</font> [<b><font color=#7A040E>winfo</font></b> containing <font color=#4A181B>$px</font> <font color=#4A181B>$py</font>]] ||  !<font color=#4A181B>$ttdata(on)</font> || ![<b><font color=#923B23>info</font></b> exists ttdata(on,<font color=#4A181B>$w)</font>] || !<font color=#4A181B>$ttdata(on</font>,<font color=#4A181B>$w))</font>} {
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ttdata(global</font>,<font color=#4A181B>$w)</font>} {
+    <b><font color=#923B23>array</font></b> set data [::tooltip4::cget]
+  } <b><font color=#923B23>else</font></b> {
+    <b><font color=#923B23>array</font></b> set data <font color=#4A181B>$optvals</font>
+  }
+  <b><font color=#923B23>if</font></b> {!<font color=#4A181B>$force</font> && <font color=#4A181B>$geo</font> eq <font color=#035103>&quot;&quot;</font> && ([<b><font color=#7A040E>winfo</font></b> exists <font color=#4A181B>$win</font>] ||  ![<b><font color=#923B23>info</font></b> exists ttdata(on,<font color=#4A181B>$w)</font>] || !<font color=#4A181B>$ttdata(on</font>,<font color=#4A181B>$w)</font> ||  ![<b><font color=#923B23>string</font></b> match <font color=#4A181B>$w</font> [<b><font color=#7A040E>winfo</font></b> containing <font color=#4A181B>$px</font> <font color=#4A181B>$py</font>]] ||  !<font color=#4A181B>$ttdata(on)</font> || !<font color=#4A181B>$data(on))</font>} {
     <b><font color=#A106A1>return</font></b>
   }
-  ::tooltip4::destroytooltip <font color=#4A181B>$w</font>
+  ::tooltip4::hide <font color=#4A181B>$w</font>
+  <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>string</font></b> length [<b><font color=#923B23>string</font></b> trim <font color=#4A181B>$text</font>]]} <b><font color=#A106A1>return</font></b>
   <b><font color=#923B23>lappend</font></b> ttdata(REGISTERED) <font color=#4A181B>$w</font>
   <b><font color=#923B23>foreach</font></b> wold [<b><font color=#923B23>lrange</font></b> <font color=#4A181B>$ttdata(REGISTERED)</font> 0 end-1] {
-    ::tooltip4::destroytooltip <font color=#4A181B>$wold</font>
+    ::tooltip4::hide <font color=#4A181B>$wold</font>
   }
-  <b><font color=#7A040E>toplevel</font></b> <font color=#4A181B>$win</font> <font color=#463e11>-bg</font> <font color=#4A181B>$ttdata(bg)</font> <font color=#463e11>-class</font> Tooltip<font color=#4A181B>$w</font>
+  <b><font color=#7A040E>toplevel</font></b> <font color=#4A181B>$win</font> <font color=#463e11>-bg</font> <font color=#4A181B>$data(bg)</font> <font color=#463e11>-class</font> Tooltip<font color=#4A181B>$w</font>
   <b><font color=#923B23>catch</font></b> {<b><font color=#7A040E>wm</font></b> withdraw <font color=#4A181B>$win</font>}
   <b><font color=#7A040E>wm</font></b> overrideredirect <font color=#4A181B>$win</font> 1
   <b><font color=#7A040E>wm</font></b> attributes <font color=#4A181B>$win</font> <font color=#463e11>-topmost</font> 1
-  <b><font color=#7A040E>pack</font></b> [<b><font color=#7A040E>label</font></b> <font color=#4A181B>$win</font>.label <font color=#463e11>-text</font> <font color=#4A181B>$text</font> <font color=#463e11>-justify</font> left <font color=#463e11>-relief</font> solid  <font color=#463e11>-bd</font> <font color=#4A181B>$ttdata(bd)</font> <font color=#463e11>-bg</font> <font color=#4A181B>$ttdata(bg)</font> <font color=#463e11>-fg</font> <font color=#4A181B>$ttdata(fg)</font> <font color=#463e11>-font</font> <font color=#4A181B>$ttdata(font)</font>  <font color=#463e11>-padx</font> <font color=#4A181B>$ttdata(padx)</font> <font color=#463e11>-pady</font> <font color=#4A181B>$ttdata(pady)</font>] <font color=#463e11>-padx</font> <font color=#4A181B>$ttdata(padding)</font> <font color=#463e11>-pady</font> <font color=#4A181B>$ttdata(padding)</font>
+  <b><font color=#7A040E>pack</font></b> [<b><font color=#7A040E>label</font></b> <font color=#4A181B>$win</font>.label <font color=#463e11>-text</font> <font color=#4A181B>$text</font> <font color=#463e11>-justify</font> left <font color=#463e11>-relief</font> solid  <font color=#463e11>-bd</font> <font color=#4A181B>$data(bd)</font> <font color=#463e11>-bg</font> <font color=#4A181B>$data(bg)</font> <font color=#463e11>-fg</font> <font color=#4A181B>$data(fg)</font> <font color=#463e11>-font</font> <font color=#4A181B>$data(font)</font>  <font color=#463e11>-padx</font> <font color=#4A181B>$data(padx)</font> <font color=#463e11>-pady</font> <font color=#4A181B>$data(pady)</font>] <font color=#463e11>-padx</font> <font color=#4A181B>$data(padding)</font> <font color=#463e11>-pady</font> <font color=#4A181B>$data(padding)</font>
   <i><font color=#646464># defeat rare artifact by passing mouse over a tooltip to destroy it</font></i>
   <b><font color=#7A040E>bindtags</font></b> <font color=#4A181B>$win</font> <font color=#035103>&quot;Tooltip<font color=#4A181B>$</font>win&quot;</font>
-  <b><font color=#7A040E>bind</font></b> Tooltip<font color=#4A181B>$win</font> &lt;Enter&gt;    [<b><font color=#923B23>list</font></b> ::tooltip4::destroytooltip <font color=#4A181B>$w</font>]
-  <b><font color=#7A040E>bind</font></b> Tooltip<font color=#4A181B>$win</font> &lt;Button&gt;   [<b><font color=#923B23>list</font></b> ::tooltip4::destroytooltip <font color=#4A181B>$w</font>]
+  <b><font color=#7A040E>bind</font></b> Tooltip<font color=#4A181B>$win</font> &lt;Enter&gt;    [<b><font color=#923B23>list</font></b> ::tooltip4::hide <font color=#4A181B>$w</font>]
+  <b><font color=#7A040E>bind</font></b> Tooltip<font color=#4A181B>$win</font> &lt;Button&gt;   [<b><font color=#923B23>list</font></b> ::tooltip4::hide <font color=#4A181B>$w</font>]
   <b><font color=#923B23>set</font></b> aint 20
-  <b><font color=#923B23>set</font></b> fint [<b><font color=#923B23>expr</font></b> {int(<font color=#4A181B>$ttdata(fade)</font>/<font color=#4A181B>$aint)</font>}]
-  <b><font color=#923B23>set</font></b> icount [<b><font color=#923B23>expr</font></b> {int(<font color=#4A181B>$ttdata(per10)</font>/<font color=#4A181B>$aint</font>*[<b><font color=#923B23>string</font></b> length <font color=#4A181B>$text</font>]/10.0)}]
+  <b><font color=#923B23>set</font></b> fint [<b><font color=#923B23>expr</font></b> {int(<font color=#4A181B>$data(fade)</font>/<font color=#4A181B>$aint)</font>}]
+  <b><font color=#923B23>set</font></b> icount [<b><font color=#923B23>expr</font></b> {int(<font color=#4A181B>$data(per10)</font>/<font color=#4A181B>$aint</font>*[<b><font color=#923B23>string</font></b> length <font color=#4A181B>$text</font>]/10.0)}]
   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$icount</font>} {
     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$geo</font> eq <font color=#035103>&quot;&quot;</font>} {
-      <b><font color=#923B23>catch</font></b> {<b><font color=#7A040E>wm</font></b> attributes <font color=#4A181B>$win</font> <font color=#463e11>-alpha</font> <font color=#4A181B>$ttdata(alpha)</font>}
+      <b><font color=#923B23>catch</font></b> {<b><font color=#7A040E>wm</font></b> attributes <font color=#4A181B>$win</font> <font color=#463e11>-alpha</font> <font color=#4A181B>$data(alpha)</font>}
     } <b><font color=#923B23>else</font></b> {
-      ::tooltip4::my::Fade <font color=#4A181B>$win</font> <font color=#4A181B>$aint</font> [<b><font color=#923B23>expr</font></b> {round(1.0*<font color=#4A181B>$ttdata(pause)</font>/<font color=#4A181B>$aint)</font>}]  0 Un <font color=#4A181B>$ttdata(alpha)</font> <font color=#4A181B>$geo</font> 1
+      ::tooltip4::my::Fade <font color=#4A181B>$win</font> <font color=#4A181B>$aint</font> [<b><font color=#923B23>expr</font></b> {round(1.0*<font color=#4A181B>$data(pause)</font>/<font color=#4A181B>$aint)</font>}]  0 Un <font color=#4A181B>$data(alpha)</font> <font color=#4A181B>$geo</font> 1
     }
-    <b><font color=#923B23>after</font></b> <font color=#4A181B>$ttdata(pause)</font> [<b><font color=#923B23>list</font></b>  ::tooltip4::my::Fade <font color=#4A181B>$win</font> <font color=#4A181B>$aint</font> <font color=#4A181B>$fint</font> <font color=#4A181B>$icount</font> {} <font color=#4A181B>$ttdata(alpha)</font> <font color=#4A181B>$geo</font> 1]
+    <b><font color=#923B23>after</font></b> <font color=#4A181B>$data(pause)</font> [<b><font color=#923B23>list</font></b>  ::tooltip4::my::Fade <font color=#4A181B>$win</font> <font color=#4A181B>$aint</font> <font color=#4A181B>$fint</font> <font color=#4A181B>$icount</font> {} <font color=#4A181B>$data(alpha)</font> <font color=#4A181B>$geo</font> 1]
   } <b><font color=#923B23>else</font></b> {
     <i><font color=#646464># just showing, no fading</font></i>
-    <b><font color=#923B23>after</font></b> <font color=#4A181B>$ttdata(pause)</font> [<b><font color=#923B23>list</font></b> ::tooltip4::my::ShowWindow <font color=#4A181B>$win</font> <font color=#4A181B>$geo</font>]
+    <b><font color=#923B23>after</font></b> <font color=#4A181B>$data(pause)</font> [<b><font color=#923B23>list</font></b> ::tooltip4::my::ShowWindow <font color=#4A181B>$win</font> <font color=#4A181B>$geo</font>]
   }
+  <b><font color=#923B23>array</font></b> unset data
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::tooltip4::my::ShowWindow'>ShowWindow</a><span class='ns_scope'> [<a href="tooltip4.html#::tooltip4::my" title="::tooltip4::my" class='ruff_cmd'>::tooltip4::my</a>]</span><span class='tinylink'><a href='tooltip4.html#::tooltip4::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -710,14 +807,13 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>win</code></code></td><td class='ruff_defitem'>the tooltip's window</td></tr>
 <tr><td class='ruff_defitem'><code><code>geo</code></code></td><td class='ruff_defitem'>being +X+Y, sets the tooltip coordinates</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_8' href="javascript:toggleSource('8')">Show source</a></p>
-<div id='8' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::tooltip4::my::ShowWindow {win geo} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_11' href="javascript:toggleSource('11')">Show source</a></p>
+<div id='11' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::tooltip4::my::ShowWindow {win geo} {
 
   <i><font color=#646464># Shows a window of tooltip.</font></i>
   <i><font color=#646464>#   win - the tooltip's window</font></i>
   <i><font color=#646464>#   geo - being +X+Y, sets the tooltip coordinates</font></i>
 
-  <b><font color=#923B23>variable</font></b> ttdata
   <b><font color=#923B23>if</font></b> {![<b><font color=#7A040E>winfo</font></b> exists <font color=#4A181B>$win</font>]} <b><font color=#A106A1>return</font></b>
   <b><font color=#923B23>set</font></b> w [<b><font color=#7A040E>winfo</font></b> parent <font color=#4A181B>$win</font>]
   <b><font color=#923B23>set</font></b> px [<b><font color=#7A040E>winfo</font></b> pointerx .]
@@ -765,36 +861,38 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>show</code></code></td><td class='ruff_defitem'>not used (here just for compliance with Fade)</td></tr>
 </table>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="tooltip4.html#::tooltip4::my::Fade" title="Fade" class='ruff_cmd'>Fade</a></p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_9' href="javascript:toggleSource('9')">Show source</a></p>
-<div id='9' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::tooltip4::my::UnFadeNext {w aint fint icount alpha geo show} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_12' href="javascript:toggleSource('12')">Show source</a></p>
+<div id='12' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::tooltip4::my::UnFadeNext {w aint fint icount alpha geo show} {
 
-   <i><font color=#646464># A step to unfade the tooltip's window.</font></i>
-   <i><font color=#646464>#   w - the tooltip's window</font></i>
-   <i><font color=#646464>#   aint - interval for 'after'</font></i>
-   <i><font color=#646464>#   fint - interval for fading</font></i>
-   <i><font color=#646464>#   icount - counter of intervals</font></i>
-   <i><font color=#646464>#   alpha - value of -alpha option</font></i>
-   <i><font color=#646464>#   geo - coordinates (+X+Y) of tooltip</font></i>
-   <i><font color=#646464>#   show - not used (here just for compliance with Fade)</font></i>
-   <i><font color=#646464># See also: Fade</font></i>
+  <i><font color=#646464># A step to unfade the tooltip's window.</font></i>
+  <i><font color=#646464>#   w - the tooltip's window</font></i>
+  <i><font color=#646464>#   aint - interval for 'after'</font></i>
+  <i><font color=#646464>#   fint - interval for fading</font></i>
+  <i><font color=#646464>#   icount - counter of intervals</font></i>
+  <i><font color=#646464>#   alpha - value of -alpha option</font></i>
+  <i><font color=#646464>#   geo - coordinates (+X+Y) of tooltip</font></i>
+  <i><font color=#646464>#   show - not used (here just for compliance with Fade)</font></i>
+  <i><font color=#646464># See also: Fade</font></i>
 
-   <b><font color=#923B23>incr</font></b> icount
-   <b><font color=#923B23>set</font></b> al [<b><font color=#923B23>expr</font></b> {min(<font color=#4A181B>$alpha</font>,<font color=#4A181B>$icount</font>*1.5/<font color=#4A181B>$fint)</font>}]
-   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$al</font>&lt;<font color=#4A181B>$alpha</font> && [<b><font color=#923B23>catch</font></b> {<b><font color=#7A040E>wm</font></b> attributes <font color=#4A181B>$w</font> <font color=#463e11>-alpha</font> <font color=#4A181B>$al</font>}]} {<b><font color=#923B23>set</font></b> al 1}
-   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$show</font>} {
-     ShowWindow <font color=#4A181B>$w</font> <font color=#4A181B>$geo</font>
-     <b><font color=#923B23>set</font></b> show 0
-   }
-  <i><font color=#646464># catch {wm deiconify $w ; raise $w}</font></i>
-   <b><font color=#923B23>if</font></b> {[<b><font color=#7A040E>winfo</font></b> exists <font color=#4A181B>$w</font>] && <font color=#4A181B>$al</font>&lt;<font color=#4A181B>$alpha</font>} {
-     Fade <font color=#4A181B>$w</font> <font color=#4A181B>$aint</font> <font color=#4A181B>$fint</font> <font color=#4A181B>$icount</font> Un <font color=#4A181B>$alpha</font> <font color=#4A181B>$geo</font> 0
-   }
+  <b><font color=#923B23>incr</font></b> icount
+  <b><font color=#923B23>set</font></b> al [<b><font color=#923B23>expr</font></b> {min(<font color=#4A181B>$alpha</font>,<font color=#4A181B>$icount</font>*1.5/<font color=#4A181B>$fint)</font>}]
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$al</font>&lt;<font color=#4A181B>$alpha</font> && [<b><font color=#923B23>catch</font></b> {<b><font color=#7A040E>wm</font></b> attributes <font color=#4A181B>$w</font> <font color=#463e11>-alpha</font> <font color=#4A181B>$al</font>}]} {<b><font color=#923B23>set</font></b> al 1}
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$show</font>} {
+    ShowWindow <font color=#4A181B>$w</font> <font color=#4A181B>$geo</font>
+    <b><font color=#923B23>set</font></b> show 0
+  }
+  <b><font color=#923B23>if</font></b> {[<b><font color=#7A040E>winfo</font></b> exists <font color=#4A181B>$w</font>] && <font color=#4A181B>$al</font>&lt;<font color=#4A181B>$alpha</font>} {
+    Fade <font color=#4A181B>$w</font> <font color=#4A181B>$aint</font> <font color=#4A181B>$fint</font> <font color=#4A181B>$icount</font> Un <font color=#4A181B>$alpha</font> <font color=#4A181B>$geo</font> 0
+  }
 }<br><br></code></pre></div>
-</div></div></div><div class='yui-b navbox' ><h1><a href='#::tooltip4'>tooltip4</a></h1><h2><a href='#::tooltip4-Usage'>Usage</a></h2><h2><a href='#::tooltip4-Options'>Options</a></h2><h2><a href='#::tooltip4-Links'>Links</a></h2><h2><a href='#::tooltip4-Commands'>Commands</a></h2><h4 class='tooltip'><a href='tooltip4.html#::tooltip4::cget'>cget</a><span class='tooltiptext'>Gets the tooltip's option values.
+</div></div></div><div class='yui-b navbox' ><h1><a href='#::tooltip4'>tooltip4</a></h1><h2><a href='#::tooltip4-Usage'>Usage</a></h2><h2><a href='#::tooltip4-Balloon'>Balloon</a></h2><h2><a href='#::tooltip4-Options'>Options</a></h2><h2><a href='#::tooltip4-Links'>Links</a></h2><h2><a href='#::tooltip4-Commands'>Commands</a></h2><h4 class='tooltip'><a href='tooltip4.html#::tooltip4::cget'>cget</a><span class='tooltiptext'>Gets the tooltip's option values.
 </span></h4><h4 class='tooltip'><a href='tooltip4.html#::tooltip4::configure'>configure</a><span class='tooltiptext'>Configurates the tooltip for all widgets.
-</span></h4><h4 class='tooltip'><a href='tooltip4.html#::tooltip4::destroytooltip'>destroytooltip</a><span class='tooltiptext'>Destroys the tooltip's window.
+</span></h4><h4 class='tooltip'><a href='tooltip4.html#::tooltip4::hide'>hide</a><span class='tooltiptext'>Destroys the tooltip's window.
+</span></h4><h4 class='tooltip'><a href='tooltip4.html#::tooltip4::repaint'>repaint</a><span class='tooltiptext'>Repaints a tooltip immediately.
 </span></h4><h4 class='tooltip'><a href='tooltip4.html#::tooltip4::tooltip'>tooltip</a><span class='tooltiptext'>Creates a tooltip for a widget.
-</span></h4><h1><a href='#::tooltip4::my'>tooltip4::my</a></h1><h2><a href='#::tooltip4::my-Commands'>Commands</a></h2><h4 class='tooltip'><a href='tooltip4.html#::tooltip4::my::Fade'>Fade</a><span class='tooltiptext'>Fades/unfades the tooltip's window.
+</span></h4><h4 class='tooltip'><a href='tooltip4.html#::tooltip4::update'>update</a><span class='tooltiptext'>Updates tooltips' settings according to the global settings.
+</span></h4><h1><a href='#::tooltip4::my'>tooltip4::my</a></h1><h2><a href='#::tooltip4::my-Commands'>Commands</a></h2><h4 class='tooltip'><a href='tooltip4.html#::tooltip4::my::CGet'>CGet</a><span class='tooltiptext'>Gets options' values, using local (args) and global (ttdata) settings.
+</span></h4><h4 class='tooltip'><a href='tooltip4.html#::tooltip4::my::Fade'>Fade</a><span class='tooltiptext'>Fades/unfades the tooltip's window.
 </span></h4><h4 class='tooltip'><a href='tooltip4.html#::tooltip4::my::FadeNext'>FadeNext</a><span class='tooltiptext'>A step to fade the tooltip's window.
 </span></h4><h4 class='tooltip'><a href='tooltip4.html#::tooltip4::my::Show'>Show</a><span class='tooltiptext'>Creates and shows the tooltip's window.
 </span></h4><h4 class='tooltip'><a href='tooltip4.html#::tooltip4::my::ShowWindow'>ShowWindow</a><span class='tooltiptext'>Shows a window of tooltip.
