@@ -645,6 +645,7 @@ padding: 0%;
   <font color=#4A181B>$txt</font> tag configure tagBRACKETERR <font color=#463e11>-foreground</font> white <font color=#463e11>-background</font> red
   <font color=#4A181B>$txt</font> tag configure tagCURLINE <font color=#463e11>-background</font> <font color=#4A181B>$clrCURL</font>
   <font color=#4A181B>$txt</font> tag raise sel
+  <font color=#4A181B>$txt</font> tag raise tagBRACKETERR
   my::HighlightAll <font color=#4A181B>$txt</font>
   <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists ::hl_tcl::my::data(BIND_TXT,<font color=#4A181B>$txt)</font>]} {
     <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;KeyPress&gt; [<b><font color=#923B23>list</font></b> + [<b><font color=#923B23>namespace</font></b> current]::my::MemPos <font color=#4A181B>$txt</font>]
@@ -1329,13 +1330,16 @@ padding: 0%;
 
   <b><font color=#923B23>variable</font></b> data
   <b><font color=#923B23>set</font></b> ln [<font color=#4A181B>$txt</font> index insert]
+  <b><font color=#923B23>set</font></b> updcurr [<b><font color=#923B23>expr</font></b> {![<b><font color=#923B23>info</font></b> exists data(CUR_POS,<font color=#4A181B>$txt)</font>] ||  int(<font color=#4A181B>$data(CUR_POS</font>,<font color=#4A181B>$txt))</font> != int(<font color=#4A181B>$ln)</font>}]
   <b><font color=#923B23>set</font></b> data(CUR_POS,<font color=#4A181B>$txt)</font> <font color=#4A181B>$ln</font>
   <b><font color=#923B23>set</font></b> data(CUR_LEN,<font color=#4A181B>$txt)</font> [<font color=#4A181B>$txt</font> index end]
   <b><font color=#923B23>lassign</font></b> [CountQSH <font color=#4A181B>$txt</font> <font color=#4A181B>$ln</font>]  data(CNT_QUOTE,<font color=#4A181B>$txt)</font> data(CNT_SLASH,<font color=#4A181B>$txt)</font> data(CNT_COMMENT,<font color=#4A181B>$txt)</font>
-  <font color=#4A181B>$txt</font> tag remove tagBRACKET 1.0 end
-  <font color=#4A181B>$txt</font> tag remove tagBRACKETERR 1.0 end
-  <font color=#4A181B>$txt</font> tag remove tagCURLINE 1.0 end
-  <font color=#4A181B>$txt</font> tag add tagCURLINE [<b><font color=#923B23>list</font></b> <font color=#4A181B>$ln</font> linestart] [<b><font color=#923B23>list</font></b> <font color=#4A181B>$ln</font> lineend]+1displayindices
+  <b><font color=#923B23>if</font></b> {[<font color=#4A181B>$txt</font> tag ranges tagBRACKET] ne <font color=#035103>&quot;&quot;</font>}    {<font color=#4A181B>$txt</font> tag remove tagBRACKET 1.0 end}
+  <b><font color=#923B23>if</font></b> {[<font color=#4A181B>$txt</font> tag ranges tagBRACKETERR] ne <font color=#035103>&quot;&quot;</font>} {<font color=#4A181B>$txt</font> tag remove tagBRACKETERR 1.0 end}
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$updcurr</font>} {
+    <font color=#4A181B>$txt</font> tag remove tagCURLINE 1.0 end
+    <font color=#4A181B>$txt</font> tag add tagCURLINE [<b><font color=#923B23>list</font></b> <font color=#4A181B>$ln</font> linestart] [<b><font color=#923B23>list</font></b> <font color=#4A181B>$ln</font> lineend]+1displayindices
+  }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::MergePosList'>MergePosList</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
