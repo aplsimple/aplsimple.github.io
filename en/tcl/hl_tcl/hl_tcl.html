@@ -648,8 +648,8 @@ padding: 0%;
   <font color=#4A181B>$txt</font> tag raise tagBRACKETERR
   my::HighlightAll <font color=#4A181B>$txt</font>
   <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists ::hl_tcl::my::data(BIND_TXT,<font color=#4A181B>$txt)</font>]} {
-    <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;KeyPress&gt; [<b><font color=#923B23>list</font></b> + [<b><font color=#923B23>namespace</font></b> current]::my::MemPos <font color=#4A181B>$txt</font>]
-    <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;ButtonPress-1&gt; [<b><font color=#923B23>list</font></b> + [<b><font color=#923B23>namespace</font></b> current]::my::MemPos <font color=#4A181B>$txt</font>]
+    <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;KeyPress&gt; [<b><font color=#923B23>list</font></b> + ::hl_tcl::my::MemPos <font color=#4A181B>$txt</font>]
+    <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;ButtonPress-1&gt; [<b><font color=#923B23>list</font></b> + ::hl_tcl::my::MemPos <font color=#4A181B>$txt</font>]
     <b><font color=#923B23>foreach</font></b> ev {Enter KeyRelease ButtonRelease} {
       <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;<font color=#4A181B>$ev</font>&gt; [<b><font color=#923B23>list</font></b> + ::hl_tcl::my::HighlightBrackets <font color=#4A181B>$txt</font>]
     }
@@ -758,7 +758,7 @@ padding: 0%;
   <b><font color=#923B23>set</font></b> ln2 [<b><font color=#923B23>expr</font></b> {min((<font color=#4A181B>$ln</font>+<font color=#4A181B>$dl)</font>,<font color=#4A181B>$endl)</font>}]
   <b><font color=#923B23>lassign</font></b> [CountQSH <font color=#4A181B>$txt</font> <font color=#4A181B>$ln</font>] cntq cnts ccmnt
   <i><font color=#646464># flag &quot;highlight to the end&quot;:</font></i>
-  <b><font color=#923B23>set</font></b> bf1 [<b><font color=#923B23>expr</font></b> {abs(<font color=#4A181B>$ln<font color=#463e11></font>-int</font>(<font color=#4A181B>$data(CUR_POS</font>,<font color=#4A181B>$txt)))</font>&gt;1 || <font color=#4A181B>$dl</font>&gt;1  || <font color=#4A181B>$cntq</font>!=<font color=#4A181B>$data(CNT_QUOTE</font>,<font color=#4A181B>$txt)</font>  || <font color=#4A181B>$cnts</font>!=<font color=#4A181B>$data(CNT_SLASH</font>,<font color=#4A181B>$txt)</font>  || <font color=#4A181B>$ccmnt</font>!=<font color=#4A181B>$data(CNT_COMMENT</font>,<font color=#4A181B>$txt)</font>}]
+  <b><font color=#923B23>set</font></b> bf1 [<b><font color=#923B23>expr</font></b> {abs(<font color=#4A181B>$ln<font color=#463e11></font>-int</font>(<font color=#4A181B>$data(CURPOS</font>,<font color=#4A181B>$txt)))</font>&gt;1 || <font color=#4A181B>$dl</font>&gt;1  || <font color=#4A181B>$cntq</font>!=<font color=#4A181B>$data(CNT_QUOTE</font>,<font color=#4A181B>$txt)</font>  || <font color=#4A181B>$cnts</font>!=<font color=#4A181B>$data(CNT_SLASH</font>,<font color=#4A181B>$txt)</font>  || <font color=#4A181B>$ccmnt</font>!=<font color=#4A181B>$data(CNT_COMMENT</font>,<font color=#4A181B>$txt)</font>}]
   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$bf1</font> && !<font color=#4A181B>$data(MULTILINE</font>,<font color=#4A181B>$txt)</font>} {
     <b><font color=#923B23>set</font></b> lnt1 <font color=#4A181B>$ln</font>
     <b><font color=#923B23>set</font></b> lnt2 [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$ln</font>+1}]
@@ -964,10 +964,8 @@ padding: 0%;
   <i><font color=#646464># Highlights matching brackets if any.</font></i>
   <i><font color=#646464>#   w - text widget's path</font></i>
 
-  <b><font color=#923B23>set</font></b> curpos [<font color=#4A181B>$w</font> index insert]
+  <b><font color=#923B23>set</font></b> curpos [ShowCurrentLine <font color=#4A181B>$w</font>]
   <b><font color=#923B23>set</font></b> curpos2 [<font color=#4A181B>$w</font> index <font color=#035103>&quot;insert -1 chars&quot;</font>]
-  <font color=#4A181B>$w</font> tag remove tagCURLINE 1.0 end
-  <font color=#4A181B>$w</font> tag add tagCURLINE [<b><font color=#923B23>list</font></b> <font color=#4A181B>$curpos</font> linestart] [<b><font color=#923B23>list</font></b> <font color=#4A181B>$curpos</font> lineend]+1displayindices
   <b><font color=#923B23>set</font></b> ch [<font color=#4A181B>$w</font> get <font color=#4A181B>$curpos</font>]
   <b><font color=#923B23>set</font></b> lbr <font color=#035103>&quot;\{(\[&quot;</font>
   <b><font color=#923B23>set</font></b> rbr <font color=#035103>&quot;\})\]&quot;</font>
@@ -1018,7 +1016,7 @@ padding: 0%;
   <b><font color=#923B23>variable</font></b> data
   <font color=#4A181B>$txt</font> tag add tagSTD <font color=#035103>&quot;<font color=#4A181B>$</font>ln.<font color=#4A181B>$</font>pri&quot;</font> <font color=#035103>&quot;<font color=#4A181B>$</font>ln.<font color=#4A181B>$</font>i -1 chars&quot;</font>
   <b><font color=#923B23>set</font></b> st [<b><font color=#923B23>string</font></b> range <font color=#4A181B>$line</font> <font color=#4A181B>$pri</font> <font color=#4A181B>$i</font>-1]
-  <b><font color=#923B23>set</font></b> lcom [<b><font color=#923B23>regexp</font></b> <font color=#463e11>-inline</font> <font color=#463e11>-all</font> <font color=#463e11>-indices</font> {(^|\[|\{|\}|;)+\s*(:|\w)+} <font color=#4A181B>$st</font>]
+  <b><font color=#923B23>set</font></b> lcom [<b><font color=#923B23>regexp</font></b> <font color=#463e11>-inline</font> <font color=#463e11>-all</font> <font color=#463e11>-indices</font> <font color=#4A181B>$data(RE1)</font> <font color=#4A181B>$st</font>]
   <i><font color=#646464># commands</font></i>
   <b><font color=#923B23>foreach</font></b> {lc _ _} <font color=#4A181B>$lcom</font> {
     <b><font color=#923B23>lassign</font></b> <font color=#4A181B>$lc</font> i1 i2
@@ -1037,14 +1035,14 @@ padding: 0%;
     }
   }
   <b><font color=#923B23>foreach</font></b> el {else elseif} {
-    <b><font color=#923B23>set</font></b> lcom [<b><font color=#923B23>regexp</font></b> <font color=#463e11>-inline</font> <font color=#463e11>-all</font> <font color=#463e11>-indices</font> <font color=#035103>&quot;\}\\s+(<font color=#4A181B>$</font>el)\\s+\{&quot;</font> <font color=#4A181B>$st</font>]
+    <b><font color=#923B23>set</font></b> lcom [<b><font color=#923B23>regexp</font></b> <font color=#463e11>-inline</font> <font color=#463e11>-all</font> <font color=#463e11>-indices</font> <font color=#4A181B>$data(RE2</font>$el) <font color=#4A181B>$st</font>]
     <b><font color=#923B23>foreach</font></b> {_ lc} <font color=#4A181B>$lcom</font> {
       <b><font color=#923B23>lassign</font></b> <font color=#4A181B>$lc</font> i1 i2
       <font color=#4A181B>$txt</font> tag add tagCOM <font color=#035103>&quot;<font color=#4A181B>$</font>ln.<font color=#4A181B>$</font>pri +<font color=#4A181B>$</font>i1 char&quot;</font> <font color=#035103>&quot;<font color=#4A181B>$</font>ln.<font color=#4A181B>$</font>pri +<font color=#4A181B>[</font>incr i2<font color=#4A181B>]</font> char&quot;</font>
     }
   }
   <i><font color=#646464># $variables</font></i>
-  <b><font color=#923B23>set</font></b> lcom [<b><font color=#923B23>regexp</font></b> <font color=#463e11>-inline</font> <font color=#463e11>-all</font> <font color=#463e11>-indices</font> {(^|[^\\])\$+\{?(:|\w|\(|\))+\}?} <font color=#4A181B>$st</font>]
+  <b><font color=#923B23>set</font></b> lcom [<b><font color=#923B23>regexp</font></b> <font color=#463e11>-inline</font> <font color=#463e11>-all</font> <font color=#463e11>-indices</font> <font color=#4A181B>$data(RE3)</font> <font color=#4A181B>$st</font>]
   <b><font color=#923B23>foreach</font></b> {lc _ _} <font color=#4A181B>$lcom</font> {
     <b><font color=#923B23>lassign</font></b> <font color=#4A181B>$lc</font> i1 i2
     <b><font color=#923B23>set</font></b> i [<b><font color=#923B23>string</font></b> first \$ [<b><font color=#923B23>set</font></b> c [<b><font color=#923B23>string</font></b> range <font color=#4A181B>$st</font> <font color=#4A181B>$i1</font> <font color=#4A181B>$i2</font>]]]
@@ -1055,7 +1053,7 @@ padding: 0%;
   }
   <i><font color=#646464># -options</font></i>
   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$::hl_tcl::my::data(OPTRE</font>,<font color=#4A181B>$txt)</font>} {
-    <b><font color=#923B23>set</font></b> lcom [<b><font color=#923B23>regexp</font></b> <font color=#463e11>-inline</font> <font color=#463e11>-all</font> <font color=#463e11>-indices</font> {(\s*|^)(-[[:alpha:]]+\w*)(\s*|<font color=#4A181B>$)</font>} <font color=#4A181B>$st</font>]
+    <b><font color=#923B23>set</font></b> lcom [<b><font color=#923B23>regexp</font></b> <font color=#463e11>-inline</font> <font color=#463e11>-all</font> <font color=#463e11>-indices</font> <font color=#4A181B>$data(RE4)</font> <font color=#4A181B>$st</font>]
     <b><font color=#923B23>foreach</font></b> {_ _ lc _} <font color=#4A181B>$lcom</font> {
       <b><font color=#923B23>lassign</font></b> <font color=#4A181B>$lc</font> i1 i2
       <font color=#4A181B>$txt</font> tag add tagOPT <font color=#035103>&quot;<font color=#4A181B>$</font>ln.<font color=#4A181B>$</font>pri +<font color=#4A181B>$</font>i1 char&quot;</font> <font color=#035103>&quot;<font color=#4A181B>$</font>ln.<font color=#4A181B>$</font>pri +<font color=#4A181B>[</font>incr i2<font color=#4A181B>]</font> char&quot;</font>
@@ -1162,11 +1160,12 @@ padding: 0%;
   <i><font color=#646464>#   p1 - starting index of the string in 'txt'</font></i>
   <i><font color=#646464>#   p2 - ending index of the string in 'txt'</font></i>
 
+  <b><font color=#923B23>variable</font></b> data
   <b><font color=#923B23>set</font></b> p1 [<font color=#4A181B>$txt</font> index <font color=#4A181B>$p1</font>]
   <b><font color=#923B23>set</font></b> p2 [<font color=#4A181B>$txt</font> index <font color=#4A181B>$p2</font>]
   <font color=#4A181B>$txt</font> tag add tagSTR <font color=#4A181B>$p1</font> <font color=#4A181B>$p2</font>
   <b><font color=#923B23>set</font></b> st [<font color=#4A181B>$txt</font> get <font color=#4A181B>$p1</font> <font color=#4A181B>$p2</font>]
-  <b><font color=#923B23>set</font></b> lcom [<b><font color=#923B23>regexp</font></b> <font color=#463e11>-inline</font> <font color=#463e11>-all</font> <font color=#463e11>-indices</font> {(^|[^\\])(\[|\]|\$|\{|\})+} <font color=#4A181B>$st</font>]
+  <b><font color=#923B23>set</font></b> lcom [<b><font color=#923B23>regexp</font></b> <font color=#463e11>-inline</font> <font color=#463e11>-all</font> <font color=#463e11>-indices</font> <font color=#4A181B>$data(RE5)</font> <font color=#4A181B>$st</font>]
   <b><font color=#923B23>foreach</font></b> {lc g1 g2} <font color=#4A181B>$lcom</font> {
     <b><font color=#923B23>lassign</font></b> <font color=#4A181B>$lc</font> i1 i2
     <b><font color=#923B23>incr</font></b> i2
@@ -1329,17 +1328,12 @@ padding: 0%;
   <i><font color=#646464>#   txt - text widget's path</font></i>
 
   <b><font color=#923B23>variable</font></b> data
-  <b><font color=#923B23>set</font></b> ln [<font color=#4A181B>$txt</font> index insert]
-  <b><font color=#923B23>set</font></b> updcurr [<b><font color=#923B23>expr</font></b> {![<b><font color=#923B23>info</font></b> exists data(CUR_POS,<font color=#4A181B>$txt)</font>] ||  int(<font color=#4A181B>$data(CUR_POS</font>,<font color=#4A181B>$txt))</font> != int(<font color=#4A181B>$ln)</font>}]
-  <b><font color=#923B23>set</font></b> data(CUR_POS,<font color=#4A181B>$txt)</font> <font color=#4A181B>$ln</font>
+  <b><font color=#923B23>set</font></b> ln [ShowCurrentLine <font color=#4A181B>$txt</font>]
+  <b><font color=#923B23>set</font></b> data(CURPOS,<font color=#4A181B>$txt)</font> <font color=#4A181B>$ln</font>
   <b><font color=#923B23>set</font></b> data(CUR_LEN,<font color=#4A181B>$txt)</font> [<font color=#4A181B>$txt</font> index end]
   <b><font color=#923B23>lassign</font></b> [CountQSH <font color=#4A181B>$txt</font> <font color=#4A181B>$ln</font>]  data(CNT_QUOTE,<font color=#4A181B>$txt)</font> data(CNT_SLASH,<font color=#4A181B>$txt)</font> data(CNT_COMMENT,<font color=#4A181B>$txt)</font>
   <b><font color=#923B23>if</font></b> {[<font color=#4A181B>$txt</font> tag ranges tagBRACKET] ne <font color=#035103>&quot;&quot;</font>}    {<font color=#4A181B>$txt</font> tag remove tagBRACKET 1.0 end}
   <b><font color=#923B23>if</font></b> {[<font color=#4A181B>$txt</font> tag ranges tagBRACKETERR] ne <font color=#035103>&quot;&quot;</font>} {<font color=#4A181B>$txt</font> tag remove tagBRACKETERR 1.0 end}
-  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$updcurr</font>} {
-    <font color=#4A181B>$txt</font> tag remove tagCURLINE 1.0 end
-    <font color=#4A181B>$txt</font> tag add tagCURLINE [<b><font color=#923B23>list</font></b> <font color=#4A181B>$ln</font> linestart] [<b><font color=#923B23>list</font></b> <font color=#4A181B>$ln</font> lineend]+1displayindices
-  }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::MergePosList'>MergePosList</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -1486,6 +1480,26 @@ padding: 0%;
   }
   <b><font color=#A106A1>return</font></b> -1
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::ShowCurrentLine'>ShowCurrentLine</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Shows the current line.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>ShowCurrentLine</span> <span class='ruff_arg'>txt</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>text widget's path</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_26' href="javascript:toggleSource('26')">Show source</a></p>
+<div id='26' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::ShowCurrentLine {txt} {
+
+  <i><font color=#646464># Shows the current line.</font></i>
+  <i><font color=#646464>#   txt - text widget's path</font></i>
+
+  <b><font color=#923B23>set</font></b> ln [<font color=#4A181B>$txt</font> index insert]
+  <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists data(CURPOS,<font color=#4A181B>$txt)</font>] || int(<font color=#4A181B>$data(CURPOS</font>,<font color=#4A181B>$txt))</font>!=int(<font color=#4A181B>$ln)</font>} {
+    <font color=#4A181B>$txt</font> tag remove tagCURLINE 1.0 end
+    <font color=#4A181B>$txt</font> tag add tagCURLINE [<b><font color=#923B23>list</font></b> <font color=#4A181B>$ln</font> linestart] [<b><font color=#923B23>list</font></b> <font color=#4A181B>$ln</font> lineend]+1displayindices
+  }
+  <b><font color=#A106A1>return</font></b> <font color=#4A181B>$ln</font>
+}<br><br></code></pre></div>
 </div></div></div><div class='yui-b navbox' ><h1><a href='#::hl_tcl'>hl_tcl</a></h1><h2><a href='#::hl_tcl-Some_of_blah-blah'>Some of blah-blah</a></h2><h2><a href='#::hl_tcl-Some_of_editors'>Some of editors</a></h2><h2><a href='#::hl_tcl-What_can_we_do_'>What can we do?</a></h2><h2><a href='#::hl_tcl-Use_for_text_widget'>Use for text widget</a></h2><h2><a href='#::hl_tcl-Use_for_static_html'>Use for static html</a></h2><h2><a href='#::hl_tcl-Links'>Links</a></h2><h2><a href='#::hl_tcl-Commands'>Commands</a></h2><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_all'>hl_all</a><span class='tooltiptext'>Updates (&quot;rehighlights&quot;) all highlighted and existing text widgets.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_init'>hl_init</a><span class='tooltiptext'>Initializes highlighting.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_readonly'>hl_readonly</a><span class='tooltiptext'>Makes the text widget be readonly or gets its 'read-only' state.
@@ -1511,5 +1525,6 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::NotEscaped'>NotEscaped</a><span class='tooltiptext'>Checks if a character escaped in a line.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::RemoveTags'>RemoveTags</a><span class='tooltiptext'>Removes tags in text.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::SearchTag'>SearchTag</a><span class='tooltiptext'>Searches a position in tag ranges.
+</span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::ShowCurrentLine'>ShowCurrentLine</a><span class='tooltiptext'>Shows the current line.
 </span></h4></div></div><div id='ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div></div>
 </div></body></html>
