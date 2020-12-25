@@ -333,7 +333,7 @@ padding: 0%;
 <p class='ruff'><hr></p>
 <p class='ruff'>Runs this way:</p>
 <pre class='ruff'><br><code class="tcl"><b><font color=#923B23>package</font></b> require transpops
-::transpops::run transpops.txt {&lt;Control<font color=#463e11>-p</font>&gt; &lt;Alt<font color=#463e11>-p</font>&gt;} .win
+::transpops::run transpops.txt {&lt;Control<font color=#463e11>-p</font>&gt; &lt;Alt<font color=#463e11>-p</font>&gt;} .win ?fg? ?bg?
 <br></code></pre>
 <p class='ruff'>where:</p>
 <ul class='ruff'>
@@ -341,6 +341,7 @@ padding: 0%;
 <li><em>Control-p</em> - <em>hotkey</em> event to start the pop-up of messages</li>
 <li><em>Alt-p</em> - <em>alternative hotkey</em> event to restart the pop-up of messages at new coordinates</li>
 <li><em>.win</em> - toplevel window the events are bound to</li>
+<li><em>fg, bg</em> - foreground and background colors</li>
 </ul>
 <p class='ruff'>Of course, those <code>&lt;Control-p&gt;</code> and <code>&lt;Alt-p&gt;</code> may be substituted with other events specific for the application.</p>
 <p class='ruff'><hr></p>
@@ -401,13 +402,14 @@ padding: 0%;
   <b><font color=#923B23>variable</font></b> alpha
   <b><font color=#923B23>variable</font></b> alphaincr
   <b><font color=#923B23>variable</font></b> cntwait
+  <b><font color=#923B23>variable</font></b> perchars
   <b><font color=#923B23>if</font></b> {![<b><font color=#7A040E>winfo</font></b> exists <font color=#4A181B>$wmsgs</font>]} <b><font color=#A106A1>return</font></b>
   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$cntwait</font>&gt;0} {
     <b><font color=#923B23>incr</font></b> cntwait -1
   } <b><font color=#923B23>else</font></b> {
     <b><font color=#923B23>set</font></b> alpha [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$alpha</font>+<font color=#4A181B>$alphaincr</font>}]
     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$alpha</font>&gt;1.0} {
-      <b><font color=#923B23>set</font></b> cntwait [<b><font color=#923B23>expr</font></b> {int(max(2,[<b><font color=#923B23>string</font></b> length <font color=#4A181B>$msg</font>]/12.)/<font color=#4A181B>$alphaincr)</font>}]
+      <b><font color=#923B23>set</font></b> cntwait [<b><font color=#923B23>expr</font></b> {int(max(2,[<b><font color=#923B23>string</font></b> length <font color=#4A181B>$msg</font>]/<font color=#4A181B>$perchars)</font>/<font color=#4A181B>$alphaincr)</font>}]
       <b><font color=#923B23>set</font></b> alphaincr [<b><font color=#923B23>expr</font></b> {-<font color=#4A181B>$alphaincr</font>}]
       <b><font color=#923B23>set</font></b> alpha 1.0
     } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$alpha</font>&lt;0.0} {

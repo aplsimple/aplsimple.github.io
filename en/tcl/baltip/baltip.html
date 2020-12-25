@@ -341,7 +341,7 @@ padding: 0%;
 <li>be displayed as a stand-alone balloon message at given coordinates</li>
 <li>have configure/cget etc. wrapped in Tcl ensemble for convenience</li>
 </ul>
-<p class='ruff'>The video introduction to <em>balltip</em> is presented by <a href="https://github.com/aplsimple/baltip/releases/download/baltip-1.0/baltip-1.0.mp4" >baltip-1.0.mp4</a> (11 Mb).</p>
+<p class='ruff'>The video introduction to <em>baltip</em> is presented by <a href="https://github.com/aplsimple/baltip/releases/download/baltip-1.0/baltip-1.0.mp4" >baltip-1.0.mp4</a> (11 Mb).</p>
 <p class='ruff'>Below are several pictures just to glance at <em>baltip</em>.</p>
 <p class='ruff'><em>Under the mouse pointer</em>. By default, the tips are displayed just under the mouse pointer.</p>
 <p class='ruff'><img src="https://aplsimple.github.io/en/tcl/baltip/files/btip3.png" class="media" alt=""></p>
@@ -481,6 +481,7 @@ padding: 0%;
   <i><font color=#646464>#   args - option names (if empty, returns all options)</font></i>
   <i><font color=#646464># Returns a list of &quot;name value&quot; pairs.</font></i>
 
+  <b><font color=#923B23>variable</font></b> my::ttdata
   <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>llength</font></b> <font color=#4A181B>$args</font>]} {
     <b><font color=#923B23>lappend</font></b> args <font color=#463e11>-on</font> <font color=#463e11>-per10</font> <font color=#463e11>-fade</font> <font color=#463e11>-pause</font> <font color=#463e11>-fg</font> <font color=#463e11>-bg</font> <font color=#463e11>-bd</font> <font color=#463e11>-padx</font> <font color=#463e11>-pady</font> <font color=#463e11>-padding</font>  <font color=#463e11>-font</font> <font color=#463e11>-alpha</font> <font color=#463e11>-text</font> <font color=#463e11>-index</font> <font color=#463e11>-tag</font> <font color=#463e11>-bell</font> <font color=#463e11>-under</font>
   }
@@ -508,6 +509,7 @@ padding: 0%;
   <i><font color=#646464>#   args - options (&quot;name value&quot; pairs)</font></i>
   <i><font color=#646464># Returns the list of -force, -geometry, -index, -tag option values.</font></i>
 
+  <b><font color=#923B23>variable</font></b> my::ttdata
   <b><font color=#923B23>set</font></b> force no
   <b><font color=#923B23>set</font></b> index -1
   <b><font color=#923B23>set</font></b> geometry [<b><font color=#923B23>set</font></b> tag <font color=#035103>&quot;&quot;</font>]
@@ -562,10 +564,11 @@ padding: 0%;
   <i><font color=#646464>#   w - widget's path</font></i>
   <i><font color=#646464>#  args - options (incl. -index/-tag)</font></i>
 
+  <b><font color=#923B23>variable</font></b> my::ttdata
   <b><font color=#923B23>if</font></b> {[<b><font color=#7A040E>winfo</font></b> exists <font color=#4A181B>$w</font>] && [<b><font color=#923B23>info</font></b> exists my::ttdata(optvals,<font color=#4A181B>$w)</font>] &&  [<b><font color=#923B23>dict</font></b> exists <font color=#4A181B>$my::ttdata(optvals</font>,<font color=#4A181B>$w)</font> <font color=#463e11>-text</font>]} {
-    <b><font color=#923B23>set</font></b> optvals <font color=#4A181B>$::baltip::my::ttdata(optvals</font>,<font color=#4A181B>$w)</font>
+    <b><font color=#923B23>set</font></b> optvals <font color=#4A181B>$my::ttdata(optvals</font>,<font color=#4A181B>$w)</font>
     <b><font color=#923B23>lappend</font></b> optvals {*}<font color=#4A181B>$args</font>
-    <b><font color=#923B23>after</font></b> idle [<b><font color=#923B23>list</font></b> ::baltip::my::Show <font color=#4A181B>$w</font>  [<b><font color=#923B23>dict</font></b> get <font color=#4A181B>$::baltip::my::ttdata(optvals</font>,<font color=#4A181B>$w)</font> <font color=#463e11>-text</font>] yes  {} <font color=#4A181B>$optvals</font>]
+    <b><font color=#923B23>after</font></b> idle [<b><font color=#923B23>list</font></b> ::baltip::my::Show <font color=#4A181B>$w</font>  [<b><font color=#923B23>dict</font></b> get <font color=#4A181B>$my::ttdata(optvals</font>,<font color=#4A181B>$w)</font> <font color=#463e11>-text</font>] yes {} <font color=#4A181B>$optvals</font>]
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::baltip::tip'>tip</a><span class='ns_scope'> [<a href="baltip.html#::baltip" title="::baltip" class='ruff_cmd'>::baltip</a>]</span><span class='tinylink'><a href='baltip.html#::baltip'>baltip</a>, <a href='#top'>Top</a></span></h4>
@@ -585,6 +588,8 @@ padding: 0%;
   <i><font color=#646464>#   text - the tip text</font></i>
   <i><font color=#646464>#   args - options (&quot;name value&quot; pairs)</font></i>
 
+  <b><font color=#923B23>variable</font></b> my::ttdata
+  <b><font color=#923B23>array</font></b> unset my::ttdata winGEO*
   <b><font color=#923B23>if</font></b> {[<b><font color=#7A040E>winfo</font></b> exists <font color=#4A181B>$w</font>] || <font color=#4A181B>$w</font> eq <font color=#035103>&quot;&quot;</font>} {
     <b><font color=#923B23>set</font></b> arrsaved [<b><font color=#923B23>array</font></b> get my::ttdata]
     <b><font color=#923B23>set</font></b> optvals [::baltip::my::CGet {*}<font color=#4A181B>$args</font>]
@@ -610,7 +615,7 @@ padding: 0%;
           <b><font color=#923B23>set</font></b> my::ttdata(LASTMITEM) <font color=#035103>&quot;&quot;</font>
           <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$w</font> &lt;&lt;MenuSelect&gt;&gt; [<b><font color=#923B23>list</font></b> + ::baltip::my::MenuTip <font color=#4A181B>$w</font> %W <font color=#4A181B>$optvals</font>]
         } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$ttag</font> ne <font color=#035103>&quot;&quot;</font>} {
-          <b><font color=#923B23>set</font></b> ::baltip::my::ttdata(<font color=#4A181B>$w</font>,<font color=#4A181B>$ttag)</font> <font color=#035103>&quot;<font color=#4A181B>$</font>text&quot;</font>
+          <b><font color=#923B23>set</font></b> my::ttdata(<font color=#4A181B>$w</font>,<font color=#4A181B>$ttag)</font> <font color=#035103>&quot;<font color=#4A181B>$</font>text&quot;</font>
           <font color=#4A181B>$w</font> tag bind <font color=#4A181B>$ttag</font> &lt;Enter&gt; [<b><font color=#923B23>list</font></b> + ::baltip::my::TagTip <font color=#4A181B>$w</font> <font color=#4A181B>$ttag</font> <font color=#4A181B>$optvals</font>]
           <b><font color=#923B23>foreach</font></b> event {Leave KeyPress Button} {
             <font color=#4A181B>$w</font> tag bind <font color=#4A181B>$ttag</font> &lt;<font color=#4A181B>$event</font>&gt; [<b><font color=#923B23>list</font></b> + ::baltip::my::TagTip <font color=#4A181B>$w</font>]
@@ -639,6 +644,7 @@ padding: 0%;
   <i><font color=#646464>#  text - tip's text</font></i>
   <i><font color=#646464>#  args - tip's settings</font></i>
 
+  <b><font color=#923B23>variable</font></b> my::ttdata
   <b><font color=#923B23>set</font></b> my::ttdata(text,<font color=#4A181B>$w)</font> <font color=#4A181B>$text</font>
   <b><font color=#923B23>foreach</font></b> {k v} <font color=#4A181B>$args</font> {<b><font color=#923B23>set</font></b> my::ttdata([<b><font color=#923B23>string</font></b> range <font color=#4A181B>$k</font> 1 end],<font color=#4A181B>$w)</font> <font color=#4A181B>$v</font>}
 }<br><br></code></pre></div>
@@ -862,10 +868,10 @@ padding: 0%;
     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$geo</font> eq <font color=#035103>&quot;&quot;</font>} {
       <b><font color=#923B23>catch</font></b> {<b><font color=#7A040E>wm</font></b> attributes <font color=#4A181B>$win</font> <font color=#463e11>-alpha</font> <font color=#4A181B>$data(<font color=#463e11></font>-alpha</font>)}
     } <b><font color=#923B23>else</font></b> {
-      ::baltip::my::Fade <font color=#4A181B>$win</font> <font color=#4A181B>$aint</font> [<b><font color=#923B23>expr</font></b> {round(1.0*<font color=#4A181B>$data(<font color=#463e11></font>-pause</font>)/<font color=#4A181B>$aint)</font>}]  0 Un <font color=#4A181B>$data(<font color=#463e11></font>-alpha</font>) 1 <font color=#4A181B>$geo</font>
+      Fade <font color=#4A181B>$win</font> <font color=#4A181B>$aint</font> [<b><font color=#923B23>expr</font></b> {round(1.0*<font color=#4A181B>$data(<font color=#463e11></font>-pause</font>)/<font color=#4A181B>$aint)</font>}]  0 Un <font color=#4A181B>$data(<font color=#463e11></font>-alpha</font>) 1 <font color=#4A181B>$geo</font>
     }
     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$force</font>} {
-      ::baltip::my::Fade <font color=#4A181B>$win</font> <font color=#4A181B>$aint</font> <font color=#4A181B>$fint</font> <font color=#4A181B>$icount</font> {} <font color=#4A181B>$data(<font color=#463e11></font>-alpha</font>) 1 <font color=#4A181B>$geo</font>
+      Fade <font color=#4A181B>$win</font> <font color=#4A181B>$aint</font> <font color=#4A181B>$fint</font> <font color=#4A181B>$icount</font> {} <font color=#4A181B>$data(<font color=#463e11></font>-alpha</font>) 1 <font color=#4A181B>$geo</font>
     } <b><font color=#923B23>else</font></b> {
       <b><font color=#923B23>after</font></b> <font color=#4A181B>$data(<font color=#463e11></font>-pause</font>) [<b><font color=#923B23>list</font></b>  ::baltip::my::Fade <font color=#4A181B>$win</font> <font color=#4A181B>$aint</font> <font color=#4A181B>$fint</font> <font color=#4A181B>$icount</font> {} <font color=#4A181B>$data(<font color=#463e11></font>-alpha</font>) 1 <font color=#4A181B>$geo</font>]
     }
@@ -889,8 +895,8 @@ padding: 0%;
   <i><font color=#646464># Shows a window of tip.</font></i>
   <i><font color=#646464>#   win - the tip's window</font></i>
 
-  <b><font color=#923B23>if</font></b> {![<b><font color=#7A040E>winfo</font></b> exists <font color=#4A181B>$win</font>]} <b><font color=#A106A1>return</font></b>
   <b><font color=#923B23>variable</font></b> ttdata
+  <b><font color=#923B23>if</font></b> {![<b><font color=#7A040E>winfo</font></b> exists <font color=#4A181B>$win</font>] || ![<b><font color=#923B23>info</font></b> exists ttdata(winGEO,<font color=#4A181B>$win)</font>]} <b><font color=#A106A1>return</font></b>
   <b><font color=#923B23>set</font></b> geo <font color=#4A181B>$ttdata(winGEO</font>,<font color=#4A181B>$win)</font>
   <b><font color=#923B23>set</font></b> under <font color=#4A181B>$ttdata(winUNDER</font>,<font color=#4A181B>$win)</font>
   <b><font color=#923B23>set</font></b> w [<b><font color=#7A040E>winfo</font></b> parent <font color=#4A181B>$win</font>]
