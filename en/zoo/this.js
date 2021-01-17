@@ -20,6 +20,7 @@ function writeHeader() {
         <span id=flagcont>&nbsp;Home</span></a> \
         <a href="../../misc/news/news.html"  id=nav1   title="News and views">News</a> \
         <a href="../../misc/links/links.html" id=nav2   title="Some links">Links</a> \
+        <a href="../../misc/gallery/gallery.html" id=nav3   title="Some demos">Gallery</a> \
         <a href='+homeLINK+'/ru/index.html id=helpme title="Switch to Russian pages"> \
         <img id="flagimg" height=14 width=14 src="../../zoo/ru.png"> \
         <span id=flagcont>&nbsp;Ru</span></a> \
