@@ -493,7 +493,7 @@ padding: 0%;
   <i><font color=#646464>#     set options [list -name some -value &quot;any value&quot; -tooltip &quot;some tip&quot;]</font></i>
   <i><font color=#646464>#     set optvalue [::apave::getOption -tooltip {*}$options]</font></i>
 
-  <b><font color=#923B23>lassign</font></b> [::apave::parseOptions <font color=#4A181B>$args</font> <font color=#4A181B>$optname</font> <font color=#035103>&quot;&quot;</font>] optvalue
+  <b><font color=#923B23>set</font></b> optvalue [<b><font color=#923B23>lindex</font></b> [::apave::parseOptions <font color=#4A181B>$args</font> <font color=#4A181B>$optname</font> <font color=#035103>&quot;&quot;</font>] 0]
   <b><font color=#A106A1>return</font></b> <font color=#4A181B>$optvalue</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::iconData'>iconData</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
@@ -1081,6 +1081,7 @@ padding: 0%;
 <h5 class='ruff'>Method summary</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APave::constructor" title="constructor" class='ruff_cmd'>constructor</a></code></td><td class='ruff_defitem'>Constructor for the class.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APave::destructor" title="destructor" class='ruff_cmd'>destructor</a></code></td><td class='ruff_defitem'>Destructor for the class.</td></tr>
+<tr><td class='ruff_defitem'><code><code>basicDefFont</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::basicDefFont" title="ObjectTheming.basicDefFont" class='ruff_cmd'>ObjectTheming.basicDefFont</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>basicFontSize</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::basicFontSize" title="ObjectTheming.basicFontSize" class='ruff_cmd'>ObjectTheming.basicFontSize</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>basicTextFont</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::basicTextFont" title="ObjectTheming.basicTextFont" class='ruff_cmd'>ObjectTheming.basicTextFont</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>boldTextFont</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::boldTextFont" title="ObjectTheming.boldTextFont" class='ruff_cmd'>ObjectTheming.boldTextFont</a></td></tr>
@@ -1178,8 +1179,7 @@ padding: 0%;
   <b><font color=#923B23>set</font></b> _pav(lwidgets) [<b><font color=#923B23>list</font></b>]
   <b><font color=#923B23>set</font></b> _pav(moveall) 0
   <b><font color=#923B23>set</font></b> _pav(tonemoves) 1
-  <b><font color=#923B23>set</font></b> _pav(initialcolor) black
-  <b><font color=#923B23>set</font></b> _pav(clnddate) <font color=#035103>&quot;&quot;</font>
+  <b><font color=#923B23>set</font></b> _pav(initialcolor) <font color=#035103>&quot;&quot;</font>
   <b><font color=#923B23>set</font></b> _pav(modalwin) <font color=#035103>&quot;.&quot;</font>
   <b><font color=#923B23>set</font></b> _pav(fgbut) [<b><font color=#7A040E>ttk::style</font></b> lookup TButton <font color=#463e11>-foreground</font>]
   <b><font color=#923B23>set</font></b> _pav(bgbut) [<b><font color=#7A040E>ttk::style</font></b> lookup TButton <font color=#463e11>-background</font>]
@@ -1187,7 +1187,7 @@ padding: 0%;
   <b><font color=#923B23>set</font></b> _pav(prepost) [<b><font color=#923B23>list</font></b>]
   <b><font color=#923B23>set</font></b> _pav(widgetopts) [<b><font color=#923B23>list</font></b>]
   <b><font color=#923B23>set</font></b> _pav(edge) <font color=#035103>&quot;@@&quot;</font>
-  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$_pav(fgtxt)</font>==<font color=#035103>&quot;black&quot;</font> || <font color=#4A181B>$_pav(fgtxt)</font>==<font color=#035103>&quot;#000000&quot;</font>} {
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$_pav(fgtxt)</font> in {<font color=#035103>&quot;black&quot;</font> <font color=#035103>&quot;#000000&quot;</font>}} {
     <b><font color=#923B23>set</font></b> _pav(bgtxt) white
   } <b><font color=#923B23>else</font></b> {
     <b><font color=#923B23>set</font></b> _pav(bgtxt) [<b><font color=#7A040E>ttk::style</font></b> lookup TEntry <font color=#463e11>-background</font>]
@@ -1334,15 +1334,20 @@ padding: 0%;
   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$nchooser</font> eq <font color=#035103>&quot;ftx_OpenFile&quot;</font>} {
     <b><font color=#923B23>set</font></b> nchooser <font color=#035103>&quot;tk_getOpenFile&quot;</font>
   }
-  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$nchooser</font>==<font color=#035103>&quot;fontChooser&quot;</font> || <font color=#4A181B>$nchooser</font>==<font color=#035103>&quot;colorChooser&quot;</font>  ||  <font color=#4A181B>$nchooser</font>==<font color=#035103>&quot;dateChooser&quot;</font> } {
-    <b><font color=#923B23>set</font></b> nchooser <font color=#035103>&quot;my <font color=#4A181B>$</font>nchooser <font color=#4A181B>$</font>tvar&quot;</font>
-  } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$nchooser</font>==<font color=#035103>&quot;tk_getOpenFile&quot;</font> || <font color=#4A181B>$nchooser</font>==<font color=#035103>&quot;tk_getSaveFile&quot;</font>} {
+  <b><font color=#923B23>set</font></b> choosname <font color=#4A181B>$nchooser</font>
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$choosname</font> in {<font color=#035103>&quot;fontChooser&quot;</font> <font color=#035103>&quot;colorChooser&quot;</font> <font color=#035103>&quot;dateChooser&quot;</font>}} {
+    <b><font color=#923B23>set</font></b> nchooser <font color=#035103>&quot;my <font color=#4A181B>$</font>choosname <font color=#4A181B>$</font>tvar&quot;</font>
+  } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$choosname</font> in {<font color=#035103>&quot;tk_getOpenFile&quot;</font> <font color=#035103>&quot;tk_getSaveFile&quot;</font>}} {
     <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> fn [<b><font color=#923B23>set</font></b> <font color=#4A181B>$tvar</font>]]==<font color=#035103>&quot;&quot;</font>} {<b><font color=#923B23>set</font></b> dn [<b><font color=#923B23>pwd</font></b>]} {<b><font color=#923B23>set</font></b> dn [<b><font color=#923B23>file</font></b> dirname <font color=#4A181B>$fn</font>]}
     <b><font color=#923B23>set</font></b> args <font color=#035103>&quot;-initialfile \&quot;<font color=#4A181B>$</font>fn\&quot; -initialdir \&quot;<font color=#4A181B>$</font>dn\&quot; <font color=#4A181B>[</font>my ParentOpt<font color=#4A181B>]</font> <font color=#4A181B>$</font>args&quot;</font>
     <b><font color=#923B23>incr</font></b> isfilename
-  } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$nchooser</font>==<font color=#035103>&quot;tk_chooseDirectory&quot;</font>} {
+  } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$nchooser</font> eq <font color=#035103>&quot;tk_chooseDirectory&quot;</font>} {
     <b><font color=#923B23>set</font></b> args <font color=#035103>&quot;-initialdir \&quot;<font color=#4A181B>[</font>set <font color=#4A181B>$</font>tvar<font color=#4A181B>]</font>\&quot; <font color=#4A181B>[</font>my ParentOpt<font color=#4A181B>]</font> <font color=#4A181B>$</font>args&quot;</font>
     <b><font color=#923B23>incr</font></b> isfilename
+  }
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$::tcl_platform(platform)</font> eq <font color=#035103>&quot;unix&quot;</font> && <font color=#4A181B>$choosname</font> ne <font color=#035103>&quot;dateChooser&quot;</font> &&  [<b><font color=#923B23>set</font></b> cs [<b><font color=#A106A1>my</font></b> csCurrent]] != -2} {
+    <b><font color=#A106A1>my</font></b> untouchWidgets *.foc.*                   ;<i><font color=#646464># don't touch tkcc's boxes</font></i>
+    <b><font color=#923B23>after</font></b> idle [<b><font color=#923B23>list</font></b> [<b><font color=#A106A1>self</font></b>] csSet <font color=#4A181B>$cs</font> . <font color=#463e11>-doit</font>]  ;<i><font color=#646464># theme the chooser</font></i>
   }
   <b><font color=#923B23>set</font></b> res [{*}<font color=#4A181B>$nchooser</font> {*}<font color=#4A181B>$args</font>]
   <b><font color=#923B23>if</font></b> {<font color=#035103>&quot;<font color=#4A181B>$</font>res&quot;</font> ne <font color=#035103>&quot;&quot;</font> && <font color=#035103>&quot;<font color=#4A181B>$</font>tvar&quot;</font> ne <font color=#035103>&quot;&quot;</font>} {
@@ -1387,6 +1392,9 @@ padding: 0%;
   <i><font color=#646464>#</font></i>
   <i><font color=#646464># Returns a selected color.</font></i>
 
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$_pav(initialcolor)</font> eq <font color=#035103>&quot;&quot;</font>} {
+    <b><font color=#923B23>source</font></b> [<b><font color=#923B23>file</font></b> join <font color=#4A181B>$::apave::apaveDir</font> pickers color clrpick.tcl]
+  }
   <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> _ [<b><font color=#923B23>string</font></b> trim [<b><font color=#923B23>set</font></b> <font color=#4A181B>$tvar</font>]]] ne <font color=#035103>&quot;&quot;</font>} {
     <b><font color=#923B23>set</font></b> _pav(initialcolor) <font color=#4A181B>$_</font>
   } <b><font color=#923B23>else</font></b> {
@@ -1427,52 +1435,26 @@ padding: 0%;
 <div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT dateChooser</span> <span class='ruff_arg'>tvar ?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>tvar</code></code></td><td class='ruff_defitem'>name of variable containing a date</td></tr>
-<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>options of <em>widget::calendar</em></td></tr>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>options of <em>::klnd::calendar</em></td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>The <em>tvar</em> sets the initial date for the chooser and it gets a date selected in the chooser.</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a selected date.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_30' href="javascript:toggleSource('30')">Show source</a></p>
 <div id='30' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> dateChooser {tvar args} {
 
   <i><font color=#646464># Date chooser (calendar widget).</font></i>
   <i><font color=#646464>#   tvar - name of variable containing a date</font></i>
-  <i><font color=#646464>#   args - options of *widget::calendar*</font></i>
-  <i><font color=#646464>#</font></i>
-  <i><font color=#646464># The *tvar* sets the initial date for the chooser and</font></i>
-  <i><font color=#646464># it gets a date selected in the chooser.</font></i>
+  <i><font color=#646464>#   args - options of *::klnd::calendar*</font></i>
   <i><font color=#646464>#</font></i>
   <i><font color=#646464># Returns a selected date.</font></i>
 
-  <b><font color=#923B23>set</font></b> df %d.%m.%Y
-  <b><font color=#923B23>array</font></b> set a <font color=#4A181B>$args</font>
-  <b><font color=#923B23>set</font></b> ttl <font color=#035103>&quot;Date&quot;</font>
-  <b><font color=#923B23>if</font></b> [<b><font color=#923B23>info</font></b> exists a(<font color=#463e11>-title</font>)] {<b><font color=#923B23>set</font></b> ttl <font color=#035103>&quot;<font color=#4A181B>$</font>a(-title)&quot;</font>}
-  <b><font color=#923B23>catch</font></b> {
-    <b><font color=#923B23>set</font></b> df <font color=#4A181B>$a(<font color=#463e11></font>-dateformat</font>)
-    <b><font color=#923B23>set</font></b> _pav(clnddate) [<b><font color=#923B23>set</font></b> <font color=#4A181B>$tvar</font>]
+  <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> commands ::klnd::calendar] eq <font color=#035103>&quot;&quot;</font>} {
+    <i><font color=#646464># imo, it's more effective to source on request than to require on possibility</font></i>
+    <b><font color=#923B23>source</font></b> [<b><font color=#923B23>file</font></b> join <font color=#4A181B>$::apave::apaveDir</font> pickers klnd klnd.tcl]
   }
-  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$_pav(clnddate)</font>==<font color=#035103>&quot;&quot;</font>} {
-    <b><font color=#923B23>set</font></b> _pav(clnddate) [<b><font color=#923B23>clock</font></b> format [<b><font color=#923B23>clock</font></b> seconds] <font color=#463e11>-format</font> <font color=#4A181B>$df</font>]
-  }
-  <b><font color=#923B23>set</font></b> wcal [<b><font color=#923B23>set</font></b> wmain [<b><font color=#923B23>set</font></b> <font color=#4A181B>${_pav(ns)}</font>PN::wn]].dateWidChooser
-  <b><font color=#923B23>catch</font></b> {<b><font color=#7A040E>destroy</font></b> <font color=#4A181B>$wcal</font>}
-  <b><font color=#7A040E>wm</font></b> title [<b><font color=#7A040E>toplevel</font></b> <font color=#4A181B>$wcal</font>] <font color=#4A181B>$ttl</font>
-  <b><font color=#923B23>lassign</font></b> [<b><font color=#923B23>split</font></b> [<b><font color=#7A040E>winfo</font></b> geometry <font color=#4A181B>$_pav(modalwin)</font>] x+] rw rh rx ry
-  <b><font color=#7A040E>wm</font></b> geometry <font color=#4A181B>$wcal</font> [<b><font color=#A106A1>my</font></b> CenteredXY <font color=#4A181B>$rw</font> <font color=#4A181B>$rh</font> <font color=#4A181B>$rx</font> <font color=#4A181B>$ry</font> 220 150]
-  <b><font color=#7A040E>wm</font></b> protocol <font color=#4A181B>$wcal</font> WM_DELETE_WINDOW [<b><font color=#923B23>list</font></b> set <font color=#4A181B>${_pav(ns)}</font>datechoosen <font color=#035103>&quot;&quot;</font>]
-  <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$wcal</font> &lt;Escape&gt; [<b><font color=#923B23>list</font></b> set <font color=#4A181B>${_pav(ns)}</font>datechoosen <font color=#035103>&quot;&quot;</font>]
-  <b><font color=#923B23>set</font></b> <font color=#4A181B>${_pav(ns)}</font>datechoosen <font color=#035103>&quot;&quot;</font>
-  <b><font color=#923B23>package</font></b> require widget::calendar
-  widget::calendar <font color=#4A181B>$wcal</font>.c <font color=#463e11>-dateformat</font> <font color=#4A181B>$df</font> <font color=#463e11>-enablecmdonkey</font> 0 <font color=#463e11>-command</font>  [<b><font color=#923B23>list</font></b> set <font color=#4A181B>${_pav(ns)}</font>datechoosen] <font color=#463e11>-textvariable</font> <font color=#4A181B>${_pav(ns)}</font>_pav(clnddate)
-  <b><font color=#7A040E>pack</font></b> <font color=#4A181B>$wcal</font>.c <font color=#463e11>-fill</font> both <font color=#463e11>-expand</font> 0
-  <b><font color=#923B23>after</font></b> idle [<b><font color=#923B23>list</font></b> focus <font color=#4A181B>$wcal</font>]
-  <b><font color=#923B23>vwait</font></b> <font color=#4A181B>${_pav(ns)}</font>datechoosen
-  <b><font color=#923B23>update</font></b> idle
-  <b><font color=#7A040E>destroy</font></b> <font color=#4A181B>$wcal</font>
-  <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> <font color=#4A181B>${_pav(ns)}</font>datechoosen]==<font color=#035103>&quot;&quot;</font>} {
-    <b><font color=#923B23>set</font></b> _pav(clnddate) [<b><font color=#923B23>set</font></b> <font color=#4A181B>$tvar</font>]
-  }
-  <b><font color=#A106A1>return</font></b> <font color=#4A181B>$_pav(clnddate)</font>
+  <b><font color=#923B23>set</font></b> ent [<b><font color=#A106A1>my</font></b> [<b><font color=#A106A1>my</font></b> ownWName [::apave::getOption <font color=#463e11>-entry</font> {*}<font color=#4A181B>$args</font>]]]
+  <b><font color=#923B23>dict</font></b> set args <font color=#463e11>-entry</font> <font color=#4A181B>$ent</font>
+  <b><font color=#923B23>set</font></b> res [::klnd::calendar {*}<font color=#4A181B>$args</font> <font color=#463e11>-tvar</font> <font color=#4A181B>$tvar</font> <font color=#463e11>-parent</font> [<b><font color=#7A040E>winfo</font></b> toplevel <font color=#4A181B>$ent</font>]]
+  <b><font color=#A106A1>return</font></b> <font color=#4A181B>$res</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APave::displayTaggedText'>displayTaggedText</a><span class='ns_scope'> [<a href="apave.html#::apave::APave" title="::apave::APave" class='ruff_cmd'>::apave::APave</a>]</span><span class='tinylink'><a href='apave.html#::apave::APave'>APave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -1575,7 +1557,7 @@ padding: 0%;
   }
   <b><font color=#923B23>lassign</font></b> [<b><font color=#A106A1>my</font></b> csGet] fg fg2 bg bg2
   <b><font color=#923B23>set</font></b> lfont [<font color=#4A181B>$w</font> cget <font color=#463e11>-font</font>]
-  <b><font color=#923B23>catch</font></b> {<b><font color=#923B23>set</font></b> lfont [<b><font color=#7A040E>font</font></b> configure <font color=#4A181B>$lfont</font>]}
+  <b><font color=#923B23>catch</font></b> {<b><font color=#923B23>set</font></b> lfont [<b><font color=#7A040E>font</font></b> actual <font color=#4A181B>$lfont</font>]}
   <b><font color=#923B23>foreach</font></b> {o v} [<b><font color=#A106A1>my</font></b> initLinkFont] {<b><font color=#923B23>dict</font></b> set lfont <font color=#4A181B>$o</font> <font color=#4A181B>$v</font>}
   <b><font color=#923B23>set</font></b> ::apave::__TEXTLINKS__(<font color=#4A181B>$w)</font> [<b><font color=#923B23>list</font></b>]
   <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> it [<b><font color=#923B23>llength</font></b> <font color=#4A181B>$taglist</font>]} {[<b><font color=#923B23>incr</font></b> it -1]&gt;=0} {} {
@@ -2019,18 +2001,20 @@ padding: 0%;
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APave::makeWindow'>makeWindow</a><span class='ns_scope'> [<a href="apave.html#::apave::APave" title="::apave::APave" class='ruff_cmd'>::apave::APave</a>]</span><span class='tinylink'><a href='apave.html#::apave::APave'>APave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Creates a toplevel window that has to be paved.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT makeWindow</span> <span class='ruff_arg'>w ttl</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT makeWindow</span> <span class='ruff_arg'>w ttl ?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>w</code></code></td><td class='ruff_defitem'>window's name</td></tr>
 <tr><td class='ruff_defitem'><code><code>ttl</code></code></td><td class='ruff_defitem'>window's title</td></tr>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>options for 'toplevel' command</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>If <code>$w</code> matches &quot;*.fra&quot; then ttk::frame is created with name <code>$w</code>.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_42' href="javascript:toggleSource('42')">Show source</a></p>
-<div id='42' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> makeWindow {w ttl} {
+<div id='42' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> makeWindow {w ttl args} {
 
   <i><font color=#646464># Creates a toplevel window that has to be paved.</font></i>
   <i><font color=#646464>#   w - window's name</font></i>
   <i><font color=#646464>#   ttl - window's title</font></i>
+  <i><font color=#646464>#   args - options for 'toplevel' command</font></i>
   <i><font color=#646464># If $w matches &quot;*.fra&quot; then ttk::frame is created with name $w.</font></i>
 
   <b><font color=#A106A1>my</font></b> CleanUps
@@ -2040,7 +2024,7 @@ padding: 0%;
     <b><font color=#923B23>set</font></b> wtop [<b><font color=#923B23>string</font></b> range <font color=#4A181B>$w</font> 0 <font color=#4A181B>$pp</font>-1]
   }
   <b><font color=#923B23>catch</font></b> {<b><font color=#7A040E>destroy</font></b> <font color=#4A181B>$wtop</font>}
-  <b><font color=#7A040E>toplevel</font></b> <font color=#4A181B>$wtop</font>
+  <b><font color=#7A040E>toplevel</font></b> <font color=#4A181B>$wtop</font> {*}<font color=#4A181B>$args</font>
   <b><font color=#923B23>if</font></b> {[::iswindows]} { ;<i><font color=#646464># maybe nice to hide all windows manipulations</font></i>
     <b><font color=#7A040E>wm</font></b> attributes <font color=#4A181B>$wtop</font> <font color=#463e11>-alpha</font> 0.0
   } <b><font color=#923B23>else</font></b> {
@@ -2319,30 +2303,14 @@ padding: 0%;
 <div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT showModal</span> <span class='ruff_arg'>win ?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>win</code></code></td><td class='ruff_defitem'>window's name</td></tr>
-<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>attributes of window set with &quot;-name value&quot; pairs</td></tr>
-</table>
-<h5 class='ruff'>Description</h5><p class='ruff'>The &quot;-modal false&quot; option of 'args' allows to show the window as non-modal which may be needed in some cases.</p>
-<p class='ruff'>Examples of &quot;-name value&quot; pairs:</p>
-<table class='ruff_deflist'>
-<tr><td class='ruff_defitem'><code>-focus NAME</code></td><td class='ruff_defitem'>a name of focused widget</td></tr>
-<tr><td class='ruff_defitem'><code>-onclose PROC</code></td><td class='ruff_defitem'>a name of procedure being called  at closing window by &quot;X&quot; button; the procedure gets  the variable name that can be changed to 0  in order to close the window indeed</td></tr>
-<tr><td class='ruff_defitem'><code>-geometry GEOMETRY</code></td><td class='ruff_defitem'>a geometry of window</td></tr>
-<tr><td class='ruff_defitem'><code>-decor DECOR</code></td><td class='ruff_defitem'>decorative buttons of window (if DECOR=1)</td></tr>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>attributes of window (&quot;-name value&quot; pairs)</td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_52' href="javascript:toggleSource('52')">Show source</a></p>
 <div id='52' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> showModal {win args} {
 
   <i><font color=#646464># Shows a window as modal.</font></i>
   <i><font color=#646464>#   win - window's name</font></i>
-  <i><font color=#646464>#   args - attributes of window set with &quot;-name value&quot; pairs</font></i>
-  <i><font color=#646464># The &quot;-modal false&quot; option of 'args' allows to show the window as</font></i>
-  <i><font color=#646464># non-modal which may be needed in some cases.</font></i>
-  <i><font color=#646464>#</font></i>
-  <i><font color=#646464># Examples of &quot;-name value&quot; pairs:</font></i>
-  <i><font color=#646464>#  -focus NAME - a name of focused widget</font></i>
-  <i><font color=#646464>#  -onclose PROC - a name of procedure being called  at closing window by &quot;X&quot; button; the procedure gets  the variable name that can be changed to 0  in order to close the window indeed</font></i>
-  <i><font color=#646464>#  -geometry GEOMETRY - a geometry of window</font></i>
-  <i><font color=#646464>#  -decor DECOR - decorative buttons of window (if DECOR=1)</font></i>
+  <i><font color=#646464>#   args - attributes of window (&quot;-name value&quot; pairs)</font></i>
 
   <b><font color=#923B23>set</font></b> shal [::apave::shadowAllowed 0]
   <b><font color=#923B23>if</font></b> {[::apave::getOption <font color=#463e11>-themed</font> {*}<font color=#4A181B>$args</font>] in {<font color=#035103>&quot;&quot;</font> <font color=#035103>&quot;0&quot;</font>} &&  [<b><font color=#A106A1>my</font></b> csCurrent] != [apave::cs_Non]} {
@@ -2364,15 +2332,18 @@ padding: 0%;
     <b><font color=#923B23>set</font></b> modal yes
   }
   <b><font color=#923B23>set</font></b> args [::apave::removeOptions <font color=#4A181B>$args</font> <font color=#463e11>-centerme</font> <font color=#463e11>-ontop</font> <font color=#463e11>-modal</font>]
-  <b><font color=#923B23>array</font></b> set opt  [<b><font color=#923B23>list</font></b> <font color=#463e11>-focus</font> <font color=#035103>&quot;&quot;</font> <font color=#463e11>-onclose</font> <font color=#035103>&quot;&quot;</font> <font color=#463e11>-geometry</font> <font color=#035103>&quot;&quot;</font> <font color=#463e11>-decor</font> 0 <font color=#463e11>-root</font> <font color=#4A181B>$root</font> {*}<font color=#4A181B>$args</font>]
+  <b><font color=#923B23>array</font></b> set opt [<b><font color=#923B23>list</font></b> <font color=#463e11>-focus</font> <font color=#035103>&quot;&quot;</font> <font color=#463e11>-onclose</font> <font color=#035103>&quot;&quot;</font> <font color=#463e11>-geometry</font> <font color=#035103>&quot;&quot;</font> <font color=#463e11>-decor</font> 0  <font color=#463e11>-root</font> <font color=#4A181B>$root</font> <font color=#463e11>-resizable</font> <font color=#035103>&quot;&quot;</font> <font color=#463e11>-variable</font> <font color=#035103>&quot;&quot;</font> {*}<font color=#4A181B>$args</font>]
   <b><font color=#923B23>lassign</font></b> [<b><font color=#923B23>split</font></b> [<b><font color=#7A040E>wm</font></b> geometry <font color=#4A181B>$root</font>] x+] rw rh rx ry
   <b><font color=#923B23>if</font></b> {! <font color=#4A181B>$opt(<font color=#463e11></font>-decor</font>)} {
     <b><font color=#7A040E>wm</font></b> transient <font color=#4A181B>$win</font> <font color=#4A181B>$root</font>
   }
-  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$opt(<font color=#463e11></font>-onclose</font>) == <font color=#035103>&quot;&quot;</font>} {
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$opt(<font color=#463e11></font>-onclose</font>) eq <font color=#035103>&quot;&quot;</font>} {
     <b><font color=#923B23>set</font></b> opt(<font color=#463e11>-onclose</font>) [<b><font color=#923B23>list</font></b> set <font color=#4A181B>${_pav(ns)}</font>PN::AR(<font color=#4A181B>$win)</font> 0]
   } <b><font color=#923B23>else</font></b> {
     <b><font color=#923B23>set</font></b> opt(<font color=#463e11>-onclose</font>) [<b><font color=#923B23>list</font></b> <font color=#4A181B>$opt(<font color=#463e11></font>-onclose</font>) <font color=#4A181B>${_pav(ns)}</font>PN::AR(<font color=#4A181B>$win)</font>]
+  }
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$opt(<font color=#463e11></font>-resizable</font>) ne <font color=#035103>&quot;&quot;</font>} {
+     <b><font color=#7A040E>wm</font></b> resizable <font color=#4A181B>$win</font> {*}<font color=#4A181B>$opt(<font color=#463e11></font>-resizable</font>)
   }
   <b><font color=#923B23>set</font></b> opt(<font color=#463e11>-onclose</font>) <font color=#035103>&quot;::apave::obj EXPORT CleanUps <font color=#4A181B>$</font>win; <font color=#4A181B>$</font>opt(-onclose)&quot;</font>
   <b><font color=#7A040E>wm</font></b> protocol <font color=#4A181B>$win</font> WM_DELETE_WINDOW <font color=#4A181B>$opt(<font color=#463e11></font>-onclose</font>)
@@ -2391,9 +2362,9 @@ padding: 0%;
   <b><font color=#923B23>set</font></b> <font color=#4A181B>${_pav(ns)}</font>PN::AR(<font color=#4A181B>$win)</font> <font color=#035103>&quot;-&quot;</font>
   <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$win</font> &lt;Escape&gt; <font color=#4A181B>$opt(<font color=#463e11></font>-onclose</font>)
   <b><font color=#923B23>update</font></b>
+  <b><font color=#923B23>set</font></b> w [<b><font color=#7A040E>winfo</font></b> width <font color=#4A181B>$win</font>]
+  <b><font color=#923B23>set</font></b> h [<b><font color=#7A040E>winfo</font></b> height <font color=#4A181B>$win</font>]
   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$inpgeom</font> == <font color=#035103>&quot;&quot;</font>} {  ;<i><font color=#646464># final geometrizing with actual sizes</font></i>
-    <b><font color=#923B23>set</font></b> w [<b><font color=#7A040E>winfo</font></b> width <font color=#4A181B>$win</font>]
-    <b><font color=#923B23>set</font></b> h [<b><font color=#7A040E>winfo</font></b> height <font color=#4A181B>$win</font>]
     <b><font color=#923B23>if</font></b> {(<font color=#4A181B>$h</font>/2-<font color=#4A181B>$ry</font>-<font color=#4A181B>$rh</font>/2)&gt;30 && <font color=#4A181B>$root</font> != <font color=#035103>&quot;.&quot;</font>} {
       <i><font color=#646464># ::tk::PlaceWindow needs correcting in rare cases, namely:</font></i>
       <i><font color=#646464># when 'root' is of less sizes than 'win' and at screen top</font></i>
@@ -2402,6 +2373,10 @@ padding: 0%;
       ::tk::PlaceWindow <font color=#4A181B>$win</font> widget <font color=#4A181B>$root</font>
     }
   } <b><font color=#923B23>else</font></b> {
+    <b><font color=#923B23>lassign</font></b> [<b><font color=#923B23>lrange</font></b> [<b><font color=#923B23>split</font></b> <font color=#4A181B>$inpgeom</font> +] end-1 end] x y
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$x</font> ne <font color=#035103>&quot;&quot;</font> && <font color=#4A181B>$y</font> ne <font color=#035103>&quot;&quot;</font> && [<b><font color=#923B23>string</font></b> first x <font color=#4A181B>$inpgeom</font>]&lt;0} {
+      <b><font color=#923B23>set</font></b> inpgeom [<b><font color=#A106A1>my</font></b> CheckXY <font color=#4A181B>$w</font> <font color=#4A181B>$h</font> <font color=#4A181B>$x</font> <font color=#4A181B>$y</font>]
+    }
     <b><font color=#7A040E>wm</font></b> geometry <font color=#4A181B>$win</font> <font color=#4A181B>$inpgeom</font>
   }
   <b><font color=#923B23>if</font></b> {[::iswindows]} {
@@ -2420,7 +2395,8 @@ padding: 0%;
     <b><font color=#7A040E>tkwait</font></b> visibility <font color=#4A181B>$win</font>
   }
   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$modal</font>} {<b><font color=#7A040E>grab</font></b> set <font color=#4A181B>$win</font>}
-  <b><font color=#7A040E>tkwait</font></b> variable <font color=#4A181B>${_pav(ns)}</font>PN::AR(<font color=#4A181B>$win)</font>
+  <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> var <font color=#4A181B>$opt(<font color=#463e11></font>-variable</font>)] eq <font color=#035103>&quot;&quot;</font>} {<b><font color=#923B23>set</font></b> var <font color=#4A181B>${_pav(ns)}</font>PN::AR(<font color=#4A181B>$win)</font>}
+  <b><font color=#7A040E>tkwait</font></b> variable <font color=#4A181B>$var</font>
   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$modal</font>} {<b><font color=#7A040E>grab</font></b> release <font color=#4A181B>$win</font>}
   ::apave::modalsOpen [<b><font color=#923B23>expr</font></b> {[::apave::modalsOpen] - 1}]
   <b><font color=#A106A1>my</font></b> GetOutputValues
@@ -2749,6 +2725,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveDialog::constructor" title="constructor" class='ruff_cmd'>constructor</a></code></td><td class='ruff_defitem'>Constructor for the class.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveDialog::destructor" title="destructor" class='ruff_cmd'>destructor</a></code></td><td class='ruff_defitem'>Destructor for the class.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveDialog::abortretrycancel" title="abortretrycancel" class='ruff_cmd'>abortretrycancel</a></code></td><td class='ruff_defitem'>Shows the <em>ABORTRETRYCANCEL</em> dialog.</td></tr>
+<tr><td class='ruff_defitem'><code><code>basicDefFont</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::basicDefFont" title="ObjectTheming.basicDefFont" class='ruff_cmd'>ObjectTheming.basicDefFont</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>basicFontSize</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::basicFontSize" title="ObjectTheming.basicFontSize" class='ruff_cmd'>ObjectTheming.basicFontSize</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>basicTextFont</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::basicTextFont" title="ObjectTheming.basicTextFont" class='ruff_cmd'>ObjectTheming.basicTextFont</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>boldTextFont</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::boldTextFont" title="ObjectTheming.boldTextFont" class='ruff_cmd'>ObjectTheming.boldTextFont</a></td></tr>
@@ -3030,7 +3007,7 @@ padding: 0%;
   <b><font color=#923B23>if</font></b> {!<font color=#4A181B>$err</font> && [<b><font color=#923B23>llength</font></b> <font color=#4A181B>$sel</font>]==2} {
     <b><font color=#923B23>set</font></b> sel [<font color=#4A181B>$txt</font> get <font color=#4A181B>$pos</font> <font color=#4A181B>$pos2</font>]  ;<i><font color=#646464># single selection</font></i>
   } <b><font color=#923B23>else</font></b> {
-    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$err</font> || [<b><font color=#923B23>string</font></b> trim <font color=#4A181B>$sel</font>]==<font color=#035103>&quot;&quot;</font>} {
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$err</font> || [<b><font color=#923B23>string</font></b> trim <font color=#4A181B>$sel</font>] eq <font color=#035103>&quot;&quot;</font>} {
       <b><font color=#923B23>set</font></b> pos  [<font color=#4A181B>$txt</font> index <font color=#035103>&quot;insert wordstart&quot;</font>]
       <b><font color=#923B23>set</font></b> pos2 [<font color=#4A181B>$txt</font> index <font color=#035103>&quot;insert wordend&quot;</font>]
       <b><font color=#923B23>set</font></b> sel [<b><font color=#923B23>string</font></b> trim [<font color=#4A181B>$txt</font> get <font color=#4A181B>$pos</font> <font color=#4A181B>$pos2</font>]]
@@ -3524,6 +3501,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveInput::constructor" title="constructor" class='ruff_cmd'>constructor</a></code></td><td class='ruff_defitem'>Constructor for the class.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveInput::destructor" title="destructor" class='ruff_cmd'>destructor</a></code></td><td class='ruff_defitem'>Destructor for the class.</td></tr>
 <tr><td class='ruff_defitem'><code><code>abortretrycancel</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveDialog::abortretrycancel" title="APaveDialog.abortretrycancel" class='ruff_cmd'>APaveDialog.abortretrycancel</a></td></tr>
+<tr><td class='ruff_defitem'><code><code>basicDefFont</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::basicDefFont" title="ObjectTheming.basicDefFont" class='ruff_cmd'>ObjectTheming.basicDefFont</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>basicFontSize</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::basicFontSize" title="ObjectTheming.basicFontSize" class='ruff_cmd'>ObjectTheming.basicFontSize</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>basicTextFont</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::basicTextFont" title="ObjectTheming.basicTextFont" class='ruff_cmd'>ObjectTheming.basicTextFont</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>boldTextFont</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::boldTextFont" title="ObjectTheming.boldTextFont" class='ruff_cmd'>ObjectTheming.boldTextFont</a></td></tr>
@@ -3928,7 +3906,7 @@ padding: 0%;
     ::apave::obj ok err <font color=#035103>&quot;ERROR&quot;</font> <font color=#035103>&quot;\n<font color=#4A181B>$</font>e\n&quot;</font>  <font color=#463e11>-t</font> 1 <font color=#463e11>-head</font> <font color=#035103>&quot;\nAPaveInput returned an error: \n&quot;</font> <font color=#463e11>-hfg</font> red <font color=#463e11>-weight</font> bold
     <b><font color=#A106A1>return</font></b> 0
   }
-  <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>lindex</font></b> <font color=#4A181B>$res</font> 0]!=1} {  ;<i><font color=#646464># restore old values if OK not chosen</font></i>
+  <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>lindex</font></b> <font color=#4A181B>$res</font> 0]} {  ;<i><font color=#646464># restore old values if OK not chosen</font></i>
     <b><font color=#923B23>foreach</font></b> {vn vv} <font color=#4A181B>$_savedvv</font> {
       <i><font color=#646464># tk_optionCascade (destroyed now) was tracing its variable =&gt; catch</font></i>
       <b><font color=#923B23>catch</font></b> {<b><font color=#923B23>set</font></b> <font color=#4A181B>$vn</font> <font color=#4A181B>$vv</font>}
@@ -4077,6 +4055,7 @@ padding: 0%;
 <h5 class='ruff'>Method summary</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::ObjectTheming::constructor" title="constructor" class='ruff_cmd'>constructor</a></code></td><td class='ruff_defitem'>Constructor for the class.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::ObjectTheming::destructor" title="destructor" class='ruff_cmd'>destructor</a></code></td><td class='ruff_defitem'>Destructor for the class.</td></tr>
+<tr><td class='ruff_defitem'><code><a href="apave.html#::apave::ObjectTheming::basicDefFont" title="basicDefFont" class='ruff_cmd'>basicDefFont</a></code></td><td class='ruff_defitem'>Gets/Sets a basic default font.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::ObjectTheming::basicFontSize" title="basicFontSize" class='ruff_cmd'>basicFontSize</a></code></td><td class='ruff_defitem'>Gets/Sets a basic size of font used in apave</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::ObjectTheming::basicTextFont" title="basicTextFont" class='ruff_cmd'>basicTextFont</a></code></td><td class='ruff_defitem'>Gets/Sets a basic font used in editing/viewing text widget.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::ObjectTheming::boldTextFont" title="boldTextFont" class='ruff_cmd'>boldTextFont</a></code></td><td class='ruff_defitem'>Returns a bold fixed font.</td></tr>
@@ -4121,6 +4100,29 @@ padding: 0%;
 
   <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>llength</font></b> [<b><font color=#A106A1>self</font></b> next]]} <b><font color=#923B23>next</font></b>
 }<br><br></code></pre></div>
+</div><br><br><h4 class='ruffmethod'><a name='::apave::ObjectTheming::basicDefFont'>basicDefFont</a><span class='ns_scope'> [<a href="apave.html#::apave::ObjectTheming" title="::apave::ObjectTheming" class='ruff_cmd'>::apave::ObjectTheming</a>]</span><span class='tinylink'><a href='apave.html#::apave::ObjectTheming'>ObjectTheming</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Gets/Sets a basic default font.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT basicDefFont</span> <span class='ruff_arg'>?deffont?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>deffont</code></code></td><td class='ruff_defitem'>font; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+</table>
+<h5 class='ruff'>Description</h5><p class='ruff'>If 'deffont' is omitted or ==&quot;&quot;, this method gets it. If 'deffont' is set, this method sets it.</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_96' href="javascript:toggleSource('96')">Show source</a></p>
+<div id='96' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> basicDefFont {{deffont {}}} {
+
+  <i><font color=#646464># Gets/Sets a basic default font.</font></i>
+  <i><font color=#646464>#    deffont - font</font></i>
+  <i><font color=#646464>#</font></i>
+  <i><font color=#646464># If 'deffont' is omitted or ==&quot;&quot;, this method gets it.</font></i>
+  <i><font color=#646464># If 'deffont' is set, this method sets it.</font></i>
+
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$deffont</font> ne <font color=#035103>&quot;&quot;</font>} {
+    <b><font color=#A106A1>return</font></b> [<b><font color=#923B23>set</font></b> ::apave::_CS_(defFont) <font color=#4A181B>$deffont</font>]
+  } <b><font color=#923B23>else</font></b> {
+    <b><font color=#A106A1>return</font></b> <font color=#4A181B>$::apave::_CS_(defFont)</font>
+  }
+}<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::ObjectTheming::basicFontSize'>basicFontSize</a><span class='ns_scope'> [<a href="apave.html#::apave::ObjectTheming" title="::apave::ObjectTheming" class='ruff_cmd'>::apave::ObjectTheming</a>]</span><span class='tinylink'><a href='apave.html#::apave::ObjectTheming'>ObjectTheming</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Gets/Sets a basic size of font used in apave</p>
@@ -4130,8 +4132,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>ds</code></code></td><td class='ruff_defitem'>incr/decr of size; <i>optional, default</i> <code>0</code></td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>If 'fs' is omitted or ==0, this method gets it. If 'fs' &gt;0, this method sets it.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_96' href="javascript:toggleSource('96')">Show source</a></p>
-<div id='96' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> basicFontSize {{fs 0} {ds 0}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_97' href="javascript:toggleSource('97')">Show source</a></p>
+<div id='97' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> basicFontSize {{fs 0} {ds 0}} {
 
   <i><font color=#646464># Gets/Sets a basic size of font used in apave</font></i>
   <i><font color=#646464>#    fs - font size</font></i>
@@ -4154,8 +4156,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>textfont</code></code></td><td class='ruff_defitem'>font; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>If 'textfont' is omitted or ==&quot;&quot;, this method gets it. If 'textfont' is set, this method sets it.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_97' href="javascript:toggleSource('97')">Show source</a></p>
-<div id='97' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> basicTextFont {{textfont {}}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_98' href="javascript:toggleSource('98')">Show source</a></p>
+<div id='98' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> basicTextFont {{textfont {}}} {
 
   <i><font color=#646464># Gets/Sets a basic font used in editing/viewing text widget.</font></i>
   <i><font color=#646464>#    textfont - font</font></i>
@@ -4172,18 +4174,19 @@ padding: 0%;
 </div><br><br><h4 class='ruffmethod'><a name='::apave::ObjectTheming::boldTextFont'>boldTextFont</a><span class='ns_scope'> [<a href="apave.html#::apave::ObjectTheming" title="::apave::ObjectTheming" class='ruff_cmd'>::apave::ObjectTheming</a>]</span><span class='tinylink'><a href='apave.html#::apave::ObjectTheming'>ObjectTheming</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Returns a bold fixed font.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT boldTextFont</span> <span class='ruff_arg'>fs</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT boldTextFont</span> <span class='ruff_arg'>?fs?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td class='ruff_defitem'><code><code>fs</code></code></td><td class='ruff_defitem'>font size</td></tr>
+<tr><td class='ruff_defitem'><code><code>fs</code></code></td><td class='ruff_defitem'>font size; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a bold fixed font.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_98' href="javascript:toggleSource('98')">Show source</a></p>
-<div id='98' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> boldTextFont {fs} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_99' href="javascript:toggleSource('99')">Show source</a></p>
+<div id='99' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> boldTextFont {{fs {}}} {
 
   <i><font color=#646464># Returns a bold fixed font.</font></i>
   <i><font color=#646464>#    fs - font size</font></i>
 
-  <b><font color=#923B23>set</font></b> bf [<b><font color=#7A040E>font</font></b> configure TkFixedFont]
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$fs</font> eq <font color=#035103>&quot;&quot;</font>} {<b><font color=#923B23>set</font></b> fs [<b><font color=#923B23>expr</font></b> {2+[<b><font color=#A106A1>my</font></b> basicFontSize]}]}
+  <b><font color=#923B23>set</font></b> bf [<b><font color=#7A040E>font</font></b> actual TkFixedFont]
   <b><font color=#A106A1>return</font></b> [<b><font color=#923B23>dict</font></b> replace <font color=#4A181B>$bf</font> <font color=#463e11>-family</font> [<b><font color=#A106A1>my</font></b> basicTextFont] <font color=#463e11>-weight</font> bold <font color=#463e11>-size</font> <font color=#4A181B>$fs</font>]
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::ObjectTheming::csAdd'>csAdd</a><span class='ns_scope'> [<a href="apave.html#::apave::ObjectTheming" title="::apave::ObjectTheming" class='ruff_cmd'>::apave::ObjectTheming</a>]</span><span class='tinylink'><a href='apave.html#::apave::ObjectTheming'>ObjectTheming</a>, <a href='#top'>Top</a></span></h4>
@@ -4197,8 +4200,8 @@ padding: 0%;
 <h5 class='ruff'>Description</h5><p class='ruff'>Does not register the CS, if it is already registered.</p>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns an index of current CS.</p>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="apave.html#::apave::ObjectTheming::themeWindow" title="themeWindow" class='ruff_cmd'>themeWindow</a></p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_99' href="javascript:toggleSource('99')">Show source</a></p>
-<div id='99' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csAdd {newcs {setnew true}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_100' href="javascript:toggleSource('100')">Show source</a></p>
+<div id='100' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csAdd {newcs {setnew true}} {
 
   <i><font color=#646464># Registers new color scheme in the list of CS.</font></i>
   <i><font color=#646464>#   newcs -  CS item</font></i>
@@ -4236,8 +4239,8 @@ padding: 0%;
 <div style='clear:both;'></div>
 <p class='ruff'>Gets an index of current color scheme</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT csCurrent</span> </div>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_100' href="javascript:toggleSource('100')">Show source</a></p>
-<div id='100' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csCurrent {} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_101' href="javascript:toggleSource('101')">Show source</a></p>
+<div id='101' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csCurrent {} {
 
   <i><font color=#646464># Gets an index of current color scheme</font></i>
 
@@ -4248,8 +4251,8 @@ padding: 0%;
 <p class='ruff'>Returns a flag &quot;the editor of CS is dark&quot;</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT csDarkEdit</span> </div>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a flag &quot;the editor of CS is dark&quot;</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_101' href="javascript:toggleSource('101')">Show source</a></p>
-<div id='101' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csDarkEdit {} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_102' href="javascript:toggleSource('102')">Show source</a></p>
+<div id='102' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csDarkEdit {} {
 
   <i><font color=#646464># Returns a flag &quot;the editor of CS is dark&quot;</font></i>
 
@@ -4260,8 +4263,8 @@ padding: 0%;
 <div style='clear:both;'></div>
 <p class='ruff'>TODO</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT csExport</span> </div>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_102' href="javascript:toggleSource('102')">Show source</a></p>
-<div id='102' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csExport {} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_103' href="javascript:toggleSource('103')">Show source</a></p>
+<div id='103' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csExport {} {
 
   <i><font color=#646464># TODO</font></i>
 
@@ -4282,8 +4285,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>fontname</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns attributes of CS font.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_103' href="javascript:toggleSource('103')">Show source</a></p>
-<div id='103' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csFont {fontname} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_104' href="javascript:toggleSource('104')">Show source</a></p>
+<div id='104' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csFont {fontname} {
 
   <i><font color=#646464># Returns attributes of CS font.</font></i>
   <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>catch</font></b> {<b><font color=#923B23>set</font></b> font [<b><font color=#7A040E>font</font></b> configure <font color=#4A181B>$fontname</font>]}]} {
@@ -4297,8 +4300,8 @@ padding: 0%;
 <p class='ruff'>Returns attributes of CS default font.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT csFontDef</span> </div>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns attributes of CS default font.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_104' href="javascript:toggleSource('104')">Show source</a></p>
-<div id='104' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csFontDef {} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_105' href="javascript:toggleSource('105')">Show source</a></p>
+<div id='105' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csFontDef {} {
 
   <i><font color=#646464># Returns attributes of CS default font.</font></i>
   <b><font color=#A106A1>return</font></b> [<b><font color=#A106A1>my</font></b> csFont apaveFontDef]
@@ -4308,8 +4311,8 @@ padding: 0%;
 <p class='ruff'>Returns attributes of CS monotype font.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT csFontMono</span> </div>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns attributes of CS monotype font.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_105' href="javascript:toggleSource('105')">Show source</a></p>
-<div id='105' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csFontMono {} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_106' href="javascript:toggleSource('106')">Show source</a></p>
+<div id='106' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csFontMono {} {
 
   <i><font color=#646464># Returns attributes of CS monotype font.</font></i>
   <b><font color=#A106A1>return</font></b> [<b><font color=#A106A1>my</font></b> csFont apaveFontMono]
@@ -4321,8 +4324,8 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>ncolor</code></code></td><td class='ruff_defitem'>index of color scheme; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_106' href="javascript:toggleSource('106')">Show source</a></p>
-<div id='106' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csGet {{ncolor {}}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_107' href="javascript:toggleSource('107')">Show source</a></p>
+<div id='107' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csGet {{ncolor {}}} {
 
   <i><font color=#646464># Gets a color scheme's colors</font></i>
   <i><font color=#646464>#   ncolor - index of color scheme</font></i>
@@ -4337,8 +4340,8 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>ncolor</code></code></td><td class='ruff_defitem'>index of color scheme; <i>optional, default</i> <code>0</code></td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_107' href="javascript:toggleSource('107')">Show source</a></p>
-<div id='107' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csGetName {{ncolor 0}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_108' href="javascript:toggleSource('108')">Show source</a></p>
+<div id='108' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csGetName {{ncolor 0}} {
 
   <i><font color=#646464># Gets a color scheme's name</font></i>
   <i><font color=#646464>#   ncolor - index of color scheme</font></i>
@@ -4360,8 +4363,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>list of colors if ncolor=&quot;&quot;</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>The <code>args</code> can be set as &quot;-doit&quot;. In this case the method does set the <code>ncolor</code> color scheme (otherwise it doesn't set the CS if it's already of the same <code>ncolor</code>).</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_108' href="javascript:toggleSource('108')">Show source</a></p>
-<div id='108' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csSet {{ncolor 0} {win .} args} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_109' href="javascript:toggleSource('109')">Show source</a></p>
+<div id='109' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> csSet {{ncolor 0} {win .} args} {
 
   <i><font color=#646464># Sets a color scheme and applies it to Tk/Ttk widgets.</font></i>
   <i><font color=#646464>#   ncolor - index of color scheme (0 through $::apave::_CS_(MAXCS))</font></i>
@@ -4427,8 +4430,8 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>options of ::baltip::configure</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_109' href="javascript:toggleSource('109')">Show source</a></p>
-<div id='109' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> initTooltip {args} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_110' href="javascript:toggleSource('110')">Show source</a></p>
+<div id='110' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> initTooltip {args} {
 
   <i><font color=#646464># Configurates colors and other attributes of tooltip.</font></i>
   <i><font color=#646464>#  args - options of ::baltip::configure</font></i>
@@ -4447,8 +4450,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>win</code></code></td><td class='ruff_defitem'>window path whose children will be touched</td></tr>
 </table>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="apave.html#::apave::ObjectTheming::untouchWidgets" title="untouchWidgets" class='ruff_cmd'>untouchWidgets</a></p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_110' href="javascript:toggleSource('110')">Show source</a></p>
-<div id='110' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> themeNonThemed {win} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_111' href="javascript:toggleSource('111')">Show source</a></p>
+<div id='111' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> themeNonThemed {win} {
 
   <i><font color=#646464># Updates the appearances of currently used widgets (non-themed).</font></i>
   <i><font color=#646464>#   win - window path whose children will be touched</font></i>
@@ -4497,8 +4500,8 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>mnu</code></code></td><td class='ruff_defitem'>menu's name (path)</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_111' href="javascript:toggleSource('111')">Show source</a></p>
-<div id='111' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> themePopup {mnu} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_112' href="javascript:toggleSource('112')">Show source</a></p>
+<div id='112' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> themePopup {mnu} {
 
   <i><font color=#646464># Configures a popup menu so that its colors accord with a current CS.</font></i>
   <i><font color=#646464>#   mnu - menu's name (path)</font></i>
@@ -4506,7 +4509,7 @@ padding: 0%;
   <b><font color=#923B23>if</font></b> {[<b><font color=#A106A1>my</font></b> csCurrent] == <font color=#4A181B>$::apave::_CS_(NONCS)</font>} <b><font color=#A106A1>return</font></b>
   <b><font color=#923B23>lassign</font></b> [<b><font color=#A106A1>my</font></b> csGet] - fg - bg2 - bgS fgS - - - - - - bg
   <b><font color=#923B23>if</font></b> {[<b><font color=#A106A1>my</font></b> csCurrent] &gt; <font color=#4A181B>$::apave::_CS_(STDCS)</font>} {<b><font color=#923B23>set</font></b> bg <font color=#4A181B>$bg2</font>}
-  <b><font color=#A106A1>my</font></b> ThemePopup <font color=#4A181B>$mnu</font> <font color=#463e11>-foreground</font> <font color=#4A181B>$fg</font> <font color=#463e11>-background</font> <font color=#4A181B>$bg</font>  <font color=#463e11>-activeforeground</font> <font color=#4A181B>$fgS</font> <font color=#463e11>-activebackground</font> <font color=#4A181B>$bgS</font>
+  <b><font color=#A106A1>my</font></b> ThemePopup <font color=#4A181B>$mnu</font> <font color=#463e11>-foreground</font> <font color=#4A181B>$fg</font> <font color=#463e11>-background</font> <font color=#4A181B>$bg</font>  <font color=#463e11>-activeforeground</font> <font color=#4A181B>$fgS</font> <font color=#463e11>-activebackground</font> <font color=#4A181B>$bgS</font> <font color=#463e11>-font</font> [<b><font color=#7A040E>font</font></b> actual apaveFontDef]
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::ObjectTheming::themeWindow'>themeWindow</a><span class='ns_scope'> [<a href="apave.html#::apave::ObjectTheming" title="::apave::ObjectTheming" class='ruff_cmd'>::apave::ObjectTheming</a>]</span><span class='tinylink'><a href='apave.html#::apave::ObjectTheming'>ObjectTheming</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -4533,8 +4536,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>other options</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>The themeWindow can be used outside of &quot;color scheme&quot; UI. E.g., in TKE editor, e_menu and add_shortcuts plugins use it to be consistent with TKE theme.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_112' href="javascript:toggleSource('112')">Show source</a></p>
-<div id='112' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> themeWindow {win {tfg1 {}} {tbg1 {}} {tfg2 {}} {tbg2 {}} {tfgS {}} {tbgS {}} {tfgD {}} {tbgD {}} {tcur {}} {bclr {}} {thlp {}} {tfgI {}} {tbgI {}} {tfgM {}} {tbgM {}} {isCS true} args} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_113' href="javascript:toggleSource('113')">Show source</a></p>
+<div id='113' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> themeWindow {win {tfg1 {}} {tbg1 {}} {tfg2 {}} {tbg2 {}} {tfgS {}} {tbgS {}} {tfgD {}} {tbgD {}} {tcur {}} {bclr {}} {thlp {}} {tfgI {}} {tbgI {}} {tfgM {}} {tbgM {}} {isCS true} args} {
 
   <i><font color=#646464># Changes a Tk style (theming a bit)</font></i>
   <i><font color=#646464>#   win - window's name</font></i>
@@ -4590,9 +4593,7 @@ padding: 0%;
     <b><font color=#A106A1>my</font></b> Ttk_style configure <font color=#4A181B>$ts</font> <font color=#463e11>-fieldforeground</font> <font color=#4A181B>$tfg2</font>
     <b><font color=#A106A1>my</font></b> Ttk_style configure <font color=#4A181B>$ts</font> <font color=#463e11>-fieldbackground</font> <font color=#4A181B>$tbg2</font>
   }
-    <b><font color=#A106A1>my</font></b> Ttk_style configure TMenu.Frame <font color=#463e11>-foreground</font> yellow
-    <b><font color=#A106A1>my</font></b> Ttk_style configure TMenu.Frame <font color=#463e11>-background</font> green
-  <b><font color=#923B23>foreach</font></b> ts {TNotebook TPanedwindow TFrame} {
+  <b><font color=#923B23>foreach</font></b> ts {TNotebook TFrame} {
     <b><font color=#A106A1>my</font></b> Ttk_style configure <font color=#4A181B>$ts</font> <font color=#463e11>-background</font> <font color=#4A181B>$tbg1</font>
   }
   <b><font color=#923B23>foreach</font></b> ts {TNotebook.Tab} {
@@ -4601,7 +4602,7 @@ padding: 0%;
     <b><font color=#A106A1>my</font></b> Ttk_style map <font color=#4A181B>$ts</font> <font color=#463e11>-background</font> [<b><font color=#923B23>list</font></b> selected <font color=#4A181B>$tbgS</font> active <font color=#4A181B>$tbg2</font>]
   }
 
-  <b><font color=#923B23>foreach</font></b> ts {TEntry Treeview TSpinbox TCombobox TCombobox.Spinbox TProgressbar} {
+  <b><font color=#923B23>foreach</font></b> ts {TEntry Treeview TSpinbox TCombobox TCombobox.Spinbox TProgressbar TMatchbox} {
     <b><font color=#A106A1>my</font></b> Ttk_style configure <font color=#4A181B>$ts</font> <font color=#463e11>-font</font> apaveFontDef
     <b><font color=#A106A1>my</font></b> Ttk_style configure <font color=#4A181B>$ts</font> <font color=#463e11>-selectforeground</font> <font color=#4A181B>$tfgS</font>
     <b><font color=#A106A1>my</font></b> Ttk_style configure <font color=#4A181B>$ts</font> <font color=#463e11>-selectbackground</font> <font color=#4A181B>$tbgS</font>
@@ -4615,7 +4616,7 @@ padding: 0%;
     <b><font color=#A106A1>my</font></b> Ttk_style map <font color=#4A181B>$ts</font> <font color=#463e11>-lightcolor</font> [<b><font color=#923B23>list</font></b> focus <font color=#4A181B>$bclr</font>]
     <b><font color=#A106A1>my</font></b> Ttk_style map <font color=#4A181B>$ts</font> <font color=#463e11>-darkcolor</font> [<b><font color=#923B23>list</font></b> focus <font color=#4A181B>$bclr</font>]
     <b><font color=#A106A1>my</font></b> Ttk_style configure <font color=#4A181B>$ts</font> <font color=#463e11>-insertwidth</font> <font color=#4A181B>$::apave::_CS_(CURSORWIDTH)</font>
-    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ts</font>==<font color=#035103>&quot;TCombobox&quot;</font>} {
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ts</font> eq <font color=#035103>&quot;TCombobox&quot;</font>} {
       <i><font color=#646464># combobox is sort of individual</font></i>
       <b><font color=#A106A1>my</font></b> Ttk_style configure <font color=#4A181B>$ts</font> <font color=#463e11>-foreground</font> <font color=#4A181B>$tfg1</font>
       <b><font color=#A106A1>my</font></b> Ttk_style configure <font color=#4A181B>$ts</font> <font color=#463e11>-background</font> <font color=#4A181B>$tbg1</font>
@@ -4630,10 +4631,13 @@ padding: 0%;
       <b><font color=#A106A1>my</font></b> Ttk_style map <font color=#4A181B>$ts</font> <font color=#463e11>-background</font> [<b><font color=#923B23>list</font></b> disabled <font color=#4A181B>$tbgD</font> readonly <font color=#4A181B>$tbgD</font> selected <font color=#4A181B>$tbgS</font>]
     }
   }
-  <b><font color=#7A040E>option</font></b> add *Listbox.font apaveFontDef userDefault
-  <b><font color=#7A040E>option</font></b> add *Menu.font apaveFontDef userDefault
-  <b><font color=#923B23>foreach</font></b> {i nam clr} {0 back tbg1 1 fore tfg1 2 selectBack tbgS 3 selectFore tfgS} {
-    <b><font color=#7A040E>option</font></b> add *Listbox.<font color=#4A181B>${nam}</font>ground [<b><font color=#923B23>set</font></b> <font color=#4A181B>$clr</font>] userDefault
+  <b><font color=#7A040E>option</font></b> add *Listbox.font apaveFontDef
+  <b><font color=#7A040E>option</font></b> add *Menu.font apaveFontDef
+  <b><font color=#923B23>foreach</font></b> {nam clr} {back tbg1 fore tfg1 selectBack tbgS selectFore tfgS} {
+    <b><font color=#7A040E>option</font></b> add *Listbox.<font color=#4A181B>${nam}</font>ground [<b><font color=#923B23>set</font></b> <font color=#4A181B>$clr</font>]
+  }
+  <b><font color=#923B23>foreach</font></b> {nam clr} {back tbgM fore tfgM selectBack tbgS selectFore tfgS} {
+    <b><font color=#7A040E>option</font></b> add *Menu.<font color=#4A181B>${nam}</font>ground [<b><font color=#923B23>set</font></b> <font color=#4A181B>$clr</font>]
   }
   <b><font color=#923B23>foreach</font></b> ts {TRadiobutton TCheckbutton} {
     <b><font color=#7A040E>ttk::style</font></b> map <font color=#4A181B>$ts</font> <font color=#463e11>-background</font> [<b><font color=#923B23>list</font></b> focus <font color=#4A181B>$tbg2</font> !focus <font color=#4A181B>$tbg1</font>]
@@ -4654,10 +4658,10 @@ padding: 0%;
         <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,8) <font color=#035103>&quot;-highlightbackground <font color=#4A181B>$</font>tbg1&quot;</font>
       }
       <b><font color=#7A040E>frame</font></b> - scrollbar - scale - tframe - tnotebook {
-        <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,0) 9
+        <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,0) 8
+        <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,4) <font color=#035103>&quot;-activebackground <font color=#4A181B>$</font>bclr&quot;</font>
         <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,7) <font color=#035103>&quot;-troughcolor <font color=#4A181B>$</font>tbg1&quot;</font>
-        <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,8) <font color=#035103>&quot;-activebackground <font color=#4A181B>$</font>bclr&quot;</font>
-        <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,9) <font color=#035103>&quot;-elementborderwidth 2&quot;</font>
+        <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,8) <font color=#035103>&quot;-elementborderwidth 2&quot;</font>
       }
       <b><font color=#7A040E>menu</font></b> {
         <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,0) 7
@@ -4667,6 +4671,9 @@ padding: 0%;
         <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,5) <font color=#035103>&quot;-borderwidth 2&quot;</font>
         <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,7) <font color=#035103>&quot;-relief raised&quot;</font>
       }
+      <b><font color=#7A040E>canvas</font></b> {
+        <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,1) <font color=#035103>&quot;-background <font color=#4A181B>$</font>tbg2&quot;</font>
+      }
     }
   }
   <b><font color=#923B23>foreach</font></b> ts [<b><font color=#A106A1>my</font></b> NonThemedWidgets entry] {
@@ -4675,7 +4682,7 @@ padding: 0%;
     <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,2) <font color=#035103>&quot;-background <font color=#4A181B>$</font>tbg2&quot;</font>
     <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,3) <font color=#035103>&quot;-highlightbackground <font color=#4A181B>$</font>tfgD&quot;</font>
     <b><font color=#923B23>switch</font></b> -- <font color=#4A181B>$ts</font> {
-      tcombobox {
+      tcombobox - tmatchbox {
         <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,0) 8
         <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,4) <font color=#035103>&quot;-disabledforeground <font color=#4A181B>$</font>tfgD&quot;</font>
         <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,5) <font color=#035103>&quot;-disabledbackground <font color=#4A181B>$</font>tbgD&quot;</font>
@@ -4691,9 +4698,9 @@ padding: 0%;
         <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,7) <font color=#035103>&quot;-disabledbackground <font color=#4A181B>$</font>tbgD&quot;</font>
         <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,8) <font color=#035103>&quot;-highlightcolor <font color=#4A181B>$</font>bclr&quot;</font>
         <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ts</font> eq <font color=#035103>&quot;text&quot;</font>} {
-          <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,9) <font color=#035103>&quot;-font <font color=#4A181B>{[</font>font configure apaveFontMono<font color=#4A181B>]}</font>&quot;</font>
+          <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,9) <font color=#035103>&quot;-font <font color=#4A181B>{[</font>font actual apaveFontMono<font color=#4A181B>]}</font>&quot;</font>
         } <b><font color=#923B23>else</font></b> {
-          <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,9) <font color=#035103>&quot;-font <font color=#4A181B>{[</font>font configure apaveFontDef<font color=#4A181B>]}</font>&quot;</font>
+          <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,9) <font color=#035103>&quot;-font <font color=#4A181B>{[</font>font actual apaveFontDef<font color=#4A181B>]}</font>&quot;</font>
         }
         <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,10) <font color=#035103>&quot;-insertwidth <font color=#4A181B>$</font>::apave::_CS_(CURSORWIDTH)&quot;</font>
         <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,11) <font color=#035103>&quot;-insertbackground <font color=#4A181B>$</font>tcur&quot;</font>
@@ -4702,8 +4709,8 @@ padding: 0%;
         <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,0) 12
         <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,4) <font color=#035103>&quot;-insertbackground <font color=#4A181B>$</font>tcur&quot;</font>
         <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,5) <font color=#035103>&quot;-buttonbackground <font color=#4A181B>$</font>tbg2&quot;</font>
-        <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,6) <font color=#035103>&quot;-selectforeground <font color=#4A181B>$</font>::apave::_CS_(!FG)&quot;</font> ;<i><font color=#646464># $tfgS</font></i>
-        <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,7) <font color=#035103>&quot;-selectbackground <font color=#4A181B>$</font>::apave::_CS_(!BG)&quot;</font> ;<i><font color=#646464># $tbgS</font></i>
+        <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,6) <font color=#035103>&quot;-selectforeground <font color=#4A181B>$</font>::apave::_CS_(!FG)&quot;</font>
+        <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,7) <font color=#035103>&quot;-selectbackground <font color=#4A181B>$</font>::apave::_CS_(!BG)&quot;</font>
         <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,8) <font color=#035103>&quot;-disabledforeground <font color=#4A181B>$</font>tfgD&quot;</font>
         <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,9) <font color=#035103>&quot;-disabledbackground <font color=#4A181B>$</font>tbgD&quot;</font>
         <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,10) <font color=#035103>&quot;-font apaveFontDef&quot;</font>
@@ -4738,6 +4745,7 @@ padding: 0%;
     }
   }
   ::apave::initStyles
+  <b><font color=#A106A1>my</font></b> ThemeChoosers
   <b><font color=#A106A1>return</font></b>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::ObjectTheming::untouchWidgets'>untouchWidgets</a><span class='ns_scope'> [<a href="apave.html#::apave::ObjectTheming" title="::apave::ObjectTheming" class='ruff_cmd'>::apave::ObjectTheming</a>]</span><span class='tinylink'><a href='apave.html#::apave::ObjectTheming'>ObjectTheming</a>, <a href='#top'>Top</a></span></h4>
@@ -4748,8 +4756,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>list of widget globs (e.g. {.em.fr.win.* .em.fr.h1 .em.fr.h2})</td></tr>
 </table>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="apave.html#::apave::ObjectTheming::themeNonThemed" title="themeNonThemed" class='ruff_cmd'>themeNonThemed</a></p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_113' href="javascript:toggleSource('113')">Show source</a></p>
-<div id='113' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> untouchWidgets {args} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_114' href="javascript:toggleSource('114')">Show source</a></p>
+<div id='114' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>method</font></b> untouchWidgets {args} {
 
   <i><font color=#646464># Makes non-ttk widgets to be untouched by coloring</font></i>
   <i><font color=#646464>#   args - list of widget globs (e.g. {.em.fr.win.* .em.fr.h1 .em.fr.h2})</font></i>
@@ -4849,7 +4857,8 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveInput::vieweditFile'>vieweditFile</a><span class='tooltiptext'>Views or edits a file.
 </span></h4><hr><h3><a href='apave.html#::apave::ObjectProperty'>ObjectProperty</a></h3><h4><a href='apave.html#::apave::ObjectProperty::constructor'>constructor</a></h4><h4><a href='apave.html#::apave::ObjectProperty::destructor'>destructor</a></h4><h4 class='tooltip'><a href='apave.html#::apave::ObjectProperty::getProperty'>getProperty</a><span class='tooltiptext'>Gets a property's value.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::ObjectProperty::setProperty'>setProperty</a><span class='tooltiptext'>Sets a property's value.
-</span></h4><hr><h3><a href='apave.html#::apave::ObjectTheming'>ObjectTheming</a></h3><h4><a href='apave.html#::apave::ObjectTheming::constructor'>constructor</a></h4><h4><a href='apave.html#::apave::ObjectTheming::destructor'>destructor</a></h4><h4 class='tooltip'><a href='apave.html#::apave::ObjectTheming::basicFontSize'>basicFontSize</a><span class='tooltiptext'>Gets/Sets a basic size of font used in apave
+</span></h4><hr><h3><a href='apave.html#::apave::ObjectTheming'>ObjectTheming</a></h3><h4><a href='apave.html#::apave::ObjectTheming::constructor'>constructor</a></h4><h4><a href='apave.html#::apave::ObjectTheming::destructor'>destructor</a></h4><h4 class='tooltip'><a href='apave.html#::apave::ObjectTheming::basicDefFont'>basicDefFont</a><span class='tooltiptext'>Gets/Sets a basic default font.
+</span></h4><h4 class='tooltip'><a href='apave.html#::apave::ObjectTheming::basicFontSize'>basicFontSize</a><span class='tooltiptext'>Gets/Sets a basic size of font used in apave
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::ObjectTheming::basicTextFont'>basicTextFont</a><span class='tooltiptext'>Gets/Sets a basic font used in editing/viewing text widget.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::ObjectTheming::boldTextFont'>boldTextFont</a><span class='tooltiptext'>Returns a bold fixed font.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::ObjectTheming::csAdd'>csAdd</a><span class='tooltiptext'>Registers new color scheme in the list of CS.
