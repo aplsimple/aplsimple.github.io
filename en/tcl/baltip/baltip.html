@@ -583,7 +583,8 @@ padding: 0%;
   <b><font color=#923B23>if</font></b> {[<b><font color=#7A040E>winfo</font></b> exists <font color=#4A181B>$w</font>] && [<b><font color=#923B23>info</font></b> exists my::ttdata(optvals,<font color=#4A181B>$w)</font>] &&  [<b><font color=#923B23>dict</font></b> exists <font color=#4A181B>$my::ttdata(optvals</font>,<font color=#4A181B>$w)</font> <font color=#463e11>-text</font>]} {
     <b><font color=#923B23>set</font></b> optvals <font color=#4A181B>$my::ttdata(optvals</font>,<font color=#4A181B>$w)</font>
     <b><font color=#923B23>lappend</font></b> optvals {*}<font color=#4A181B>$args</font>
-    <b><font color=#923B23>after</font></b> idle [<b><font color=#923B23>list</font></b> ::baltip::my::Show <font color=#4A181B>$w</font>  [<b><font color=#923B23>dict</font></b> get <font color=#4A181B>$my::ttdata(optvals</font>,<font color=#4A181B>$w)</font> <font color=#463e11>-text</font>] yes {} <font color=#4A181B>$optvals</font>]
+    <b><font color=#923B23>catch</font></b> {<b><font color=#923B23>after</font></b> cancel <font color=#4A181B>$my::ttdata(after)</font>}
+    <b><font color=#923B23>set</font></b> my::ttdata(after) [<b><font color=#923B23>after</font></b> idle [<b><font color=#923B23>list</font></b> ::baltip::my::Show <font color=#4A181B>$w</font>  [<b><font color=#923B23>dict</font></b> get <font color=#4A181B>$my::ttdata(optvals</font>,<font color=#4A181B>$w)</font> <font color=#463e11>-text</font>] yes {} <font color=#4A181B>$optvals</font>]]
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::baltip::tip'>tip</a><span class='ns_scope'> [<a href="baltip.html#::baltip" title="::baltip" class='ruff_cmd'>::baltip</a>]</span><span class='tinylink'><a href='baltip.html#::baltip'>baltip</a>, <a href='#top'>Top</a></span></h4>
@@ -724,9 +725,11 @@ padding: 0%;
   <i><font color=#646464>#   geos - saved coordinates (+X+Y) of shown tip</font></i>
   <i><font color=#646464># See also: FadeNext, UnFadeNext</font></i>
 
+  <b><font color=#923B23>variable</font></b> ttdata
   <b><font color=#923B23>update</font></b>
   <b><font color=#923B23>if</font></b> {[<b><font color=#7A040E>winfo</font></b> exists <font color=#4A181B>$w</font>]} {
-    <b><font color=#923B23>after</font></b> idle [<b><font color=#923B23>list</font></b> after <font color=#4A181B>$aint</font>  [<b><font color=#923B23>list</font></b> ::baltip::my::<font color=#4A181B>${Un}</font>FadeNext <font color=#4A181B>$w</font> <font color=#4A181B>$aint</font> <font color=#4A181B>$fint</font> <font color=#4A181B>$icount</font> <font color=#4A181B>$alpha</font> <font color=#4A181B>$show</font> <font color=#4A181B>$geo</font> <font color=#4A181B>$geos</font>]]
+    <b><font color=#923B23>catch</font></b> {<b><font color=#923B23>after</font></b> cancel <font color=#4A181B>$ttdata(after)</font>}
+    <b><font color=#923B23>set</font></b> ttdata(after) [<b><font color=#923B23>after</font></b> idle [<b><font color=#923B23>list</font></b> after <font color=#4A181B>$aint</font>  [<b><font color=#923B23>list</font></b> ::baltip::my::<font color=#4A181B>${Un}</font>FadeNext <font color=#4A181B>$w</font> <font color=#4A181B>$aint</font> <font color=#4A181B>$fint</font> <font color=#4A181B>$icount</font> <font color=#4A181B>$alpha</font> <font color=#4A181B>$show</font> <font color=#4A181B>$geo</font> <font color=#4A181B>$geos</font>]]]
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::baltip::my::FadeNext'>FadeNext</a><span class='ns_scope'> [<a href="baltip.html#::baltip::my" title="::baltip::my" class='ruff_cmd'>::baltip::my</a>]</span><span class='tinylink'><a href='baltip.html#::baltip::my'>my</a>, <a href='#top'>Top</a></span></h4>
@@ -888,11 +891,13 @@ padding: 0%;
     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$force</font>} {
       Fade <font color=#4A181B>$win</font> <font color=#4A181B>$aint</font> <font color=#4A181B>$fint</font> <font color=#4A181B>$icount</font> {} <font color=#4A181B>$data(<font color=#463e11></font>-alpha</font>) 1 <font color=#4A181B>$geo</font>
     } <b><font color=#923B23>else</font></b> {
-      <b><font color=#923B23>after</font></b> <font color=#4A181B>$data(<font color=#463e11></font>-pause</font>) [<b><font color=#923B23>list</font></b>  ::baltip::my::Fade <font color=#4A181B>$win</font> <font color=#4A181B>$aint</font> <font color=#4A181B>$fint</font> <font color=#4A181B>$icount</font> {} <font color=#4A181B>$data(<font color=#463e11></font>-alpha</font>) 1 <font color=#4A181B>$geo</font>]
+      <b><font color=#923B23>catch</font></b> {<b><font color=#923B23>after</font></b> cancel <font color=#4A181B>$ttdata(after)</font>}
+      <b><font color=#923B23>set</font></b> ttdata(after) [<b><font color=#923B23>after</font></b> <font color=#4A181B>$data(<font color=#463e11></font>-pause</font>) [<b><font color=#923B23>list</font></b>  ::baltip::my::Fade <font color=#4A181B>$win</font> <font color=#4A181B>$aint</font> <font color=#4A181B>$fint</font> <font color=#4A181B>$icount</font> {} <font color=#4A181B>$data(<font color=#463e11></font>-alpha</font>) 1 <font color=#4A181B>$geo</font>]]
     }
   } <b><font color=#923B23>else</font></b> {
     <i><font color=#646464># just showing, no fading</font></i>
-    <b><font color=#923B23>after</font></b> <font color=#4A181B>$data(<font color=#463e11></font>-pause</font>) [<b><font color=#923B23>list</font></b> ::baltip::my::ShowWindow <font color=#4A181B>$win</font>]
+    <b><font color=#923B23>catch</font></b> {<b><font color=#923B23>after</font></b> cancel <font color=#4A181B>$ttdata(after)</font>}
+    <b><font color=#923B23>set</font></b> ttdata(after) [<b><font color=#923B23>after</font></b> <font color=#4A181B>$data(<font color=#463e11></font>-pause</font>) [<b><font color=#923B23>list</font></b> ::baltip::my::ShowWindow <font color=#4A181B>$win</font>]]
   }
   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$data(<font color=#463e11></font>-bell</font>)} [<b><font color=#923B23>list</font></b> after [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$data(<font color=#463e11></font>-pause</font>)/4}] bell]
   <b><font color=#923B23>array</font></b> unset data
