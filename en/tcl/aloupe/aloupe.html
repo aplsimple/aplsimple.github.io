@@ -341,7 +341,7 @@ padding: 0%;
 </div>
 <div id='bd'><div id='yui-main'><div class='yui-b'><h1 class='ruff'><a name='::aloupe'></a>::aloupe<span class='tinylink'><a href='#top'>Top</a></span></h1>
 <div style='clear:both;'></div>
-<p class='ruff'>The <em>aloupe</em> is a Tcl/Tk small widget / utility allowing to view the screen through a loupe.</p>
+<p class='ruff'>The <em>aloupe v0.8.2</em> is a Tcl/Tk small widget / utility allowing to view the screen through a loupe.</p>
 <p class='ruff'>It allows also</p>
 <ul class='ruff'>
 <li>to make screenshots of magnified images</li>
@@ -379,7 +379,7 @@ padding: 0%;
 <li><code>-alpha</code> - an opacity of the loupe (0.0 .. 1.0)</li>
 <li><code>-background</code> - a background color of the loupe</li>
 <li><code>-geometry</code> - a displaying window's geometry set as +X+Y</li>
-<li><code>-ontop</code> - if <em>yes</em>, sets the displaying window above others</li>
+<li><code>-ontop</code> - if <em>yes</em> (default), sets the displaying window above others</li>
 </ul>
 <p class='ruff'>Some options can be used at running <em>aloupe</em> from a Tcl code:</p>
 <ul class='ruff'>
@@ -452,7 +452,7 @@ padding: 0%;
     } <b><font color=#923B23>else</font></b> {
       <b><font color=#923B23>puts</font></b> <font color=#035103>&quot;Bad option: <font color=#4A181B>$</font>a \&quot;<font color=#4A181B>$</font>v\&quot;&quot;</font>
       my::Synopsis
-      Exit
+      my::Exit
       <b><font color=#A106A1>return</font></b>
     }
   }
@@ -477,6 +477,11 @@ padding: 0%;
   <i><font color=#646464># Processes the click on 'Clipboard' button.</font></i>
 
   <b><font color=#923B23>variable</font></b> data
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$data(COLOR)</font> ne <font color=#035103>&quot;&quot;</font>} {
+    StyleButton2 yes <font color=#463e11>-background</font> <font color=#4A181B>$data(INVCOLOR)</font> <font color=#463e11>-foreground</font> <font color=#4A181B>$data(COLOR)</font>
+    <b><font color=#923B23>update</font></b> idletasks
+    <b><font color=#923B23>after</font></b> 60 ;<i><font color=#646464># just to make the click visible</font></i>
+  }
   <b><font color=#923B23>if</font></b> {[HandleColor] && !<font color=#4A181B>$data(<font color=#463e11></font>-exit</font>) && <font color=#4A181B>$data(<font color=#463e11></font>-command</font>) ne <font color=#035103>&quot;&quot;</font>} {
     SaveGeometry
     {*}[<b><font color=#923B23>string</font></b> map [<b><font color=#923B23>list</font></b> %c <font color=#4A181B>$data(COLOR)</font>] <font color=#4A181B>$data(<font color=#463e11></font>-command</font>)]
@@ -566,7 +571,6 @@ padding: 0%;
   <b><font color=#7A040E>frame</font></b> <font color=#4A181B>$data(WLOUP)</font>
   <b><font color=#7A040E>wm</font></b> manage <font color=#4A181B>$data(WLOUP)</font>
   <b><font color=#7A040E>wm</font></b> withdraw <font color=#4A181B>$data(WLOUP)</font>
-  <b><font color=#7A040E>wm</font></b> attributes <font color=#4A181B>$data(WLOUP)</font> <font color=#463e11>-topmost</font> 1 <font color=#463e11>-alpha</font> <font color=#4A181B>$data(<font color=#463e11></font>-alpha</font>)
   <b><font color=#7A040E>wm</font></b> overrideredirect <font color=#4A181B>$data(WLOUP)</font> 1
   <b><font color=#923B23>set</font></b> canvas <font color=#4A181B>$data(WLOUP)</font>.c
   <b><font color=#7A040E>canvas</font></b> <font color=#4A181B>$canvas</font> <font color=#463e11>-width</font> 100 <font color=#463e11>-height</font> 100 <font color=#463e11>-background</font> <font color=#4A181B>$data(<font color=#463e11></font>-background</font>)  <font color=#463e11>-relief</font> flat <font color=#463e11>-bd</font> 0 <font color=#463e11>-highlightthickness</font> 2 <font color=#463e11>-highlightbackground</font> red
@@ -578,6 +582,7 @@ padding: 0%;
   <b><font color=#923B23>after</font></b> 50 <font color=#035103>&quot;</font>
 <font color=#035103>    ::aloupe::my::InitGeometry <font color=#4A181B>$</font>geom</font>
 <font color=#035103>    wm deiconify <font color=#4A181B>$</font>data(WLOUP)</font>
+<font color=#035103>    wm attributes <font color=#4A181B>$</font>data(WLOUP) -topmost 1 -alpha <font color=#4A181B>$</font>data(-alpha)</font>
 <font color=#035103>    &quot;</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::aloupe::my::Drag'>Drag</a><span class='ns_scope'> [<a href="aloupe.html#::aloupe::my" title="::aloupe::my" class='ruff_cmd'>::aloupe::my</a>]</span><span class='tinylink'><a href='aloupe.html#::aloupe::my'>my</a>, <a href='#top'>Top</a></span></h4>
@@ -619,7 +624,8 @@ padding: 0%;
   <b><font color=#923B23>variable</font></b> data
   <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists data(dragX)]} <b><font color=#A106A1>return</font></b>
   <b><font color=#7A040E>wm</font></b> withdraw <font color=#4A181B>$data(WLOUP)</font>
-  <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>set</font></b> isfocused [<b><font color=#923B23>string</font></b> match <font color=#4A181B>$data(WDISP)</font>* <font color=#4A181B>$data(FOCUS)</font>]]} {
+  <b><font color=#923B23>if</font></b> {!<font color=#4A181B>$data(<font color=#463e11></font>-ontop</font>) && ![<b><font color=#923B23>string</font></b> match <font color=#4A181B>$data(WDISP)</font>* <font color=#4A181B>$data(FOCUS)</font>] &&
+  <font color=#4A181B>$::tcl_platform(platform)</font> eq <font color=#035103>&quot;unix&quot;</font>} {
     <i><font color=#646464># the disp window can be overlapped by others =&gt; it should be deiconified</font></i>
     <b><font color=#7A040E>wm</font></b> withdraw <font color=#4A181B>$data(WDISP)</font>
   }
@@ -639,8 +645,9 @@ padding: 0%;
   <b><font color=#923B23>catch</font></b> {
     <font color=#4A181B>$data(IMAGE)</font> copy <font color=#4A181B>$data(CAPTURE)</font>  <font color=#463e11>-from</font> 0 0 [<b><font color=#923B23>expr</font></b> {2*<font color=#4A181B>$data(<font color=#463e11></font>-size</font>)}] [<b><font color=#923B23>expr</font></b> {2*<font color=#4A181B>$data(<font color=#463e11></font>-size</font>)}]  <font color=#463e11>-to</font> 0 0 <font color=#4A181B>$data(IMSIZE)</font> <font color=#4A181B>$data(IMSIZE)</font> <font color=#463e11>-zoom</font> <font color=#4A181B>$data(<font color=#463e11></font>-zoom</font>)
   }
-  <b><font color=#923B23>if</font></b> {!<font color=#4A181B>$isfocused</font>} {<b><font color=#7A040E>wm</font></b> deiconify <font color=#4A181B>$data(WDISP)</font>}
+  <b><font color=#7A040E>wm</font></b> deiconify <font color=#4A181B>$data(WDISP)</font>
   <b><font color=#7A040E>wm</font></b> deiconify <font color=#4A181B>$data(WLOUP)</font>
+  <b><font color=#7A040E>focus</font></b> <font color=#463e11>-force</font> <font color=#4A181B>$data(WDISP)</font>.but2
   <b><font color=#923B23>set</font></b> data(<font color=#463e11>-PREVGEOM</font>) [<b><font color=#7A040E>wm</font></b> geometry <font color=#4A181B>$data(WLOUP)</font>]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::aloupe::my::DragStart'>DragStart</a><span class='ns_scope'> [<a href="aloupe.html#::aloupe::my" title="::aloupe::my" class='ruff_cmd'>::aloupe::my</a>]</span><span class='tinylink'><a href='aloupe.html#::aloupe::my'>my</a>, <a href='#top'>Top</a></span></h4>
@@ -664,6 +671,7 @@ padding: 0%;
   <b><font color=#923B23>variable</font></b> size
   <b><font color=#923B23>variable</font></b> zoom
   <b><font color=#923B23>set</font></b> data(FOCUS) [<b><font color=#7A040E>focus</font></b>]
+  <b><font color=#7A040E>focus</font></b> <font color=#463e11>-force</font> <font color=#4A181B>$data(WDISP)</font>
   <b><font color=#923B23>set</font></b> data(<font color=#463e11>-size</font>) <font color=#4A181B>$size</font>
   <b><font color=#923B23>set</font></b> data(<font color=#463e11>-zoom</font>) <font color=#4A181B>$zoom</font>
   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$data(PREVZOOM)</font> != <font color=#4A181B>$data(<font color=#463e11></font>-zoom</font>) || <font color=#4A181B>$data(PREVSIZE)</font> != <font color=#4A181B>$data(<font color=#463e11></font>-size</font>)} {
@@ -722,7 +730,7 @@ padding: 0%;
   <b><font color=#923B23>set</font></b> res no
   <b><font color=#923B23>if</font></b> {[IsCapture]} {
     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$data(COLOR)</font> eq <font color=#035103>&quot;&quot;</font>} {
-      Message <font color=#463e11>-title</font> <font color=#035103>&quot;Color of Image&quot;</font>  <font color=#463e11>-parent</font> <font color=#4A181B>$data(WDISP)</font> <font color=#463e11>-icon</font> warning <font color=#463e11>-type</font> ok  <font color=#463e11>-message</font> <font color=#035103>&quot;Click the magnified image\nto get a pixel's color.\n\nThen hit this button.&quot;</font>
+      Message <font color=#463e11>-title</font> <font color=#035103>&quot;Color of Image&quot;</font> <font color=#463e11>-icon</font> warning  <font color=#463e11>-message</font> <font color=#035103>&quot;Click the magnified image\nto get a pixel's color.\n\nThen hit this button.&quot;</font>
     } <b><font color=#923B23>else</font></b> {
       <b><font color=#923B23>if</font></b> {<font color=#4A181B>$doclb</font>} {
         <b><font color=#7A040E>clipboard</font></b> clear
@@ -798,7 +806,7 @@ padding: 0%;
 
   <b><font color=#923B23>variable</font></b> data
   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$data(CAPTURE)</font> eq <font color=#035103>&quot;&quot;</font>} {
-    Message <font color=#463e11>-title</font> <font color=#035103>&quot;Color of Image&quot;</font>  <font color=#463e11>-parent</font> <font color=#4A181B>$data(WDISP)</font> <font color=#463e11>-icon</font> warning <font color=#463e11>-type</font> ok  <font color=#463e11>-message</font> <font color=#035103>&quot;Click, then drag and drop\nthe loupe to get the image.&quot;</font>
+    Message <font color=#463e11>-title</font> <font color=#035103>&quot;Color of Image&quot;</font> <font color=#463e11>-icon</font> warning  <font color=#463e11>-message</font> <font color=#035103>&quot;Click, then drag and drop\nthe loupe to get the image.&quot;</font>
     <b><font color=#A106A1>return</font></b> no
   }
   <b><font color=#A106A1>return</font></b> yes
@@ -817,7 +825,7 @@ padding: 0%;
 
   <b><font color=#923B23>variable</font></b> data
   <b><font color=#7A040E>wm</font></b> withdraw <font color=#4A181B>$data(WLOUP)</font>
-  <b><font color=#7A040E>tk_messageBox</font></b> {*}<font color=#4A181B>$args</font>
+  <b><font color=#7A040E>tk_messageBox</font></b> <font color=#463e11>-parent</font> <font color=#4A181B>$data(WDISP)</font> <font color=#463e11>-type</font> ok {*}<font color=#4A181B>$args</font>
   <b><font color=#7A040E>wm</font></b> deiconify <font color=#4A181B>$data(WLOUP)</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::aloupe::my::PickColor'>PickColor</a><span class='ns_scope'> [<a href="aloupe.html#::aloupe::my" title="::aloupe::my" class='ruff_cmd'>::aloupe::my</a>]</span><span class='tinylink'><a href='aloupe.html#::aloupe::my'>my</a>, <a href='#top'>Top</a></span></h4>
@@ -869,7 +877,7 @@ padding: 0%;
       <b><font color=#923B23>append</font></b> file <font color=#035103>&quot;.<font color=#4A181B>${</font>ext<font color=#4A181B>}</font>&quot;</font>
     }
     <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>catch</font></b> {<font color=#4A181B>$data(IMAGE)</font> write <font color=#4A181B>$file</font> <font color=#463e11>-format</font> [<b><font color=#923B23>string</font></b> tolower <font color=#4A181B>$ext</font>]} err]} {
-      Message <font color=#463e11>-title</font> <font color=#035103>&quot;Error Writing File&quot;</font>  <font color=#463e11>-parent</font> <font color=#4A181B>$data(WDISP)</font> <font color=#463e11>-icon</font> error <font color=#463e11>-type</font> ok  <font color=#463e11>-message</font> <font color=#035103>&quot;Error writing to file \&quot;<font color=#4A181B>$</font>file\&quot;:\n<font color=#4A181B>$</font>err&quot;</font>
+      Message <font color=#463e11>-title</font> <font color=#035103>&quot;Error Writing File&quot;</font> <font color=#463e11>-icon</font> error  <font color=#463e11>-message</font> <font color=#035103>&quot;Error writing to file \&quot;<font color=#4A181B>$</font>file\&quot;:\n<font color=#4A181B>$</font>err&quot;</font>
     }
   }
   <b><font color=#7A040E>wm</font></b> deiconify <font color=#4A181B>$data(WLOUP)</font>
