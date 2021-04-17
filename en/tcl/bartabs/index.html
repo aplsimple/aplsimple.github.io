@@ -195,6 +195,7 @@ Here the details are:
 <li>tabs can be multi-selected with Ctrl+Click</li>
 <li>thus, the caller of <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">bartabs</a></span> can handle the batch of tabs</li>
 </ul>
+The batch of selected tabs can be moved by means of popup menu item "Tabs behind".
 </p>
 
 <br>
@@ -338,8 +339,8 @@ or just draw the bar without mind-breaking about its tabs:
 4) The rest actions include:
 <ul>
 <li>responses to a selection of tab (through <code>-csel command</code> option of Bar object)</li>
-<li>responses to a deletion of tab (through <code>-cdel command</code> option of Bar object)</li>
-<li>responses to a reorganization of bar (through <code>-cmov command</code> option of Bar object)</li>
+<li>responses to a deletion (closing) of tab (through <code>-cdel / -cdel2 command</code> option of Bar object)</li>
+<li>responses to a reorganization of bar (through <code>-cmov / -cmov2 command</code> option of Bar object)</li>
 <li>inserting and renaming tabs</li>
 <li>disabling and enabling tabs</li>
 <li>marking tabs with colors or icons</li>
@@ -383,7 +384,7 @@ which creates <em>NS::tab</em> object for the tab labeled "some label", just to 
 NS::tabMain configure <font color=#463e11><font color=#463e11>-text</font></font> <font color=#035103><font color=#035103>&quot;me the boss&quot;</font></font>    ;<i><font color=#646464># a new boss enters</font></i>
 NS::tabMain show                             ;<i><font color=#646464># the tab object didn't change its TID</font></i>
 NS::bar create NS::tabMeBoss <font color=#035103><font color=#035103>&quot;me the boss&quot;</font></font>   ;<i><font color=#646464># it's the same TID</font></i>
-NS::tabMeBoss close                          ;<i><font color=#646464># deletes NS::tabMain too</font></i>
+NS::tabMeBoss close                          ;<i><font color=#646464># closes NS::tabMain too</font></i>
 </pre>
 
 </p>
@@ -642,10 +643,10 @@ NS::bars create NS::bar [<b><font color=#923B23>list</font></b> <font color=#463
 		<td class="col0"><em> -static </em></td><td class="col1">disables closing and moving the tabs by <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">bartabs</a></span></td><td class="col2">by default:<br><code>-static no</code></td>
 	</tr>
 	<tr class="row2">
-		<td class="col0"><em> -hidearrows </em></td><td class="col1">hides the scrolling arrows instead of disabling them</td><td class="col2">by default:<br><code>-hidearrows no</code><br>use this option carefully: it's mostly for bars with <code>-static yes</code> option</td>
+		<td class="col0"><em> -hidearrows </em></td><td class="col1">hides the scrolling arrows instead of disabling them</td><td class="col2">by default:<br><code>-hidearrows no</code><br>use this option carefully: hiding arrows is good for static bars with few tabs</td>
 	</tr>
 	<tr class="row2">
-		<td class="col0"><em> -expand </em></td><td class="col1">expands tabs to fill the bar</td><td class="col2">by default:<br><code>-expand yes</code><br>switch this option off only in some specific cases, e.g. for bars with<br><code>-static yes -hidearrows yes</code></td>
+		<td class="col0"><em> -expand </em></td><td class="col1">expands tabs to fill the bar</td><td class="col2">by default:<br><code>-expand no</code></td>
 	</tr>
 	<tr class="row2">
 		<td class="col0"><em> -tab </em></td><td class="col1">label of tab;<br>a sequence of <code>-tab</code> and <code>-imagetab</code> options defines a tab list<br><b>Note</b>: the label must be unique throughout the bar it belongs to</td><td class="col2"><code>-tab {First item} -tab {Second item}</code></td>
@@ -676,7 +677,7 @@ NS::bars create NS::bar [<b><font color=#923B23>list</font></b> <font color=#463
     <br>for example:<br><code>-csel {NS::btsSel %b %t} -csel2 {NS::btsSel2 %b %t}</code></td>
 	</tr>
 	<tr class="row2">
-		<td class="col0"><em> -cmov,<br> -cdel </em></td><td class="col1">commands called at moving and deleting a tab</td><td class="col2">the command should return 1 to enable the action, 0 to disable, -1 to cancel;<br>three placeholders may be set in the option value:
+		<td class="col0"><em> -cmov,<br> -cmov2,<br> -cdel,<br> -cdel2 </em></td><td class="col1">commands called before and after moving and closing a tab</td><td class="col2">-cmov, -cdel commands should return 1 / yes / true to enable the action, 2 to disable, 0 to cancel;<br>three placeholders may be set in the option value:
     <br><code>%b</code> - BID, <code>%t</code> - TID, <code>%l</code> - label
     <br>for example:<br><code>-cdel {NS::btsDel %b %t {%l}}</code></td>
 	</tr>
@@ -753,24 +754,28 @@ NS::bar draw</pre></td>
 		<td class="col0"><em> -relief </em></td><td class="col1">relief of tabs</td><td class="col2">by default:<br><code>-relief groove</code></td>
 	</tr>
 	<tr class="row2">
-		<td class="col0"><em> -padx,<br> -pady </em></td><td class="col1">padding of tab</td><td class="col2">by default:<br><code> -padx 3 -pady 3</code></td>
+		<td class="col0"><em> -padx,<br> -pady </em></td><td class="col1">padding of tab</td><td class="col2">by default:<br><code> -padx 1 -pady 1</code></td>
 	</tr>
 	<tr class="row2">
-		<td class="col0"><em> -bd</em></td><td class="col1">border of tab (0 or 1)</td><td class="col2">by default:<br><code>-bd 1</code></td>
+		<td class="col0"><em> -bd</em></td><td class="col1">border of tab (0 or 1)</td><td class="col2">by default:<br><code>-bd 0</code></td>
 	</tr>
 	<tr class="row2">
-		<td class="col0"><em> -lablen </em></td><td class="col1">maximum of tab label's length;<br><code>0</code>means no limit</td><td class="col2">by default:<br><code>-lablen 0</code></td>
+		<td class="col0"><em> -separator</em></td><td class="col1">draws a separator under a bar of tabs</td><td class="col2">by default:<br><code>-separator 1</code></td>
+	</tr>
+	<tr class="row2" id=lablen>
+		<td class="col0"><em> -lablen </em></td><td class="col1">maximum of tab label's length;<br><code>0</code>means no limit</td><td class="col2">by default:<br><code>-lablen 0</code>
+    <br>this option sets also the tips for shortened labels</td>
 	</tr>
 	<tr class="row2">
 		<td class="col0"><em> -dotip </em></td><td class="col1">setting <code>-dotip yes</code> forces tips of scrolling arrows</td><td class="col2">by default:<br><code>-dotip no</code></td>
 	</tr>
-	<tr class="row2">
+	<tr class="row2" id=tiplen>
 		<td class="col0"><em> -tiplen </em></td><td class="col1"><ul><li>maximum of tips for scrolling arrows</li><li>maximum of lines in menu "List"</li>
     </ul><code>0</code>means "no limit for both"; <code>-1</code>means "no tips" and "no limit for lines"</td><td class="col2">by default:<br><code>-tiplen 0</code><br>when you put 30-40 or more tabs into a bar, this option would help;
     <br>however, for more than 50 tabs <a href="#" class="wikilink1" title="Table of Contents">bartabs</a></span> is not an adequate widget; try treeview / tablelist instead<br>see also <code>-lowlist</code> option below</td>
 	</tr>
 	<tr class="row2">
-		<td class="col0"><em>-lowlist </em></td><td class="col1"><code>-lowlist no / yes</code> sets normal / low height of the tab lists of popup menu</td><td class="col2">by default:<br><code>-lowlist no</code><br>the <code>-lowlist yes</code> option makes sense for the themes with large font size<br>see also <code>-tiplen</code> option above</td>
+		<td class="col0"><em>-lowlist </em></td><td class="col1"><code>-lowlist no / yes</code> sets normal / low height of the tab lists of popup menu</td><td class="col2">by default:<br><code>-lowlist no</code><br>the <code>-lowlist yes</code> option makes sense for the themes with large font size<br>see also  <a href="#tiplen">-tiplen</a> option above</td>
 	</tr>
 </tbody></table></div>
 
@@ -784,7 +789,13 @@ NS::bar draw
 </pre>
 to show your tabs within the saved range.
 </p>
-<p>There are also two analogue methods <code>NS::bar TID configure</code> and <code>NS::bar TID cget</code> to set and get the <em>tab options</em> however few they are. Perhaps, only <code>-text</code> (the tab label's text) is worthwhile.
+<p>There are also two analogue methods <code>NS::bar TID configure</code> and <code>NS::bar TID cget</code> to set and get the <em>tab options</em> however few they are:
+
+<ul>
+<li><code>-text</code> sets a tab label's text</li>
+<li><code>-tip</code> sets a tab label's tip (overcoming <a href="#lablen">-lablen</a> option)</li>
+</ul>
+
 </p>
 <p>That said, these methods may be useful to store and fetch your own options, i.e. any data related to your bars and tabs. Sort of little data bases.
 </p>
@@ -880,7 +891,10 @@ Below is the list of possible use cases.
 		<th class="col0">static</th><th class="col1">hidearrows</th><th class="col2">expand</th><th class="col3">Usage</th>
 	</tr>
 	<tr class="row2">
-		<td class="col0">no</td><td class="col1">no</td><td class="col2">yes</td><td class="col2">default, standard usage</td>
+		<td class="col0">no</td><td class="col1">no</td><td class="col2">no</td><td class="col2">default, standard usage<br>good when the <em>-wbar</em> widget has <em>-fill x</em> option</td>
+	</tr>
+	<tr class="row2">
+		<td class="col0">no</td><td class="col1">no</td><td class="col2">yes</td><td class="col2">as previous, except for tabs expanded<br>not good when tabs are few</td>
 	</tr>
 	<tr class="row2">
 		<td class="col0">yes</td><td class="col1">yes</td><td class="col2">no</td><td class="col2">static bar like <em>ttk::notebook</em>
@@ -901,7 +915,7 @@ Below is the list of possible use cases.
     <br>good only when all tabs are visible (scrolling arrows hidden)</td>
 	</tr>
 	<tr class="row2">
-		<td class="col0">yes, no</td><td class="col1">no</td><td class="col2">no</td><td class="col2">no sense probably<br>see e.g. in <em>test.tcl of <a href="https://chiselapp.com/user/aplsimple/repository/bartabs/download" title="bartabs.zip" rel="nofollow">bartabs.zip</a></em> how 2nd bar behaves</td>
+		<td class="col0">yes, no</td><td class="col1">no</td><td class="col2">no</td><td class="col2">if <em>-wbar</em> widget hasn't <em>-fill x</em> option, this setting makes no sense probably<br>see e.g. in <em>test.tcl of <a href="https://chiselapp.com/user/aplsimple/repository/bartabs/download" title="bartabs.zip" rel="nofollow">bartabs.zip</a></em> how 2nd bar behaves</td>
 	</tr>
 </tbody></table></div>
 </p>

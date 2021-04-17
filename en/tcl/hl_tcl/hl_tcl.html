@@ -415,7 +415,7 @@ padding: 0%;
 <p class='ruff'>The code below:</p>
 <pre class='ruff'><br><code class="tcl">  <b><font color=#923B23>package</font></b> require hl_tcl
 
-  <b><font color=#A106A1>proc</font></b> ::stub {} {<b><font color=#923B23>puts</font></b> <font color=#035103>&quot;stub: <font color=#4A181B>[$</font>::txt index end<font color=#4A181B>]</font>&quot;</font>}
+  <b><font color=#A106A1>proc</font></b> ::stub {args} {<b><font color=#923B23>puts</font></b> <font color=#035103>&quot;stub: <font color=#4A181B>$</font>args&quot;</font>}
 
   ::hl_tcl::hl_init <font color=#4A181B>$::txt</font> <font color=#463e11>-readonly</font> yes <font color=#463e11>-cmd</font> ::stub
 
@@ -442,6 +442,7 @@ padding: 0%;
 <li><em>-readonly</em> - flag &quot;text is read-only&quot; (default &quot;no&quot;)</li>
 <li><em>-multiline</em> - flag &quot;multi-line strings&quot; (default &quot;yes&quot;)</li>
 <li><em>-cmd</em> - command to watch editing/viewing (default &quot;&quot;)</li>
+<li><em>-cmdpos</em> - command to watch cursor positioning (default &quot;&quot;)</li>
 <li><em>-seen</em> - number of first lines seen at start (default 500)</li>
 <li><em>-optRE</em> - flag &quot;use a regular expression to highlight options&quot; (default &quot;yes&quot;)</li>
 </ul>
@@ -450,6 +451,7 @@ padding: 0%;
 <ul class='ruff'>
 <li><strong><code>hl_all</code></strong> updates all highlighted existing text widgets, e.g. at changing a color scheme of application</li>
 <li><strong><code>hl_readonly</code></strong> gets/sets a read-only mode and/or a command to watch a text widget at viewing/editing it</li>
+<li><strong><code>hl_colors</code></strong> gets a list of colors for highlighting</li>
 </ul>
 <p class='ruff'>See details in <a href="https://aplsimple.github.io/en/tcl/hl_tcl/hl_tcl.html" >Reference</a>.</p>
 <br><h2 class='ruff'><a name='::hl_tcl-Use for static html'></a>Use for static html<span class='tinylink'><a href='hl_tcl.html#::hl_tcl'>hl_tcl</a>, <a href='#top'>Top</a></span></h2>
@@ -504,14 +506,37 @@ padding: 0%;
         <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists ::hl_tcl::my::data(SETCOLORS,<font color=#4A181B>$txt)</font>]} {
           <b><font color=#923B23>unset</font></b> ::hl_tcl::my::data(COLORS,<font color=#4A181B>$txt)</font> ;<i><font color=#646464># colors defined by DARK</font></i>
         }
-        hl_init <font color=#4A181B>$txt</font> {*}<font color=#4A181B>$args</font>
-        <i><font color=#646464># args (if set) override the settings for $txt</font></i>
-        <i><font color=#646464># except for these VIPs: readonly and command</font></i>
-        <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(READONLY,<font color=#4A181B>$txt)</font> <font color=#4A181B>$ro</font>
-        <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(CMD,<font color=#4A181B>$txt)</font> <font color=#4A181B>$com2</font>
+        <i><font color=#646464># args (if set) override the appropriate settings for $txt</font></i>
+        hl_init <font color=#4A181B>$txt</font> -- {*}<font color=#4A181B>$args</font>
         hl_text <font color=#4A181B>$txt</font>
       }
     }
+  }
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::hl_colors'>hl_colors</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl" title="::hl_tcl" class='ruff_cmd'>::hl_tcl</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl'>hl_tcl</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Gets the main colors for highlighting (except for &quot;curr.line&quot;).</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>hl_colors</span> <span class='ruff_arg'>txt ?dark?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>text widget's path</td></tr>
+<tr><td class='ruff_defitem'><code><code>dark</code></code></td><td class='ruff_defitem'>Not documented; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a list of colors for COM COMTK STR VAR CMN PROC OPT  or, if the colors aren't initialized, &quot;standard&quot; colors.</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_2' href="javascript:toggleSource('2')">Show source</a></p>
+<div id='2' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::hl_colors {txt {dark {}}} {
+
+  <i><font color=#646464># Gets the main colors for highlighting (except for &quot;curr.line&quot;).</font></i>
+  <i><font color=#646464>#   txt - text widget's path</font></i>
+  <i><font color=#646464># Returns a list of colors for COM COMTK STR VAR CMN PROC OPT  or, if the colors aren't initialized, &quot;standard&quot; colors.</font></i>
+
+  <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists ::hl_tcl::my::data(COLORS,<font color=#4A181B>$txt)</font>]}  {
+    <b><font color=#A106A1>return</font></b> <font color=#4A181B>$::hl_tcl::my::data(COLORS</font>,<font color=#4A181B>$txt)</font>
+  }
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$dark</font> eq <font color=#035103>&quot;&quot;</font>} {<b><font color=#923B23>set</font></b> dark <font color=#4A181B>$::hl_tcl::my::data(DARK</font>,<font color=#4A181B>$txt)</font>}
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$dark</font>} {
+    <b><font color=#A106A1>return</font></b> [<b><font color=#923B23>list</font></b> orange #ff7e00 lightgreen #f1b479 #76a396 #d485d4 #b9b96e]
+  } <b><font color=#923B23>else</font></b> {
+    <b><font color=#A106A1>return</font></b> [<b><font color=#923B23>list</font></b> <font color=#035103>&quot;#923B23&quot;</font> #7d1c00 #035103 #4A181B #505050 #A106A1 #463e11]
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::hl_init'>hl_init</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl" title="::hl_tcl" class='ruff_cmd'>::hl_tcl</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl'>hl_tcl</a>, <a href='#top'>Top</a></span></h4>
@@ -524,36 +549,47 @@ padding: 0%;
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>The 'args' options include:</p>
 <table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code>--</code></td><td class='ruff_defitem'>means that only args' options will be initialized (defaults skipped)</td></tr>
 <tr><td class='ruff_defitem'><code>-dark</code></td><td class='ruff_defitem'>flag &quot;the text widget has dark background&quot;</td></tr>
 <tr><td class='ruff_defitem'><code>-readonly</code></td><td class='ruff_defitem'>flag &quot;read-only&quot;</td></tr>
 <tr><td class='ruff_defitem'><code>-optRE</code></td><td class='ruff_defitem'>flag &quot;use of RE to highlight options&quot;</td></tr>
 <tr><td class='ruff_defitem'><code>-multiline</code></td><td class='ruff_defitem'>flag &quot;allowed multi-line strings&quot;</td></tr>
 <tr><td class='ruff_defitem'><code>-cmd</code></td><td class='ruff_defitem'>command to watch editing/viewing</td></tr>
+<tr><td class='ruff_defitem'><code>-cmdpos</code></td><td class='ruff_defitem'>command to watch cursor positioning</td></tr>
 <tr><td class='ruff_defitem'><code>-colors</code></td><td class='ruff_defitem'>list of colors: clrCOM, clrCOMTK, clrSTR, clrVAR, clrCMN, clrPROC</td></tr>
 <tr><td class='ruff_defitem'><code>-font</code></td><td class='ruff_defitem'>attributes of font</td></tr>
 <tr><td class='ruff_defitem'><code>-seen</code></td><td class='ruff_defitem'>lines seen at start</td></tr>
 </table>
 <p class='ruff'>This procedure has to be called before writing a text in the text widget.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_2' href="javascript:toggleSource('2')">Show source</a></p>
-<div id='2' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::hl_init {txt args} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_3' href="javascript:toggleSource('3')">Show source</a></p>
+<div id='3' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::hl_init {txt args} {
 
   <i><font color=#646464># Initializes highlighting.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
   <i><font color=#646464>#   args - dict of options</font></i>
   <i><font color=#646464># The 'args' options include:</font></i>
+  <i><font color=#646464>#   -- - means that only args' options will be initialized (defaults skipped)</font></i>
   <i><font color=#646464>#   -dark - flag &quot;the text widget has dark background&quot;</font></i>
   <i><font color=#646464>#   -readonly - flag &quot;read-only&quot;</font></i>
   <i><font color=#646464>#   -optRE - flag &quot;use of RE to highlight options&quot;</font></i>
   <i><font color=#646464>#   -multiline - flag &quot;allowed multi-line strings&quot;</font></i>
   <i><font color=#646464>#   -cmd - command to watch editing/viewing</font></i>
+  <i><font color=#646464>#   -cmdpos - command to watch cursor positioning</font></i>
   <i><font color=#646464>#   -colors - list of colors: clrCOM, clrCOMTK, clrSTR, clrVAR, clrCMN, clrPROC</font></i>
   <i><font color=#646464>#   -font - attributes of font</font></i>
   <i><font color=#646464>#   -seen - lines seen at start</font></i>
   <i><font color=#646464># This procedure has to be called before writing a text in the text widget.</font></i>
 
+  <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> setonly [<b><font color=#923B23>expr</font></b> {[<b><font color=#923B23>lindex</font></b> <font color=#4A181B>$args</font> 0] eq <font color=#035103>&quot;--&quot;</font>}]]} {
+    <b><font color=#923B23>set</font></b> args [<b><font color=#923B23>lrange</font></b> <font color=#4A181B>$args</font> 1 end]
+  }
   <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(REG_TXT,<font color=#4A181B>$txt)</font> <font color=#035103>&quot;&quot;</font>  ;<i><font color=#646464># disables Modified at changing the text</font></i>
-  <b><font color=#923B23>foreach</font></b> {opt val} {<font color=#463e11>-dark</font> 0 <font color=#463e11>-readonly</font> 0 <font color=#463e11>-cmd</font> <font color=#035103>&quot;&quot;</font> <font color=#463e11>-optRE</font> 1 <font color=#463e11>-multiline</font> 1 <font color=#463e11>-seen</font> 500} {
-    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>dict</font></b> exists <font color=#4A181B>$args</font> <font color=#4A181B>$opt</font>]} {<b><font color=#923B23>set</font></b> val [<b><font color=#923B23>dict</font></b> get <font color=#4A181B>$args</font> <font color=#4A181B>$opt</font>]}
+  <b><font color=#923B23>foreach</font></b> {opt val} {<font color=#463e11>-dark</font> 0 <font color=#463e11>-readonly</font> 0 <font color=#463e11>-cmd</font> <font color=#035103>&quot;&quot;</font> <font color=#463e11>-cmdpos</font> <font color=#035103>&quot;&quot;</font> <font color=#463e11>-optRE</font> 1  <font color=#463e11>-multiline</font> 1 <font color=#463e11>-seen</font> 500 <font color=#463e11>-plaintext</font> no <font color=#463e11>-insertwidth</font> 2} {
+    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>dict</font></b> exists <font color=#4A181B>$args</font> <font color=#4A181B>$opt</font>]} {
+      <b><font color=#923B23>set</font></b> val [<b><font color=#923B23>dict</font></b> get <font color=#4A181B>$args</font> <font color=#4A181B>$opt</font>]
+    } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$setonly</font>} {
+      <b><font color=#923B23>continue</font></b>  ;<i><font color=#646464># only those set in args are taken into account</font></i>
+    }
     <b><font color=#923B23>set</font></b> ::hl_tcl::my::data([<b><font color=#923B23>string</font></b> toupper [<b><font color=#923B23>string</font></b> range <font color=#4A181B>$opt</font> 1 end]],<font color=#4A181B>$txt)</font> <font color=#4A181B>$val</font>
   }
   <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>dict</font></b> exists <font color=#4A181B>$args</font> <font color=#463e11>-colors</font>]} {
@@ -565,20 +601,28 @@ padding: 0%;
       <b><font color=#923B23>catch</font></b> {<b><font color=#923B23>set</font></b> clrCURL [<b><font color=#923B23>lindex</font></b> [::apave::obj csGet] 16]}
       <b><font color=#923B23>if</font></b> {<font color=#4A181B>$::hl_tcl::my::data(DARK</font>,<font color=#4A181B>$txt)</font>} {
         <b><font color=#923B23>if</font></b> {<font color=#4A181B>$clrCURL</font> eq <font color=#035103>&quot;&quot;</font>} {<b><font color=#923B23>set</font></b> clrCURL #29383c}
-        <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(COLORS,<font color=#4A181B>$txt)</font> [<b><font color=#923B23>list</font></b>  orange #ff7e00 lightgreen #f1b479 #76a396 #d485d4 #b9b96e <font color=#4A181B>$clrCURL</font>]
-        <i><font color=#646464># $clrCOM $clrCOMTK $clrSTR $clrVAR $clrCMN $clrPROC $clrOPT $clrCURL</font></i>
+        <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(COLORS,<font color=#4A181B>$txt)</font> [<b><font color=#923B23>list</font></b> {*}[hl_colors <font color=#4A181B>$txt</font>] <font color=#4A181B>$clrCURL</font>]
       } <b><font color=#923B23>else</font></b> {
         <b><font color=#923B23>if</font></b> {<font color=#4A181B>$clrCURL</font> eq <font color=#035103>&quot;&quot;</font>} {<b><font color=#923B23>set</font></b> clrCURL #efe0cd}
-        <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(COLORS,<font color=#4A181B>$txt)</font> [<b><font color=#923B23>list</font></b>  <font color=#035103>&quot;#923B23&quot;</font> #7d1c00 #035103 #4A181B #505050 #A106A1 #463e11 <font color=#4A181B>$clrCURL</font>]
+        <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(COLORS,<font color=#4A181B>$txt)</font> [<b><font color=#923B23>list</font></b> {*}[hl_colors <font color=#4A181B>$txt</font>] <font color=#4A181B>$clrCURL</font>]
       }
     }
   }
-  <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>dict</font></b> exists <font color=#4A181B>$args</font> <font color=#463e11>-font</font>]} {
-    <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(FONT,<font color=#4A181B>$txt)</font> [<b><font color=#923B23>dict</font></b> get <font color=#4A181B>$args</font> <font color=#463e11>-font</font>]
-  } <b><font color=#923B23>else</font></b> {
-    <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(FONT,<font color=#4A181B>$txt)</font> [<b><font color=#7A040E>font</font></b> actual TkFixedFont]
+  <b><font color=#923B23>if</font></b> {!<font color=#4A181B>$setonly</font>} {
+    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>dict</font></b> exists <font color=#4A181B>$args</font> <font color=#463e11>-font</font>]} {
+      <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(FONT,<font color=#4A181B>$txt)</font> [<b><font color=#923B23>dict</font></b> get <font color=#4A181B>$args</font> <font color=#463e11>-font</font>]
+    } <b><font color=#923B23>else</font></b> {
+      <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(FONT,<font color=#4A181B>$txt)</font> [<b><font color=#7A040E>font</font></b> actual TkFixedFont]
+    }
   }
-  hl_readonly <font color=#4A181B>$txt</font> <font color=#4A181B>$::hl_tcl::my::data(READONLY</font>,<font color=#4A181B>$txt)</font>
+  <b><font color=#923B23>if</font></b> {!<font color=#4A181B>$setonly</font> || [<b><font color=#923B23>dict</font></b> exists <font color=#4A181B>$args</font> <font color=#463e11>-readonly</font>]} {
+    hl_readonly <font color=#4A181B>$txt</font> <font color=#4A181B>$::hl_tcl::my::data(READONLY</font>,<font color=#4A181B>$txt)</font>
+  }
+  <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>string</font></b> first <font color=#035103>&quot;::hl_tcl::&quot;</font> [<b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font>]]&lt;0} {
+    <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;FocusIn&gt; [<b><font color=#923B23>list</font></b> + ::hl_tcl::my::ShowCurrentLine <font color=#4A181B>$txt</font>]
+  }
+  <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(_INSPOS_,<font color=#4A181B>$txt)</font> <font color=#035103>&quot;&quot;</font>
+  my::MemPos <font color=#4A181B>$txt</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::hl_readonly'>hl_readonly</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl" title="::hl_tcl" class='ruff_cmd'>::hl_tcl</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl'>hl_tcl</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -587,44 +631,42 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>text widget's path</td></tr>
 <tr><td class='ruff_defitem'><code><code>ro</code></code></td><td class='ruff_defitem'>flag &quot;the text widget is readonly&quot; <i>optional, default</i> <code>-1</code></td></tr>
-<tr><td class='ruff_defitem'><code><code>com2</code></code></td><td class='ruff_defitem'>command to be called after changes; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>com2</code></code></td><td class='ruff_defitem'>command to be called at viewing and after changes; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>If 'ro' argument is omitted, returns the widget's 'read-only' state.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_3' href="javascript:toggleSource('3')">Show source</a></p>
-<div id='3' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::hl_readonly {txt {ro -1} {com2 {}}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_4' href="javascript:toggleSource('4')">Show source</a></p>
+<div id='4' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::hl_readonly {txt {ro -1} {com2 {}}} {
 
   <i><font color=#646464># Makes the text widget be readonly or gets its 'read-only' state.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
   <i><font color=#646464>#   ro - flag &quot;the text widget is readonly&quot;</font></i>
-  <i><font color=#646464>#   com2 - command to be called after changes</font></i>
+  <i><font color=#646464>#   com2 - command to be called at viewing and after changes</font></i>
   <i><font color=#646464># If 'ro' argument is omitted, returns the widget's 'read-only' state.</font></i>
 
   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ro</font>==-1} {
     <b><font color=#A106A1>return</font></b> [<b><font color=#923B23>expr</font></b> {[<b><font color=#923B23>info</font></b> exists ::hl_tcl::my::data(READONLY,<font color=#4A181B>$txt)</font>] && <font color=#4A181B>$::hl_tcl::my::data(READONLY</font>,<font color=#4A181B>$txt)</font>}]
   }
   <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(READONLY,<font color=#4A181B>$txt)</font> <font color=#4A181B>$ro</font>
-  <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(CMD,<font color=#4A181B>$txt)</font> <font color=#4A181B>$com2</font>
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$com2</font> ne <font color=#035103>&quot;&quot;</font>} {<b><font color=#923B23>set</font></b> ::hl_tcl::my::data(CMD,<font color=#4A181B>$txt)</font> <font color=#4A181B>$com2</font>}
   <b><font color=#923B23>set</font></b> newcom <font color=#035103>&quot;::<font color=#4A181B>$</font>txt.internal&quot;</font>
   <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> commands <font color=#4A181B>$newcom</font>] eq <font color=#035103>&quot;&quot;</font>} {<b><font color=#923B23>rename</font></b> <font color=#4A181B>$txt</font> <font color=#4A181B>$newcom</font>}
   <b><font color=#923B23>set</font></b> com <font color=#035103>&quot;<font color=#4A181B>[</font>namespace current<font color=#4A181B>]</font>::my::Modified <font color=#4A181B>$</font>txt&quot;</font>
-  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$com2</font> ne <font color=#035103>&quot;&quot;</font>} {<b><font color=#923B23>append</font></b> com <font color=#035103>&quot; ; <font color=#4A181B>$</font>com2&quot;</font>}
+  <i><font color=#646464>#if {$com2 ne &quot;&quot;} {append com &quot; ; $com2&quot;}</font></i>
   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ro</font>} {<b><font color=#A106A1>proc</font></b> ::<font color=#4A181B>$txt</font> {args} <font color=#035103>&quot;</font>
-<font color=#035103>      switch -exact -- \[lindex \$args 0\] \{</font>
-<font color=#035103>          insert \<font color=#4A181B>{$</font>com2\}</font>
-<font color=#035103>          delete \<font color=#4A181B>{$</font>com2\}</font>
-<font color=#035103>          replace \<font color=#4A181B>{$</font>com2\}</font>
-<font color=#035103>          default \{</font>
-<font color=#035103>              return \[eval <font color=#4A181B>$</font>newcom \$args\]</font>
-<font color=#035103>          \}</font>
-<font color=#035103>      \}&quot;</font>
+<font color=#035103>    switch -exact -- \[lindex \$args 0\] \{</font>
+<font color=#035103>      insert \<font color=#4A181B>{$</font>com2\}</font>
+<font color=#035103>      delete \<font color=#4A181B>{$</font>com2\}</font>
+<font color=#035103>      replace \<font color=#4A181B>{$</font>com2\}</font>
+<font color=#035103>      default \{ return \[eval <font color=#4A181B>$</font>newcom \$args\] \}</font>
+<font color=#035103>    \}&quot;</font>
   } <b><font color=#923B23>else</font></b> {<b><font color=#A106A1>proc</font></b> ::<font color=#4A181B>$txt</font> {args} <font color=#035103>&quot;</font>
-<font color=#035103>      set _res_ \[eval <font color=#4A181B>$</font>newcom \$args\]</font>
-<font color=#035103>      switch -exact -- \[lindex \$args 0\] \{</font>
-<font color=#035103>          insert \{after idle <font color=#4A181B>{$</font>com<font color=#4A181B>}</font>\}</font>
-<font color=#035103>          delete \{after idle <font color=#4A181B>{$</font>com<font color=#4A181B>}</font>\}</font>
-<font color=#035103>          replace \{after idle <font color=#4A181B>{$</font>com<font color=#4A181B>}</font>\}</font>
-<font color=#035103>      \}</font>
-<font color=#035103>      return \$_res_&quot;</font>
+<font color=#035103>    switch -exact -- \[lindex \$args 0\] \{</font>
+<font color=#035103>      delete \<font color=#4A181B>{$</font>com <font color=#4A181B>{</font>*<font color=#4A181B>}</font>\$args\}</font>
+<font color=#035103>      insert \<font color=#4A181B>{$</font>com <font color=#4A181B>{</font>*<font color=#4A181B>}</font>\$args\}</font>
+<font color=#035103>      replace \<font color=#4A181B>{$</font>com <font color=#4A181B>{</font>*<font color=#4A181B>}</font>\$args\}</font>
+<font color=#035103>    \}</font>
+<font color=#035103>    set _res_ \[eval <font color=#4A181B>$</font>newcom \$args\]</font>
+<font color=#035103>    return \$_res_&quot;</font>
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::hl_text'>hl_text</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl" title="::hl_tcl" class='ruff_cmd'>::hl_tcl</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl'>hl_tcl</a>, <a href='#top'>Top</a></span></h4>
@@ -634,8 +676,8 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>text widget's path</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_4' href="javascript:toggleSource('4')">Show source</a></p>
-<div id='4' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::hl_text {txt} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_5' href="javascript:toggleSource('5')">Show source</a></p>
+<div id='5' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::hl_text {txt} {
 
   <i><font color=#646464># Highlights Tcl code of a text widget.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -662,9 +704,11 @@ padding: 0%;
   <b><font color=#923B23>catch</font></b> {<font color=#4A181B>$txt</font> tag raise hilited;  <font color=#4A181B>$txt</font> tag raise hilited2} ;<i><font color=#646464># for apave package</font></i>
   my::HighlightAll <font color=#4A181B>$txt</font>
   <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists ::hl_tcl::my::data(BIND_TXT,<font color=#4A181B>$txt)</font>]} {
-    <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;KeyPress&gt; [<b><font color=#923B23>list</font></b> + ::hl_tcl::my::MemPos <font color=#4A181B>$txt</font>]
-    <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;ButtonPress-1&gt; [<b><font color=#923B23>list</font></b> + ::hl_tcl::my::MemPos <font color=#4A181B>$txt</font>]
-    <b><font color=#923B23>foreach</font></b> ev {Enter KeyRelease ButtonRelease} {
+    <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;FocusIn&gt; [<b><font color=#923B23>list</font></b> + ::hl_tcl::my::MemPos <font color=#4A181B>$txt</font>]
+    <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;KeyPress&gt; [<b><font color=#923B23>list</font></b> + ::hl_tcl::my::MemPos1 <font color=#4A181B>$txt</font>]
+    <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;KeyRelease&gt; [<b><font color=#923B23>list</font></b> + ::hl_tcl::my::MemPos <font color=#4A181B>$txt</font>]
+    <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;ButtonRelease-1&gt; [<b><font color=#923B23>list</font></b> + ::hl_tcl::my::MemPos <font color=#4A181B>$txt</font>]
+    <b><font color=#923B23>foreach</font></b> ev {Enter KeyRelease ButtonRelease-1} {
       <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;<font color=#4A181B>$ev</font>&gt; [<b><font color=#923B23>list</font></b> + ::hl_tcl::my::HighlightBrackets <font color=#4A181B>$txt</font>]
     }
     <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(BIND_TXT,<font color=#4A181B>$txt)</font> yes
@@ -695,8 +739,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>iName</code></code></td><td class='ruff_defitem'>variable's name for 'i'</td></tr>
 </table>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="hl_tcl.html#::hl_tcl::my::HighlightLine" title="HighlightLine" class='ruff_cmd'>HighlightLine</a></p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_5' href="javascript:toggleSource('5')">Show source</a></p>
-<div id='5' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::AuxEnding {kName lineName iName} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_6' href="javascript:toggleSource('6')">Show source</a></p>
+<div id='6' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::AuxEnding {kName lineName iName} {
 
   <i><font color=#646464># Auxiliary procedure to process the ending comments in the line.</font></i>
   <i><font color=#646464>#   kName - variable's name for 'k'</font></i>
@@ -715,24 +759,27 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>text widget's path</td></tr>
 </table>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="hl_tcl.html#::hl_tcl::my::HighlightAll" title="HighlightAll" class='ruff_cmd'>HighlightAll</a></p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_6' href="javascript:toggleSource('6')">Show source</a></p>
-<div id='6' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CoroHighlightAll {txt} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_7' href="javascript:toggleSource('7')">Show source</a></p>
+<div id='7' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CoroHighlightAll {txt} {
 
   <i><font color=#646464># Highlights all of a text as a coroutine.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
   <i><font color=#646464># See also: HighlightAll</font></i>
 
-  <b><font color=#923B23>set</font></b> tlen [<b><font color=#923B23>lindex</font></b> [<b><font color=#923B23>split</font></b> [<font color=#4A181B>$txt</font> index end] .] 0]
-  RemoveTags <font color=#4A181B>$txt</font> 1.0 end
-  <b><font color=#923B23>set</font></b> maxl [<b><font color=#923B23>expr</font></b> {min(<font color=#4A181B>$::hl_tcl::my::data(SEEN</font>,<font color=#4A181B>$txt)</font>,<font color=#4A181B>$tlen)</font>}]
-  <b><font color=#923B23>set</font></b> maxl [<b><font color=#923B23>expr</font></b> {min(<font color=#4A181B>$::hl_tcl::my::data(SEEN</font>,<font color=#4A181B>$txt)</font>,<font color=#4A181B>$tlen)</font>}]
-  <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> currQtd [<b><font color=#923B23>set</font></b> ln [<b><font color=#923B23>set</font></b> lnseen 0]]} {<font color=#4A181B>$ln</font>&lt;=<font color=#4A181B>$tlen</font>} {} {
-    <b><font color=#923B23>set</font></b> currQtd [HighlightLine <font color=#4A181B>$txt</font> <font color=#4A181B>$ln</font> <font color=#4A181B>$currQtd</font>]
-    <b><font color=#923B23>incr</font></b> ln
-    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>incr</font></b> lnseen]&gt;<font color=#4A181B>$::hl_tcl::my::data(SEEN</font>,<font color=#4A181B>$txt)</font>} {
-      <b><font color=#923B23>set</font></b> lnseen 0
-      <b><font color=#923B23>after</font></b> idle after 1 [<b><font color=#923B23>info</font></b> coroutine]
-      <b><font color=#A106A1>yield</font></b>
+  <b><font color=#923B23>variable</font></b> data
+  <b><font color=#923B23>if</font></b> {!<font color=#4A181B>$data(PLAINTEXT</font>,<font color=#4A181B>$txt)</font>} {
+    <b><font color=#923B23>set</font></b> tlen [<b><font color=#923B23>lindex</font></b> [<b><font color=#923B23>split</font></b> [<font color=#4A181B>$txt</font> index end] .] 0]
+    RemoveTags <font color=#4A181B>$txt</font> 1.0 end
+    <b><font color=#923B23>set</font></b> maxl [<b><font color=#923B23>expr</font></b> {min(<font color=#4A181B>$::hl_tcl::my::data(SEEN</font>,<font color=#4A181B>$txt)</font>,<font color=#4A181B>$tlen)</font>}]
+    <b><font color=#923B23>set</font></b> maxl [<b><font color=#923B23>expr</font></b> {min(<font color=#4A181B>$::hl_tcl::my::data(SEEN</font>,<font color=#4A181B>$txt)</font>,<font color=#4A181B>$tlen)</font>}]
+    <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> currQtd [<b><font color=#923B23>set</font></b> ln [<b><font color=#923B23>set</font></b> lnseen 0]]} {<font color=#4A181B>$ln</font>&lt;=<font color=#4A181B>$tlen</font>} {} {
+      <b><font color=#923B23>set</font></b> currQtd [HighlightLine <font color=#4A181B>$txt</font> <font color=#4A181B>$ln</font> <font color=#4A181B>$currQtd</font>]
+      <b><font color=#923B23>incr</font></b> ln
+      <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>incr</font></b> lnseen]&gt;<font color=#4A181B>$::hl_tcl::my::data(SEEN</font>,<font color=#4A181B>$txt)</font>} {
+        <b><font color=#923B23>set</font></b> lnseen 0
+        <b><font color=#923B23>after</font></b> idle after 1 [<b><font color=#923B23>info</font></b> coroutine]
+        <b><font color=#A106A1>yield</font></b>
+      }
     }
   }
   <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(REG_TXT,<font color=#4A181B>$txt)</font> <font color=#035103>&quot;1&quot;</font>
@@ -741,15 +788,16 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::CoroModified'>CoroModified</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Handles modifications of text.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>CoroModified</span> <span class='ruff_arg'>txt ?i1? ?i2?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>CoroModified</span> <span class='ruff_arg'>txt ?i1? ?i2? ?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>text widget's path</td></tr>
 <tr><td class='ruff_defitem'><code><code>i1</code></code></td><td class='ruff_defitem'>Not documented; <i>optional, default</i> <code>-1</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>i2</code></code></td><td class='ruff_defitem'>Not documented; <i>optional, default</i> <code>-1</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>Optional arguments.</td></tr>
 </table>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="hl_tcl.html#::hl_tcl::my::Modified" title="Modified" class='ruff_cmd'>Modified</a></p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_7' href="javascript:toggleSource('7')">Show source</a></p>
-<div id='7' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CoroModified {txt {i1 -1} {i2 -1}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_8' href="javascript:toggleSource('8')">Show source</a></p>
+<div id='8' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CoroModified {txt {i1 -1} {i2 -1} args} {
 
   <i><font color=#646464># Handles modifications of text.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -759,7 +807,7 @@ padding: 0%;
   <i><font color=#646464># current line:</font></i>
   <b><font color=#923B23>set</font></b> ln [<b><font color=#923B23>expr</font></b> {int([<font color=#4A181B>$txt</font> index insert])}]
   <i><font color=#646464># ending line:</font></i>
-  <b><font color=#923B23>set</font></b> endl [<b><font color=#923B23>expr</font></b> {int([<font color=#4A181B>$txt</font> index end])}]
+  <b><font color=#923B23>set</font></b> endl [<b><font color=#923B23>expr</font></b> {int([<font color=#4A181B>$txt</font> index <font color=#035103>&quot;end -1 char&quot;</font>])}]
   <i><font color=#646464># range of change:</font></i>
   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$i1</font>!=-1} {
     <b><font color=#923B23>set</font></b> dl [<b><font color=#923B23>expr</font></b> {abs(<font color=#4A181B>$i2</font>-<font color=#4A181B>$i1)</font>}]
@@ -768,8 +816,8 @@ padding: 0%;
     <b><font color=#923B23>set</font></b> dl [<b><font color=#923B23>expr</font></b> {abs(int(<font color=#4A181B>$data(CUR_LEN</font>,<font color=#4A181B>$txt))</font> - <font color=#4A181B>$endl)</font>}]
   }
   <i><font color=#646464># begin and end of changes:</font></i>
-  <b><font color=#923B23>set</font></b> ln1 [<b><font color=#923B23>expr</font></b> {max((<font color=#4A181B>$ln</font>-<font color=#4A181B>$dl)</font>,1)}]
-  <b><font color=#923B23>set</font></b> ln2 [<b><font color=#923B23>expr</font></b> {min((<font color=#4A181B>$ln</font>+<font color=#4A181B>$dl)</font>,<font color=#4A181B>$endl)</font>}]
+  <b><font color=#923B23>set</font></b> ln1 [<b><font color=#923B23>set</font></b> lno1 [<b><font color=#923B23>expr</font></b> {max((<font color=#4A181B>$ln</font>-<font color=#4A181B>$dl)</font>,1)}]]
+  <b><font color=#923B23>set</font></b> ln2 [<b><font color=#923B23>set</font></b> lno2 [<b><font color=#923B23>expr</font></b> {min((<font color=#4A181B>$ln</font>+<font color=#4A181B>$dl)</font>,<font color=#4A181B>$endl)</font>}]]
   <b><font color=#923B23>lassign</font></b> [CountQSH <font color=#4A181B>$txt</font> <font color=#4A181B>$ln</font>] cntq cnts ccmnt
   <i><font color=#646464># flag &quot;highlight to the end&quot;:</font></i>
   <b><font color=#923B23>set</font></b> bf1 [<b><font color=#923B23>expr</font></b> {abs(<font color=#4A181B>$ln<font color=#463e11></font>-int</font>(<font color=#4A181B>$data(CURPOS</font>,<font color=#4A181B>$txt)))</font>&gt;1 || <font color=#4A181B>$dl</font>&gt;1  || <font color=#4A181B>$cntq</font>!=<font color=#4A181B>$data(CNT_QUOTE</font>,<font color=#4A181B>$txt)</font>  || <font color=#4A181B>$cnts</font>!=<font color=#4A181B>$data(CNT_SLASH</font>,<font color=#4A181B>$txt)</font>  || <font color=#4A181B>$ccmnt</font>!=<font color=#4A181B>$data(CNT_COMMENT</font>,<font color=#4A181B>$txt)</font>}]
@@ -790,24 +838,55 @@ padding: 0%;
   } <b><font color=#923B23>else</font></b> {
     <b><font color=#923B23>set</font></b> currQtd [LineState <font color=#4A181B>$txt</font> <font color=#4A181B>$tSTR</font> <font color=#4A181B>$tCMN</font> <font color=#035103>&quot;<font color=#4A181B>$</font>ln1.0 -1 chars&quot;</font>]
   }
-  <b><font color=#923B23>set</font></b> lnseen 0
-  <b><font color=#923B23>while</font></b> {<font color=#4A181B>$ln1</font>&lt;=<font color=#4A181B>$ln2</font>} {
-    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ln1</font>==<font color=#4A181B>$ln2</font>} {
-      <b><font color=#923B23>set</font></b> bf2 [LineState <font color=#4A181B>$txt</font> <font color=#4A181B>$tSTR</font> <font color=#4A181B>$tCMN</font> <font color=#035103>&quot;<font color=#4A181B>$</font>ln1.end +1 chars&quot;</font>]
+  <b><font color=#923B23>if</font></b> {!<font color=#4A181B>$data(PLAINTEXT</font>,<font color=#4A181B>$txt)</font>} {
+    <b><font color=#923B23>set</font></b> lnseen 0
+    <b><font color=#923B23>while</font></b> {<font color=#4A181B>$ln1</font>&lt;=<font color=#4A181B>$ln2</font>} {
+      <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ln1</font>==<font color=#4A181B>$ln2</font>} {
+        <b><font color=#923B23>set</font></b> bf2 [LineState <font color=#4A181B>$txt</font> <font color=#4A181B>$tSTR</font> <font color=#4A181B>$tCMN</font> <font color=#035103>&quot;<font color=#4A181B>$</font>ln1.end +1 chars&quot;</font>]
+      }
+      RemoveTags <font color=#4A181B>$txt</font> <font color=#4A181B>$ln1</font>.0 <font color=#4A181B>$ln1</font>.end
+      <b><font color=#923B23>set</font></b> currQtd [HighlightLine <font color=#4A181B>$txt</font> <font color=#4A181B>$ln1</font> <font color=#4A181B>$currQtd</font>]
+      <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ln1</font>==<font color=#4A181B>$ln2</font> && (<font color=#4A181B>$bf1</font> || <font color=#4A181B>$bf2</font>!=<font color=#4A181B>$currQtd)</font> && <font color=#4A181B>$data(MULTILINE</font>,<font color=#4A181B>$txt)</font>} {
+        <b><font color=#923B23>set</font></b> ln2 <font color=#4A181B>$endl</font>  ;<i><font color=#646464># run to the end</font></i>
+      }
+      <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>incr</font></b> lnseen]&gt;<font color=#4A181B>$::hl_tcl::my::data(SEEN</font>,<font color=#4A181B>$txt)</font>} {
+        <b><font color=#923B23>set</font></b> lnseen 0
+        <b><font color=#923B23>catch</font></b> {<b><font color=#923B23>after</font></b> cancel <font color=#4A181B>$data(COROATFER</font>,<font color=#4A181B>$txt)</font>}
+        <b><font color=#923B23>set</font></b> data(COROATFER,<font color=#4A181B>$txt)</font> [<b><font color=#923B23>after</font></b> idle after 1 [<b><font color=#923B23>info</font></b> coroutine]]
+        <b><font color=#A106A1>yield</font></b>
+      }
+      <b><font color=#923B23>incr</font></b> ln1
     }
-    RemoveTags <font color=#4A181B>$txt</font> <font color=#4A181B>$ln1</font>.0 <font color=#4A181B>$ln1</font>.end
-    <b><font color=#923B23>set</font></b> currQtd [HighlightLine <font color=#4A181B>$txt</font> <font color=#4A181B>$ln1</font> <font color=#4A181B>$currQtd</font>]
-    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ln1</font>==<font color=#4A181B>$ln2</font> && (<font color=#4A181B>$bf1</font> || <font color=#4A181B>$bf2</font>!=<font color=#4A181B>$currQtd)</font> && <font color=#4A181B>$data(MULTILINE</font>,<font color=#4A181B>$txt)</font>} {
-      <b><font color=#923B23>set</font></b> ln2 <font color=#4A181B>$endl</font>  ;<i><font color=#646464># run to the end</font></i>
-    }
-    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>incr</font></b> lnseen]&gt;<font color=#4A181B>$::hl_tcl::my::data(SEEN</font>,<font color=#4A181B>$txt)</font>} {
-      <b><font color=#923B23>set</font></b> lnseen 0
-      <b><font color=#923B23>after</font></b> idle after 1 [<b><font color=#923B23>info</font></b> coroutine]
-      <b><font color=#A106A1>yield</font></b>
-    }
-    <b><font color=#923B23>incr</font></b> ln1
   }
+  <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> cmd <font color=#4A181B>$data(CMD</font>,<font color=#4A181B>$txt)</font>] ne <font color=#035103>&quot;&quot;</font>} {
+    <i><font color=#646464># run a command after changes done (its arguments are txt, ln1, ln2)</font></i>
+    <b><font color=#923B23>append</font></b> cmd <font color=#035103>&quot; <font color=#4A181B>$</font>txt <font color=#4A181B>$</font>lno1 <font color=#4A181B>$</font>lno2 <font color=#4A181B>$</font>args&quot;</font>
+    {*}<font color=#4A181B>$cmd</font>
+  }
+  MemPos <font color=#4A181B>$txt</font>
   <b><font color=#A106A1>return</font></b>
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::CoroRun'>CoroRun</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>CoroRun</span> <span class='ruff_arg'>txt pos1 pos2 ?args?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
+<tr><td class='ruff_defitem'><code><code>pos1</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
+<tr><td class='ruff_defitem'><code><code>pos2</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>Optional arguments.</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_9' href="javascript:toggleSource('9')">Show source</a></p>
+<div id='9' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CoroRun {txt pos1 pos2 args} {
+
+  <b><font color=#923B23>variable</font></b> data
+  <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exist data(REG_TXT,<font color=#4A181B>$txt)</font>] || <font color=#4A181B>$data(REG_TXT</font>,<font color=#4A181B>$txt)</font> eq <font color=#035103>&quot;&quot;</font> ||  ![<b><font color=#923B23>info</font></b> exist data(CUR_LEN,<font color=#4A181B>$txt)</font>]} {
+    <b><font color=#A106A1>return</font></b>  ;<i><font color=#646464># skip changes till the highlighting done</font></i>
+  }
+  <i><font color=#646464># let them work one by one</font></i>
+  <b><font color=#923B23>set</font></b> i1 [<b><font color=#923B23>expr</font></b> {int(<font color=#4A181B>$pos1)</font>}]
+  <b><font color=#923B23>set</font></b> i2 [<b><font color=#923B23>expr</font></b> {int(<font color=#4A181B>$pos2)</font>}]
+  <b><font color=#923B23>set</font></b> coroNo [<b><font color=#923B23>expr</font></b> {[<b><font color=#923B23>incr</font></b> ::hl_tcl::my::data(CORMOD)] % 10000000}]
+  <b><font color=#A106A1>coroutine</font></b> CoModified<font color=#4A181B>$coroNo</font> ::hl_tcl::my::CoroModified <font color=#4A181B>$txt</font> <font color=#4A181B>$i1</font> <font color=#4A181B>$i2</font> {*}<font color=#4A181B>$args</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::CountChar'>CountChar</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -819,8 +898,8 @@ padding: 0%;
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a number of non-escaped occurences of character <em>ch</em> in string <em>str</em>.</p>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="https://wiki.tcl-lang.org/page/Reformatting+Tcl+code+indentation" >wiki.tcl-lang.org</a></p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_8' href="javascript:toggleSource('8')">Show source</a></p>
-<div id='8' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CountChar {str ch} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_10' href="javascript:toggleSource('10')">Show source</a></p>
+<div id='10' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CountChar {str ch} {
 
   <i><font color=#646464># Counts a character in a string.</font></i>
   <i><font color=#646464>#   str - a string</font></i>
@@ -855,8 +934,8 @@ padding: 0%;
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a number of ANY occurences of character <em>ch</em> in string <em>str</em>.</p>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="hl_tcl.html#::hl_tcl::my::CountChar" title="my::CountChar" class='ruff_cmd'>my::CountChar</a></p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_9' href="javascript:toggleSource('9')">Show source</a></p>
-<div id='9' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CountChar2 {str ch {plistName {}}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_11' href="javascript:toggleSource('11')">Show source</a></p>
+<div id='11' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CountChar2 {str ch {plistName {}}} {
 
   <i><font color=#646464># Counts a character in a string.</font></i>
   <i><font color=#646464>#   str - a string</font></i>
@@ -887,8 +966,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>text widget's path</td></tr>
 <tr><td class='ruff_defitem'><code><code>ln</code></code></td><td class='ruff_defitem'>line's index</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_10' href="javascript:toggleSource('10')">Show source</a></p>
-<div id='10' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CountQSH {txt ln} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_12' href="javascript:toggleSource('12')">Show source</a></p>
+<div id='12' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CountQSH {txt ln} {
 
   <i><font color=#646464># Counts quotes, slashes, hashes in a line</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -901,18 +980,20 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::FirstQtd'>FirstQtd</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Searches the quote characters in line.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>FirstQtd</span> <span class='ruff_arg'>lineName iName</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>FirstQtd</span> <span class='ruff_arg'>lineName iName currQtd</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>lineName</code></code></td><td class='ruff_defitem'>variable's name for 'line'</td></tr>
 <tr><td class='ruff_defitem'><code><code>iName</code></code></td><td class='ruff_defitem'>variable's name for 'i'</td></tr>
+<tr><td class='ruff_defitem'><code><code>currQtd</code></code></td><td class='ruff_defitem'>yes, if searching inside the quoted</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns &quot;yes&quot; if a quote character was found.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_11' href="javascript:toggleSource('11')">Show source</a></p>
-<div id='11' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::FirstQtd {lineName iName} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_13' href="javascript:toggleSource('13')">Show source</a></p>
+<div id='13' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::FirstQtd {lineName iName currQtd} {
 
   <i><font color=#646464># Searches the quote characters in line.</font></i>
   <i><font color=#646464>#   lineName - variable's name for 'line'</font></i>
   <i><font color=#646464>#   iName - variable's name for 'i'</font></i>
+  <i><font color=#646464>#   currQtd - yes, if searching inside the quoted</font></i>
   <i><font color=#646464># Returns &quot;yes&quot; if a quote character was found.</font></i>
 
   <b><font color=#923B23>variable</font></b> data
@@ -920,6 +1001,7 @@ padding: 0%;
   <b><font color=#923B23>while</font></b> {1} {
     <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> i [<b><font color=#923B23>string</font></b> first \&quot; <font color=#4A181B>$line</font> <font color=#4A181B>$i</font>]]==-1} {<b><font color=#A106A1>return</font></b> no}
     <b><font color=#923B23>if</font></b> {[NotEscaped <font color=#4A181B>$line</font> <font color=#4A181B>$i</font>]} {
+      <b><font color=#923B23>if</font></b> {<font color=#4A181B>$currQtd</font>} {<b><font color=#A106A1>return</font></b> yes}
       <b><font color=#923B23>set</font></b> i1 [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$i</font>-1}]
       <b><font color=#923B23>set</font></b> i2 [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$i</font>+1}]
       <b><font color=#923B23>if</font></b> {[NotEscaped <font color=#4A181B>$line</font> <font color=#4A181B>$i1</font>]} {
@@ -953,8 +1035,8 @@ padding: 0%;
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>Makes a coroutine from this.</p>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="hl_tcl.html#::hl_tcl::my::CoroHighlightAll" title="CoroHighlightAll" class='ruff_cmd'>CoroHighlightAll</a></p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_12' href="javascript:toggleSource('12')">Show source</a></p>
-<div id='12' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightAll {txt} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_14' href="javascript:toggleSource('14')">Show source</a></p>
+<div id='14' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightAll {txt} {
 
   <i><font color=#646464># Highlights all of a text.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -972,8 +1054,8 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>w</code></code></td><td class='ruff_defitem'>text widget's path</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_13' href="javascript:toggleSource('13')">Show source</a></p>
-<div id='13' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightBrackets {w} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_15' href="javascript:toggleSource('15')">Show source</a></p>
+<div id='15' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightBrackets {w} {
 
   <i><font color=#646464># Highlights matching brackets if any.</font></i>
   <i><font color=#646464>#   w - text widget's path</font></i>
@@ -1017,8 +1099,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>pri</code></code></td><td class='ruff_defitem'>column number to highlighted from</td></tr>
 <tr><td class='ruff_defitem'><code><code>i</code></code></td><td class='ruff_defitem'>current position in 'line'</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_14' href="javascript:toggleSource('14')">Show source</a></p>
-<div id='14' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightCmd {txt line ln pri i} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_16' href="javascript:toggleSource('16')">Show source</a></p>
+<div id='16' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightCmd {txt line ln pri i} {
 
   <i><font color=#646464># Highlights Tcl/Tk commands.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1098,8 +1180,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>ln</code></code></td><td class='ruff_defitem'>line's number</td></tr>
 <tr><td class='ruff_defitem'><code><code>prevQtd</code></code></td><td class='ruff_defitem'>flag of &quot;being quoted&quot; from the previous line</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_15' href="javascript:toggleSource('15')">Show source</a></p>
-<div id='15' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightLine {txt ln prevQtd} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_17' href="javascript:toggleSource('17')">Show source</a></p>
+<div id='17' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightLine {txt ln prevQtd} {
 
   <i><font color=#646464># Highlightes a line in text.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1117,7 +1199,7 @@ padding: 0%;
   <b><font color=#923B23>set</font></b> i [<b><font color=#923B23>set</font></b> pri [<b><font color=#923B23>set</font></b> lasti 0]]
   <b><font color=#923B23>set</font></b> k -1
   <b><font color=#923B23>while</font></b> {1} {
-    <b><font color=#923B23>if</font></b> {![FirstQtd line i]} <b><font color=#923B23>break</font></b>
+    <b><font color=#923B23>if</font></b> {![FirstQtd line i <font color=#4A181B>$currQtd</font>]} <b><font color=#923B23>break</font></b>
     <b><font color=#923B23>set</font></b> lasti <font color=#4A181B>$i</font>
     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$currQtd</font>} {
       HighlightStr <font color=#4A181B>$txt</font> <font color=#4A181B>$ln</font>.<font color=#4A181B>$pri</font> <font color=#035103>&quot;<font color=#4A181B>$</font>ln.<font color=#4A181B>$</font>i +1 char&quot;</font>
@@ -1127,7 +1209,7 @@ padding: 0%;
         <b><font color=#923B23>set</font></b> i <font color=#4A181B>$lasti</font>
         <b><font color=#923B23>set</font></b> st [<b><font color=#923B23>string</font></b> range <font color=#4A181B>$line</font> <font color=#4A181B>$i</font> <font color=#4A181B>$j</font>]
         <b><font color=#923B23>set</font></b> it 0
-        <b><font color=#923B23>if</font></b> {[FirstQtd st it]} <b><font color=#923B23>continue</font></b>  ;<i><font color=#646464># there is a quote yet</font></i>
+        <b><font color=#923B23>if</font></b> {[FirstQtd st it <font color=#4A181B>$currQtd</font>]} <b><font color=#923B23>continue</font></b>  ;<i><font color=#646464># there is a quote yet</font></i>
         <b><font color=#923B23>set</font></b> k <font color=#4A181B>$j</font>
         <b><font color=#923B23>break</font></b>
       }
@@ -1166,8 +1248,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>p1</code></code></td><td class='ruff_defitem'>starting index of the string in 'txt'</td></tr>
 <tr><td class='ruff_defitem'><code><code>p2</code></code></td><td class='ruff_defitem'>ending index of the string in 'txt'</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_16' href="javascript:toggleSource('16')">Show source</a></p>
-<div id='16' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightStr {txt p1 p2} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_18' href="javascript:toggleSource('18')">Show source</a></p>
+<div id='18' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightStr {txt p1 p2} {
 
   <i><font color=#646464># Highlights strings.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1202,8 +1284,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>l</code></code></td><td class='ruff_defitem'>line position to check (or 'l.c' if 'c' not set)</td></tr>
 <tr><td class='ruff_defitem'><code><code>c</code></code></td><td class='ruff_defitem'>column position to check; <i>optional, default</i> <code>-1</code></td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_17' href="javascript:toggleSource('17')">Show source</a></p>
-<div id='17' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::InRange {p1 p2 l {c -1}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_19' href="javascript:toggleSource('19')">Show source</a></p>
+<div id='19' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::InRange {p1 p2 l {c -1}} {
 
   <i><font color=#646464># Checks if a text position is in a range of text positions.</font></i>
   <i><font color=#646464>#   p1 - 1st position of range</font></i>
@@ -1233,8 +1315,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>l1</code></code></td><td class='ruff_defitem'>the line's index</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>Returns: 0 if no tags for the line; 1 if the line is a string's continuation; -1 if the line is a comment's continuation.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_18' href="javascript:toggleSource('18')">Show source</a></p>
-<div id='18' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::LineState {txt tSTR tCMN l1} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_20' href="javascript:toggleSource('20')">Show source</a></p>
+<div id='20' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::LineState {txt tSTR tCMN l1} {
 
   <i><font color=#646464># Gets an initial state of line.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1248,37 +1330,57 @@ padding: 0%;
     <b><font color=#923B23>set</font></b> i1 [<font color=#4A181B>$txt</font> index <font color=#035103>&quot;<font color=#4A181B>$</font>i1 -1 chars&quot;</font>]
   }
   <b><font color=#923B23>set</font></b> ch [<font color=#4A181B>$txt</font> get <font color=#035103>&quot;<font color=#4A181B>$</font>i1&quot;</font> <font color=#035103>&quot;<font color=#4A181B>$</font>i1 +1 chars&quot;</font>]
-  <b><font color=#923B23>set</font></b> currQtd 0
   <b><font color=#923B23>if</font></b> {[SearchTag <font color=#4A181B>$tCMN</font> <font color=#4A181B>$i1</font>]!=-1} {    ;<i><font color=#646464># is a comment continues?</font></i>
-    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ch</font> eq <font color=#035103>&quot;\\&quot;</font>} {<b><font color=#923B23>set</font></b> currQtd -1}
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ch</font> eq <font color=#035103>&quot;\\&quot;</font>} {<b><font color=#A106A1>return</font></b> -1}
   } <b><font color=#923B23>else</font></b> {                            ;<i><font color=#646464># is a string continues?</font></i>
     <b><font color=#923B23>set</font></b> nl [<b><font color=#923B23>lindex</font></b> [<b><font color=#923B23>split</font></b> <font color=#4A181B>$l1</font> .] 0]
-    <b><font color=#923B23>set</font></b> line <font color=#035103>&quot;&quot;</font>
     <b><font color=#923B23>if</font></b> {<font color=#4A181B>$prev</font>&gt;-1} {
+      <i><font color=#646464># is the start of line quoted?</font></i>
+      <i><font color=#646464># Tk tag ranges refer only to non-empty lines</font></i>
+      <i><font color=#646464># =&gt; previous two non-empty chars' coordinates are needed</font></i>
+      <i><font color=#646464># to analize whether they:</font></i>
+      <i><font color=#646464># - end the range</font></i>
+      <i><font color=#646464># - are inside of the range</font></i>
+      <i><font color=#646464># - begin the range</font></i>
+      <b><font color=#923B23>set</font></b> co1 [<b><font color=#923B23>set</font></b> co2 <font color=#035103>&quot;&quot;</font>]
       <b><font color=#923B23>while</font></b> {<font color=#4A181B>$nl</font>&gt;1} {
         <b><font color=#923B23>incr</font></b> nl -1
-        <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> line [<font color=#4A181B>$txt</font> get <font color=#4A181B>$nl</font>.0 <font color=#4A181B>$nl</font>.end]] ne <font color=#035103>&quot;&quot;</font>} <b><font color=#923B23>break</font></b>
+        <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> line [<font color=#4A181B>$txt</font> get <font color=#4A181B>$nl</font>.0 <font color=#4A181B>$nl</font>.end]] ne <font color=#035103>&quot;&quot;</font>} {
+          <b><font color=#923B23>if</font></b> {<font color=#4A181B>$co2</font> eq <font color=#035103>&quot;&quot;</font>} {
+            <b><font color=#923B23>set</font></b> co2 [<font color=#4A181B>$txt</font> index <font color=#035103>&quot;<font color=#4A181B>$</font>nl.end -1 char&quot;</font>]
+            <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>string</font></b> length <font color=#4A181B>$line</font>]&gt;1} {
+              <b><font color=#923B23>set</font></b> co1 [<font color=#4A181B>$txt</font> index <font color=#035103>&quot;<font color=#4A181B>$</font>nl.end -2 char&quot;</font>]
+              <b><font color=#923B23>break</font></b>
+            }
+          } <b><font color=#923B23>else</font></b> {
+            <b><font color=#923B23>set</font></b> co1 [<font color=#4A181B>$txt</font> index <font color=#035103>&quot;<font color=#4A181B>$</font>nl.end -1 char&quot;</font>]
+            <b><font color=#923B23>break</font></b>
+          }
+        }
       }
-      <b><font color=#923B23>set</font></b> i1 [<font color=#4A181B>$txt</font> index <font color=#035103>&quot;<font color=#4A181B>$</font>nl.end -1 char&quot;</font>]
-    } <b><font color=#923B23>else</font></b> {
-      <b><font color=#923B23>set</font></b> nltot [<b><font color=#923B23>lindex</font></b> [<b><font color=#923B23>split</font></b> [<font color=#4A181B>$txt</font> index end] .] 0]
-      <b><font color=#923B23>while</font></b> {<font color=#4A181B>$nl</font>&lt;<font color=#4A181B>$nltot</font>} {
-        <b><font color=#923B23>incr</font></b> nl
-        <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> line [<font color=#4A181B>$txt</font> get <font color=#4A181B>$nl</font>.0 <font color=#4A181B>$nl</font>.end]] ne <font color=#035103>&quot;&quot;</font>} <b><font color=#923B23>break</font></b>
-      }
-      <b><font color=#923B23>set</font></b> i1 <font color=#4A181B>$nl</font>.0
+      <b><font color=#923B23>if</font></b> {<font color=#4A181B>$co2</font> eq <font color=#035103>&quot;&quot;</font>} {<b><font color=#A106A1>return</font></b> 0}   {<b><font color=#923B23>set</font></b> f2 [<b><font color=#923B23>expr</font></b> {[SearchTag <font color=#4A181B>$tSTR</font> <font color=#4A181B>$co2</font>]!=-1}]}
+      <b><font color=#923B23>if</font></b> {<font color=#4A181B>$co1</font> eq <font color=#035103>&quot;&quot;</font>} {<b><font color=#923B23>set</font></b> f1 <font color=#4A181B>$f2</font>} {<b><font color=#923B23>set</font></b> f1 [<b><font color=#923B23>expr</font></b> {[SearchTag <font color=#4A181B>$tSTR</font> <font color=#4A181B>$co1</font>]!=-1}]}
+      <b><font color=#923B23>set</font></b> ch [<font color=#4A181B>$txt</font> get <font color=#4A181B>$co2</font> <font color=#035103>&quot;<font color=#4A181B>$</font>co2 +1 chars&quot;</font>]
+      <b><font color=#923B23>set</font></b> c [<b><font color=#923B23>lindex</font></b> [<b><font color=#923B23>split</font></b> [<font color=#4A181B>$txt</font> index <font color=#4A181B>$co2</font>] .] 1]
+      <b><font color=#923B23>if</font></b> {![NotEscaped <font color=#4A181B>$line</font> <font color=#4A181B>$c</font>]} {<b><font color=#923B23>set</font></b> ch <font color=#035103>&quot;&quot;</font>}
+      <b><font color=#A106A1>return</font></b> [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$ch</font>!=<font color=#035103>&quot;\&quot;&quot;</font> && <font color=#4A181B>$f2</font> || <font color=#4A181B>$ch</font>==<font color=#035103>&quot;\&quot;&quot;</font> && !<font color=#4A181B>$f1</font>}]
     }
-    <b><font color=#923B23>set</font></b> f1 [<b><font color=#923B23>expr</font></b> {[SearchTag <font color=#4A181B>$tSTR</font> [<font color=#4A181B>$txt</font> index <font color=#035103>&quot;<font color=#4A181B>$</font>i1 -1 chars&quot;</font>]]!=-1}]
-    <b><font color=#923B23>set</font></b> f  [<b><font color=#923B23>expr</font></b> {[SearchTag <font color=#4A181B>$tSTR</font> [<font color=#4A181B>$txt</font> index <font color=#035103>&quot;<font color=#4A181B>$</font>i1&quot;</font>]]!=-1}]
-    <b><font color=#923B23>set</font></b> f2 [<b><font color=#923B23>expr</font></b> {[SearchTag <font color=#4A181B>$tSTR</font> [<font color=#4A181B>$txt</font> index <font color=#035103>&quot;<font color=#4A181B>$</font>i1 +1 chars&quot;</font>]]!=-1}]
-    <b><font color=#923B23>set</font></b> ch [<font color=#4A181B>$txt</font> get <font color=#035103>&quot;<font color=#4A181B>$</font>i1&quot;</font> <font color=#035103>&quot;<font color=#4A181B>$</font>i1 +1 chars&quot;</font>]
-    <b><font color=#923B23>lassign</font></b> [<b><font color=#923B23>split</font></b> [<font color=#4A181B>$txt</font> index <font color=#4A181B>$i1</font>] .] l c
+    <i><font color=#646464># is the end of line quoted?</font></i>
+    <b><font color=#923B23>set</font></b> line <font color=#035103>&quot;&quot;</font>
+    <b><font color=#923B23>set</font></b> nltot [<b><font color=#923B23>lindex</font></b> [<b><font color=#923B23>split</font></b> [<font color=#4A181B>$txt</font> index end] .] 0]
+    <b><font color=#923B23>while</font></b> {<font color=#4A181B>$nl</font>&lt;<font color=#4A181B>$nltot</font>} {
+      <b><font color=#923B23>incr</font></b> nl
+      <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> line [<font color=#4A181B>$txt</font> get <font color=#4A181B>$nl</font>.0 <font color=#4A181B>$nl</font>.end]] ne <font color=#035103>&quot;&quot;</font>} <b><font color=#923B23>break</font></b>
+    }
+    <b><font color=#923B23>set</font></b> i1 <font color=#4A181B>$nl</font>.0
+    <b><font color=#923B23>set</font></b> ch [<font color=#4A181B>$txt</font> get <font color=#4A181B>$i1</font> <font color=#035103>&quot;<font color=#4A181B>$</font>i1 +1 chars&quot;</font>]
+    <b><font color=#923B23>set</font></b> c [<b><font color=#923B23>lindex</font></b> [<b><font color=#923B23>split</font></b> [<font color=#4A181B>$txt</font> index <font color=#4A181B>$i1</font>] .] 1]
     <b><font color=#923B23>if</font></b> {![NotEscaped <font color=#4A181B>$line</font> <font color=#4A181B>$c</font>]} {<b><font color=#923B23>set</font></b> ch <font color=#035103>&quot;&quot;</font>}
-    <b><font color=#923B23>set</font></b> currQtd [<b><font color=#923B23>expr</font></b> {
-      <font color=#4A181B>$prev</font>!=-1 && (<font color=#4A181B>$ch</font>!=<font color=#035103>&quot;\&quot;&quot;</font> && <font color=#4A181B>$f</font> || <font color=#4A181B>$ch</font>==<font color=#035103>&quot;\&quot;&quot;</font> && !<font color=#4A181B>$f1)</font> ||
-      <font color=#4A181B>$prev</font>==-1 && (<font color=#4A181B>$ch</font>!=<font color=#035103>&quot;\&quot;&quot;</font> && <font color=#4A181B>$f</font> || <font color=#4A181B>$ch</font>==<font color=#035103>&quot;\&quot;&quot;</font> && !<font color=#4A181B>$f2)</font>}]
+    <b><font color=#923B23>set</font></b> f1 [<b><font color=#923B23>expr</font></b> {[SearchTag <font color=#4A181B>$tSTR</font> [<font color=#4A181B>$txt</font> index <font color=#4A181B>$i1</font>]]!=-1}]
+    <b><font color=#923B23>set</font></b> f2 [<b><font color=#923B23>expr</font></b> {[SearchTag <font color=#4A181B>$tSTR</font> [<font color=#4A181B>$txt</font> index <font color=#035103>&quot;<font color=#4A181B>$</font>i1 +1 chars&quot;</font>]]!=-1}]
+    <b><font color=#A106A1>return</font></b> [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$ch</font>!=<font color=#035103>&quot;\&quot;&quot;</font> && <font color=#4A181B>$f1</font> || <font color=#4A181B>$ch</font>==<font color=#035103>&quot;\&quot;&quot;</font> && !<font color=#4A181B>$f2</font>}]
   }
-  <b><font color=#A106A1>return</font></b> <font color=#4A181B>$currQtd</font>
+  <b><font color=#A106A1>return</font></b> 0
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::MatchedBrackets'>MatchedBrackets</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -1291,8 +1393,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>dchar</code></code></td><td class='ruff_defitem'>destination character</td></tr>
 <tr><td class='ruff_defitem'><code><code>dir</code></code></td><td class='ruff_defitem'>search direction: 1 to the end, -1 to the beginning of list</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_19' href="javascript:toggleSource('19')">Show source</a></p>
-<div id='19' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::MatchedBrackets {inplist curpos schar dchar dir} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_21' href="javascript:toggleSource('21')">Show source</a></p>
+<div id='21' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::MatchedBrackets {inplist curpos schar dchar dir} {
 
   <i><font color=#646464># Finds a match of characters (dchar for schar).</font></i>
   <i><font color=#646464>#   inplist - list of strings where to find a match</font></i>
@@ -1335,19 +1437,64 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>text widget's path</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_20' href="javascript:toggleSource('20')">Show source</a></p>
-<div id='20' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::MemPos {txt} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_22' href="javascript:toggleSource('22')">Show source</a></p>
+<div id='22' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::MemPos {txt} {
 
   <i><font color=#646464># Remembers the state of current line.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
 
   <b><font color=#923B23>variable</font></b> data
+  <b><font color=#923B23>set</font></b> data(_INSPOS_,<font color=#4A181B>$txt)</font> [MemPos1 <font color=#4A181B>$txt</font> no]
   <b><font color=#923B23>set</font></b> ln [ShowCurrentLine <font color=#4A181B>$txt</font>]
   <b><font color=#923B23>set</font></b> data(CURPOS,<font color=#4A181B>$txt)</font> <font color=#4A181B>$ln</font>
-  <b><font color=#923B23>set</font></b> data(CUR_LEN,<font color=#4A181B>$txt)</font> [<font color=#4A181B>$txt</font> index end]
+  <b><font color=#923B23>set</font></b> data(CUR_LEN,<font color=#4A181B>$txt)</font> [<font color=#4A181B>$txt</font> index <font color=#035103>&quot;end -1 char&quot;</font>]
   <b><font color=#923B23>lassign</font></b> [CountQSH <font color=#4A181B>$txt</font> <font color=#4A181B>$ln</font>]  data(CNT_QUOTE,<font color=#4A181B>$txt)</font> data(CNT_SLASH,<font color=#4A181B>$txt)</font> data(CNT_COMMENT,<font color=#4A181B>$txt)</font>
   <b><font color=#923B23>if</font></b> {[<font color=#4A181B>$txt</font> tag ranges tagBRACKET] ne <font color=#035103>&quot;&quot;</font>}    {<font color=#4A181B>$txt</font> tag remove tagBRACKET 1.0 end}
   <b><font color=#923B23>if</font></b> {[<font color=#4A181B>$txt</font> tag ranges tagBRACKETERR] ne <font color=#035103>&quot;&quot;</font>} {<font color=#4A181B>$txt</font> tag remove tagBRACKETERR 1.0 end}
+  <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> cmd <font color=#4A181B>$data(CMDPOS</font>,<font color=#4A181B>$txt)</font>] ne <font color=#035103>&quot;&quot;</font>} {
+    <i><font color=#646464># run a command after changing position (with the state as arguments)</font></i>
+    <b><font color=#923B23>append</font></b> cmd <font color=#035103>&quot; <font color=#4A181B>$</font>txt <font color=#4A181B>$</font>data(CUR_LEN,<font color=#4A181B>$</font>txt) <font color=#4A181B>$</font>ln <font color=#4A181B>$</font>data(CNT_QUOTE,<font color=#4A181B>$</font>txt)  <font color=#4A181B>$</font>data(CNT_SLASH,<font color=#4A181B>$</font>txt) <font color=#4A181B>$</font>data(CNT_COMMENT,<font color=#4A181B>$</font>txt)&quot;</font>
+    <b><font color=#923B23>catch</font></b> {<b><font color=#923B23>after</font></b> cancel <font color=#4A181B>$data(CMDATFER</font>,<font color=#4A181B>$txt)</font>}
+    <b><font color=#923B23>set</font></b> data(CMDATFER,<font color=#4A181B>$txt)</font> [<b><font color=#923B23>after</font></b> idle <font color=#4A181B>$cmd</font>]
+  }
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::MemPos1'>MemPos1</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Checks and sets the cursor's width, depending on its position.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>MemPos1</span> <span class='ruff_arg'>txt ?donorm?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>text widget's path</td></tr>
+<tr><td class='ruff_defitem'><code><code>donorm</code></code></td><td class='ruff_defitem'>if yes, forces &quot;normal&quot; cursor; <i>optional, default</i> <code>yes</code></td></tr>
+</table>
+<h5 class='ruff'>Description</h5><p class='ruff'>This fixes an issue with text cursor: less width at 0th column.</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_23' href="javascript:toggleSource('23')">Show source</a></p>
+<div id='23' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::MemPos1 {txt {donorm yes}} {
+
+  <i><font color=#646464># Checks and sets the cursor's width, depending on its position.</font></i>
+  <i><font color=#646464>#   txt - text widget's path</font></i>
+  <i><font color=#646464>#   donorm - if yes, forces &quot;normal&quot; cursor</font></i>
+  <i><font color=#646464># This fixes an issue with text cursor: less width at 0th column.</font></i>
+
+  <b><font color=#923B23>variable</font></b> data
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$data(INSERTWIDTH</font>,<font color=#4A181B>$txt)</font>==1} {
+    <b><font color=#923B23>if</font></b> {[<font color=#4A181B>$txt</font> cget <font color=#463e11>-insertwidth</font>]!=1} {<font color=#4A181B>$txt</font> configure <font color=#463e11>-insertwidth</font> 1}
+    <b><font color=#A106A1>return</font></b> 0
+  }
+  <b><font color=#923B23>set</font></b> insLC [<font color=#4A181B>$txt</font> index insert]
+  <b><font color=#923B23>lassign</font></b> [<b><font color=#923B23>split</font></b> <font color=#4A181B>$insLC</font> .] L C
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$data(_INSPOS_</font>,<font color=#4A181B>$txt)</font> eq <font color=#035103>&quot;&quot;</font>} {
+    <b><font color=#923B23>set</font></b> L2 [<b><font color=#923B23>set</font></b> C2 0]
+  } <b><font color=#923B23>else</font></b> {
+    <b><font color=#923B23>lassign</font></b> [<b><font color=#923B23>split</font></b> <font color=#4A181B>$data(_INSPOS_</font>,<font color=#4A181B>$txt)</font> .] L2 C2
+  }
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$L</font>!=<font color=#4A181B>$L2</font> || <font color=#4A181B>$C</font>==0 || <font color=#4A181B>$C2</font>==0} {
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$C</font> || <font color=#4A181B>$donorm</font>} {
+      <font color=#4A181B>$txt</font> configure <font color=#463e11>-insertwidth</font> <font color=#4A181B>$data(INSERTWIDTH</font>,<font color=#4A181B>$txt)</font>
+    } <b><font color=#923B23>else</font></b> {
+      <font color=#4A181B>$txt</font> configure <font color=#463e11>-insertwidth</font> [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$data(INSERTWIDTH</font>,<font color=#4A181B>$txt)</font>*2-1}]
+    }
+  }
+  <b><font color=#A106A1>return</font></b> <font color=#4A181B>$insLC</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::MergePosList'>MergePosList</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -1358,8 +1505,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>list of the lists to be merged</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a list of pairs: index of list + item of list.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_21' href="javascript:toggleSource('21')">Show source</a></p>
-<div id='21' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::MergePosList {none args} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_24' href="javascript:toggleSource('24')">Show source</a></p>
+<div id='24' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::MergePosList {none args} {
 
   <i><font color=#646464># Merges lists of numbers that are not-coinciding and sorted.</font></i>
   <i><font color=#646464>#   none - a number to be not allowed in the lists (e.g. less than minimal)</font></i>
@@ -1397,16 +1544,17 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::Modified'>Modified</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Handles modifications of text.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>Modified</span> <span class='ruff_arg'>txt ?i1? ?i2?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>Modified</span> <span class='ruff_arg'>txt oper pos1 ?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>text widget's path</td></tr>
-<tr><td class='ruff_defitem'><code><code>i1</code></code></td><td class='ruff_defitem'>Not documented; <i>optional, default</i> <code>-1</code></td></tr>
-<tr><td class='ruff_defitem'><code><code>i2</code></code></td><td class='ruff_defitem'>Not documented; <i>optional, default</i> <code>-1</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>oper</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
+<tr><td class='ruff_defitem'><code><code>pos1</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>Optional arguments.</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>Makes a coroutine from this.</p>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="hl_tcl.html#::hl_tcl::my::CoroModified" title="CoroModified" class='ruff_cmd'>CoroModified</a></p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_22' href="javascript:toggleSource('22')">Show source</a></p>
-<div id='22' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::Modified {txt {i1 -1} {i2 -1}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_25' href="javascript:toggleSource('25')">Show source</a></p>
+<div id='25' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::Modified {txt oper pos1 args} {
 
   <i><font color=#646464># Handles modifications of text.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1414,12 +1562,26 @@ padding: 0%;
   <i><font color=#646464># See also: CoroModified</font></i>
 
   <b><font color=#923B23>variable</font></b> data
-  <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exist data(REG_TXT,<font color=#4A181B>$txt)</font>] || <font color=#4A181B>$data(REG_TXT</font>,<font color=#4A181B>$txt)</font> eq <font color=#035103>&quot;&quot;</font> ||  ![<b><font color=#923B23>info</font></b> exist data(CUR_LEN,<font color=#4A181B>$txt)</font>]} {
-    <b><font color=#A106A1>return</font></b>  ;<i><font color=#646464># skip changes till the highlighting done</font></i>
+  <b><font color=#923B23>set</font></b> ar2 [<b><font color=#923B23>lindex</font></b> <font color=#4A181B>$args</font> 0]
+  <b><font color=#923B23>set</font></b> posins [<font color=#4A181B>$txt</font> index insert]
+  <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>catch</font></b> {<b><font color=#923B23>set</font></b> pos1 [<b><font color=#923B23>set</font></b> pos2 [<font color=#4A181B>$txt</font> index <font color=#4A181B>$pos1</font>]]}]} {
+    <b><font color=#923B23>set</font></b> pos1 [<b><font color=#923B23>set</font></b> pos2 <font color=#4A181B>$posins</font>]
   }
-  <i><font color=#646464># let them work one by one</font></i>
-  <b><font color=#923B23>set</font></b> coroNo [<b><font color=#923B23>expr</font></b> {[<b><font color=#923B23>incr</font></b> ::hl_tcl::my::data(CORMOD)] % 10000000}]
-  <b><font color=#A106A1>coroutine</font></b> CoModified<font color=#4A181B>$coroNo</font> ::hl_tcl::my::CoroModified <font color=#4A181B>$txt</font> <font color=#4A181B>$i1</font> <font color=#4A181B>$i2</font>
+  <b><font color=#923B23>switch</font></b> <font color=#4A181B>$oper</font> {
+    insert {
+      <b><font color=#923B23>set</font></b> nl [<b><font color=#923B23>expr</font></b> {[<b><font color=#923B23>llength</font></b> [<b><font color=#923B23>split</font></b> <font color=#4A181B>$ar2</font> \n]] - 1}]
+      <b><font color=#923B23>set</font></b> pos2 [<font color=#4A181B>$txt</font> index <font color=#035103>&quot;<font color=#4A181B>$</font>pos1 +<font color=#4A181B>$</font>nl lines&quot;</font>]
+      <b><font color=#923B23>if</font></b> {(<font color=#4A181B>$pos1</font>+<font color=#4A181B>$nl)</font>&gt;<font color=#4A181B>$pos2</font>} {
+        <b><font color=#923B23>set</font></b> pos1 [<b><font color=#923B23>expr</font></b> {1.0*int(max(1,abs(<font color=#4A181B>$pos2</font>-<font color=#4A181B>$nl)))</font>}]
+      }
+    }
+    delete {
+      <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ar2</font> eq <font color=#035103>&quot;&quot;</font> || [<b><font color=#923B23>catch</font></b> {<b><font color=#923B23>set</font></b> pos2 [<font color=#4A181B>$txt</font> index <font color=#4A181B>$ar2</font>]}]} {
+        <b><font color=#923B23>set</font></b> pos2 <font color=#4A181B>$posins</font>
+      }
+    }
+  }
+  <b><font color=#923B23>after</font></b> idle <font color=#035103>&quot;::hl_tcl::my::CoroRun <font color=#4A181B>$</font>txt <font color=#4A181B>$</font>pos1 <font color=#4A181B>$</font>pos2 <font color=#4A181B>$</font>args&quot;</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::NotEscaped'>NotEscaped</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -1430,8 +1592,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>i</code></code></td><td class='ruff_defitem'>the character's position in 'line'</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns &quot;1&quot; if the character not escaped.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_23' href="javascript:toggleSource('23')">Show source</a></p>
-<div id='23' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::NotEscaped {line i} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_26' href="javascript:toggleSource('26')">Show source</a></p>
+<div id='26' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::NotEscaped {line i} {
 
   <i><font color=#646464># Checks if a character escaped in a line.</font></i>
   <i><font color=#646464>#   line - line</font></i>
@@ -1456,8 +1618,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>from</code></code></td><td class='ruff_defitem'>starting index</td></tr>
 <tr><td class='ruff_defitem'><code><code>to</code></code></td><td class='ruff_defitem'>ending index</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_24' href="javascript:toggleSource('24')">Show source</a></p>
-<div id='24' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::RemoveTags {txt from to} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_27' href="javascript:toggleSource('27')">Show source</a></p>
+<div id='27' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::RemoveTags {txt from to} {
 
   <i><font color=#646464># Removes tags in text.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1478,8 +1640,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>l1</code></code></td><td class='ruff_defitem'>the position to find</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a found range's index of -1 if not found.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_25' href="javascript:toggleSource('25')">Show source</a></p>
-<div id='25' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::SearchTag {tagpos l1} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_28' href="javascript:toggleSource('28')">Show source</a></p>
+<div id='28' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::SearchTag {tagpos l1} {
 
   <i><font color=#646464># Searches a position in tag ranges.</font></i>
   <i><font color=#646464>#   tagpos - tag position ranges</font></i>
@@ -1501,8 +1663,8 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>text widget's path</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_26' href="javascript:toggleSource('26')">Show source</a></p>
-<div id='26' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::ShowCurrentLine {txt} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_29' href="javascript:toggleSource('29')">Show source</a></p>
+<div id='29' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::ShowCurrentLine {txt} {
 
   <i><font color=#646464># Shows the current line.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1515,13 +1677,14 @@ padding: 0%;
   <b><font color=#A106A1>return</font></b> <font color=#4A181B>$ln</font>
 }<br><br></code></pre></div>
 </div></div></div><div class='yui-b navbox' ><h1><a href='#::hl_tcl'>hl_tcl</a></h1><h2><a href='#::hl_tcl-Some of blah-blah'>Some of blah-blah</a></h2><h2><a href='#::hl_tcl-Some of editors'>Some of editors</a></h2><h2><a href='#::hl_tcl-What can we do?'>What can we do?</a></h2><h2><a href='#::hl_tcl-Use for text widget'>Use for text widget</a></h2><h2><a href='#::hl_tcl-Use for static html'>Use for static html</a></h2><h2><a href='#::hl_tcl-Links'>Links</a></h2><h2><a href='#::hl_tcl-Commands'>Commands</a></h2><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_all'>hl_all</a><span class='tooltiptext'>Updates (&quot;rehighlights&quot;) all highlighted and existing text widgets.
+</span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_colors'>hl_colors</a><span class='tooltiptext'>Gets the main colors for highlighting (except for &quot;curr.line&quot;).
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_init'>hl_init</a><span class='tooltiptext'>Initializes highlighting.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_readonly'>hl_readonly</a><span class='tooltiptext'>Makes the text widget be readonly or gets its 'read-only' state.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_text'>hl_text</a><span class='tooltiptext'>Highlights Tcl code of a text widget.
 </span></h4><h1><a href='#::hl_tcl::my'>hl_tcl::my</a></h1><h2><a href='#::hl_tcl::my-Commands'>Commands</a></h2><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::AuxEnding'>AuxEnding</a><span class='tooltiptext'>Auxiliary procedure to process the ending comments in the line.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::CoroHighlightAll'>CoroHighlightAll</a><span class='tooltiptext'>Highlights all of a text as a coroutine.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::CoroModified'>CoroModified</a><span class='tooltiptext'>Handles modifications of text.
-</span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::CountChar'>CountChar</a><span class='tooltiptext'>Counts a character in a string.
+</span></h4><h4><a href='hl_tcl.html#::hl_tcl::my::CoroRun'>CoroRun</a></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::CountChar'>CountChar</a><span class='tooltiptext'>Counts a character in a string.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::CountChar2'>CountChar2</a><span class='tooltiptext'>Counts a character in a string.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::CountQSH'>CountQSH</a><span class='tooltiptext'>Counts quotes, slashes, hashes in a line
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::FirstQtd'>FirstQtd</a><span class='tooltiptext'>Searches the quote characters in line.
@@ -1534,6 +1697,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::LineState'>LineState</a><span class='tooltiptext'>Gets an initial state of line.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::MatchedBrackets'>MatchedBrackets</a><span class='tooltiptext'>Finds a match of characters (dchar for schar).
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::MemPos'>MemPos</a><span class='tooltiptext'>Remembers the state of current line.
+</span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::MemPos1'>MemPos1</a><span class='tooltiptext'>Checks and sets the cursor's width, depending on its position.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::MergePosList'>MergePosList</a><span class='tooltiptext'>Merges lists of numbers that are not-coinciding and sorted.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::Modified'>Modified</a><span class='tooltiptext'>Handles modifications of text.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::NotEscaped'>NotEscaped</a><span class='tooltiptext'>Checks if a character escaped in a line.
