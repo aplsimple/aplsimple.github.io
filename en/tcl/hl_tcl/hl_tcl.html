@@ -781,18 +781,20 @@ padding: 0%;
   <i><font color=#646464># See also: HighlightAll</font></i>
 
   <b><font color=#923B23>variable</font></b> data
-  <b><font color=#923B23>if</font></b> {!<font color=#4A181B>$data(PLAINTEXT</font>,<font color=#4A181B>$txt)</font>} {
-    <b><font color=#923B23>set</font></b> tlen [<b><font color=#923B23>lindex</font></b> [<b><font color=#923B23>split</font></b> [<font color=#4A181B>$txt</font> index end] .] 0]
-    RemoveTags <font color=#4A181B>$txt</font> 1.0 end
-    <b><font color=#923B23>set</font></b> maxl [<b><font color=#923B23>expr</font></b> {min(<font color=#4A181B>$::hl_tcl::my::data(SEEN</font>,<font color=#4A181B>$txt)</font>,<font color=#4A181B>$tlen)</font>}]
-    <b><font color=#923B23>set</font></b> maxl [<b><font color=#923B23>expr</font></b> {min(<font color=#4A181B>$::hl_tcl::my::data(SEEN</font>,<font color=#4A181B>$txt)</font>,<font color=#4A181B>$tlen)</font>}]
-    <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> currQtd [<b><font color=#923B23>set</font></b> ln [<b><font color=#923B23>set</font></b> lnseen 0]]} {<font color=#4A181B>$ln</font>&lt;=<font color=#4A181B>$tlen</font>} {} {
-      <b><font color=#923B23>set</font></b> currQtd [HighlightLine <font color=#4A181B>$txt</font> <font color=#4A181B>$ln</font> <font color=#4A181B>$currQtd</font>]
-      <b><font color=#923B23>incr</font></b> ln
-      <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>incr</font></b> lnseen]&gt;<font color=#4A181B>$::hl_tcl::my::data(SEEN</font>,<font color=#4A181B>$txt)</font>} {
-        <b><font color=#923B23>set</font></b> lnseen 0
-        <b><font color=#923B23>after</font></b> idle after 1 [<b><font color=#923B23>info</font></b> coroutine]
-        <b><font color=#A106A1>yield</font></b>
+  <b><font color=#923B23>catch</font></b> {  ;<i><font color=#646464># $txt may be destroyed, so catch this</font></i>
+    <b><font color=#923B23>if</font></b> {!<font color=#4A181B>$data(PLAINTEXT</font>,<font color=#4A181B>$txt)</font>} {
+      <b><font color=#923B23>set</font></b> tlen [<b><font color=#923B23>lindex</font></b> [<b><font color=#923B23>split</font></b> [<font color=#4A181B>$txt</font> index end] .] 0]
+      RemoveTags <font color=#4A181B>$txt</font> 1.0 end
+      <b><font color=#923B23>set</font></b> maxl [<b><font color=#923B23>expr</font></b> {min(<font color=#4A181B>$::hl_tcl::my::data(SEEN</font>,<font color=#4A181B>$txt)</font>,<font color=#4A181B>$tlen)</font>}]
+      <b><font color=#923B23>set</font></b> maxl [<b><font color=#923B23>expr</font></b> {min(<font color=#4A181B>$::hl_tcl::my::data(SEEN</font>,<font color=#4A181B>$txt)</font>,<font color=#4A181B>$tlen)</font>}]
+      <b><font color=#923B23>for</font></b> {<b><font color=#923B23>set</font></b> currQtd [<b><font color=#923B23>set</font></b> ln [<b><font color=#923B23>set</font></b> lnseen 0]]} {<font color=#4A181B>$ln</font>&lt;=<font color=#4A181B>$tlen</font>} {} {
+        <b><font color=#923B23>set</font></b> currQtd [HighlightLine <font color=#4A181B>$txt</font> <font color=#4A181B>$ln</font> <font color=#4A181B>$currQtd</font>]
+        <b><font color=#923B23>incr</font></b> ln
+        <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>incr</font></b> lnseen]&gt;<font color=#4A181B>$::hl_tcl::my::data(SEEN</font>,<font color=#4A181B>$txt)</font>} {
+          <b><font color=#923B23>set</font></b> lnseen 0
+          <b><font color=#923B23>after</font></b> idle after 1 [<b><font color=#923B23>info</font></b> coroutine]
+          <b><font color=#A106A1>yield</font></b>
+        }
       }
     }
   }
@@ -1610,11 +1612,7 @@ padding: 0%;
   }
   <b><font color=#923B23>switch</font></b> <font color=#4A181B>$oper</font> {
     insert {
-      <b><font color=#923B23>set</font></b> nl [<b><font color=#923B23>expr</font></b> {[<b><font color=#923B23>llength</font></b> [<b><font color=#923B23>split</font></b> <font color=#4A181B>$ar2</font> \n]] - 1}]
-      <b><font color=#923B23>set</font></b> pos2 [<font color=#4A181B>$txt</font> index <font color=#035103>&quot;<font color=#4A181B>$</font>pos1 +<font color=#4A181B>$</font>nl lines&quot;</font>]
-      <b><font color=#923B23>if</font></b> {(<font color=#4A181B>$pos1</font>+<font color=#4A181B>$nl)</font>&gt;<font color=#4A181B>$pos2</font>} {
-        <b><font color=#923B23>set</font></b> pos1 [<b><font color=#923B23>expr</font></b> {1.0*int(max(1,abs(<font color=#4A181B>$pos2</font>-<font color=#4A181B>$nl)))</font>}]
-      }
+      <b><font color=#923B23>set</font></b> pos2 [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$pos1</font> + [<b><font color=#923B23>llength</font></b> [<b><font color=#923B23>split</font></b> <font color=#4A181B>$ar2</font> \n]]}]
     }
     delete {
       <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ar2</font> eq <font color=#035103>&quot;&quot;</font> || [<b><font color=#923B23>catch</font></b> {<b><font color=#923B23>set</font></b> pos2 [<font color=#4A181B>$txt</font> index <font color=#4A181B>$ar2</font>]}]} {
