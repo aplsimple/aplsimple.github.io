@@ -391,8 +391,9 @@ padding: 0%;
   <b><font color=#923B23>close</font></b> <font color=#4A181B>$chan</font>
   <b><font color=#923B23>set</font></b> ::transpops::my::imsgs 0
   <b><font color=#923B23>foreach</font></b> w <font color=#4A181B>$win</font> {
+    <b><font color=#923B23>set</font></b> ei 0
     <b><font color=#923B23>foreach</font></b> ev <font color=#4A181B>$events</font> {
-      <b><font color=#923B23>after</font></b> 100 [<b><font color=#923B23>list</font></b> ::transpops::my::Run <font color=#4A181B>$w</font> <font color=#4A181B>$ev</font> [<b><font color=#923B23>list</font></b> ::transpops::my::Show <font color=#4A181B>$w</font> [<b><font color=#923B23>incr</font></b> evnnn]]]
+      <b><font color=#923B23>after</font></b> 300 [<b><font color=#923B23>list</font></b> ::transpops::my::Run <font color=#4A181B>$w</font> <font color=#4A181B>$ev</font> [<b><font color=#923B23>list</font></b> ::transpops::my::Show <font color=#4A181B>$w</font> [<b><font color=#923B23>incr</font></b> ei]]]
     }
   }
 }<br><br></code></pre></div>
@@ -487,9 +488,15 @@ padding: 0%;
   <b><font color=#923B23>variable</font></b> bg
   <b><font color=#923B23>set</font></b> wmsgs [<b><font color=#923B23>string</font></b> trimright <font color=#4A181B>$win</font> .].transpops
   <b><font color=#923B23>catch</font></b> {<b><font color=#7A040E>destroy</font></b> <font color=#4A181B>$wmsgs</font>}
-  <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>incr</font></b> imsgs]&gt;=[<b><font color=#923B23>llength</font></b> <font color=#4A181B>$msgs</font>]} <b><font color=#A106A1>return</font></b>
-  <b><font color=#923B23>set</font></b> msg [<b><font color=#923B23>string</font></b> map {\\n \n} [<b><font color=#923B23>lindex</font></b> <font color=#4A181B>$msgs</font> <font color=#4A181B>$imsgs</font>-1]]
-  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$msg</font> eq <font color=#035103>&quot;&quot;</font>} {<b><font color=#923B23>set</font></b> imsgs 99999999; <b><font color=#A106A1>return</font></b>}
+  <b><font color=#923B23>while</font></b> {1} {
+    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>incr</font></b> imsgs]&gt;=[<b><font color=#923B23>llength</font></b> <font color=#4A181B>$msgs</font>]} <b><font color=#A106A1>return</font></b>
+    <b><font color=#923B23>set</font></b> msg [<b><font color=#923B23>string</font></b> map {\\n \n} [<b><font color=#923B23>lindex</font></b> <font color=#4A181B>$msgs</font> <font color=#4A181B>$imsgs</font>-1]]
+    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>string</font></b> index <font color=#4A181B>$msg</font> 0] ni {{} {#}}} <b><font color=#923B23>break</font></b>
+  }
+  <b><font color=#923B23>catch</font></b> {
+    <i><font color=#646464># when used within apave theme, disable theming transpops</font></i>
+    ::apave::obj untouchWidgets *.transpops*
+  }
   <b><font color=#7A040E>toplevel</font></b> <font color=#4A181B>$wmsgs</font>
   <b><font color=#7A040E>wm</font></b> withdraw <font color=#4A181B>$wmsgs</font>
   <b><font color=#7A040E>wm</font></b> overrideredirect <font color=#4A181B>$wmsgs</font> 1
@@ -506,9 +513,9 @@ padding: 0%;
       ::apave::obj makeLabelLinked <font color=#4A181B>$wmsgs</font>.l  <font color=#035103>&quot;::apave::openDoc <font color=#4A181B>$</font>msg@@<font color=#4A181B>$</font>msg@@&quot;</font> <font color=#4A181B>$fg</font> <font color=#4A181B>$bg</font> <font color=#4A181B>$fg</font> yellow
     }
   }
-  <b><font color=#923B23>set</font></b> x [<b><font color=#923B23>expr</font></b> {[<b><font color=#7A040E>winfo</font></b> pointerx .]+10}]
-  <b><font color=#923B23>set</font></b> y [<b><font color=#923B23>expr</font></b> {[<b><font color=#7A040E>winfo</font></b> pointery .]+10}]
-  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$geom</font> eq <font color=#035103>&quot;&quot;</font> || <font color=#4A181B>$evn</font>==2} {<b><font color=#923B23>set</font></b> geom +<font color=#4A181B>$x</font>+<font color=#4A181B>$y</font>}
+  <b><font color=#923B23>set</font></b> x [<b><font color=#923B23>expr</font></b> {[<b><font color=#7A040E>winfo</font></b> pointerx <font color=#4A181B>$win</font>]+10}]
+  <b><font color=#923B23>set</font></b> y [<b><font color=#923B23>expr</font></b> {[<b><font color=#7A040E>winfo</font></b> pointery <font color=#4A181B>$win</font>]+10}]
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$geom</font> eq {} || <font color=#4A181B>$evn</font>==2} {<b><font color=#923B23>set</font></b> geom +<font color=#4A181B>$x</font>+<font color=#4A181B>$y</font>}
   <b><font color=#7A040E>wm</font></b> geometry <font color=#4A181B>$wmsgs</font> <font color=#4A181B>$geom</font>
   <b><font color=#923B23>after</font></b> 10 <font color=#035103>&quot;wm deiconify <font color=#4A181B>$</font>wmsgs; wm attributes <font color=#4A181B>$</font>wmsgs -alpha 0.0 -topmost 1&quot;</font>
   <b><font color=#923B23>after</font></b> 15 <font color=#035103>&quot;::transpops::my::Popup <font color=#4A181B>{$</font>msg<font color=#4A181B>}</font>&quot;</font>
