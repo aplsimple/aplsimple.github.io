@@ -527,20 +527,27 @@ padding: 0%;
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::hl_colors'>hl_colors</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl" title="::hl_tcl" class='ruff_cmd'>::hl_tcl</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl'>hl_tcl</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
-<p class='ruff'>Gets the main colors for highlighting (except for &quot;curr.line&quot;).</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>hl_colors</span> <span class='ruff_arg'>txt ?dark?</span></div>
+<p class='ruff'>Gets/sets the main colors for highlighting (except for &quot;curr.line&quot;).</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>hl_colors</span> <span class='ruff_arg'>txt ?dark? ?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>text widget's path</td></tr>
-<tr><td class='ruff_defitem'><code><code>dark</code></code></td><td class='ruff_defitem'>Not documented; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>dark</code></code></td><td class='ruff_defitem'>flag &quot;dark scheme&quot; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>a list of colors to set for <em>txt</em></td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a list of colors for COM COMTK STR VAR CMN PROC OPT BRAC  or, if the colors aren't initialized, &quot;standard&quot; colors.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_3' href="javascript:toggleSource('3')">Show source</a></p>
-<div id='3' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::hl_colors {txt {dark {}}} {
+<div id='3' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::hl_colors {txt {dark {}} args} {
 
-  <i><font color=#646464># Gets the main colors for highlighting (except for &quot;curr.line&quot;).</font></i>
+  <i><font color=#646464># Gets/sets the main colors for highlighting (except for &quot;curr.line&quot;).</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
+  <i><font color=#646464>#   dark - flag &quot;dark scheme&quot;</font></i>
+  <i><font color=#646464>#   args - a list of colors to set for *txt*</font></i>
   <i><font color=#646464># Returns a list of colors for COM COMTK STR VAR CMN PROC OPT BRAC  or, if the colors aren't initialized, &quot;standard&quot; colors.</font></i>
 
+  <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>llength</font></b> <font color=#4A181B>$args</font>]} {
+    <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(COLORS,<font color=#4A181B>$txt)</font> <font color=#4A181B>$args</font>
+    <b><font color=#A106A1>return</font></b>
+  }
   <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> exists ::hl_tcl::my::data(COLORS,<font color=#4A181B>$txt)</font>]}  {
     <b><font color=#A106A1>return</font></b> <font color=#4A181B>$::hl_tcl::my::data(COLORS</font>,<font color=#4A181B>$txt)</font>
   }
@@ -937,7 +944,9 @@ padding: 0%;
 
   <b><font color=#923B23>variable</font></b> data
   <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exist data(REG_TXT,<font color=#4A181B>$txt)</font>] || <font color=#4A181B>$data(REG_TXT</font>,<font color=#4A181B>$txt)</font> eq {} ||  ![<b><font color=#923B23>info</font></b> exist data(CUR_LEN,<font color=#4A181B>$txt)</font>]} {
-    <b><font color=#A106A1>return</font></b>  ;<i><font color=#646464># skip changes till the highlighting done</font></i>
+    <i><font color=#646464># skip changes till the highlighting done</font></i>
+    <b><font color=#923B23>after</font></b> 10 [<b><font color=#923B23>list</font></b> ::hl_tcl::my::RunCoroAfterIdle <font color=#4A181B>$txt</font> <font color=#4A181B>$pos1</font> <font color=#4A181B>$pos2</font> yes {*}<font color=#4A181B>$args</font>]
+    <b><font color=#A106A1>return</font></b>
   }
   <i><font color=#646464># let them work one by one</font></i>
   <b><font color=#923B23>set</font></b> i1 [<b><font color=#923B23>expr</font></b> {int(<font color=#4A181B>$pos1)</font>}]
@@ -1658,7 +1667,7 @@ padding: 0%;
       }
     }
   }
-  <b><font color=#923B23>after</font></b> idle <font color=#035103>&quot;::hl_tcl::my::CoroRun <font color=#4A181B>$</font>txt <font color=#4A181B>$</font>pos1 <font color=#4A181B>$</font>pos2 <font color=#4A181B>$</font>args&quot;</font>
+  RunCoroAfterIdle <font color=#4A181B>$txt</font> <font color=#4A181B>$pos1</font> <font color=#4A181B>$pos2</font> no {*}<font color=#4A181B>$args</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::NotEscaped'>NotEscaped</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -1708,6 +1717,34 @@ padding: 0%;
   }
   <b><font color=#A106A1>return</font></b>
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::RunCoroAfterIdle'>RunCoroAfterIdle</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Runs a &quot;modified&quot; corotine after idle.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>RunCoroAfterIdle</span> <span class='ruff_arg'>txt pos1 pos2 wait ?args?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
+<tr><td class='ruff_defitem'><code><code>pos1</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
+<tr><td class='ruff_defitem'><code><code>pos2</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
+<tr><td class='ruff_defitem'><code><code>wait</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>Optional arguments.</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_30' href="javascript:toggleSource('30')">Show source</a></p>
+<div id='30' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::RunCoroAfterIdle {txt pos1 pos2 wait args} {
+
+  <i><font color=#646464># Runs a &quot;modified&quot; corotine after idle.</font></i>
+
+  <b><font color=#923B23>variable</font></b> data
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$wait</font>} {
+    <b><font color=#923B23>catch</font></b> {
+      <b><font color=#923B23>after</font></b> cancel <font color=#4A181B>$data(COROAFTER</font>,<font color=#4A181B>$txt)</font>
+      <b><font color=#923B23>if</font></b> {<font color=#4A181B>$data(COROPOS1</font>,<font color=#4A181B>$txt)</font> &lt; <font color=#4A181B>$pos1</font>} {<b><font color=#923B23>set</font></b> pos1 <font color=#4A181B>$data(COROPOS1</font>,<font color=#4A181B>$txt)</font>}
+      <b><font color=#923B23>if</font></b> {<font color=#4A181B>$data(COROPOS2</font>,<font color=#4A181B>$txt)</font> &gt; <font color=#4A181B>$pos2</font>} {<b><font color=#923B23>set</font></b> pos2 <font color=#4A181B>$data(COROPOS2</font>,<font color=#4A181B>$txt)</font>}
+    }
+    <b><font color=#923B23>set</font></b> data(COROPOS1,<font color=#4A181B>$txt)</font> <font color=#4A181B>$pos1</font>
+    <b><font color=#923B23>set</font></b> data(COROPOS2,<font color=#4A181B>$txt)</font> <font color=#4A181B>$pos2</font>
+  }
+  <b><font color=#923B23>set</font></b> data(COROAFTER,<font color=#4A181B>$txt)</font> [<b><font color=#923B23>after</font></b> idle <font color=#035103>&quot;::hl_tcl::my::CoroRun <font color=#4A181B>$</font>txt <font color=#4A181B>$</font>pos1 <font color=#4A181B>$</font>pos2 <font color=#4A181B>$</font>args&quot;</font>]
+}<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::SearchTag'>SearchTag</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Searches a position in tag ranges.</p>
@@ -1717,8 +1754,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>l1</code></code></td><td class='ruff_defitem'>the position to find</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a found range's index of -1 if not found.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_30' href="javascript:toggleSource('30')">Show source</a></p>
-<div id='30' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::SearchTag {tagpos l1} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_31' href="javascript:toggleSource('31')">Show source</a></p>
+<div id='31' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::SearchTag {tagpos l1} {
 
   <i><font color=#646464># Searches a position in tag ranges.</font></i>
   <i><font color=#646464>#   tagpos - tag position ranges</font></i>
@@ -1742,8 +1779,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>doit</code></code></td><td class='ruff_defitem'>if yes, forces updating current line's background; <i>optional, default</i> <code>no</code></td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a current position of cursor.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_31' href="javascript:toggleSource('31')">Show source</a></p>
-<div id='31' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::ShowCurrentLine {txt {doit no}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_32' href="javascript:toggleSource('32')">Show source</a></p>
+<div id='32' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::ShowCurrentLine {txt {doit no}} {
 
   <i><font color=#646464># Shows the current line.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1769,7 +1806,7 @@ padding: 0%;
 }<br><br></code></pre></div>
 </div></div></div><div class='yui-b navbox' ><h1><a href='#::hl_tcl'>hl_tcl</a></h1><h2><a href='#::hl_tcl-Some of blah-blah'>Some of blah-blah</a></h2><h2><a href='#::hl_tcl-Some of editors'>Some of editors</a></h2><h2><a href='#::hl_tcl-What can we do?'>What can we do?</a></h2><h2><a href='#::hl_tcl-Use for text widget'>Use for text widget</a></h2><h2><a href='#::hl_tcl-Use for static html'>Use for static html</a></h2><h2><a href='#::hl_tcl-Links'>Links</a></h2><h2><a href='#::hl_tcl-Commands'>Commands</a></h2><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_all'>hl_all</a><span class='tooltiptext'>Updates (&quot;rehighlights&quot;) all highlighted and existing text widgets.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_colorNames'>hl_colorNames</a><span class='tooltiptext'>Returns a list of color names for syntax highlighting.
-</span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_colors'>hl_colors</a><span class='tooltiptext'>Gets the main colors for highlighting (except for &quot;curr.line&quot;).
+</span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_colors'>hl_colors</a><span class='tooltiptext'>Gets/sets the main colors for highlighting (except for &quot;curr.line&quot;).
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_init'>hl_init</a><span class='tooltiptext'>Initializes highlighting.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_line'>hl_line</a><span class='tooltiptext'>Updates a current line's highlighting.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_readonly'>hl_readonly</a><span class='tooltiptext'>Makes the text widget be readonly or gets its 'read-only' state.
@@ -1795,6 +1832,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::Modified'>Modified</a><span class='tooltiptext'>Handles modifications of text.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::NotEscaped'>NotEscaped</a><span class='tooltiptext'>Checks if a character escaped in a line.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::RemoveTags'>RemoveTags</a><span class='tooltiptext'>Removes tags in text.
+</span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::RunCoroAfterIdle'>RunCoroAfterIdle</a><span class='tooltiptext'>Runs a &quot;modified&quot; corotine after idle.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::SearchTag'>SearchTag</a><span class='tooltiptext'>Searches a position in tag ranges.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::ShowCurrentLine'>ShowCurrentLine</a><span class='tooltiptext'>Shows the current line.
 </span></h4></div></div><div id='ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div></div>
