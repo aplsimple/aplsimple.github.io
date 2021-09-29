@@ -347,17 +347,17 @@ padding: 0%;
 <p class='ruff'><hr></p>
 <p class='ruff'>Runs this way:</p>
 <pre class='ruff'><br><code class="tcl"><b><font color=#923B23>package</font></b> require transpops
-::transpops::run transpops.txt {&lt;Control<font color=#463e11>-t</font>&gt; &lt;Alt<font color=#463e11>-t</font>&gt;} {.w1 .w2} ?fg? ?bg?
+::transpops::run transpops.txt {&lt;Alt<font color=#463e11>-t</font>&gt; &lt;Alt<font color=#463e11>-y</font>&gt;} {.w1 .w2} ?fg? ?bg?
 <br></code></pre>
 <p class='ruff'>where:</p>
 <ul class='ruff'>
 <li><em>transpops.txt</em> - name of <em>text file</em> containing messages</li>
-<li><em>Control-t</em> - <em>hotkey</em> event to start the pop-up of messages</li>
-<li><em>Alt-t</em> - <em>alternative hotkey</em> event to restart the pop-up of messages at new coordinates</li>
+<li><em>Alt-t</em> - <em>hotkey</em> event to start the pop-up of messages</li>
+<li><em>Alt-y</em> - <em>alternative hotkey</em> event to restart the pop-up of messages at new coordinates</li>
 <li><em>.w1 .w2</em> - list of toplevel windows the events are bound to</li>
 <li><em>fg, bg</em> - foreground and background colors</li>
 </ul>
-<p class='ruff'>Of course, those <code>&lt;Control-t&gt;</code> and <code>&lt;Alt-t&gt;</code> may be substituted with other events specific for the application.</p>
+<p class='ruff'>Of course, those <code>&lt;Alt-t&gt;</code> and <code>&lt;Alt-y&gt;</code> may be substituted with other events specific for the application.</p>
 <p class='ruff'><hr></p>
 <p class='ruff'>License: MIT.</p>
 <br><h2 class='ruff'><a name='::transpops-Commands'></a>Commands<span class='tinylink'><a href='transpops.html#::transpops'>transpops</a>, <a href='#top'>Top</a></span></h2>
@@ -387,7 +387,24 @@ padding: 0%;
   <b><font color=#923B23>set</font></b> ::transpops::my::bg <font color=#4A181B>$bg1</font>
   <b><font color=#923B23>set</font></b> chan [<b><font color=#923B23>open</font></b> <font color=#4A181B>$fname</font>]
   <b><font color=#923B23>chan</font></b> configure <font color=#4A181B>$chan</font> <font color=#463e11>-encoding</font> utf-8
-  <b><font color=#923B23>set</font></b> ::transpops::my::msgs [<b><font color=#923B23>split</font></b> [<b><font color=#923B23>read</font></b> <font color=#4A181B>$chan</font>] \n]
+  <b><font color=#923B23>set</font></b> ::transpops::my::msgs [<b><font color=#923B23>list</font></b>]
+  <b><font color=#923B23>set</font></b> merge no
+  <b><font color=#923B23>foreach</font></b> line [<b><font color=#923B23>split</font></b> [<b><font color=#923B23>read</font></b> <font color=#4A181B>$chan</font>] \n] {
+    <i><font color=#646464># if line has &quot;\&quot; at its end, it continues a message</font></i>
+    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>string</font></b> index <font color=#4A181B>$line</font> 0] eq {#}} <b><font color=#923B23>continue</font></b>
+    <b><font color=#923B23>set</font></b> line2 [<b><font color=#923B23>string</font></b> map {{ } {} - {} + {} / {} \\ {} * {} = {}} <font color=#4A181B>$line</font>]
+    <b><font color=#923B23>set</font></b> continued [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$line2</font> ne {} || <font color=#4A181B>$line</font> eq {}}]
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$continued</font>} {
+      <b><font color=#923B23>if</font></b> {<font color=#4A181B>$merge</font>} {
+        <b><font color=#923B23>set</font></b> last [<b><font color=#923B23>lindex</font></b> <font color=#4A181B>$::transpops::my::msgs</font> end]
+        <b><font color=#923B23>append</font></b> last \n <font color=#4A181B>$line</font>
+        <b><font color=#923B23>set</font></b> ::transpops::my::msgs [<b><font color=#923B23>lreplace</font></b> <font color=#4A181B>$::transpops::my::msgs</font> end end <font color=#4A181B>$last</font>]
+      } <b><font color=#923B23>else</font></b> {
+        <b><font color=#923B23>lappend</font></b> ::transpops::my::msgs <font color=#4A181B>$line</font>
+      }
+    }
+    <b><font color=#923B23>set</font></b> merge <font color=#4A181B>$continued</font>
+  }
   <b><font color=#923B23>close</font></b> <font color=#4A181B>$chan</font>
   <b><font color=#923B23>set</font></b> ::transpops::my::imsgs 0
   <b><font color=#923B23>foreach</font></b> w <font color=#4A181B>$win</font> {
@@ -489,9 +506,9 @@ padding: 0%;
   <b><font color=#923B23>set</font></b> wmsgs [<b><font color=#923B23>string</font></b> trimright <font color=#4A181B>$win</font> .].transpops
   <b><font color=#923B23>catch</font></b> {<b><font color=#7A040E>destroy</font></b> <font color=#4A181B>$wmsgs</font>}
   <b><font color=#923B23>while</font></b> {1} {
-    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>incr</font></b> imsgs]&gt;=[<b><font color=#923B23>llength</font></b> <font color=#4A181B>$msgs</font>]} <b><font color=#A106A1>return</font></b>
-    <b><font color=#923B23>set</font></b> msg [<b><font color=#923B23>string</font></b> map {\\n \n} [<b><font color=#923B23>lindex</font></b> <font color=#4A181B>$msgs</font> <font color=#4A181B>$imsgs</font>-1]]
-    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>string</font></b> index <font color=#4A181B>$msg</font> 0] ni {{} {#}}} <b><font color=#923B23>break</font></b>
+    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>incr</font></b> imsgs]&gt;[<b><font color=#923B23>llength</font></b> <font color=#4A181B>$msgs</font>]} <b><font color=#A106A1>return</font></b>
+    <b><font color=#923B23>set</font></b> msg [<b><font color=#923B23>string</font></b> trim [<b><font color=#923B23>lindex</font></b> <font color=#4A181B>$msgs</font> <font color=#4A181B>$imsgs</font>-1]]
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$msg</font> ne {}} <b><font color=#923B23>break</font></b>
   }
   <b><font color=#923B23>catch</font></b> {
     <i><font color=#646464># when used within apave theme, disable theming transpops</font></i>

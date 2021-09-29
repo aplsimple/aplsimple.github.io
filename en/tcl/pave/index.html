@@ -59,6 +59,7 @@
 <li class="level4"><div class="li"><a href="#linkdata">Link</a></div>
 <li class="level4"><div class="li"><a href="#gutter">Gutter</a></div>
 <li class="level4"><div class="li"><a href="#scfWid">Scrolled frame</a></div>
+<li class="level4"><div class="li"><a href="#swiWid">Switch</a></div>
 </ul>
 </li>
 <li class="level3"><div class="li"><a href="#OptAbbr">Option Abbreviations</a></div></li>
@@ -158,6 +159,7 @@ Along with <a href=#WidNames>standard widgets</a>, the mentioned <span class="cu
 <li class="level2"><div class="li"><a href="#linkdata">link</a></div></li>
 <li class="level2"><div class="li"><a href="#gutter">gutter</a></div></li>
 <li class="level2"><div class="li"><a href="#scfWid">scrolled frame</a></div></li>
+<li class="level2"><div class="li"><a href="#swiWid">switch</a></div></li>
 </ul>
 </p>
 
@@ -661,6 +663,7 @@ The <span class="curid"><a href="http://tcl.tk/man/tcl8.7/TkCmd/pack.htm" class=
 		<tr><td class="col0"> <em>spx*</em> </td><td class="col1"> ttk::spinbox </td><td class="col2">  </td><td class="col3">  </td></tr>
 		<tr><td class="col0"> <em>spX*</em> </td><td class="col1"> spinbox </td><td class="col2">  </td><td class="col3">  </td></tr>
 	  <tr>		<td class="col0"> <em>sta*</em> </td><td class="col1"> status bar </td><td class="col2">  </td><td class="col3"> See <a href=#staWid>its description</a> below.</td></tr>
+	  <tr>		<td class="col0"> <em>swi*</em> </td><td class="col1"> switch </td><td class="col2">  </td><td class="col3"> See <a href=#swiWid>its description</a> below.</td></tr>
 		<tr><td class="col0"> <em>tbl*</em> </td><td class="col1"> tablelist::tablelist </td><td class="col2"> -labelcommand tablelist::sortByColumn<br> -stretch all </td><td class="col3"> 
     An example of <em>tablelist </em> widget with <em>label</em> and <em>scrollbar</em> (from <a href="#test2_pave">test2_pave.tcl</a> of downloaded <a href="#download">pave.zip</a>):
 <pre class="code">{labtbl1 labBftx1 T 1 1 {<font color=#463e11>-st</font> e} {<font color=#463e11>-t</font> <font color=#035103>&quot;Tablelist widget:&quot;</font>}}
@@ -741,7 +744,7 @@ Some widget attributes are specific to <span class="curid"><a href="#" class="wi
 </div></li>
 <li class="level2"><div class="li"> <code>-lbxsel "value"</code> for the listbox, file listbox and tablelist widgets: sets a selection to a line beginning with "value"
 </div></li>
-<li class="level2"><div class="li"> <code>-tooltip "tip message"</code> for most of widgets
+<li class="level2"><div class="li"> <code>-tooltip/-tip "tip message"</code> set tips for most of widgets
   </div></li>
 <li class="level2"><div class="li"> <code>-traverse true</code> means that the notebook is traversed (due to <em>ttk::notebook::enableTraversal)</em>
   </div></li>
@@ -759,6 +762,10 @@ Some widget attributes are specific to <span class="curid"><a href="#" class="wi
   </div></li>
 <li class="level2"><div class="li"> <code>-timeout seconds</code> makes a timeout to be counted down before executing a button's command
   </div></li>
+<li class="level2"><div class="li"> <code>-columnoptions {column {option value...} ...}</code> sets a list of options for treeview (<em>tre</em>) columns
+  </div></li>
+<li class="level2"><div class="li"> <code>-selcombobox {command}</code> sets a command executed at selecting a combobox item</div></li>
+<li class="level2"><div class="li"> <code>-selborderwidth value</code> sets a border for text widget's selection</div></li>
 <li class="level2"><div class="li"> <code>-myown {command %w}</code> sets a command to be run after a creation of widget 
   </div></li>
 </ul>
@@ -814,6 +821,9 @@ where:
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<code>{Pick a file}</code> - a title of picker dialog
 </p>
 <p>
+Also, <code>-initialdir, -initialfile, -defaultextension, -multiple</code> options can be used.
+</p>
+<p>
 The F2 hotkey is provided to call the picker.
 </p>
 <p>
@@ -862,6 +872,9 @@ where:
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<code>{Pick a directory}</code> - a title of picker dialog
 </p>
 <p>
+Also, <code>-initialdir</code> option can be used.
+</p>
+<p>
 The F2 hotkey is provided to call the picker.
 </p>
 <p>
@@ -893,6 +906,18 @@ The widget is shown like this:
 <br>
 <img src="files/widgfon.png" class="media" alt="Font picker">
 </p>
+
+<p>
+The font picker can be run independently, with a command like this:
+<pre class="code">  <b><font color=#923B23>set</font></b> res [::apave::obj chooser fontChooser tvar {*}<font color=#4A181B>$args</font>]
+
+  where:
+    tvar - name of variable containing a font attributes
+    args - options of <em>tk fontchooser</em>
+    res - gets a font chosen or {}
+</pre>
+</p>
+
 </div>
 
 <br id=clrWid>
@@ -901,12 +926,13 @@ The widget is shown like this:
 <p>
 The <a href=#WidList>widget list</a> item for color picker is set as follows:
 <pre class="code">  {labclr1 - - - - {<font color=#463e11>-st</font> e} {<font color=#463e11>-t</font> <font color=#035103>&quot;Pick a color:&quot;</font>}}
-  {clr1 labclr1 L 1 1 {} {<font color=#463e11>-tvar</font> ::clr1 <font color=#463e11>-title</font> {Pick a color}}}
+  {clr1 labclr1 L 1 1 {} {<font color=#463e11>-tvar</font> ::clr1 <font color=#463e11>-showcolor</font> 0 <font color=#463e11>-title</font> {Pick a color}}}
 </pre>
 where:
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<code>labclr1</code> - a prompt
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<code>clr1</code> - an entry to get a color
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<code>::clr1</code> - a variable to store the color
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<code>-showcolor 0</code> - hides the color box
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<code>{Pick a color}</code> - a title of picker dialog
 </p>
 <p>
@@ -948,6 +974,16 @@ The widget is shown like this:
 <img src="files/widgdat.png" class="media" alt="Date picker">
 <br><br>and runs the following dialogue:<br>
 <img src="files/widgdat2.png" class="media" alt="Date picker">
+</p>
+<p>
+This dialogue can be run independently, with a command like this:
+<pre class="code">  <b><font color=#923B23>set</font></b> res [::apave::obj chooser dateChooser datevar <font color=#463e11>-parent</font> <font color=#4A181B>$win</font> <font color=#463e11>-dateformat</font> %D]
+
+  where:
+    datevar - variable name to set a date
+    win - parent window (to center the date picker inside it)
+    res - gets a date chosen or {}
+</pre>
 </p>
 See also <a href="../klnd/klnd.html" title="Klnd reference" rel="nofollow">Reference</a> of klnd package.
 </div>
@@ -1508,6 +1544,27 @@ The <em>scrolled frame</em> widget (containing labels and comboboxes) is shown l
 </p>
 </div>
 
+
+<br id=swiWid>
+<h3>Switch</h3>
+<div class="level4">
+<p>
+The <em>swi</em> widget provides a switch. This widget is the same as ttk::checkbutton, just having a different appearance. It is well used with rows of label-switch options.
+</p>
+<p>
+<b>Note</b>: the <em>switch</em> can be only used with azure, forest and sun-valley themes. With other themes it runs as ttk::checkbutton.
+</p>
+<p>
+The <a href="../alited/index.html">alited</a> editor uses switches in "Preferences" dialogue. You can <A href="https://chiselapp.com/user/aplsimple/repository/alited/download">download its code</A></li> to access the azure, forest and sun-valley themes (dark and light), with examples of usage (ini.tcl).
+</p>
+
+<p>
+The <em>switch</em> widget is shown like this:
+<br>
+<img src="files/widgswi.png" class="media" alt="scrolled frame">
+</p>
+</div>
+
 <p id=OptAbbr>
 <br>
 
@@ -1627,10 +1684,11 @@ For example:
 <br>  ...
 <br>  }
 <br>  ...
-<br>  pobj showModal .win -focus .win.lab1 -geometry +200+100 -onclose {::doClose}
+<br>  pobj showModal .win -focus .win.lab1 -geometry +200+100 -onclose ::doClose
 </em>
 <br>
-<br><b>Note:</b> <em>showModal</em> doesn't destroy the window. You have to do it yourself with a command <em>destroy .win</em> (or hide the window in order to show it afterwards). Also note that <em>-onclose {::doClose}</em> is a must if you want a window manager to close the window after clicking "X" button or pressing Alt+F4; at that <em>::doClose</em> procedure must have an argument meaning a variable name for <em>tkwait</em>: it should be changed somehow by <em>::doClose</em> to a value (generally, 0) which will be a result of <em>showModal</em>.
+<br><b>Note:</b> <em>showModal</em> doesn't destroy the window. You have to do it yourself with a command <em>destroy .win</em> (or hide the window in order to show it afterwards).
+<br><br>Also note that <em>-onclose ::doClose</em> is a must if you want to control  clicking "X" button or pressing Alt+F4; at that <em>::doClose</em> procedure must have an argument meaning a variable name for <em>tkwait</em>: it should be changed somehow by <em>::doClose</em> to a value (e.g. 0) which will be a result of <em>showModal</em>. Or given a response from a user, you don't change the variable so that the window remains open.
 </p>
 
 <br><p>4. <b>pobj res</b> is to get/set a result of variable that used for closing the window. The calling format:<br>
@@ -1689,12 +1747,44 @@ The theming facility is enabled with procedures and methods as follows.
 It is separated from APave in order to do without any theming, i.e. in a default Tk environment. In that case, you just don't call <code>apave::initWM</code>.
 </p>
 <p>Syntax:
-<pre class="code">  apave::initWM
+<pre class="code">  apave::initWM ?<font color=#463e11>-option</font> value...?
+
+  where <font color=#463e11>-option</font> may be:
+    <font color=#463e11>-theme</font>        - ttk theme (default, clam, alt etc.)
+    <font color=#463e11>-cursorwidth</font>  - cursor width
+    <font color=#463e11>-buttonwidth</font>  - button width
+    <font color=#463e11>-buttonborder</font> - button border
+    <font color=#463e11>-labelborder</font>  - label border
+    <font color=#463e11>-padding</font>      - padding for buttons and labels
 </pre>
 </p>
 
 <p>
-<b>2.</b> The <em>APave</em> constructor of object allows to set a (otherwise optional) <code>cs</code> color scheme. The <em>APaveDialog</em> and <em>APaveInput</em> constructors have "win" and "cs" arguments.
+<b>2.</b> The <em>csSet</em> method of object allows to set a <code>cs</code> color scheme for all widgets of a window and its descendants.
+</p>
+<p>Syntax:
+<pre class="code">  pobj csSet cs win
+
+  where:
+    cs - index of a color scheme
+    win - window's path (<font color=#035103>&quot;.&quot;</font> <b><font color=#923B23>if</font></b> omitted)
+</pre>
+</p>
+
+<p>
+<b>3.</b> The <em>csToned</em> makes a new color scheme that has tones (hues) of a <code>cs</code> color scheme. Then the colors of the new CS are applied to all widgets.
+</p>
+<p>Syntax:
+<pre class="code">  pobj csToned cs hue
+
+  where:
+    cs - index of a color scheme
+    hue - value of hue (-99 through 99, from dark to light)
+</pre>
+</p>
+
+<p>
+<b>4.</b> The <em>APave</em> constructor of object allows to set a (otherwise optional) <code>cs</code> color scheme. The <em>APaveDialog</em> and <em>APaveInput</em> constructors have "win" and "cs" arguments.
 </p>
 <p>Syntax:
 <pre class="code">  APave create pobj <font color=#4A181B>$cs</font>
@@ -1703,7 +1793,7 @@ It is separated from APave in order to do without any theming, i.e. in a default
 </pre>
 </p>
 <p>
-The color schemes (CS) are indexed from -1 to 47.
+The color schemes (CS) are indexed from -2 to 47. The -2 means "no CS". The -1 through 22 are light CS. The 23 through 47 are dark CS.
 </p>
 <p>
 The <code>-1</code> CS is very similar to the default Tk theme. Thus it isn't so much of theme and as such called "basic". Other CSs have their own names too.
@@ -1718,7 +1808,7 @@ Though each CS has its own pluses and minuses, CSs of <em>APave</em> are rather 
 </p>
 
 <p>
-<b>3. </b> If no <em>APave</em> CS can satisfy your taste, you can provide your own CS for <em>APave</em>.
+<b>5. </b> If no <em>APave</em> CS can satisfy your taste, you can provide your own CS for <em>APave</em>.
 </p>
 <p>
 For this, the <code>themeWindow</code> method is used. Syntax:
@@ -1771,7 +1861,7 @@ The last way is preferable. In this case you don't need to repeat the <em>pobj t
 </p>
 
 <p>
-<b>4. </b> If you want to get/set a default font size for your widgets, you can use the <code>basicFontSize</code> method. Syntax:
+<b>6. </b> If you want to get/set a default font size for your widgets, you can use the <code>basicFontSize</code> method. Syntax:
 <pre class="code">  <b><font color=#923B23>set</font></b> fs [pobj basicFontSize]  ;<i><font color=#646464># to get a current font size</font></i>
   pobj basicFontSize <font color=#4A181B>$fs</font>       ;<i><font color=#646464># to set a new font size</font></i>
 </pre>
@@ -1787,7 +1877,7 @@ You need not even create a <em>APave</em> object for this. Use <code>apave::pave
 </p>
 
 <p>
-<b>5. </b> There are also other procedures and methods of <em>APave</em> theming. They are described in <a href="apave.html">::apave reference</a>.
+<b>7. </b> There are also other procedures and methods of <em>APave</em> theming. They are described in <a href="apave.html">::apave reference</a>.
 </p>
 
 <p>
@@ -1920,8 +2010,33 @@ In ./tests directory of downloaded <a href="#download">pave.zip</a> there are al
 
 <br>
 <p>
-... and here is a video of it:<br>
-<A href="https://github.com/aplsimple/aplsimple.github.io/releases/download/demo_apave_v2.9.2/test2pave-292.mp4">Demo (31 Mb)</A>
+... and here is a few of its videos:<br>
+<ul>
+<li><A href="https://github.com/aplsimple/pave/releases/download/apave-3.2.7/apave.3.2.7.mp4">apave v3.2.7 - Overview</A></li>
+<li><A href="https://github.com/aplsimple/pave/releases/download/apave-dialogs.3.2.7/apave-dialogs.3.2.7.mp4">apave v3.2.7 - Dialogues</A></li>
+<li><A href="https://github.com/aplsimple/pave/releases/download/apave-links.3.2.7/apave-links.3.2.7.mp4">apave v3.2.7 - Links</A></li>
+<li><A href="https://github.com/aplsimple/pave/releases/download/apave-theming.3.4.5/apave-theming.3.4.5.mp4">apave v3.4.5 - Theming</A></li>
+</ul>
+</p>
+
+<br>
+<p>Probably, the most impressive usage of <a href="#" class="wikilink1" title="Table of Contents">apave</a></span> is presented by <a href="../alited/index.html">alited</a> editor. Below are its screenshots of English and localized variants:
+</p>
+
+<p>
+<img src="../alited/files/alited-en.png" class="media" alt="alited editor">
+</p>
+
+<p>
+<img src="../alited/files/alited-ru.png" class="media" alt="alited editor localized">
+</p>
+
+<br>
+<p>
+... and here are two videos, just to glance at it:<br>
+<A href="https://github.com/aplsimple/alited/releases/download/2.Units_alited-1.0.4/2.Units_alited-1.0.4.mp4">2. Units (alited's main point)</A>
+<br>
+<A href="https://github.com/aplsimple/alited/releases/download/6.Themes_alited-1.0.3/6.Themes_alited-1.0.3.mp4">6. Themes</A>
 </p>
 
 <p>
@@ -2601,11 +2716,15 @@ Contents">apave</a></span> stuff is available here:
 </li>
 </ul>
 
+<p>
+Demo videos:<br>
 <ul>
-<li class="level1"><div class="li"> 
-<A href="https://github.com/aplsimple/aplsimple.github.io/releases/download/demo_apave_v2.9.2/test2pave-292.mp4">demo (31 Mb)</A>
-</li>
+<li><A href="https://github.com/aplsimple/pave/releases/download/apave-3.2.7/apave.3.2.7.mp4">apave v3.2.7 - Overview</A></li>
+<li><A href="https://github.com/aplsimple/pave/releases/download/apave-dialogs.3.2.7/apave-dialogs.3.2.7.mp4">apave v3.2.7 - Dialogues</A></li>
+<li><A href="https://github.com/aplsimple/pave/releases/download/apave-links.3.2.7/apave-links.3.2.7.mp4">apave v3.2.7 - Links</A></li>
+<li><A href="https://github.com/aplsimple/pave/releases/download/apave-theming.3.4.5/apave-theming.3.4.5.mp4">apave v3.4.5 - Theming</A></li>
 </ul>
+</p>
 
 <p>
 Notice that <span class="curid"><a href="#" class="wikilink1" title="Table of Contents">apave</a></span> is still disposed to update.

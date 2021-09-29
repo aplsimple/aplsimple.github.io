@@ -882,15 +882,17 @@ padding: 0%;
   <b><font color=#923B23>set</font></b> ln2 [<b><font color=#923B23>set</font></b> lno2 [<b><font color=#923B23>expr</font></b> {min((<font color=#4A181B>$ln</font>+<font color=#4A181B>$dl)</font>,<font color=#4A181B>$endl)</font>}]]
   <b><font color=#923B23>lassign</font></b> [CountQSH <font color=#4A181B>$txt</font> <font color=#4A181B>$ln</font>] cntq cnts ccmnt
   <i><font color=#646464># flag &quot;highlight to the end&quot;:</font></i>
-  <b><font color=#923B23>set</font></b> bf1 [<b><font color=#923B23>expr</font></b> {abs(<font color=#4A181B>$ln<font color=#463e11></font>-int</font>(<font color=#4A181B>$data(CURPOS</font>,<font color=#4A181B>$txt)))</font>&gt;1 || <font color=#4A181B>$dl</font>&gt;1  || <font color=#4A181B>$cntq</font>!=<font color=#4A181B>$data(CNT_QUOTE</font>,<font color=#4A181B>$txt)</font>  || <font color=#4A181B>$cnts</font>!=<font color=#4A181B>$data(CNT_SLASH</font>,<font color=#4A181B>$txt)</font>  || <font color=#4A181B>$ccmnt</font>!=<font color=#4A181B>$data(CNT_COMMENT</font>,<font color=#4A181B>$txt)</font>}]
-  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$bf1</font> && !<font color=#4A181B>$data(MULTILINE</font>,<font color=#4A181B>$txt)</font>} {
+  <b><font color=#923B23>set</font></b> bf1 [<b><font color=#923B23>expr</font></b> {abs(<font color=#4A181B>$ln<font color=#463e11></font>-int</font>(<font color=#4A181B>$data(CURPOS</font>,<font color=#4A181B>$txt)))</font>&gt;1 || <font color=#4A181B>$dl</font>&gt;1  || <font color=#4A181B>$cntq</font>!=<font color=#4A181B>$data(CNT_QUOTE</font>,<font color=#4A181B>$txt)</font>  || <font color=#4A181B>$ccmnt</font>!=<font color=#4A181B>$data(CNT_COMMENT</font>,<font color=#4A181B>$txt)</font>}]
+  <b><font color=#923B23>set</font></b> bf2 [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$cnts</font>!=<font color=#4A181B>$data(CNT_SLASH</font>,<font color=#4A181B>$txt)</font>}]
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$bf1</font> && !<font color=#4A181B>$data(MULTILINE</font>,<font color=#4A181B>$txt)</font> || <font color=#4A181B>$bf2</font>} {
     <b><font color=#923B23>set</font></b> lnt1 <font color=#4A181B>$ln</font>
     <b><font color=#923B23>set</font></b> lnt2 [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$ln</font>+1}]
     <b><font color=#923B23>while</font></b> {<font color=#4A181B>$ln2</font>&lt;<font color=#4A181B>$endl</font> && <font color=#4A181B>$lnt1</font>&lt;<font color=#4A181B>$endl</font> && <font color=#4A181B>$lnt2</font>&lt;=<font color=#4A181B>$endl</font> && (  [<font color=#4A181B>$txt</font> get <font color=#035103>&quot;<font color=#4A181B>$</font>lnt1.end -1 char&quot;</font> <font color=#4A181B>$lnt1</font>.end] in {\\ \&quot;} ||
-    [<font color=#4A181B>$txt</font> get <font color=#035103>&quot;<font color=#4A181B>$</font>lnt2.end -1 char&quot;</font> <font color=#4A181B>$lnt2</font>.end] in {\\ \&quot;})} {
+    [<font color=#4A181B>$txt</font> get <font color=#035103>&quot;<font color=#4A181B>$</font>lnt2.end -1 char&quot;</font> <font color=#4A181B>$lnt2</font>.end] in {\\ \&quot;}) || <font color=#4A181B>$bf2</font>} {
       <b><font color=#923B23>incr</font></b> lnt1 ;<i><font color=#646464># next lines be handled too, if ended with &quot;\\&quot;</font></i>
       <b><font color=#923B23>incr</font></b> lnt2
       <b><font color=#923B23>incr</font></b> ln2
+      <b><font color=#923B23>set</font></b> bf2 0
     }
   }
   <b><font color=#923B23>set</font></b> tSTR [<font color=#4A181B>$txt</font> tag ranges tagSTR]
@@ -1167,15 +1169,20 @@ padding: 0%;
 
   <b><font color=#923B23>variable</font></b> data
   <font color=#4A181B>$txt</font> tag add tagSTD <font color=#035103>&quot;<font color=#4A181B>$</font>ln.<font color=#4A181B>$</font>pri&quot;</font> <font color=#035103>&quot;<font color=#4A181B>$</font>ln.<font color=#4A181B>$</font>i +1 chars&quot;</font>
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$pri</font>} {
+    <b><font color=#923B23>incr</font></b> pri -1
+    <b><font color=#923B23>set</font></b> RE <font color=#4A181B>$data(RE1)</font>
+  } <b><font color=#923B23>else</font></b> {
+    <b><font color=#923B23>set</font></b> RE <font color=#4A181B>$data(RE0)</font>
+  }
   <b><font color=#923B23>set</font></b> st [<b><font color=#923B23>string</font></b> range <font color=#4A181B>$line</font> <font color=#4A181B>$pri</font> <font color=#4A181B>$i</font>-1]
-  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$pri</font>} {<b><font color=#923B23>set</font></b> RE <font color=#4A181B>$data(RE1)</font>} {<b><font color=#923B23>set</font></b> RE <font color=#4A181B>$data(RE0)</font>}
   <b><font color=#923B23>set</font></b> lcom [<b><font color=#923B23>regexp</font></b> <font color=#463e11>-inline</font> <font color=#463e11>-all</font> <font color=#463e11>-indices</font> <font color=#4A181B>$RE</font> <font color=#4A181B>$st</font>]
   <i><font color=#646464># commands</font></i>
-  <b><font color=#923B23>foreach</font></b> {lc _ _} <font color=#4A181B>$lcom</font> {
+  <b><font color=#923B23>foreach</font></b> {- - lc -} <font color=#4A181B>$lcom</font> {
     <b><font color=#923B23>lassign</font></b> <font color=#4A181B>$lc</font> i1 i2
     <b><font color=#923B23>set</font></b> c [<b><font color=#923B23>string</font></b> trim [<b><font color=#923B23>string</font></b> range <font color=#4A181B>$st</font> <font color=#4A181B>$i1</font> <font color=#4A181B>$i2</font>] <font color=#035103>&quot;\{\}\[;\t &quot;</font>]
     <b><font color=#923B23>set</font></b> ik [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$i2</font>-<font color=#4A181B>$i1</font>+1-[<b><font color=#923B23>string</font></b> length <font color=#4A181B>$c</font>]}]
-    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$c</font> ne <font color=#035103>&quot;&quot;</font>} {
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$c</font> ne {}} {
       <b><font color=#923B23>incr</font></b> i1 <font color=#4A181B>$ik</font>
       <b><font color=#923B23>incr</font></b> i2
       <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>lsearch</font></b> <font color=#463e11>-exact</font> <font color=#463e11>-sorted</font> <font color=#4A181B>$data(CMD_TCL)</font> <font color=#4A181B>$c</font>]&gt;-1} {
@@ -1193,7 +1200,7 @@ padding: 0%;
   <b><font color=#923B23>set</font></b> cnt [CountChar <font color=#4A181B>$st</font> \$ dlist no]
   <b><font color=#923B23>foreach</font></b> dl <font color=#4A181B>$dlist</font> {
     <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>string</font></b> index <font color=#4A181B>$st</font> <font color=#4A181B>$dl</font>+1] eq <font color=#035103>&quot;\{&quot;</font>} {
-      <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> br2 [<b><font color=#923B23>string</font></b> first <font color=#035103>&quot;\}&quot;</font> <font color=#4A181B>$st</font> <font color=#4A181B>$dl</font>+2]]!=-1} {
+      <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> br2 [<b><font color=#923B23>string</font></b> first \} <font color=#4A181B>$st</font> <font color=#4A181B>$dl</font>+2]]!=-1} {
         <font color=#4A181B>$txt</font> tag add tagVAR <font color=#035103>&quot;<font color=#4A181B>$</font>ln.<font color=#4A181B>$</font>pri +<font color=#4A181B>$</font>dl char&quot;</font> <font color=#035103>&quot;<font color=#4A181B>$</font>ln.<font color=#4A181B>$</font>pri +<font color=#4A181B>[</font>incr br2<font color=#4A181B>]</font> char&quot;</font>
       }
       <b><font color=#923B23>continue</font></b>
