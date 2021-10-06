@@ -657,15 +657,14 @@ padding: 0%;
   <i><font color=#646464>#   txt - text's path</font></i>
 
   <b><font color=#923B23>if</font></b> {!<font color=#4A181B>$::hl_tcl::my::data(PLAINTEXT</font>,<font color=#4A181B>$txt)</font>} {
-    <b><font color=#923B23>set</font></b> ln [<b><font color=#923B23>expr</font></b> {int([<font color=#4A181B>$txt</font> index insert])}]
     <b><font color=#923B23>set</font></b> tSTR [<font color=#4A181B>$txt</font> tag ranges tagSTR]
     <b><font color=#923B23>set</font></b> tCMN [<font color=#4A181B>$txt</font> tag ranges tagCMN]
-    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ln</font>==1} {
-      <b><font color=#923B23>set</font></b> currQtd 0
-    } <b><font color=#923B23>else</font></b> {
-      <b><font color=#923B23>set</font></b> currQtd [::hl_tcl::my::LineState <font color=#4A181B>$txt</font> <font color=#4A181B>$tSTR</font> <font color=#4A181B>$tCMN</font> <font color=#035103>&quot;<font color=#4A181B>$</font>ln.0 -1 chars&quot;</font>]
-    }
-    ::hl_tcl::my::HighlightLine <font color=#4A181B>$txt</font> <font color=#4A181B>$ln</font> <font color=#4A181B>$currQtd</font>
+    <b><font color=#923B23>set</font></b> ln0 [<b><font color=#923B23>expr</font></b> {int([<font color=#4A181B>$txt</font> index insert])}]
+    <b><font color=#923B23>set</font></b> ln2 [<b><font color=#923B23>expr</font></b> {int([<font color=#4A181B>$txt</font> index end])}]
+    <b><font color=#923B23>set</font></b> ln1 [<b><font color=#923B23>expr</font></b> {max (1,<font color=#4A181B>$ln0</font>-1)}]
+    <b><font color=#923B23>set</font></b> ln2 [<b><font color=#923B23>expr</font></b> {min (<font color=#4A181B>$ln2</font>,<font color=#4A181B>$ln0</font>+1)}]
+    <i><font color=#646464># update lines: previous, current, next</font></i>
+    ::hl_tcl::my::RunCoroAfterIdle <font color=#4A181B>$txt</font> <font color=#4A181B>$ln1</font> <font color=#4A181B>$ln2</font> no
   }
   ::hl_tcl::my::MemPos <font color=#4A181B>$txt</font> yes
   <font color=#4A181B>$txt</font> configure <font color=#463e11>-insertwidth</font> <font color=#4A181B>$::hl_tcl::my::data(INSERTWIDTH</font>,<font color=#4A181B>$txt)</font>
@@ -698,21 +697,8 @@ padding: 0%;
   <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>info</font></b> commands <font color=#4A181B>$newcom</font>] eq <font color=#035103>&quot;&quot;</font>} {<b><font color=#923B23>rename</font></b> <font color=#4A181B>$txt</font> <font color=#4A181B>$newcom</font>}
   <b><font color=#923B23>set</font></b> com <font color=#035103>&quot;<font color=#4A181B>[</font>namespace current<font color=#4A181B>]</font>::my::Modified <font color=#4A181B>$</font>txt&quot;</font>
   <i><font color=#646464>#if {$com2 ne &quot;&quot;} {append com &quot; ; $com2&quot;}</font></i>
-  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ro</font>} {<b><font color=#A106A1>proc</font></b> ::<font color=#4A181B>$txt</font> {args} <font color=#035103>&quot;</font>
-<font color=#035103>    switch -exact -- \[lindex \$args 0\] \{</font>
-<font color=#035103>      insert \<font color=#4A181B>{$</font>com2\}</font>
-<font color=#035103>      delete \<font color=#4A181B>{$</font>com2\}</font>
-<font color=#035103>      replace \<font color=#4A181B>{$</font>com2\}</font>
-<font color=#035103>      default \{ return \[eval <font color=#4A181B>$</font>newcom \$args\] \}</font>
-<font color=#035103>    \}&quot;</font>
-  } <b><font color=#923B23>else</font></b> {<b><font color=#A106A1>proc</font></b> ::<font color=#4A181B>$txt</font> {args} <font color=#035103>&quot;</font>
-<font color=#035103>    switch -exact -- \[lindex \$args 0\] \{</font>
-<font color=#035103>      delete \<font color=#4A181B>{$</font>com <font color=#4A181B>{</font>*<font color=#4A181B>}</font>\$args\}</font>
-<font color=#035103>      insert \<font color=#4A181B>{$</font>com <font color=#4A181B>{</font>*<font color=#4A181B>}</font>\$args\}</font>
-<font color=#035103>      replace \<font color=#4A181B>{$</font>com <font color=#4A181B>{</font>*<font color=#4A181B>}</font>\$args\}</font>
-<font color=#035103>    \}</font>
-<font color=#035103>    set _res_ \[eval <font color=#4A181B>$</font>newcom \$args\]</font>
-<font color=#035103>    return \$_res_&quot;</font>
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ro</font>} {<b><font color=#A106A1>proc</font></b> ::<font color=#4A181B>$txt</font> {args} <font color=#035103>&quot;  switch -exact -- \[lindex \$args 0\] \{  insert \<font color=#4A181B>{$</font>com2\}  delete \<font color=#4A181B>{$</font>com2\}  replace \<font color=#4A181B>{$</font>com2\}  default \{ return \[eval <font color=#4A181B>$</font>newcom \$args\] \}  \}&quot;</font>
+  } <b><font color=#923B23>else</font></b> {<b><font color=#A106A1>proc</font></b> ::<font color=#4A181B>$txt</font> {args} <font color=#035103>&quot;  switch -exact -- \[lindex \$args 0\] \{  delete \<font color=#4A181B>{$</font>com <font color=#4A181B>{</font>*<font color=#4A181B>}</font>\$args\}  insert \<font color=#4A181B>{$</font>com <font color=#4A181B>{</font>*<font color=#4A181B>}</font>\$args\}  replace \<font color=#4A181B>{$</font>com <font color=#4A181B>{</font>*<font color=#4A181B>}</font>\$args\}  \} ;  set _res_ \[eval <font color=#4A181B>$</font>newcom \$args\] ;  return \$_res_&quot;</font>
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::hl_text'>hl_text</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl" title="::hl_tcl" class='ruff_cmd'>::hl_tcl</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl'>hl_tcl</a>, <a href='#top'>Top</a></span></h4>
@@ -1012,7 +998,7 @@ padding: 0%;
 
   <b><font color=#923B23>set</font></b> ln [<b><font color=#923B23>expr</font></b> {int(<font color=#4A181B>$ln)</font>}]
   <b><font color=#923B23>set</font></b> st [<font color=#4A181B>$txt</font> get <font color=#4A181B>$ln</font>.0 <font color=#4A181B>$ln</font>.end]
-  <b><font color=#A106A1>return</font></b> [<b><font color=#923B23>list</font></b> [CountChar <font color=#4A181B>$st</font> <font color=#035103>&quot;\&quot;&quot;</font>] [CountChar <font color=#4A181B>$st</font> <font color=#035103>&quot;\\&quot;</font>] [CountChar <font color=#4A181B>$st</font> #]]
+  <b><font color=#A106A1>return</font></b> [<b><font color=#923B23>list</font></b> [CountChar <font color=#4A181B>$st</font> \&quot;] [CountChar <font color=#4A181B>$st</font> \\] [CountChar <font color=#4A181B>$st</font> #]]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::Escaped'>Escaped</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -1118,24 +1104,23 @@ padding: 0%;
   <i><font color=#646464># Highlights matching brackets if any.</font></i>
   <i><font color=#646464>#   w - text widget's path</font></i>
 
+  <b><font color=#923B23>variable</font></b> data
   <b><font color=#923B23>set</font></b> curpos [ShowCurrentLine <font color=#4A181B>$w</font>]
   <b><font color=#923B23>set</font></b> curpos2 [<font color=#4A181B>$w</font> index {insert -1 chars}]
   <b><font color=#923B23>set</font></b> ch [<font color=#4A181B>$w</font> get <font color=#4A181B>$curpos</font>]
-  <b><font color=#923B23>set</font></b> lbr <font color=#035103>&quot;\{(\[&quot;</font>
-  <b><font color=#923B23>set</font></b> rbr <font color=#035103>&quot;\})\]&quot;</font>
-  <b><font color=#923B23>set</font></b> il [<b><font color=#923B23>string</font></b> first <font color=#4A181B>$ch</font> <font color=#4A181B>$lbr</font>]
-  <b><font color=#923B23>set</font></b> ir [<b><font color=#923B23>string</font></b> first <font color=#4A181B>$ch</font> <font color=#4A181B>$rbr</font>]
+  <b><font color=#923B23>set</font></b> il [<b><font color=#923B23>string</font></b> first <font color=#4A181B>$ch</font> <font color=#4A181B>$data(LBR)</font>]
+  <b><font color=#923B23>set</font></b> ir [<b><font color=#923B23>string</font></b> first <font color=#4A181B>$ch</font> <font color=#4A181B>$data(RBR)</font>]
   <b><font color=#923B23>set</font></b> txt [<b><font color=#923B23>split</font></b> [<font color=#4A181B>$w</font> get 1.0 end] \n]
   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$il</font>&gt;-1} {
-    <b><font color=#923B23>set</font></b> brcpos [MatchedBrackets <font color=#4A181B>$txt</font> <font color=#4A181B>$curpos</font>  [<b><font color=#923B23>string</font></b> index <font color=#4A181B>$lbr</font> <font color=#4A181B>$il</font>] [<b><font color=#923B23>string</font></b> index <font color=#4A181B>$rbr</font> <font color=#4A181B>$il</font>] 1]
+    <b><font color=#923B23>set</font></b> brcpos [MatchedBrackets <font color=#4A181B>$txt</font> <font color=#4A181B>$curpos</font>  [<b><font color=#923B23>string</font></b> index <font color=#4A181B>$data(LBR)</font> <font color=#4A181B>$il</font>] [<b><font color=#923B23>string</font></b> index <font color=#4A181B>$data(RBR)</font> <font color=#4A181B>$il</font>] 1]
   } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$ir</font>&gt;-1} {
-    <b><font color=#923B23>set</font></b> brcpos [MatchedBrackets <font color=#4A181B>$txt</font> <font color=#4A181B>$curpos</font>  [<b><font color=#923B23>string</font></b> index <font color=#4A181B>$rbr</font> <font color=#4A181B>$ir</font>] [<b><font color=#923B23>string</font></b> index <font color=#4A181B>$lbr</font> <font color=#4A181B>$ir</font>] -1]
-  } <b><font color=#923B23>elseif</font></b> {[<b><font color=#923B23>set</font></b> il [<b><font color=#923B23>string</font></b> first [<font color=#4A181B>$w</font> get <font color=#4A181B>$curpos2</font>] <font color=#4A181B>$lbr</font>]]&gt;-1} {
+    <b><font color=#923B23>set</font></b> brcpos [MatchedBrackets <font color=#4A181B>$txt</font> <font color=#4A181B>$curpos</font>  [<b><font color=#923B23>string</font></b> index <font color=#4A181B>$data(RBR)</font> <font color=#4A181B>$ir</font>] [<b><font color=#923B23>string</font></b> index <font color=#4A181B>$data(LBR)</font> <font color=#4A181B>$ir</font>] -1]
+  } <b><font color=#923B23>elseif</font></b> {[<b><font color=#923B23>set</font></b> il [<b><font color=#923B23>string</font></b> first [<font color=#4A181B>$w</font> get <font color=#4A181B>$curpos2</font>] <font color=#4A181B>$data(LBR)</font>]]&gt;-1} {
     <b><font color=#923B23>set</font></b> curpos <font color=#4A181B>$curpos2</font>
-    <b><font color=#923B23>set</font></b> brcpos [MatchedBrackets <font color=#4A181B>$txt</font> <font color=#4A181B>$curpos</font>  [<b><font color=#923B23>string</font></b> index <font color=#4A181B>$lbr</font> <font color=#4A181B>$il</font>] [<b><font color=#923B23>string</font></b> index <font color=#4A181B>$rbr</font> <font color=#4A181B>$il</font>] 1]
-  } <b><font color=#923B23>elseif</font></b> {[<b><font color=#923B23>set</font></b> ir [<b><font color=#923B23>string</font></b> first [<font color=#4A181B>$w</font> get <font color=#4A181B>$curpos2</font>] <font color=#4A181B>$rbr</font>]]&gt;-1} {
+    <b><font color=#923B23>set</font></b> brcpos [MatchedBrackets <font color=#4A181B>$txt</font> <font color=#4A181B>$curpos</font>  [<b><font color=#923B23>string</font></b> index <font color=#4A181B>$data(LBR)</font> <font color=#4A181B>$il</font>] [<b><font color=#923B23>string</font></b> index <font color=#4A181B>$data(RBR)</font> <font color=#4A181B>$il</font>] 1]
+  } <b><font color=#923B23>elseif</font></b> {[<b><font color=#923B23>set</font></b> ir [<b><font color=#923B23>string</font></b> first [<font color=#4A181B>$w</font> get <font color=#4A181B>$curpos2</font>] <font color=#4A181B>$data(RBR)</font>]]&gt;-1} {
     <b><font color=#923B23>set</font></b> curpos <font color=#4A181B>$curpos2</font>
-    <b><font color=#923B23>set</font></b> brcpos [MatchedBrackets <font color=#4A181B>$txt</font> <font color=#4A181B>$curpos</font>  [<b><font color=#923B23>string</font></b> index <font color=#4A181B>$rbr</font> <font color=#4A181B>$ir</font>] [<b><font color=#923B23>string</font></b> index <font color=#4A181B>$lbr</font> <font color=#4A181B>$ir</font>] -1]
+    <b><font color=#923B23>set</font></b> brcpos [MatchedBrackets <font color=#4A181B>$txt</font> <font color=#4A181B>$curpos</font>  [<b><font color=#923B23>string</font></b> index <font color=#4A181B>$data(RBR)</font> <font color=#4A181B>$ir</font>] [<b><font color=#923B23>string</font></b> index <font color=#4A181B>$data(LBR)</font> <font color=#4A181B>$ir</font>] -1]
   } <b><font color=#923B23>else</font></b> {
     <b><font color=#A106A1>return</font></b>
   }
@@ -1376,10 +1361,6 @@ padding: 0%;
   <b><font color=#923B23>incr</font></b> c2 -1 ;<i><font color=#646464># text ranges are not right-inclusive</font></i>
   <b><font color=#A106A1>return</font></b> [<b><font color=#923B23>expr</font></b> {  (<font color=#4A181B>$l</font>&gt;=<font color=#4A181B>$l1</font> && <font color=#4A181B>$l</font>&lt;<font color=#4A181B>$l2</font> && <font color=#4A181B>$c</font>&gt;=<font color=#4A181B>$c1)</font> || (<font color=#4A181B>$l</font>&gt;<font color=#4A181B>$l1</font> && <font color=#4A181B>$l</font>&lt;=<font color=#4A181B>$l2</font> && <font color=#4A181B>$c</font>&lt;=<font color=#4A181B>$c2)</font> ||
     (<font color=#4A181B>$l</font>==<font color=#4A181B>$l1</font> && <font color=#4A181B>$l1</font>==<font color=#4A181B>$l2</font> && <font color=#4A181B>$c</font>&gt;=<font color=#4A181B>$c1</font> && <font color=#4A181B>$c</font>&lt;=<font color=#4A181B>$c2)</font> || (<font color=#4A181B>$l</font>&gt;<font color=#4A181B>$l1</font> && <font color=#4A181B>$l</font>&lt;<font color=#4A181B>$l2)</font>}]
-  <i><font color=#646464>#set p [format &quot;%09d%09d&quot; $l $c]</font></i>
-  <i><font color=#646464>#set p1 [format &quot;%09d%09d&quot; $l1 $c1]</font></i>
-  <i><font color=#646464>#set p2 [format &quot;%09d%09d&quot; $l2 $c2]</font></i>
-  <i><font color=#646464>#return [expr {$p&gt;=$p1 && $p&lt;=$p2}]</font></i>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::LineState'>LineState</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -1423,7 +1404,7 @@ padding: 0%;
       <b><font color=#923B23>set</font></b> co1 [<b><font color=#923B23>set</font></b> co2 {}]
       <b><font color=#923B23>while</font></b> {<font color=#4A181B>$nl</font>&gt;1} {
         <b><font color=#923B23>incr</font></b> nl -1
-        <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> line [<font color=#4A181B>$txt</font> get <font color=#4A181B>$nl</font>.0 <font color=#4A181B>$nl</font>.end]] ne <font color=#035103>&quot;&quot;</font>} {
+        <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> line [<font color=#4A181B>$txt</font> get <font color=#4A181B>$nl</font>.0 <font color=#4A181B>$nl</font>.end]] ne {}} {
           <b><font color=#923B23>if</font></b> {<font color=#4A181B>$co2</font> eq {}} {
             <b><font color=#923B23>set</font></b> co2 [<font color=#4A181B>$txt</font> index <font color=#035103>&quot;<font color=#4A181B>$</font>nl.end -1 char&quot;</font>]
             <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>string</font></b> length <font color=#4A181B>$line</font>]&gt;1} {
@@ -1441,7 +1422,7 @@ padding: 0%;
       <b><font color=#923B23>set</font></b> ch [<font color=#4A181B>$txt</font> get <font color=#4A181B>$co2</font> <font color=#035103>&quot;<font color=#4A181B>$</font>co2 +1 chars&quot;</font>]
       <b><font color=#923B23>set</font></b> c [<b><font color=#923B23>lindex</font></b> [<b><font color=#923B23>split</font></b> [<font color=#4A181B>$txt</font> index <font color=#4A181B>$co2</font>] .] 1]
       <b><font color=#923B23>if</font></b> {![NotEscaped <font color=#4A181B>$line</font> <font color=#4A181B>$c</font>]} {<b><font color=#923B23>set</font></b> ch {}}
-      <b><font color=#A106A1>return</font></b> [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$ch</font>!=<font color=#035103>&quot;\&quot;&quot;</font> && <font color=#4A181B>$f2</font> || <font color=#4A181B>$ch</font>==<font color=#035103>&quot;\&quot;&quot;</font> && !<font color=#4A181B>$f1</font>}]
+      <b><font color=#A106A1>return</font></b> [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$ch</font> ne {&quot;} && <font color=#4A181B>$f2</font> || <font color=#4A181B>$ch</font> eq {&quot;} && !<font color=#4A181B>$f1</font>}]
     }
     <i><font color=#646464># is the end of line quoted?</font></i>
     <b><font color=#923B23>set</font></b> line {}
@@ -1456,7 +1437,7 @@ padding: 0%;
     <b><font color=#923B23>if</font></b> {![NotEscaped <font color=#4A181B>$line</font> <font color=#4A181B>$c</font>]} {<b><font color=#923B23>set</font></b> ch {}}
     <b><font color=#923B23>set</font></b> f1 [<b><font color=#923B23>expr</font></b> {[SearchTag <font color=#4A181B>$tSTR</font> [<font color=#4A181B>$txt</font> index <font color=#4A181B>$i1</font>]]!=-1}]
     <b><font color=#923B23>set</font></b> f2 [<b><font color=#923B23>expr</font></b> {[SearchTag <font color=#4A181B>$tSTR</font> [<font color=#4A181B>$txt</font> index <font color=#035103>&quot;<font color=#4A181B>$</font>i1 +1 chars&quot;</font>]]!=-1}]
-    <b><font color=#A106A1>return</font></b> [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$ch</font>!=<font color=#035103>&quot;\&quot;&quot;</font> && <font color=#4A181B>$f1</font> || <font color=#4A181B>$ch</font>==<font color=#035103>&quot;\&quot;&quot;</font> && !<font color=#4A181B>$f2</font>}]
+    <b><font color=#A106A1>return</font></b> [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$ch</font> ne {&quot;} && <font color=#4A181B>$f1</font> || <font color=#4A181B>$ch</font> eq {&quot;} && !<font color=#4A181B>$f2</font>}]
   }
   <b><font color=#A106A1>return</font></b> 0
 }<br><br></code></pre></div>
@@ -1562,7 +1543,7 @@ padding: 0%;
   <i><font color=#646464># This fixes an issue with text cursor: less width at 0th column.</font></i>
 
   <b><font color=#923B23>variable</font></b> data
-  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$K</font> eq <font color=#035103>&quot;Home&quot;</font> && [<b><font color=#923B23>string</font></b> is digit <font color=#463e11>-strict</font> <font color=#4A181B>$s</font>] &&  [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$s</font> & 4}]==0 && [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$s</font> & 1}]==0} {
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$K</font> eq {Home} && [<b><font color=#923B23>string</font></b> is digit <font color=#463e11>-strict</font> <font color=#4A181B>$s</font>] &&  [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$s</font> & 4}]==0 && [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$s</font> & 1}]==0} {
     <i><font color=#646464># Ctrl-Home & Shift-Home are passed</font></i>
     <b><font color=#923B23>set</font></b> p1 [<font color=#4A181B>$txt</font> index insert]
     <b><font color=#923B23>set</font></b> line [<font color=#4A181B>$txt</font> get <font color=#035103>&quot;<font color=#4A181B>$</font>p1 linestart&quot;</font> <font color=#035103>&quot;<font color=#4A181B>$</font>p1 lineend&quot;</font>]
@@ -1579,7 +1560,7 @@ padding: 0%;
   }
   <b><font color=#923B23>set</font></b> insLC [<font color=#4A181B>$txt</font> index insert]
   <b><font color=#923B23>lassign</font></b> [<b><font color=#923B23>split</font></b> <font color=#4A181B>$insLC</font> .] L C
-  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$data(_INSPOS_</font>,<font color=#4A181B>$txt)</font> eq <font color=#035103>&quot;&quot;</font>} {
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$data(_INSPOS_</font>,<font color=#4A181B>$txt)</font> eq {}} {
     <b><font color=#923B23>set</font></b> L2 [<b><font color=#923B23>set</font></b> C2 0]
   } <b><font color=#923B23>else</font></b> {
     <b><font color=#923B23>lassign</font></b> [<b><font color=#923B23>split</font></b> <font color=#4A181B>$data(_INSPOS_</font>,<font color=#4A181B>$txt)</font> .] L2 C2
