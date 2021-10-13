@@ -603,7 +603,8 @@ padding: 0%;
     <b><font color=#923B23>set</font></b> args [<b><font color=#923B23>lrange</font></b> <font color=#4A181B>$args</font> 1 end]
   }
   <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(REG_TXT,<font color=#4A181B>$txt)</font> {}  ;<i><font color=#646464># disables Modified at changing the text</font></i>
-  <b><font color=#923B23>foreach</font></b> {opt val} {<font color=#463e11>-dark</font> 0 <font color=#463e11>-readonly</font> 0 <font color=#463e11>-cmd</font> {} <font color=#463e11>-cmdpos</font> {} <font color=#463e11>-optRE</font> 1  <font color=#463e11>-multiline</font> 1 <font color=#463e11>-seen</font> 500 <font color=#463e11>-plaintext</font> no <font color=#463e11>-insertwidth</font> 2} {
+  <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(KEYWORDS,<font color=#4A181B>$txt)</font> {}
+  <b><font color=#923B23>foreach</font></b> {opt val} {<font color=#463e11>-dark</font> 0 <font color=#463e11>-readonly</font> 0 <font color=#463e11>-cmd</font> {} <font color=#463e11>-cmdpos</font> {} <font color=#463e11>-optRE</font> 1  <font color=#463e11>-multiline</font> 1 <font color=#463e11>-seen</font> 500 <font color=#463e11>-plaintext</font> no <font color=#463e11>-insertwidth</font> 2 <font color=#463e11>-keywords</font> {}} {
     <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>dict</font></b> exists <font color=#4A181B>$args</font> <font color=#4A181B>$opt</font>]} {
       <b><font color=#923B23>set</font></b> val [<b><font color=#923B23>dict</font></b> get <font color=#4A181B>$args</font> <font color=#4A181B>$opt</font>]
     } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$setonly</font>} {
@@ -611,6 +612,8 @@ padding: 0%;
     }
     <b><font color=#923B23>set</font></b> ::hl_tcl::my::data([<b><font color=#923B23>string</font></b> toupper [<b><font color=#923B23>string</font></b> range <font color=#4A181B>$opt</font> 1 end]],<font color=#4A181B>$txt)</font> <font color=#4A181B>$val</font>
   }
+  <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(CMD_TK_EXP) [<b><font color=#923B23>lsort</font></b> [<b><font color=#923B23>list</font></b>  {*}<font color=#4A181B>$::hl_tcl::my::data(CMD_TK)</font> {*}<font color=#4A181B>$::hl_tcl::my::data(KEYWORDS</font>,<font color=#4A181B>$txt)</font>]]
+  <b><font color=#923B23>unset</font></b> ::hl_tcl::my::data(KEYWORDS,<font color=#4A181B>$txt)</font>
   <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>dict</font></b> exists <font color=#4A181B>$args</font> <font color=#463e11>-colors</font>]} {
     <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(COLORS,<font color=#4A181B>$txt)</font> [<b><font color=#923B23>dict</font></b> get <font color=#4A181B>$args</font> <font color=#463e11>-colors</font>]
     <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(SETCOLORS,<font color=#4A181B>$txt)</font> 1
@@ -1174,7 +1177,7 @@ padding: 0%;
         <font color=#4A181B>$txt</font> tag add tagCOM <font color=#035103>&quot;<font color=#4A181B>$</font>ln.<font color=#4A181B>$</font>pri +<font color=#4A181B>$</font>i1 char&quot;</font> <font color=#035103>&quot;<font color=#4A181B>$</font>ln.<font color=#4A181B>$</font>pri +<font color=#4A181B>$</font>i2 char&quot;</font>
       } <b><font color=#923B23>elseif</font></b> {[<b><font color=#923B23>lsearch</font></b> <font color=#463e11>-exact</font> <font color=#463e11>-sorted</font> <font color=#4A181B>$data(PROC_TCL)</font> <font color=#4A181B>$c</font>]&gt;-1} {
         <font color=#4A181B>$txt</font> tag add tagPROC <font color=#035103>&quot;<font color=#4A181B>$</font>ln.<font color=#4A181B>$</font>pri +<font color=#4A181B>$</font>i1 char&quot;</font> <font color=#035103>&quot;<font color=#4A181B>$</font>ln.<font color=#4A181B>$</font>pri +<font color=#4A181B>$</font>i2 char&quot;</font>
-      } <b><font color=#923B23>elseif</font></b> {[<b><font color=#923B23>lsearch</font></b> <font color=#463e11>-exact</font> <font color=#463e11>-sorted</font> <font color=#4A181B>$data(CMD_TK)</font> <font color=#4A181B>$c</font>]&gt;-1} {
+      } <b><font color=#923B23>elseif</font></b> {[<b><font color=#923B23>lsearch</font></b> <font color=#463e11>-exact</font> <font color=#463e11>-sorted</font> <font color=#4A181B>$data(CMD_TK_EXP)</font> <font color=#4A181B>$c</font>]&gt;-1} {
         <font color=#4A181B>$txt</font> tag add tagCOMTK <font color=#035103>&quot;<font color=#4A181B>$</font>ln.<font color=#4A181B>$</font>pri +<font color=#4A181B>$</font>i1 char&quot;</font> <font color=#035103>&quot;<font color=#4A181B>$</font>ln.<font color=#4A181B>$</font>pri +<font color=#4A181B>$</font>i2 char&quot;</font>
       }
     }

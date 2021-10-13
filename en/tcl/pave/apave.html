@@ -2003,8 +2003,8 @@ padding: 0%;
     } <b><font color=#923B23>else</font></b> {
       <b><font color=#923B23>set</font></b> dn [<b><font color=#923B23>file</font></b> dirname <font color=#4A181B>$fn</font>]
       <b><font color=#923B23>set</font></b> fn [<b><font color=#923B23>file</font></b> tail <font color=#4A181B>$fn</font>]
-      <b><font color=#923B23>set</font></b> args [::apave::removeOptions <font color=#4A181B>$args</font> <font color=#463e11>-initialdir</font>]
     }
+    <b><font color=#923B23>set</font></b> dn [::apave::extractOptions args <font color=#463e11>-initialdir</font> <font color=#4A181B>$dn</font>]
     <b><font color=#923B23>set</font></b> args <font color=#035103>&quot;-initialfile \&quot;<font color=#4A181B>$</font>fn\&quot; -initialdir \&quot;<font color=#4A181B>$</font>dn\&quot; <font color=#4A181B>$</font>parent <font color=#4A181B>$</font>args&quot;</font>
     <b><font color=#923B23>incr</font></b> isfilename
   } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$nchooser</font> eq <font color=#035103>&quot;tk_chooseDirectory&quot;</font>} {
@@ -2880,7 +2880,7 @@ padding: 0%;
         <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>string</font></b> index <font color=#4A181B>$st1</font> 0] in [<b><font color=#923B23>list</font></b> \t { }]} {
           <i><font color=#646464># if space(s) are at the right, remove them at cutting</font></i>
           <b><font color=#923B23>set</font></b> n1 [<b><font color=#A106A1>my</font></b> leadingSpaces <font color=#4A181B>$st1</font>]
-          <font color=#4A181B>$w</font> delete [<font color=#4A181B>$w</font> index <font color=#4A181B>$idx1</font>] [<font color=#4A181B>$w</font> index <font color=#035103>&quot;<font color=#4A181B>$</font>idx1 +<font color=#4A181B>$</font>n1 char&quot;</font>]
+          <font color=#4A181B>$w</font> delete <font color=#4A181B>$idx1</font> [<font color=#4A181B>$w</font> index <font color=#035103>&quot;<font color=#4A181B>$</font>idx1 +<font color=#4A181B>$</font>n1 char&quot;</font>]
         } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$ch2</font> eq <font color=#035103>&quot;\{&quot;</font> && <font color=#4A181B>$st1</font> eq {}} {
           <i><font color=#646464># indent + closing brace</font></i>
           <b><font color=#923B23>if</font></b> {<font color=#4A181B>$st2</font> eq {}} {
@@ -2898,11 +2898,12 @@ padding: 0%;
           <b><font color=#923B23>set</font></b> nchars [<b><font color=#A106A1>my</font></b> leadingSpaces <font color=#4A181B>$st2</font>]
           <b><font color=#923B23>set</font></b> indent [<b><font color=#923B23>string</font></b> range <font color=#4A181B>$st2</font> 0 [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$nchars</font>-1}]]
         }
-        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$islist</font>} {
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$islist</font> && ![<b><font color=#923B23>string</font></b> match *.0 <font color=#4A181B>$idx1</font>] &&  [<b><font color=#923B23>string</font></b> trim [<font color=#4A181B>$w</font> get <font color=#035103>&quot;<font color=#4A181B>$</font>idx1 linestart&quot;</font> <font color=#4A181B>$idx1</font>]] ne {}} {
+          <i><font color=#646464># a new line supplied with &quot;list-like pattern&quot;</font></i>
           <b><font color=#923B23>set</font></b> indent <font color=#035103>&quot;<font color=#4A181B>$</font>indent<font color=#4A181B>$</font>ch1&quot;</font>
           <b><font color=#923B23>incr</font></b> nchars 2
         }
-        <font color=#4A181B>$w</font> insert [<font color=#4A181B>$w</font> index <font color=#4A181B>$idx1</font>] \n<font color=#4A181B>$indent</font>
+        <font color=#4A181B>$w</font> insert <font color=#4A181B>$idx1</font> \n<font color=#4A181B>$indent</font>
         ::tk::TextSetCursor <font color=#4A181B>$w</font> [<font color=#4A181B>$w</font> index <font color=#035103>&quot;<font color=#4A181B>$</font>idx2 linestart +<font color=#4A181B>$</font>nchars char&quot;</font>]
         <b><font color=#A106A1>return</font></b> <font color=#463e11>-code</font> break
       }
@@ -3220,8 +3221,15 @@ padding: 0%;
   <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> ontop [::apave::getOption <font color=#463e11>-ontop</font> {*}<font color=#4A181B>$args</font>]] eq {}} {
     <b><font color=#923B23>set</font></b> ontop no
     <b><font color=#923B23>catch</font></b> {
-      <b><font color=#923B23>set</font></b> wpar [<b><font color=#7A040E>winfo</font></b> parent <font color=#4A181B>$win</font>]
-      <b><font color=#923B23>set</font></b> ontop [<b><font color=#7A040E>wm</font></b> attributes <font color=#4A181B>$wpar</font> <font color=#463e11>-topmost</font>]
+      <b><font color=#923B23>set</font></b> ontop [<b><font color=#7A040E>wm</font></b> attributes [<b><font color=#7A040E>winfo</font></b> parent <font color=#4A181B>$win</font>] <font color=#463e11>-topmost</font>]
+    }
+    <b><font color=#923B23>if</font></b> {!<font color=#4A181B>$ontop</font>} {
+      <i><font color=#646464># find if a window child of &quot;.&quot; is topmost</font></i>
+      <i><font color=#646464># if so, let this one be topmost too</font></i>
+      <b><font color=#923B23>foreach</font></b> w [<b><font color=#7A040E>winfo</font></b> children .] {
+        <b><font color=#923B23>catch</font></b> {<b><font color=#923B23>set</font></b> ontop [<b><font color=#7A040E>wm</font></b> attributes <font color=#4A181B>$w</font> <font color=#463e11>-topmost</font>]}
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ontop</font>} <b><font color=#923B23>break</font></b>
+      }
     }
   }
   <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> modal [::apave::getOption <font color=#463e11>-modal</font> {*}<font color=#4A181B>$args</font>]] eq {}} {
@@ -5887,7 +5895,7 @@ padding: 0%;
       }
       <b><font color=#923B23>set</font></b> fontdef [<b><font color=#7A040E>font</font></b> actual apaveFontDef]
       <i><font color=#646464># configuring themed widgets</font></i>
-      <b><font color=#923B23>foreach</font></b> ts {TLabel TButton TCheckbutton TRadiobutton TNotebook.Tab} {
+      <b><font color=#923B23>foreach</font></b> ts {TLabel TButton TCheckbutton TRadiobutton} {
         <b><font color=#A106A1>my</font></b> Ttk_style configure <font color=#4A181B>$ts</font> <font color=#463e11>-font</font> <font color=#4A181B>$fontdef</font>
         <b><font color=#A106A1>my</font></b> Ttk_style configure <font color=#4A181B>$ts</font> <font color=#463e11>-foreground</font> <font color=#4A181B>$tfg1</font>
         <b><font color=#A106A1>my</font></b> Ttk_style configure <font color=#4A181B>$ts</font> <font color=#463e11>-background</font> <font color=#4A181B>$tbg1</font>
@@ -5901,14 +5909,14 @@ padding: 0%;
       <b><font color=#A106A1>my</font></b> Ttk_style configure TLabelframe.Label <font color=#463e11>-background</font> <font color=#4A181B>$tbg1</font>
       <b><font color=#A106A1>my</font></b> Ttk_style configure TLabelframe.Label <font color=#463e11>-font</font> <font color=#4A181B>$fontdef</font>
       <b><font color=#923B23>foreach</font></b> ts {TNotebook TFrame} {
-        <b><font color=#A106A1>my</font></b> Ttk_style configure <font color=#4A181B>$ts</font> <font color=#463e11>-background</font> <font color=#4A181B>$tbg1</font>
+        <b><font color=#A106A1>my</font></b> Ttk_style map <font color=#4A181B>$ts</font> <font color=#463e11>-background</font> [<b><font color=#923B23>list</font></b> focus <font color=#4A181B>$tbg1</font> !focus <font color=#4A181B>$tbg1</font>]
       }
       <b><font color=#923B23>foreach</font></b> ts {TNotebook.Tab} {
         <b><font color=#A106A1>my</font></b> Ttk_style configure <font color=#4A181B>$ts</font> <font color=#463e11>-font</font> <font color=#4A181B>$fontdef</font>
         <b><font color=#923B23>if</font></b> {[<b><font color=#A106A1>my</font></b> apaveTheme]} {
-          <b><font color=#A106A1>my</font></b> Ttk_style map <font color=#4A181B>$ts</font> <font color=#463e11>-foreground</font> [<b><font color=#923B23>list</font></b> selected <font color=#4A181B>$tfgS</font> active <font color=#4A181B>$tfg2</font>]
+          <b><font color=#A106A1>my</font></b> Ttk_style map <font color=#4A181B>$ts</font> <font color=#463e11>-foreground</font> [<b><font color=#923B23>list</font></b> {selected !active} <font color=#4A181B>$tfgS</font> {!selected !active} <font color=#4A181B>$tfgM</font> active <font color=#4A181B>$tfg2</font> {selected active} <font color=#4A181B>$tfg2</font>]
         }
-        <b><font color=#A106A1>my</font></b> Ttk_style map <font color=#4A181B>$ts</font> <font color=#463e11>-background</font> [<b><font color=#923B23>list</font></b> selected <font color=#4A181B>$tbgS</font> {active disabled} <font color=#4A181B>$tbg1</font> active <font color=#4A181B>$tbg2</font>]
+        <b><font color=#A106A1>my</font></b> Ttk_style map <font color=#4A181B>$ts</font> <font color=#463e11>-background</font> [<b><font color=#923B23>list</font></b> {selected !active} <font color=#4A181B>$tbgS</font> {!selected !active} <font color=#4A181B>$tbgM</font> {!selected active} <font color=#4A181B>$tbg2</font> {selected active} <font color=#4A181B>$tbg2</font>]
       }
       <b><font color=#923B23>foreach</font></b> ts {TEntry Treeview TSpinbox TCombobox TCombobox.Spinbox TMatchbox TNotebook.Tab TScrollbar TScale} {
         <b><font color=#A106A1>my</font></b> Ttk_style map <font color=#4A181B>$ts</font> <font color=#463e11>-lightcolor</font> [<b><font color=#923B23>list</font></b> focus <font color=#4A181B>$bclr</font> active <font color=#4A181B>$bclr</font>]
@@ -5961,6 +5969,8 @@ padding: 0%;
       <b><font color=#7A040E>option</font></b> add *Menu.font <font color=#4A181B>$fontdef</font>
       <b><font color=#A106A1>my</font></b> Ttk_style configure TMenubutton <font color=#463e11>-foreground</font> <font color=#4A181B>$tfgM</font>
       <b><font color=#A106A1>my</font></b> Ttk_style configure TMenubutton <font color=#463e11>-background</font> <font color=#4A181B>$tbgM</font>
+      <b><font color=#A106A1>my</font></b> Ttk_style configure TButton <font color=#463e11>-foreground</font> <font color=#4A181B>$tfgM</font>
+      <b><font color=#A106A1>my</font></b> Ttk_style configure TButton <font color=#463e11>-background</font> <font color=#4A181B>$tbgM</font>
       <b><font color=#923B23>foreach</font></b> {nam clr} {back tbg2 fore tfg2 selectBack tbgS selectFore tfgS} {
         <b><font color=#7A040E>option</font></b> add *Listbox.<font color=#4A181B>${nam}</font>ground [<b><font color=#923B23>set</font></b> <font color=#4A181B>$clr</font>]
       }
@@ -5998,12 +6008,14 @@ padding: 0%;
             <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,4) <font color=#035103>&quot;-activebackground <font color=#4A181B>$</font>tbgS&quot;</font>
             <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,5) <font color=#035103>&quot;-disabledforeground <font color=#4A181B>$</font>tfgD&quot;</font>
             <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,6) <font color=#035103>&quot;-font <font color=#4A181B>{$</font>fontdef<font color=#4A181B>}</font>&quot;</font>
-            <b><font color=#923B23>if</font></b> {[<b><font color=#A106A1>my</font></b> apaveTheme]} {
-              <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,7) {<font color=#463e11>-borderwidth</font> 2}
-              <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,8) {<font color=#463e11>-relief</font> raised}
+            <b><font color=#923B23>if</font></b> {[::iswindows]} {
+              <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,0) 6
+            } <b><font color=#923B23>elseif</font></b> {[<b><font color=#A106A1>my</font></b> apaveTheme]} {
+                <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,7) {<font color=#463e11>-borderwidth</font> 2}
+                <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,8) {<font color=#463e11>-relief</font> raised}
             } <b><font color=#923B23>else</font></b> {
-              <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,7) {<font color=#463e11>-borderwidth</font> 1}
-              <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,8) {<font color=#463e11>-relief</font> groove}
+                <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,7) {<font color=#463e11>-borderwidth</font> 1}
+                <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,8) {<font color=#463e11>-relief</font> groove}
             }
             <b><font color=#923B23>if</font></b> {[<b><font color=#A106A1>my</font></b> csDarkEdit]} {<b><font color=#923B23>set</font></b> c white} {<b><font color=#923B23>set</font></b> c black}
             <b><font color=#923B23>set</font></b> ::apave::_C_(<font color=#4A181B>$ts</font>,9) <font color=#035103>&quot;-selectcolor <font color=#4A181B>$</font>c&quot;</font>
