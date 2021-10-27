@@ -578,6 +578,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code>-colors</code></td><td class='ruff_defitem'>list of colors: clrCOM, clrCOMTK, clrSTR, clrVAR, clrCMN, clrPROC</td></tr>
 <tr><td class='ruff_defitem'><code>-font</code></td><td class='ruff_defitem'>attributes of font</td></tr>
 <tr><td class='ruff_defitem'><code>-seen</code></td><td class='ruff_defitem'>lines seen at start</td></tr>
+<tr><td class='ruff_defitem'><code>-keywords</code></td><td class='ruff_defitem'>additional commands to highlight (as Tk ones)</td></tr>
 </table>
 <p class='ruff'>This procedure has to be called before writing a text in the text widget.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_4' href="javascript:toggleSource('4')">Show source</a></p>
@@ -597,6 +598,7 @@ padding: 0%;
   <i><font color=#646464>#   -colors - list of colors: clrCOM, clrCOMTK, clrSTR, clrVAR, clrCMN, clrPROC</font></i>
   <i><font color=#646464>#   -font - attributes of font</font></i>
   <i><font color=#646464>#   -seen - lines seen at start</font></i>
+  <i><font color=#646464>#   -keywords - additional commands to highlight (as Tk ones)</font></i>
   <i><font color=#646464># This procedure has to be called before writing a text in the text widget.</font></i>
 
   <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> setonly [<b><font color=#923B23>expr</font></b> {[<b><font color=#923B23>lindex</font></b> <font color=#4A181B>$args</font> 0] eq {--}}]]} {
@@ -854,72 +856,74 @@ padding: 0%;
   <i><font color=#646464>#   txt - text widget's path</font></i>
   <i><font color=#646464># See also: Modified</font></i>
 
-  <b><font color=#923B23>variable</font></b> data
-  <i><font color=#646464># current line:</font></i>
-  <b><font color=#923B23>set</font></b> ln [<b><font color=#923B23>expr</font></b> {int([<font color=#4A181B>$txt</font> index insert])}]
-  <i><font color=#646464># ending line:</font></i>
-  <b><font color=#923B23>set</font></b> endl [<b><font color=#923B23>expr</font></b> {int([<font color=#4A181B>$txt</font> index {end -1 char}])}]
-  <i><font color=#646464># range of change:</font></i>
-  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$i1</font>!=-1} {
-    <b><font color=#923B23>set</font></b> dl [<b><font color=#923B23>expr</font></b> {abs(<font color=#4A181B>$i2</font>-<font color=#4A181B>$i1)</font>}]
-    <b><font color=#923B23>set</font></b> ln <font color=#4A181B>$i1</font>
-  } <b><font color=#923B23>else</font></b> {
-    <b><font color=#923B23>set</font></b> dl [<b><font color=#923B23>expr</font></b> {abs(int(<font color=#4A181B>$data(CUR_LEN</font>,<font color=#4A181B>$txt))</font> - <font color=#4A181B>$endl)</font>}]
-  }
-  <i><font color=#646464># begin and end of changes:</font></i>
-  <b><font color=#923B23>set</font></b> ln1 [<b><font color=#923B23>set</font></b> lno1 [<b><font color=#923B23>expr</font></b> {max((<font color=#4A181B>$ln</font>-<font color=#4A181B>$dl)</font>,1)}]]
-  <b><font color=#923B23>set</font></b> ln2 [<b><font color=#923B23>set</font></b> lno2 [<b><font color=#923B23>expr</font></b> {min((<font color=#4A181B>$ln</font>+<font color=#4A181B>$dl)</font>,<font color=#4A181B>$endl)</font>}]]
-  <b><font color=#923B23>lassign</font></b> [CountQSH <font color=#4A181B>$txt</font> <font color=#4A181B>$ln</font>] cntq cnts ccmnt
-  <i><font color=#646464># flag &quot;highlight to the end&quot;:</font></i>
-  <b><font color=#923B23>set</font></b> bf1 [<b><font color=#923B23>expr</font></b> {abs(<font color=#4A181B>$ln<font color=#463e11></font>-int</font>(<font color=#4A181B>$data(CURPOS</font>,<font color=#4A181B>$txt)))</font>&gt;1 || <font color=#4A181B>$dl</font>&gt;1  || <font color=#4A181B>$cntq</font>!=<font color=#4A181B>$data(CNT_QUOTE</font>,<font color=#4A181B>$txt)</font>  || <font color=#4A181B>$ccmnt</font>!=<font color=#4A181B>$data(CNT_COMMENT</font>,<font color=#4A181B>$txt)</font>}]
-  <b><font color=#923B23>set</font></b> bf2 [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$cnts</font>!=<font color=#4A181B>$data(CNT_SLASH</font>,<font color=#4A181B>$txt)</font>}]
-  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$bf1</font> && !<font color=#4A181B>$data(MULTILINE</font>,<font color=#4A181B>$txt)</font> || <font color=#4A181B>$bf2</font>} {
-    <b><font color=#923B23>set</font></b> lnt1 <font color=#4A181B>$ln</font>
-    <b><font color=#923B23>set</font></b> lnt2 [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$ln</font>+1}]
-    <b><font color=#923B23>while</font></b> {<font color=#4A181B>$ln2</font>&lt;<font color=#4A181B>$endl</font> && <font color=#4A181B>$lnt1</font>&lt;<font color=#4A181B>$endl</font> && <font color=#4A181B>$lnt2</font>&lt;=<font color=#4A181B>$endl</font> && (  [<font color=#4A181B>$txt</font> get <font color=#035103>&quot;<font color=#4A181B>$</font>lnt1.end -1 char&quot;</font> <font color=#4A181B>$lnt1</font>.end] in {\\ \&quot;} ||
-    [<font color=#4A181B>$txt</font> get <font color=#035103>&quot;<font color=#4A181B>$</font>lnt2.end -1 char&quot;</font> <font color=#4A181B>$lnt2</font>.end] in {\\ \&quot;}) || <font color=#4A181B>$bf2</font>} {
-      <b><font color=#923B23>incr</font></b> lnt1 ;<i><font color=#646464># next lines be handled too, if ended with &quot;\\&quot;</font></i>
-      <b><font color=#923B23>incr</font></b> lnt2
-      <b><font color=#923B23>incr</font></b> ln2
-      <b><font color=#923B23>set</font></b> bf2 0
+  <b><font color=#923B23>catch</font></b> {
+    <b><font color=#923B23>variable</font></b> data
+    <i><font color=#646464># current line:</font></i>
+    <b><font color=#923B23>set</font></b> ln [<b><font color=#923B23>expr</font></b> {int([<font color=#4A181B>$txt</font> index insert])}]
+    <i><font color=#646464># ending line:</font></i>
+    <b><font color=#923B23>set</font></b> endl [<b><font color=#923B23>expr</font></b> {int([<font color=#4A181B>$txt</font> index {end -1 char}])}]
+    <i><font color=#646464># range of change:</font></i>
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$i1</font>!=-1} {
+      <b><font color=#923B23>set</font></b> dl [<b><font color=#923B23>expr</font></b> {abs(<font color=#4A181B>$i2</font>-<font color=#4A181B>$i1)</font>}]
+      <b><font color=#923B23>set</font></b> ln <font color=#4A181B>$i1</font>
+    } <b><font color=#923B23>else</font></b> {
+      <b><font color=#923B23>set</font></b> dl [<b><font color=#923B23>expr</font></b> {abs(int(<font color=#4A181B>$data(CUR_LEN</font>,<font color=#4A181B>$txt))</font> - <font color=#4A181B>$endl)</font>}]
     }
-  }
-  <b><font color=#923B23>set</font></b> tSTR [<font color=#4A181B>$txt</font> tag ranges tagSTR]
-  <b><font color=#923B23>set</font></b> tCMN [<font color=#4A181B>$txt</font> tag ranges tagCMN]
-  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ln1</font>==1} {
-    <b><font color=#923B23>set</font></b> currQtd 0
-  } <b><font color=#923B23>else</font></b> {
-    <b><font color=#923B23>set</font></b> currQtd [LineState <font color=#4A181B>$txt</font> <font color=#4A181B>$tSTR</font> <font color=#4A181B>$tCMN</font> <font color=#035103>&quot;<font color=#4A181B>$</font>ln1.0 -1 chars&quot;</font>]
-  }
-  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$data(PLAINTEXT</font>,<font color=#4A181B>$txt)</font>} {
-    <font color=#4A181B>$txt</font> tag add tagSTD <font color=#4A181B>$ln1</font>.0 <font color=#4A181B>$ln2</font>.end
-  } <b><font color=#923B23>else</font></b> {
-    <b><font color=#923B23>set</font></b> lnseen 0
-    <b><font color=#923B23>while</font></b> {<font color=#4A181B>$ln1</font>&lt;=<font color=#4A181B>$ln2</font>} {
-      <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ln1</font>==<font color=#4A181B>$ln2</font>} {
-        <b><font color=#923B23>set</font></b> bf2 [LineState <font color=#4A181B>$txt</font> <font color=#4A181B>$tSTR</font> <font color=#4A181B>$tCMN</font> <font color=#035103>&quot;<font color=#4A181B>$</font>ln1.end +1 chars&quot;</font>]
+    <i><font color=#646464># begin and end of changes:</font></i>
+    <b><font color=#923B23>set</font></b> ln1 [<b><font color=#923B23>set</font></b> lno1 [<b><font color=#923B23>expr</font></b> {max((<font color=#4A181B>$ln</font>-<font color=#4A181B>$dl)</font>,1)}]]
+    <b><font color=#923B23>set</font></b> ln2 [<b><font color=#923B23>set</font></b> lno2 [<b><font color=#923B23>expr</font></b> {min((<font color=#4A181B>$ln</font>+<font color=#4A181B>$dl)</font>,<font color=#4A181B>$endl)</font>}]]
+    <b><font color=#923B23>lassign</font></b> [CountQSH <font color=#4A181B>$txt</font> <font color=#4A181B>$ln</font>] cntq cnts ccmnt
+    <i><font color=#646464># flag &quot;highlight to the end&quot;:</font></i>
+    <b><font color=#923B23>set</font></b> bf1 [<b><font color=#923B23>expr</font></b> {abs(<font color=#4A181B>$ln<font color=#463e11></font>-int</font>(<font color=#4A181B>$data(CURPOS</font>,<font color=#4A181B>$txt)))</font>&gt;1 || <font color=#4A181B>$dl</font>&gt;1  || <font color=#4A181B>$cntq</font>!=<font color=#4A181B>$data(CNT_QUOTE</font>,<font color=#4A181B>$txt)</font>  || <font color=#4A181B>$ccmnt</font>!=<font color=#4A181B>$data(CNT_COMMENT</font>,<font color=#4A181B>$txt)</font>}]
+    <b><font color=#923B23>set</font></b> bf2 [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$cnts</font>!=<font color=#4A181B>$data(CNT_SLASH</font>,<font color=#4A181B>$txt)</font>}]
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$bf1</font> && !<font color=#4A181B>$data(MULTILINE</font>,<font color=#4A181B>$txt)</font> || <font color=#4A181B>$bf2</font>} {
+      <b><font color=#923B23>set</font></b> lnt1 <font color=#4A181B>$ln</font>
+      <b><font color=#923B23>set</font></b> lnt2 [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$ln</font>+1}]
+      <b><font color=#923B23>while</font></b> {<font color=#4A181B>$ln2</font>&lt;<font color=#4A181B>$endl</font> && <font color=#4A181B>$lnt1</font>&lt;<font color=#4A181B>$endl</font> && <font color=#4A181B>$lnt2</font>&lt;=<font color=#4A181B>$endl</font> && (  [<font color=#4A181B>$txt</font> get <font color=#035103>&quot;<font color=#4A181B>$</font>lnt1.end -1 char&quot;</font> <font color=#4A181B>$lnt1</font>.end] in {\\ \&quot;} ||
+      [<font color=#4A181B>$txt</font> get <font color=#035103>&quot;<font color=#4A181B>$</font>lnt2.end -1 char&quot;</font> <font color=#4A181B>$lnt2</font>.end] in {\\ \&quot;}) || <font color=#4A181B>$bf2</font>} {
+        <b><font color=#923B23>incr</font></b> lnt1 ;<i><font color=#646464># next lines be handled too, if ended with &quot;\\&quot;</font></i>
+        <b><font color=#923B23>incr</font></b> lnt2
+        <b><font color=#923B23>incr</font></b> ln2
+        <b><font color=#923B23>set</font></b> bf2 0
       }
-      RemoveTags <font color=#4A181B>$txt</font> <font color=#4A181B>$ln1</font>.0 <font color=#4A181B>$ln1</font>.end
-      <b><font color=#923B23>set</font></b> currQtd [HighlightLine <font color=#4A181B>$txt</font> <font color=#4A181B>$ln1</font> <font color=#4A181B>$currQtd</font>]
-      <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ln1</font>==<font color=#4A181B>$ln2</font> && (<font color=#4A181B>$bf1</font> || <font color=#4A181B>$bf2</font>!=<font color=#4A181B>$currQtd)</font> && <font color=#4A181B>$data(MULTILINE</font>,<font color=#4A181B>$txt)</font>} {
-        <b><font color=#923B23>set</font></b> ln2 <font color=#4A181B>$endl</font>  ;<i><font color=#646464># run to the end</font></i>
-      }
-      <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>incr</font></b> lnseen]&gt;<font color=#4A181B>$::hl_tcl::my::data(SEEN</font>,<font color=#4A181B>$txt)</font>} {
-        <b><font color=#923B23>set</font></b> lnseen 0
-        <b><font color=#923B23>catch</font></b> {<b><font color=#923B23>after</font></b> cancel <font color=#4A181B>$data(COROATFER</font>,<font color=#4A181B>$txt)</font>}
-        <b><font color=#923B23>set</font></b> data(COROATFER,<font color=#4A181B>$txt)</font> [<b><font color=#923B23>after</font></b> idle after 1 [<b><font color=#923B23>info</font></b> coroutine]]
-        <b><font color=#A106A1>yield</font></b>
-      }
-      <b><font color=#923B23>incr</font></b> ln1
     }
+    <b><font color=#923B23>set</font></b> tSTR [<font color=#4A181B>$txt</font> tag ranges tagSTR]
+    <b><font color=#923B23>set</font></b> tCMN [<font color=#4A181B>$txt</font> tag ranges tagCMN]
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ln1</font>==1} {
+      <b><font color=#923B23>set</font></b> currQtd 0
+    } <b><font color=#923B23>else</font></b> {
+      <b><font color=#923B23>set</font></b> currQtd [LineState <font color=#4A181B>$txt</font> <font color=#4A181B>$tSTR</font> <font color=#4A181B>$tCMN</font> <font color=#035103>&quot;<font color=#4A181B>$</font>ln1.0 -1 chars&quot;</font>]
+    }
+    <b><font color=#923B23>if</font></b> {<font color=#4A181B>$data(PLAINTEXT</font>,<font color=#4A181B>$txt)</font>} {
+      <font color=#4A181B>$txt</font> tag add tagSTD <font color=#4A181B>$ln1</font>.0 <font color=#4A181B>$ln2</font>.end
+    } <b><font color=#923B23>else</font></b> {
+      <b><font color=#923B23>set</font></b> lnseen 0
+      <b><font color=#923B23>while</font></b> {<font color=#4A181B>$ln1</font>&lt;=<font color=#4A181B>$ln2</font>} {
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ln1</font>==<font color=#4A181B>$ln2</font>} {
+          <b><font color=#923B23>set</font></b> bf2 [LineState <font color=#4A181B>$txt</font> <font color=#4A181B>$tSTR</font> <font color=#4A181B>$tCMN</font> <font color=#035103>&quot;<font color=#4A181B>$</font>ln1.end +1 chars&quot;</font>]
+        }
+        RemoveTags <font color=#4A181B>$txt</font> <font color=#4A181B>$ln1</font>.0 <font color=#4A181B>$ln1</font>.end
+        <b><font color=#923B23>set</font></b> currQtd [HighlightLine <font color=#4A181B>$txt</font> <font color=#4A181B>$ln1</font> <font color=#4A181B>$currQtd</font>]
+        <b><font color=#923B23>if</font></b> {<font color=#4A181B>$ln1</font>==<font color=#4A181B>$ln2</font> && (<font color=#4A181B>$bf1</font> || <font color=#4A181B>$bf2</font>!=<font color=#4A181B>$currQtd)</font> && <font color=#4A181B>$data(MULTILINE</font>,<font color=#4A181B>$txt)</font>} {
+          <b><font color=#923B23>set</font></b> ln2 <font color=#4A181B>$endl</font>  ;<i><font color=#646464># run to the end</font></i>
+        }
+        <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>incr</font></b> lnseen]&gt;<font color=#4A181B>$::hl_tcl::my::data(SEEN</font>,<font color=#4A181B>$txt)</font>} {
+          <b><font color=#923B23>set</font></b> lnseen 0
+          <b><font color=#923B23>catch</font></b> {<b><font color=#923B23>after</font></b> cancel <font color=#4A181B>$data(COROATFER</font>,<font color=#4A181B>$txt)</font>}
+          <b><font color=#923B23>set</font></b> data(COROATFER,<font color=#4A181B>$txt)</font> [<b><font color=#923B23>after</font></b> idle after 1 [<b><font color=#923B23>info</font></b> coroutine]]
+          <b><font color=#A106A1>yield</font></b>
+        }
+        <b><font color=#923B23>incr</font></b> ln1
+      }
+    }
+    <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> cmd <font color=#4A181B>$data(CMD</font>,<font color=#4A181B>$txt)</font>] ne {}} {
+      <i><font color=#646464># run a command after changes done (its arguments are txt, ln1, ln2)</font></i>
+      <b><font color=#923B23>append</font></b> cmd <font color=#035103>&quot; <font color=#4A181B>$</font>txt <font color=#4A181B>$</font>lno1 <font color=#4A181B>$</font>lno2 <font color=#4A181B>$</font>args&quot;</font>
+      {*}<font color=#4A181B>$cmd</font>
+    }
+    MemPos <font color=#4A181B>$txt</font>
+    <b><font color=#A106A1>return</font></b>
   }
-  <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>set</font></b> cmd <font color=#4A181B>$data(CMD</font>,<font color=#4A181B>$txt)</font>] ne {}} {
-    <i><font color=#646464># run a command after changes done (its arguments are txt, ln1, ln2)</font></i>
-    <b><font color=#923B23>append</font></b> cmd <font color=#035103>&quot; <font color=#4A181B>$</font>txt <font color=#4A181B>$</font>lno1 <font color=#4A181B>$</font>lno2 <font color=#4A181B>$</font>args&quot;</font>
-    {*}<font color=#4A181B>$cmd</font>
-  }
-  MemPos <font color=#4A181B>$txt</font>
-  <b><font color=#A106A1>return</font></b>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::CoroRun'>CoroRun</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>

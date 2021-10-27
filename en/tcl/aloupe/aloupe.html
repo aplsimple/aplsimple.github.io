@@ -341,7 +341,7 @@ padding: 0%;
 </div>
 <div id='bd'><div id='yui-main'><div class='yui-b'><h1 class='ruff'><a name='::aloupe'></a>::aloupe<span class='tinylink'><a href='#top'>Top</a></span></h1>
 <div style='clear:both;'></div>
-<p class='ruff'>The <em>aloupe v0.9.1</em> is a Tcl/Tk small widget / utility allowing to view the screen through a loupe.</p>
+<p class='ruff'>The <em>aloupe v0.9.4</em> is a Tcl/Tk small widget / utility allowing to view the screen through a loupe.</p>
 <p class='ruff'>It allows also</p>
 <ul class='ruff'>
 <li>to make screenshots of magnified images</li>
@@ -358,11 +358,11 @@ padding: 0%;
 <pre class='ruff'><br><code class="tcl"> tclsh aloupe.tcl ?option value ...?
 <br></code></pre>
 <p class='ruff'>where <code>option</code> may be <code>-size, -zoom, -alpha, -background, -geometry, -ontop</code>.</p>
-<p class='ruff'>The <code>Img</code> and <code>treectrl</code> packages have to be installed to run it. In Debian Linux the packages are titled <code>libtk-img</code> and <code>tktreectrl</code>.</p>
+<p class='ruff'>The <code>Img</code> and <code>treectrl</code> packages have to be installed to run it. In Debian Linux the packages are titled <code>libtk-img</code> and <code>tktreectrl</code>. If <em>aloupe</em> is run by a <em>tclkit</em> that doesn't provide these packages, define an environment variable <code>TCLLIBPATH</code> before running <em>aloupe</em> so that <code>TCLLIBPATH</code> be a list of pathes to the packages.</p>
 <p class='ruff'>There are also stand-alone <a href="https://github.com/aplsimple/aloupe/releases" >aloupe executables</a> for Linux / Windows.</p>
 <p class='ruff'>The executables are started as simply as:</p>
-<pre class='ruff'><br><code class="tcl"> aloupe
- aloupe.exe
+<pre class='ruff'><br><code class="tcl"> aloupe ?option value ...?
+ aloupe.exe ?option value ...?
 <br></code></pre>
 <p class='ruff'>After the start, two windows would be displayed: a moveable loupe (at the mouse pointer) and a displaying window.</p>
 <p class='ruff'>The loupe is moved by drag-and-drop. At dropping the loupe, its underlying image is magnified in the displaying window.</p>
@@ -382,15 +382,16 @@ padding: 0%;
 <li><code>-ontop</code> - if <em>yes</em> (default), sets the displaying window above others</li>
 <li><code>-save</code> - if <em>yes</em> (default), saves/restores the appearance settings</li>
 <li><code>-inifile</code> - a file to save the settings (~/.config/aloupe.conf by default)</li>
+<li><code>-locale</code> - a preferable locale (e.g., ru, ua, cz)</li>
 </ul>
 <p class='ruff'>Some options can be used at running <em>aloupe</em> from a Tcl code:</p>
 <ul class='ruff'>
 <li><code>-exit</code> - is <em>false</em> which means &quot;don't finish Tcl/Tk session, just close the loupe&quot;</li>
 <li><code>-command</code> - a command to be run at pressing the <em>To clipboard</em> button</li>
-<li><code>-commandname</code> - a label instead of <em>To clipboard</em>; means &quot;no clipboard&quot;</li>
+<li><code>-commandname</code> - a label instead of <em>To clipboard</em>; when set it means also &quot;no copy to clipboard&quot;</li>
 <li><code>-parent</code> - a parent window's path (when the parent closes, its <em>aloupe</em> children do too)</li>
 </ul>
-<p class='ruff'>From a Tcl code, <em>aloupe</em> is run this way:</p>
+<p class='ruff'>From a Tcl code, <em>aloupe</em> widget is called this way:</p>
 <pre class='ruff'><br><code class="tcl"> <b><font color=#923B23>package</font></b> require aloupe
  ::aloupe::run ?option value ...?
 <br></code></pre>
@@ -463,6 +464,12 @@ padding: 0%;
     } <b><font color=#923B23>else</font></b> {
       <b><font color=#923B23>puts</font></b> <font color=#035103>&quot;Bad option: <font color=#4A181B>$</font>a \&quot;<font color=#4A181B>$</font>v\&quot;&quot;</font>
       my::Synopsis
+    }
+  }
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$my::data(<font color=#463e11></font>-locale</font>) ne {}} {
+    <b><font color=#923B23>catch</font></b> {
+      ::msgcat::mcload [<b><font color=#923B23>file</font></b> join [<b><font color=#923B23>file</font></b> dirname [<b><font color=#923B23>info</font></b> script]] msgs]
+      ::msgcat::mclocale <font color=#4A181B>$my::data(<font color=#463e11></font>-locale</font>)
     }
   }
   <b><font color=#923B23>catch</font></b> {::apave::obj untouchWidgets <font color=#035103>&quot;*_a_loupe_loup*&quot;</font>}  ;<i><font color=#646464># don't theme the loupe</font></i>
