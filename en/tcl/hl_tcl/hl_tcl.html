@@ -643,7 +643,7 @@ padding: 0%;
     hl_readonly <font color=#4A181B>$txt</font> <font color=#4A181B>$::hl_tcl::my::data(READONLY</font>,<font color=#4A181B>$txt)</font>
   }
   <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>string</font></b> first ::hl_tcl:: [<b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font>]]&lt;0} {
-    <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;FocusIn&gt; [<b><font color=#923B23>list</font></b> + ::hl_tcl::my::ShowCurrentLine <font color=#4A181B>$txt</font>]
+    my::BindToEvent <font color=#4A181B>$txt</font> &lt;FocusIn&gt; ::hl_tcl::my::ShowCurrentLine <font color=#4A181B>$txt</font>
   }
   <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(_INSPOS_,<font color=#4A181B>$txt)</font> {}
   my::MemPos <font color=#4A181B>$txt</font>
@@ -741,12 +741,12 @@ padding: 0%;
   <b><font color=#923B23>catch</font></b> {<font color=#4A181B>$txt</font> tag raise hilited;  <font color=#4A181B>$txt</font> tag raise hilited2} ;<i><font color=#646464># for apave package</font></i>
   my::HighlightAll <font color=#4A181B>$txt</font>
   <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exists ::hl_tcl::my::data(BIND_TXT,<font color=#4A181B>$txt)</font>]} {
-    <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;FocusIn&gt; [<b><font color=#923B23>list</font></b> + ::hl_tcl::my::MemPos <font color=#4A181B>$txt</font>]
-    <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;KeyPress&gt; [<b><font color=#923B23>list</font></b> + ::hl_tcl::my::MemPos1 <font color=#4A181B>$txt</font> yes %K %s]
-    <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;KeyRelease&gt; [<b><font color=#923B23>list</font></b> + ::hl_tcl::my::MemPos <font color=#4A181B>$txt</font>]
-    <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;ButtonRelease-1&gt; [<b><font color=#923B23>list</font></b> + ::hl_tcl::my::MemPos <font color=#4A181B>$txt</font>]
+    my::BindToEvent <font color=#4A181B>$txt</font> &lt;FocusIn&gt; ::hl_tcl::my::MemPos <font color=#4A181B>$txt</font>
+    my::BindToEvent <font color=#4A181B>$txt</font> &lt;KeyPress&gt; ::hl_tcl::my::MemPos1 <font color=#4A181B>$txt</font> yes %K %s
+    my::BindToEvent <font color=#4A181B>$txt</font> &lt;KeyRelease&gt; ::hl_tcl::my::MemPos <font color=#4A181B>$txt</font>
+    my::BindToEvent <font color=#4A181B>$txt</font> &lt;ButtonRelease-1&gt; ::hl_tcl::my::MemPos <font color=#4A181B>$txt</font>
     <b><font color=#923B23>foreach</font></b> ev {Enter KeyRelease ButtonRelease-1} {
-      <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$txt</font> &lt;<font color=#4A181B>$ev</font>&gt; [<b><font color=#923B23>list</font></b> + ::hl_tcl::my::HighlightBrackets <font color=#4A181B>$txt</font>]
+      my::BindToEvent <font color=#4A181B>$txt</font> &lt;<font color=#4A181B>$ev</font>&gt; ::hl_tcl::my::HighlightBrackets <font color=#4A181B>$txt</font>
     }
     <b><font color=#923B23>set</font></b> ::hl_tcl::my::data(BIND_TXT,<font color=#4A181B>$txt)</font> yes
   }
@@ -802,6 +802,27 @@ padding: 0%;
   <b><font color=#923B23>set</font></b> k [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$k</font>+<font color=#4A181B>$i</font>+1}]
   <b><font color=#A106A1>return</font></b> 1
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::BindToEvent'>BindToEvent</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Binds an event on a widget to a command.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>BindToEvent</span> <span class='ruff_arg'>w event ?args?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>w</code></code></td><td class='ruff_defitem'>the widget's path</td></tr>
+<tr><td class='ruff_defitem'><code><code>event</code></code></td><td class='ruff_defitem'>the event</td></tr>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>the command</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_9' href="javascript:toggleSource('9')">Show source</a></p>
+<div id='9' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::BindToEvent {w event args} {
+
+  <i><font color=#646464># Binds an event on a widget to a command.</font></i>
+  <i><font color=#646464>#   w - the widget's path</font></i>
+  <i><font color=#646464>#   event - the event</font></i>
+  <i><font color=#646464>#   args - the command</font></i>
+
+  <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>string</font></b> first <font color=#4A181B>$args</font> [<b><font color=#7A040E>bind</font></b> <font color=#4A181B>$w</font> <font color=#4A181B>$event</font>]]&lt;0} {
+    <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$w</font> <font color=#4A181B>$event</font> [<b><font color=#923B23>list</font></b> + {*}<font color=#4A181B>$args</font>]
+  }
+}<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::CoroHighlightAll'>CoroHighlightAll</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Highlights all of a text as a coroutine.</p>
@@ -810,8 +831,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>text widget's path</td></tr>
 </table>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="hl_tcl.html#::hl_tcl::my::HighlightAll" title="HighlightAll" class='ruff_cmd'>HighlightAll</a></p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_9' href="javascript:toggleSource('9')">Show source</a></p>
-<div id='9' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CoroHighlightAll {txt} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_10' href="javascript:toggleSource('10')">Show source</a></p>
+<div id='10' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CoroHighlightAll {txt} {
 
   <i><font color=#646464># Highlights all of a text as a coroutine.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -849,8 +870,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>Optional arguments.</td></tr>
 </table>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="hl_tcl.html#::hl_tcl::my::Modified" title="Modified" class='ruff_cmd'>Modified</a></p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_10' href="javascript:toggleSource('10')">Show source</a></p>
-<div id='10' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CoroModified {txt {i1 -1} {i2 -1} args} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_11' href="javascript:toggleSource('11')">Show source</a></p>
+<div id='11' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CoroModified {txt {i1 -1} {i2 -1} args} {
 
   <i><font color=#646464># Handles modifications of text.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -934,8 +955,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>pos2</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
 <tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>Optional arguments.</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_11' href="javascript:toggleSource('11')">Show source</a></p>
-<div id='11' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CoroRun {txt pos1 pos2 args} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_12' href="javascript:toggleSource('12')">Show source</a></p>
+<div id='12' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CoroRun {txt pos1 pos2 args} {
 
   <b><font color=#923B23>variable</font></b> data
   <b><font color=#923B23>if</font></b> {![<b><font color=#923B23>info</font></b> exist data(REG_TXT,<font color=#4A181B>$txt)</font>] || <font color=#4A181B>$data(REG_TXT</font>,<font color=#4A181B>$txt)</font> eq {} ||  ![<b><font color=#923B23>info</font></b> exist data(CUR_LEN,<font color=#4A181B>$txt)</font>]} {
@@ -960,8 +981,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>escaped</code></code></td><td class='ruff_defitem'>true, if the character is escaped; <i>optional, default</i> <code>yes</code></td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a number of any occurences of character <em>ch</em> in string <em>str</em> if the character is escaped, but if it is not escaped, only non-escaped characters are counted.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_12' href="javascript:toggleSource('12')">Show source</a></p>
-<div id='12' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CountChar {str ch {plistName {}} {escaped yes}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_13' href="javascript:toggleSource('13')">Show source</a></p>
+<div id='13' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CountChar {str ch {plistName {}} {escaped yes}} {
 
   <i><font color=#646464># Counts a character in a string.</font></i>
   <i><font color=#646464>#   str - the string</font></i>
@@ -996,8 +1017,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>text widget's path</td></tr>
 <tr><td class='ruff_defitem'><code><code>ln</code></code></td><td class='ruff_defitem'>line's index</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_13' href="javascript:toggleSource('13')">Show source</a></p>
-<div id='13' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CountQSH {txt ln} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_14' href="javascript:toggleSource('14')">Show source</a></p>
+<div id='14' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::CountQSH {txt ln} {
 
   <i><font color=#646464># Counts quotes, slashes, hashes in a line</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1016,8 +1037,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>curpos</code></code></td><td class='ruff_defitem'>position of the character in the line</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns 1 if the character is escaped in the string.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_14' href="javascript:toggleSource('14')">Show source</a></p>
-<div id='14' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::Escaped {line curpos} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_15' href="javascript:toggleSource('15')">Show source</a></p>
+<div id='15' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::Escaped {line curpos} {
 
   <i><font color=#646464># Checks if a character is escaped in a string.</font></i>
   <i><font color=#646464>#   line - the string</font></i>
@@ -1038,8 +1059,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>currQtd</code></code></td><td class='ruff_defitem'>yes, if searching inside the quoted</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns &quot;yes&quot; if a quote character was found.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_15' href="javascript:toggleSource('15')">Show source</a></p>
-<div id='15' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::FirstQtd {lineName iName currQtd} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_16' href="javascript:toggleSource('16')">Show source</a></p>
+<div id='16' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::FirstQtd {lineName iName currQtd} {
 
   <i><font color=#646464># Searches the quote characters in line.</font></i>
   <i><font color=#646464>#   lineName - variable's name for 'line'</font></i>
@@ -1086,8 +1107,8 @@ padding: 0%;
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>Makes a coroutine from this.</p>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="hl_tcl.html#::hl_tcl::my::CoroHighlightAll" title="CoroHighlightAll" class='ruff_cmd'>CoroHighlightAll</a></p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_16' href="javascript:toggleSource('16')">Show source</a></p>
-<div id='16' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightAll {txt} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_17' href="javascript:toggleSource('17')">Show source</a></p>
+<div id='17' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightAll {txt} {
 
   <i><font color=#646464># Highlights all of a text.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1105,8 +1126,8 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>w</code></code></td><td class='ruff_defitem'>text widget's path</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_17' href="javascript:toggleSource('17')">Show source</a></p>
-<div id='17' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightBrackets {w} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_18' href="javascript:toggleSource('18')">Show source</a></p>
+<div id='18' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightBrackets {w} {
 
   <i><font color=#646464># Highlights matching brackets if any.</font></i>
   <i><font color=#646464>#   w - text widget's path</font></i>
@@ -1149,8 +1170,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>pri</code></code></td><td class='ruff_defitem'>column number to highlighted from</td></tr>
 <tr><td class='ruff_defitem'><code><code>i</code></code></td><td class='ruff_defitem'>current position in 'line'</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_18' href="javascript:toggleSource('18')">Show source</a></p>
-<div id='18' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightCmd {txt line ln pri i} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_19' href="javascript:toggleSource('19')">Show source</a></p>
+<div id='19' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightCmd {txt line ln pri i} {
 
   <i><font color=#646464># Highlights Tcl/Tk commands.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1249,8 +1270,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>ln</code></code></td><td class='ruff_defitem'>line's number</td></tr>
 <tr><td class='ruff_defitem'><code><code>prevQtd</code></code></td><td class='ruff_defitem'>flag of &quot;being quoted&quot; from the previous line</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_19' href="javascript:toggleSource('19')">Show source</a></p>
-<div id='19' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightLine {txt ln prevQtd} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_20' href="javascript:toggleSource('20')">Show source</a></p>
+<div id='20' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightLine {txt ln prevQtd} {
 
   <i><font color=#646464># Highlightes a line in text.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1317,8 +1338,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>p1</code></code></td><td class='ruff_defitem'>starting index of the string in 'txt'</td></tr>
 <tr><td class='ruff_defitem'><code><code>p2</code></code></td><td class='ruff_defitem'>ending index of the string in 'txt'</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_20' href="javascript:toggleSource('20')">Show source</a></p>
-<div id='20' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightStr {txt p1 p2} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_21' href="javascript:toggleSource('21')">Show source</a></p>
+<div id='21' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::HighlightStr {txt p1 p2} {
 
   <i><font color=#646464># Highlights strings.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1335,10 +1356,11 @@ padding: 0%;
     <b><font color=#923B23>lassign</font></b> <font color=#4A181B>$lc</font> i1 i2
     <b><font color=#923B23>incr</font></b> i2
     <b><font color=#923B23>while</font></b> {<font color=#4A181B>$i1</font>&lt;<font color=#4A181B>$i2</font>} {
-      <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>string</font></b> first [<b><font color=#923B23>string</font></b> index <font color=#4A181B>$st</font> <font color=#4A181B>$i1</font>] <font color=#035103>&quot;\[\]\$\{\}&quot;</font>]&gt;-1} {
-        <font color=#4A181B>$txt</font> tag add tagVAR <font color=#035103>&quot;<font color=#4A181B>$</font>p1 +<font color=#4A181B>$</font>i1 char&quot;</font> <font color=#035103>&quot;<font color=#4A181B>$</font>p1 +<font color=#4A181B>$</font>i2 char&quot;</font>
-      }
       <b><font color=#923B23>incr</font></b> i1
+      <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>string</font></b> first [<b><font color=#923B23>string</font></b> index <font color=#4A181B>$st</font> <font color=#4A181B>$i1</font>] <font color=#035103>&quot;\[\]\$\{\}&quot;</font>]&gt;-1} {
+        <b><font color=#923B23>set</font></b> i12 [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$i1</font>+1}]
+        <font color=#4A181B>$txt</font> tag add tagVAR <font color=#035103>&quot;<font color=#4A181B>$</font>p1 +<font color=#4A181B>$</font>i1 char&quot;</font> <font color=#035103>&quot;<font color=#4A181B>$</font>p1 +<font color=#4A181B>$</font>i12 char&quot;</font>
+      }
     }
   }
   <b><font color=#A106A1>return</font></b>
@@ -1353,8 +1375,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>l</code></code></td><td class='ruff_defitem'>line position to check (or 'l.c' if 'c' not set)</td></tr>
 <tr><td class='ruff_defitem'><code><code>c</code></code></td><td class='ruff_defitem'>column position to check; <i>optional, default</i> <code>-1</code></td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_21' href="javascript:toggleSource('21')">Show source</a></p>
-<div id='21' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::InRange {p1 p2 l {c -1}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_22' href="javascript:toggleSource('22')">Show source</a></p>
+<div id='22' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::InRange {p1 p2 l {c -1}} {
 
   <i><font color=#646464># Checks if a text position is in a range of text positions.</font></i>
   <i><font color=#646464>#   p1 - 1st position of range</font></i>
@@ -1380,8 +1402,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>l1</code></code></td><td class='ruff_defitem'>the line's index</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>Returns: 0 if no tags for the line; 1 if the line is a string's continuation; -1 if the line is a comment's continuation.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_22' href="javascript:toggleSource('22')">Show source</a></p>
-<div id='22' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::LineState {txt tSTR tCMN l1} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_23' href="javascript:toggleSource('23')">Show source</a></p>
+<div id='23' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::LineState {txt tSTR tCMN l1} {
 
   <i><font color=#646464># Gets an initial state of line.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1459,8 +1481,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>dchar</code></code></td><td class='ruff_defitem'>destination character</td></tr>
 <tr><td class='ruff_defitem'><code><code>dir</code></code></td><td class='ruff_defitem'>search direction: 1 to the end, -1 to the beginning of list</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_23' href="javascript:toggleSource('23')">Show source</a></p>
-<div id='23' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::MatchedBrackets {inplist curpos schar dchar dir} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_24' href="javascript:toggleSource('24')">Show source</a></p>
+<div id='24' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::MatchedBrackets {inplist curpos schar dchar dir} {
 
   <i><font color=#646464># Finds a match of characters (dchar for schar).</font></i>
   <i><font color=#646464>#   inplist - list of strings where to find a match</font></i>
@@ -1506,8 +1528,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>doit</code></code></td><td class='ruff_defitem'>argument for ShowCurrentLine; <i>optional, default</i> <code>no</code></td></tr>
 </table>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="hl_tcl.html#::hl_tcl::my::ShowCurrentLine" title="ShowCurrentLine" class='ruff_cmd'>ShowCurrentLine</a></p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_24' href="javascript:toggleSource('24')">Show source</a></p>
-<div id='24' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::MemPos {txt {doit no}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_25' href="javascript:toggleSource('25')">Show source</a></p>
+<div id='25' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::MemPos {txt {doit no}} {
 
   <i><font color=#646464># Remembers the state of current line.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1539,8 +1561,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>s</code></code></td><td class='ruff_defitem'>state (%s of bind); <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>This fixes an issue with text cursor: less width at 0th column.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_25' href="javascript:toggleSource('25')">Show source</a></p>
-<div id='25' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::MemPos1 {txt {donorm yes} {K {}} {s {}}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_26' href="javascript:toggleSource('26')">Show source</a></p>
+<div id='26' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::MemPos1 {txt {donorm yes} {K {}} {s {}}} {
 
   <i><font color=#646464># Checks and sets the cursor's width, depending on its position.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1590,8 +1612,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>list of the lists to be merged</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a list of pairs: index of list + item of list.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_26' href="javascript:toggleSource('26')">Show source</a></p>
-<div id='26' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::MergePosList {none args} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_27' href="javascript:toggleSource('27')">Show source</a></p>
+<div id='27' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::MergePosList {none args} {
 
   <i><font color=#646464># Merges lists of numbers that are not-coinciding and sorted.</font></i>
   <i><font color=#646464>#   none - a number to be not allowed in the lists (e.g. less than minimal)</font></i>
@@ -1638,8 +1660,8 @@ padding: 0%;
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>Makes a coroutine from this.</p>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="hl_tcl.html#::hl_tcl::my::CoroModified" title="CoroModified" class='ruff_cmd'>CoroModified</a></p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_27' href="javascript:toggleSource('27')">Show source</a></p>
-<div id='27' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::Modified {txt oper pos1 args} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_28' href="javascript:toggleSource('28')">Show source</a></p>
+<div id='28' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::Modified {txt oper pos1 args} {
 
   <i><font color=#646464># Handles modifications of text.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1673,8 +1695,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>i</code></code></td><td class='ruff_defitem'>the character's position in 'line'</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns &quot;1&quot; if the character not escaped.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_28' href="javascript:toggleSource('28')">Show source</a></p>
-<div id='28' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::NotEscaped {line i} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_29' href="javascript:toggleSource('29')">Show source</a></p>
+<div id='29' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::NotEscaped {line i} {
 
   <i><font color=#646464># Checks if a character escaped in a line.</font></i>
   <i><font color=#646464>#   line - line</font></i>
@@ -1699,8 +1721,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>from</code></code></td><td class='ruff_defitem'>starting index</td></tr>
 <tr><td class='ruff_defitem'><code><code>to</code></code></td><td class='ruff_defitem'>ending index</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_29' href="javascript:toggleSource('29')">Show source</a></p>
-<div id='29' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::RemoveTags {txt from to} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_30' href="javascript:toggleSource('30')">Show source</a></p>
+<div id='30' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::RemoveTags {txt from to} {
 
   <i><font color=#646464># Removes tags in text.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1723,8 +1745,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>wait</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
 <tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>Optional arguments.</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_30' href="javascript:toggleSource('30')">Show source</a></p>
-<div id='30' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::RunCoroAfterIdle {txt pos1 pos2 wait args} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_31' href="javascript:toggleSource('31')">Show source</a></p>
+<div id='31' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::RunCoroAfterIdle {txt pos1 pos2 wait args} {
 
   <i><font color=#646464># Runs a &quot;modified&quot; corotine after idle.</font></i>
 
@@ -1749,8 +1771,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>l1</code></code></td><td class='ruff_defitem'>the position to find</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a found range's index of -1 if not found.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_31' href="javascript:toggleSource('31')">Show source</a></p>
-<div id='31' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::SearchTag {tagpos l1} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_32' href="javascript:toggleSource('32')">Show source</a></p>
+<div id='32' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::SearchTag {tagpos l1} {
 
   <i><font color=#646464># Searches a position in tag ranges.</font></i>
   <i><font color=#646464>#   tagpos - tag position ranges</font></i>
@@ -1774,8 +1796,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>doit</code></code></td><td class='ruff_defitem'>if yes, forces updating current line's background; <i>optional, default</i> <code>no</code></td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a current position of cursor.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_32' href="javascript:toggleSource('32')">Show source</a></p>
-<div id='32' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::ShowCurrentLine {txt {doit no}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_33' href="javascript:toggleSource('33')">Show source</a></p>
+<div id='33' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::hl_tcl::my::ShowCurrentLine {txt {doit no}} {
 
   <i><font color=#646464># Shows the current line.</font></i>
   <i><font color=#646464>#   txt - text widget's path</font></i>
@@ -1807,6 +1829,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_readonly'>hl_readonly</a><span class='tooltiptext'>Makes the text widget be readonly or gets its 'read-only' state.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_text'>hl_text</a><span class='tooltiptext'>Highlights Tcl code of a text widget.
 </span></h4><h1><a href='#::hl_tcl::my'>hl_tcl::my</a></h1><h2><a href='#::hl_tcl::my-Commands'>Commands</a></h2><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::AuxEnding'>AuxEnding</a><span class='tooltiptext'>Auxiliary procedure to process the ending comments in the line.
+</span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::BindToEvent'>BindToEvent</a><span class='tooltiptext'>Binds an event on a widget to a command.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::CoroHighlightAll'>CoroHighlightAll</a><span class='tooltiptext'>Highlights all of a text as a coroutine.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::CoroModified'>CoroModified</a><span class='tooltiptext'>Handles modifications of text.
 </span></h4><h4><a href='hl_tcl.html#::hl_tcl::my::CoroRun'>CoroRun</a></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::CountChar'>CountChar</a><span class='tooltiptext'>Counts a character in a string.
