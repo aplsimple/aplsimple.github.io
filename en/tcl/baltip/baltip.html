@@ -374,9 +374,8 @@ padding: 0%;
 <p class='ruff'><img src="https://aplsimple.github.io/en/tcl/baltip/files/btip12.png" class="media" alt=""></p>
 <p class='ruff'><em>Tips of menu items</em>. The menu items can have their own tips. The popup menus may be <em>tear-off</em> at that.</p>
 <p class='ruff'>The menu tips are useful e.g. when the items are displayed as short names, while the tips are wanted to be full names.</p>
-<p class='ruff'><img src="https://aplsimple.github.io/en/tcl/baltip/files/btip5.png" class="media" alt=""></p>
 <p class='ruff'><img src="https://aplsimple.github.io/en/tcl/baltip/files/btip6.png" class="media" alt=""></p>
-<p class='ruff'><em>Label of danger</em>. The labels are also tipped. This one is configured to be an alert.</p>
+<p class='ruff'><em>Label of danger</em>. The labels are also tipped. This one is configured to be an alert shown &quot;eternally&quot; (i.e. till hovering over it).</p>
 <p class='ruff'><img src="https://aplsimple.github.io/en/tcl/baltip/files/btip7.png" class="media" alt=""></p>
 <p class='ruff'>The <em>tabs of notebook</em> are also supplied with tips.</p>
 <p class='ruff'><img src="https://aplsimple.github.io/en/tcl/baltip/files/btip13.png" class="media" alt=""></p>
@@ -388,7 +387,6 @@ padding: 0%;
 <p class='ruff'><img src="https://aplsimple.github.io/en/tcl/baltip/files/btip16.png" class="media" alt=""></p>
 <p class='ruff'><em>Configurable tips</em>. The tip configuration can be global or local (for a specific tip).</p>
 <p class='ruff'>The configuring can include: font, colors, paddings, border, relief, exposition time, opacity, image (with -compound), bell.</p>
-<p class='ruff'><img src="https://aplsimple.github.io/en/tcl/baltip/files/btip8.png" class="media" alt=""></p>
 <p class='ruff'><img src="https://aplsimple.github.io/en/tcl/baltip/files/btip9.png" class="media" alt=""></p>
 <p class='ruff'><img src="https://aplsimple.github.io/en/tcl/baltip/files/btip11.png" class="media" alt=""></p>
 <p class='ruff'><em>Balloon</em>. The balloon messages aren't related to any widgets. This one is configurated to appear at the top right corner, disappearing after a while.</p>
@@ -664,23 +662,27 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::baltip::hide'>hide</a><span class='ns_scope'> [<a href="baltip.html#::baltip" title="::baltip" class='ruff_cmd'>::baltip</a>]</span><span class='tinylink'><a href='baltip.html#::baltip'>baltip</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Destroys the tip's window.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>hide</span> <span class='ruff_arg'>?w?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>hide</span> <span class='ruff_arg'>?w? ?doit?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>w</code></code></td><td class='ruff_defitem'>widget's path; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>doit</code></code></td><td class='ruff_defitem'>yes, if do hide by force; <i>optional, default</i> <code>no</code></td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns 1, if the window was really hidden.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_4' href="javascript:toggleSource('4')">Show source</a></p>
-<div id='4' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::baltip::hide {{w {}}} {
+<div id='4' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#A106A1>proc</font></b> ::baltip::hide {{w {}} {doit no}} {
 
   <i><font color=#646464># Destroys the tip's window.</font></i>
   <i><font color=#646464>#   w - widget's path</font></i>
+  <i><font color=#646464>#   doit - yes, if do hide by force</font></i>
   <i><font color=#646464># Returns 1, if the window was really hidden.</font></i>
 
   <b><font color=#923B23>variable</font></b> my::ttdata
   <b><font color=#923B23>variable</font></b> my::GEOACTIVE
-  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$w</font> eq <font color=#4A181B>$my::GEOACTIVE</font> || <font color=#4A181B>$w</font> eq {}} {
+  <b><font color=#923B23>if</font></b> {<font color=#4A181B>$w</font> eq <font color=#4A181B>$my::GEOACTIVE</font> || <font color=#4A181B>$w</font> eq {} || <font color=#4A181B>$doit</font>} {
     ;<i><font color=#646464># unlock tips after a balloon message</font></i>
     <b><font color=#923B23>set</font></b> my::GEOACTIVE {-}
+  } <b><font color=#923B23>elseif</font></b> {<font color=#4A181B>$my::GEOACTIVE</font> ne {-}} {
+    <b><font color=#A106A1>return</font></b> no
   }
   my::Command <font color=#4A181B>$w</font> {}
   <b><font color=#A106A1>return</font></b> [<b><font color=#923B23>expr</font></b> {![<b><font color=#923B23>catch</font></b> {<b><font color=#7A040E>destroy</font></b> [tippath <font color=#4A181B>$w</font>]}]}]
@@ -775,6 +777,7 @@ padding: 0%;
       <b><font color=#923B23>if</font></b> {<font color=#4A181B>$geo</font> ne {}} {
         <i><font color=#646464># balloon popup message</font></i>
         <b><font color=#923B23>array</font></b> set my::ttdata <font color=#4A181B>$arrsaved</font>
+        <b><font color=#7A040E>bind</font></b> Tooltip<font color=#4A181B>$w</font> &lt;Motion&gt; <font color=#035103>&quot;::baltip::hide <font color=#4A181B>$</font>w yes&quot;</font>
       } <b><font color=#923B23>else</font></b> {
         <b><font color=#923B23>set</font></b> widgetclass [<b><font color=#7A040E>winfo</font></b> class <font color=#4A181B>$w</font>]
         <b><font color=#923B23>set</font></b> tags [<b><font color=#7A040E>bindtags</font></b> <font color=#4A181B>$w</font>]
@@ -1452,6 +1455,7 @@ padding: 0%;
     <b><font color=#923B23>set</font></b> data(<font color=#463e11>-fg</font>) black
     <b><font color=#923B23>set</font></b> data(<font color=#463e11>-bg</font>) #FBFB95
   }
+  <b><font color=#923B23>catch</font></b> {<b><font color=#7A040E>destroy</font></b> <font color=#4A181B>$win</font>}
   <b><font color=#7A040E>toplevel</font></b> <font color=#4A181B>$win</font> <font color=#463e11>-bg</font> <font color=#4A181B>$data(<font color=#463e11></font>-bg</font>) <font color=#463e11>-class</font> Tooltip<font color=#4A181B>$w</font>
   <b><font color=#923B23>catch</font></b> {<b><font color=#7A040E>wm</font></b> withdraw <font color=#4A181B>$win</font>}
   <b><font color=#7A040E>wm</font></b> overrideredirect <font color=#4A181B>$win</font> 1
