@@ -435,7 +435,7 @@ padding: 0%;
 
   <b><font color=#7A040E>wm</font></b> withdraw [<b><font color=#7A040E>toplevel</font></b> <font color=#4A181B>$path</font>]
   <b><font color=#923B23>set</font></b> path <font color=#4A181B>$path</font>.scrshot
-  <b><font color=#923B23>set</font></b> obj [ScreenShot create tmp <font color=#4A181B>$path</font> {*}<font color=#4A181B>$args</font>]
+  <b><font color=#923B23>set</font></b> obj [ScreenShot create tmp <font color=#4A181B>$path</font> {<b><font color=#923B23>*</font></b>}<font color=#4A181B>$args</font>]
   <b><font color=#923B23>rename</font></b> <font color=#4A181B>$obj</font> ::<font color=#4A181B>$path</font>
   <b><font color=#A106A1>return</font></b> <font color=#4A181B>$path</font>
 }<br><br></code></pre></div>
@@ -538,7 +538,7 @@ padding: 0%;
 
   <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$wcanvas</font> &lt;Configure&gt;     <font color=#035103>&quot;<font color=#4A181B>[</font>namespace code <font color=#4A181B>{</font>my Resize<font color=#4A181B>}]</font> %W %w %h&quot;</font>
   <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$wcanvas</font> &lt;ButtonPress-1&gt; <font color=#035103>&quot;<font color=#4A181B>[</font>namespace code <font color=#4A181B>{</font>my DragStart<font color=#4A181B>}]</font> %W %X %Y&quot;</font>
-  <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$wcanvas</font> &lt;B1<font color=#463e11>-Motion</font>&gt;     <font color=#035103>&quot;<font color=#4A181B>[</font>namespace code <font color=#4A181B>{</font>my PerformDrag<font color=#4A181B>}]</font> %W %X %Y&quot;</font>
+  <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$wcanvas</font> &lt;B1-Motion&gt;     <font color=#035103>&quot;<font color=#4A181B>[</font>namespace code <font color=#4A181B>{</font>my PerformDrag<font color=#4A181B>}]</font> %W %X %Y&quot;</font>
   <b><font color=#7A040E>bind</font></b> <font color=#4A181B>$wcanvas</font> &lt;Motion&gt;  <font color=#035103>&quot;<font color=#4A181B>[</font>namespace code <font color=#4A181B>{</font>my EdgeCheck<font color=#4A181B>}]</font> %W %x %y&quot;</font>
 
   <b><font color=#A106A1>my</font></b> AddMenu <font color=#4A181B>$wcanvas</font>
@@ -553,11 +553,11 @@ padding: 0%;
 
   <i><font color=#646464># start with default configuration</font></i>
   <b><font color=#923B23>foreach</font></b> opt_name [<b><font color=#923B23>array</font></b> names woptions] {
-    <b><font color=#A106A1>my</font></b> configure <font color=#4A181B>$opt_name</font> <font color=#4A181B>$woptions(</font>$opt_name)
+    <b><font color=#A106A1>my</font></b> configure <font color=#4A181B>$opt_name</font> <font color=#4A181B>$woptions($opt_name)</font>
   }
 
   <i><font color=#646464># and configure custom arguments</font></i>
-  <b><font color=#A106A1>my</font></b> configure {*}<font color=#4A181B>$args</font>
+  <b><font color=#A106A1>my</font></b> configure {<b><font color=#923B23>*</font></b>}<font color=#4A181B>$args</font>
   <b><font color=#923B23>set</font></b> showcmd <font color=#035103>&quot;<font color=#4A181B>[</font>namespace code <font color=#4A181B>{</font>my RestoreOptions<font color=#4A181B>}]</font>; pack <font color=#4A181B>$</font>path -expand true -fill both ; wm deiconify <font color=#4A181B>$</font>t&quot;</font>
   <b><font color=#923B23>if</font></b> {<font color=#4A181B>$::tcl_platform(platform)</font> eq <font color=#035103>&quot;windows&quot;</font>} {
     <b><font color=#923B23>after</font></b> 50 <font color=#035103>&quot;<font color=#4A181B>$</font>showcmd ; focus <font color=#4A181B>$</font>wcanvas&quot;</font>
@@ -591,8 +591,8 @@ padding: 0%;
   <b><font color=#923B23>if</font></b> { [<b><font color=#923B23>string</font></b> length <font color=#4A181B>$opt</font>] == 0 } {
     <b><font color=#A106A1>return</font></b> [<b><font color=#923B23>array</font></b> get woptions]
   }
-  <b><font color=#923B23>if</font></b> { [<b><font color=#923B23>info</font></b> exists woptions(<font color=#4A181B>$opt)</font> ] } {
-    <b><font color=#A106A1>return</font></b> <font color=#4A181B>$woptions(</font>$opt)
+  <b><font color=#923B23>if</font></b> { [<b><font color=#923B23>info</font></b> exists woptions(<font color=#4A181B>$opt</font>) ] } {
+    <b><font color=#A106A1>return</font></b> <font color=#4A181B>$woptions($opt)</font>
   }
   <b><font color=#A106A1>return</font></b> [<font color=#4A181B>$wcanvas</font> cget <font color=#4A181B>$opt</font>]
 }<br><br></code></pre></div>
@@ -625,8 +625,8 @@ padding: 0%;
 
     <i><font color=#646464># return configuration value for this option</font></i>
     <b><font color=#923B23>set</font></b> opt <font color=#4A181B>$args</font>
-    <b><font color=#923B23>if</font></b> { [<b><font color=#923B23>info</font></b> exists woptions(<font color=#4A181B>$opt)</font> ] } {
-      <b><font color=#A106A1>return</font></b> <font color=#4A181B>$woptions(</font>$opt)
+    <b><font color=#923B23>if</font></b> { [<b><font color=#923B23>info</font></b> exists woptions(<font color=#4A181B>$opt</font>) ] } {
+      <b><font color=#A106A1>return</font></b> <font color=#4A181B>$woptions($opt)</font>
     }
     <b><font color=#A106A1>return</font></b> [<font color=#4A181B>$wcanvas</font> cget <font color=#4A181B>$opt</font>]
   }
@@ -642,11 +642,11 @@ padding: 0%;
   <b><font color=#923B23>array</font></b> set opts <font color=#4A181B>$args</font>
 
   <b><font color=#923B23>foreach</font></b> opt_name [<b><font color=#923B23>array</font></b> names opts] {
-    <b><font color=#923B23>set</font></b> opt_value <font color=#4A181B>$opts(</font>$opt_name)
+    <b><font color=#923B23>set</font></b> opt_value <font color=#4A181B>$opts($opt_name)</font>
 
     <i><font color=#646464># overwrite with new value</font></i>
-    <b><font color=#923B23>if</font></b> { [<b><font color=#923B23>info</font></b> exists woptions(<font color=#4A181B>$opt_name)</font>] } {
-      <b><font color=#923B23>set</font></b> woptions(<font color=#4A181B>$opt_name)</font> <font color=#4A181B>$opt_value</font>
+    <b><font color=#923B23>if</font></b> { [<b><font color=#923B23>info</font></b> exists woptions(<font color=#4A181B>$opt_name</font>)] } {
+      <b><font color=#923B23>set</font></b> woptions(<font color=#4A181B>$opt_name</font>) <font color=#4A181B>$opt_value</font>
     }
 
     <i><font color=#646464># some options need action from the widgets side</font></i>
@@ -664,21 +664,21 @@ padding: 0%;
           <b><font color=#A106A1>return</font></b> <font color=#463e11>-code</font> error <font color=#035103>&quot;invalid <font color=#4A181B>$</font>option value \&quot;<font color=#4A181B>$</font>value\&quot;: must be one of <font color=#4A181B>[</font>join <font color=#4A181B>$</font>measure(valid) <font color=#4A181B>{</font>, <font color=#4A181B>}]</font>&quot;</font>
         }
         <b><font color=#923B23>set</font></b> value [<b><font color=#923B23>lindex</font></b> <font color=#4A181B>$measure(valid)</font> <font color=#4A181B>$idx</font>]
-        <b><font color=#923B23>set</font></b> measure(what) <font color=#4A181B>$measure(</font>$value)
-        <b><font color=#923B23>set</font></b> woptions(<font color=#463e11>-measure</font>) <font color=#4A181B>$value</font>
+        <b><font color=#923B23>set</font></b> measure(what) <font color=#4A181B>$measure($value)</font>
+        <b><font color=#923B23>set</font></b> woptions(-measure) <font color=#4A181B>$value</font>
         <b><font color=#A106A1>my</font></b> Redraw
       }
       <font color=#463e11>-interval</font> {
         <b><font color=#923B23>set</font></b> dir 1
         <b><font color=#923B23>set</font></b> newint {}
-        <b><font color=#923B23>foreach</font></b> i <font color=#4A181B>$woptions(<font color=#463e11></font>-interval</font>) {
+        <b><font color=#923B23>foreach</font></b> i <font color=#4A181B>$woptions(-interval)</font> {
           <b><font color=#923B23>if</font></b> {<font color=#4A181B>$dir</font> &lt; 0} {
             <b><font color=#923B23>lappend</font></b> newint [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$i</font>/2.0}]
           } <b><font color=#923B23>else</font></b> {
             <b><font color=#923B23>lappend</font></b> newint [<b><font color=#923B23>expr</font></b> {<font color=#4A181B>$i</font>*2.0}]
           }
         }
-        <b><font color=#923B23>set</font></b> woptions(<font color=#463e11>-interval</font>) <font color=#4A181B>$newint</font>
+        <b><font color=#923B23>set</font></b> woptions(-interval) <font color=#4A181B>$newint</font>
         <b><font color=#A106A1>my</font></b> Redraw
       }
       <font color=#463e11>-showgeometry</font> {
@@ -696,7 +696,7 @@ padding: 0%;
             <b><font color=#923B23>set</font></b> w <font color=#4A181B>$wcanvas</font>._<font color=#4A181B>$d</font>
             <b><font color=#923B23>catch</font></b> { <b><font color=#7A040E>destroy</font></b> <font color=#4A181B>$w</font> }
 
-            <b><font color=#7A040E>entry</font></b> <font color=#4A181B>$w</font> <font color=#463e11>-borderwidth</font> 1 <font color=#463e11>-highlightthickness</font> 1 <font color=#463e11>-width</font> 4  <font color=#463e11>-textvar</font> [<b><font color=#923B23>namespace</font></b> current]::curdim(<font color=#4A181B>$d)</font>  <font color=#463e11>-bg</font> Orange
+            <b><font color=#7A040E>entry</font></b> <font color=#4A181B>$w</font> <font color=#463e11>-borderwidth</font> 1 <font color=#463e11>-highlightthickness</font> 1 <font color=#463e11>-width</font> 4  <font color=#463e11>-textvar</font> [<b><font color=#923B23>namespace</font></b> current]::curdim(<font color=#4A181B>$d</font>)  <font color=#463e11>-bg</font> Orange
 
             <font color=#4A181B>$wcanvas</font> create window <font color=#4A181B>$x</font> <font color=#4A181B>$y</font> <font color=#463e11>-window</font> <font color=#4A181B>$w</font> <font color=#463e11>-tags</font> geoinfo
 
@@ -768,7 +768,7 @@ padding: 0%;
   <i><font color=#646464># if the command wasn't one of our special one's,</font></i>
   <i><font color=#646464># pass control over to the original canvas widget</font></i>
   <i><font color=#646464>#</font></i>
-  <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>catch</font></b> {<font color=#4A181B>$wcanvas</font> <font color=#4A181B>$method</font> {*}<font color=#4A181B>$args</font>} result]} {
+  <b><font color=#923B23>if</font></b> {[<b><font color=#923B23>catch</font></b> {<font color=#4A181B>$wcanvas</font> <font color=#4A181B>$method</font> {<b><font color=#923B23>*</font></b>}<font color=#4A181B>$args</font>} result]} {
     <b><font color=#A106A1>return</font></b> <font color=#463e11>-code</font> error <font color=#4A181B>$result</font>
   }
   <b><font color=#A106A1>return</font></b> <font color=#4A181B>$result</font>
