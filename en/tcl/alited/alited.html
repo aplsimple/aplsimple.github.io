@@ -374,12 +374,12 @@ padding: 0%;
 </ul>
 <p class='ruff'>For a quick acquaintance of <em>alited</em>, a few of demo videos are available:</p>
 <ul class='ruff'>
-<li><a href="https://github.com/aplsimple/alited/releases/download/1.Start_alited-1.0.6/1.Start_alited-1.0.6.mp4" >1. First start</a></li>
-<li><a href="https://github.com/aplsimple/alited/releases/download/2.Units_alited-1.0.6/2.Units_alited-1.0.6.mp4" >2. Units</a></li>
-<li><a href="https://github.com/aplsimple/alited/releases/download/3.Projects_alited-1.0.6/3.Projects_alited-1.0.6.mp4" >3. Projects</a></li>
-<li><a href="https://github.com/aplsimple/alited/releases/download/4.Find_alited-1.0.6/4.Find_alited-1.0.6.mp4" >4. Find and replace</a></li>
-<li><a href="https://github.com/aplsimple/alited/releases/download/5.Tools_alited-1.0.6/5.Tools_alited-1.0.6.mp4" >5. Tools</a></li>
-<li><a href="https://github.com/aplsimple/alited/releases/download/6.Themes_alited-1.0.6/6.Themes_alited-1.0.6.mp4" >6. Themes</a></li>
+<li><a href="https://github.com/aplsimple/alited/releases/download/1.Start_alited-1.1/1.Start_alited-1.1.mp4" >1. First start</a></li>
+<li><a href="https://github.com/aplsimple/alited/releases/download/2.Units_alited-1.1/2.Units_alited-1.1.mp4" >2. Units</a></li>
+<li><a href="https://github.com/aplsimple/alited/releases/download/3.Projects_alited-1.1/3.Projects_alited-1.1.mp4" >3. Projects</a></li>
+<li><a href="https://github.com/aplsimple/alited/releases/download/4.Find_alited-1.1/4.Find_alited-1.1.mp4" >4. Find and replace</a></li>
+<li><a href="https://github.com/aplsimple/alited/releases/download/5.Tools_alited-1.1/5.Tools_alited-1.1.mp4" >5. Tools</a></li>
+<li><a href="https://github.com/aplsimple/alited/releases/download/6.Themes_alited-1.1/6.Themes_alited-1.1.mp4" >6. Themes</a></li>
 </ul>
 <br><h2 class='ruff'><a name='::alited-Inevitable blah-blah'></a>Inevitable blah-blah<span class='tinylink'><a href='alited.html#::alited'>alited</a>, <a href='#top'>Top</a></span></h2>
 <div style='clear:both;'></div>
@@ -1707,7 +1707,7 @@ padding: 0%;
   <b><font color=#3a6797>variable</font></b> errors
   <b><font color=#3a6797>variable</font></b> fileerrors
   alited::info::Clear
-  alited::info::Put <font color=#1b1baa>$al(MC,wait)</font> {} yes
+  alited::info::Put <font color=#1b1baa>$al(MC,wait)</font> {} yes yes
   <b><font color=#3a6797>set</font></b> errors [<b><font color=#3a6797>set</font></b> fileerrors 0]
   <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$what</font> {
     1 CheckFile
@@ -1977,24 +1977,34 @@ padding: 0%;
   <i><font color=#4b5d50># If currentTID is set, the commands of this TID are shown unqualified.</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> isread [<b><font color=#3a6797>info</font></b> exists al(_SessionCommands)]]} {
+    <b><font color=#3a6797>unset</font></b> al(_SessionCommands)
+  } <b><font color=#3a6797>else</font></b> {
+    alited::info::Put <font color=#1b1baa>$al(MC,wait)</font> {} yes yes
+    <b><font color=#3a6797>update</font></b>
+  }
+  <b><font color=#3a6797>set</font></b> al(_SessionCommands) [<b><font color=#3a6797>dict</font></b> create]
   <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>list</font></b>]
   <b><font color=#3a6797>foreach</font></b> tab [alited::find::SessionList] {
     <b><font color=#3a6797>set</font></b> TID [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tab</font> 0]
-    alited::file::ReadFileByTID <font color=#1b1baa>$TID</font>
+    <b><font color=#3a6797>lassign</font></b> [alited::main::GetText <font color=#1b1baa>$TID</font> no no] curfile wtxt
     <b><font color=#3a6797>foreach</font></b> it <font color=#1b1baa>$al(_unittree,$TID)</font> {
       <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$it</font> lev leaf fl1 ttl l1 l2
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$leaf</font> && [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$ttl</font>]==1} {
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> eq <font color=#1b1baa>$currentTID</font>} {
-          <b><font color=#3a6797>lappend</font></b> res [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$ttl</font> :] end]
-        } <b><font color=#3a6797>else</font></b> {
-          <b><font color=#3a6797>lappend</font></b> res <font color=#1b1baa>$ttl</font>
+          <b><font color=#3a6797>set</font></b> ttl [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$ttl</font> :] end]
         }
+        <b><font color=#3a6797>lappend</font></b> res <font color=#1b1baa>$ttl</font>
+        <i><font color=#4b5d50># save arguments of proc/method</font></i>
+        <b><font color=#3a6797>set</font></b> h [alited::unit::GetHeader {} {} 0 <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$l1</font> <font color=#1b1baa>$l2</font>]
+        <b><font color=#3a6797>dict</font></b> set al(_SessionCommands) <font color=#1b1baa>$ttl</font> [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$h</font> \n] 0 2]
       }
     }
   }
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$al(ED,TclKeyWords)</font>]} {
     <b><font color=#3a6797>lappend</font></b> res {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$al(ED,TclKeyWords)</font>  ;<i><font color=#4b5d50># user's commands</font></i>
   }
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$isread</font>} {alited::info::Clear end}
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::complete::AutoCompleteCommand'>AutoCompleteCommand</a><span class='ns_scope'> [<a href="alited.html#::alited::complete" title="::alited::complete" class='ruff_cmd'>::alited::complete</a>]</span><span class='tinylink'><a href='alited.html#::alited::complete'>complete</a>, <a href='#top'>Top</a></span></h4>
@@ -2006,6 +2016,7 @@ padding: 0%;
 
   <i><font color=#4b5d50># Runs auto completion of commands.</font></i>
 
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   <b><font color=#3a6797>lassign</font></b> [MatchedCommands] curword idx1 idx2
   <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> com [PickCommand <font color=#1b1baa>$wtxt</font>]] ne {}} {
@@ -2013,7 +2024,22 @@ padding: 0%;
     <b><font color=#3a6797>set</font></b> row [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$wtxt</font> index insert])}]
     <font color=#1b1baa>$wtxt</font> delete <font color=#1b1baa>$row</font>.<font color=#1b1baa>$idx1</font> <font color=#1b1baa>$row</font>.[<b><font color=#3a6797>incr</font></b> idx2]
     <b><font color=#3a6797>set</font></b> pos <font color=#1b1baa>$row</font>.<font color=#1b1baa>$idx1</font>
-    <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$pos</font> <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>com &quot;</font>
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$al(_SessionCommands)</font> <font color=#1b1baa>$com</font>]
+    && [<b><font color=#3a6797>set</font></b> argums [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$al(_SessionCommands)</font> <font color=#1b1baa>$com</font>]] ne {}} {
+      <i><font color=#4b5d50># add all of the unit's arguments</font></i>
+      <b><font color=#3a6797>catch</font></b> {
+        <b><font color=#3a6797>foreach</font></b> ar <font color=#1b1baa>$argums</font> {
+          <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$ar</font>]==1} {
+            <b><font color=#3a6797>append</font></b> com <font color=#7d1a1a>&quot; \$<font color=#1b1baa>$</font>ar&quot;</font>
+          } <b><font color=#3a6797>else</font></b> {
+            <b><font color=#3a6797>append</font></b> com <font color=#7d1a1a>&quot; <font color=#1b1baa>{</font>\$<font color=#1b1baa>$</font>ar<font color=#1b1baa>}</font>&quot;</font> ;<i><font color=#4b5d50># default value to be seen</font></i>
+          }
+        }
+      }
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>append</font></b> com { }
+    }
+    <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$pos</font> <font color=#1b1baa>$com</font>
     ::alited::main::HighlightLine
   }
   <b><font color=#134070>focus</font></b> <font color=#6c3e67>-force</font> <font color=#1b1baa>$wtxt</font>
@@ -2055,6 +2081,7 @@ padding: 0%;
       <b><font color=#3a6797>set</font></b> maxwidth [<b><font color=#3a6797>expr</font></b> {max(<font color=#1b1baa>$maxwidth</font>,[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$com</font>])}]
     }
   }
+  <b><font color=#3a6797>set</font></b> comms [<b><font color=#3a6797>lsort</font></b> <font color=#6c3e67>-dictionary</font> <font color=#6c3e67>-unique</font> <font color=#1b1baa>$comms</font>]
   <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$curword</font> <font color=#1b1baa>$idx1</font> <font color=#1b1baa>$idx2</font>]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::complete::PickCommand'>PickCommand</a><span class='ns_scope'> [<a href="alited.html#::alited::complete" title="::alited::complete" class='ruff_cmd'>::alited::complete</a>]</span><span class='tinylink'><a href='alited.html#::alited::complete'>complete</a>, <a href='#top'>Top</a></span></h4>
@@ -2107,7 +2134,7 @@ padding: 0%;
       <b><font color=#3a6797>incr</font></b> Y 40
       <b><font color=#3a6797>after</font></b> 100 <font color=#7d1a1a>&quot;wm deiconify <font color=#1b1baa>$</font>win&quot;</font>
     }
-    <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$obj</font> showModal <font color=#1b1baa>$win</font> <font color=#6c3e67>-focus</font> <font color=#1b1baa>$lbx</font> <font color=#6c3e67>-geometry</font> +<font color=#1b1baa>$X</font>+<font color=#1b1baa>$Y</font>]
+    <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$obj</font> showModal <font color=#1b1baa>$win</font> <font color=#6c3e67>-focus</font> <font color=#1b1baa>$lbx</font> <font color=#6c3e67>-geometry</font> +<font color=#1b1baa>$X</font>+<font color=#1b1baa>$Y</font> <font color=#6c3e67>-ontop</font> yes]
   }
   <b><font color=#134070>destroy</font></b> <font color=#1b1baa>$win</font>
   <font color=#1b1baa>$obj</font> destroy
@@ -5353,6 +5380,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   inv - index of a button that was hit (3 means &quot;All in Session&quot; button)</font></i>
 
   <b><font color=#3a6797>variable</font></b> data
+  <b><font color=#3a6797>if</font></b> {![CheckData find]} <b><font color=#ca14ca>return</font></b>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$inv</font>&gt;-1} {<b><font color=#3a6797>set</font></b> data(lastinvoke) <font color=#1b1baa>$inv</font>}
   InitShowResults
   <b><font color=#3a6797>set</font></b> allfnd [<b><font color=#3a6797>list</font></b>]
@@ -5614,7 +5642,7 @@ padding: 0%;
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   alited::info::Clear
-  alited::info::Put <font color=#1b1baa>$al(MC,wait)</font> <font color=#7d1a1a>&quot;&quot;</font> yes
+  alited::info::Put <font color=#1b1baa>$al(MC,wait)</font> {} yes yes
   <b><font color=#3a6797>update</font></b>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::find::LastInvoke'>LastInvoke</a><span class='ns_scope'> [<a href="alited.html#::alited::find" title="::alited::find" class='ruff_cmd'>::alited::find</a>]</span><span class='tinylink'><a href='alited.html#::alited::find'>find</a>, <a href='#top'>Top</a></span></h4>
@@ -5793,7 +5821,7 @@ padding: 0%;
   <b><font color=#3a6797>lassign</font></b> [FindOptions <font color=#1b1baa>$wtxt</font>] findstr options
   <b><font color=#3a6797>if</font></b> {![CheckData find]} {<b><font color=#ca14ca>return</font></b> {}}
   <font color=#1b1baa>$obPav</font> set_HighlightedString <font color=#1b1baa>$findstr</font>
-  <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$obPav</font> csDarkEdit]} {
+  <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$obPav</font> csDark]} {
     <b><font color=#3a6797>set</font></b> fg white
     <b><font color=#3a6797>set</font></b> bg #1c1cff
   } <b><font color=#3a6797>else</font></b> {
@@ -6302,17 +6330,17 @@ padding: 0%;
   <i><font color=#4b5d50># Clears the info listbox widget and the related data.</font></i>
   <i><font color=#4b5d50>#   i - index of message (if omitted, clears all messages)</font></i>
 
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited obPav obPav
   <b><font color=#3a6797>variable</font></b> list
   <b><font color=#3a6797>variable</font></b> info
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i</font> == -1} {
     <b><font color=#3a6797>set</font></b> list [<b><font color=#3a6797>list</font></b>]
     <b><font color=#3a6797>set</font></b> info [<b><font color=#3a6797>list</font></b>]
   } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$obPav</font> csGet] fg
+    <b><font color=#3a6797>catch</font></b> {[<font color=#1b1baa>$obPav</font> LbxInfo] itemconfigure <font color=#1b1baa>$i</font> <font color=#6c3e67>-foreground</font> <font color=#1b1baa>$fg</font>}
     <b><font color=#3a6797>set</font></b> list [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$list</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
     <b><font color=#3a6797>set</font></b> info [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$info</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
-    <b><font color=#3a6797>namespace</font></b> upvar ::alited obPav obPav
-    <b><font color=#3a6797>lassign</font></b> [alited::FgFgBold] fg
-    <b><font color=#3a6797>catch</font></b> {[<font color=#1b1baa>$obPav</font> LbxInfo] itemconfigure 0 <font color=#6c3e67>-foreground</font> <font color=#1b1baa>$fg</font>}
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::info::FocusIn'>FocusIn</a><span class='ns_scope'> [<a href="alited.html#::alited::info" title="::alited::info" class='ruff_cmd'>::alited::info</a>]</span><span class='tinylink'><a href='alited.html#::alited::info'>info</a>, <a href='#top'>Top</a></span></h4>
@@ -6442,29 +6470,37 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::info::Put'>Put</a><span class='ns_scope'> [<a href="alited.html#::alited::info" title="::alited::info" class='ruff_cmd'>::alited::info</a>]</span><span class='tinylink'><a href='alited.html#::alited::info'>info</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Puts a message to the info listbox widget.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>Put</span> <span class='ruff_arg'>msg ?inf? ?bold?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>Put</span> <span class='ruff_arg'>msg ?inf? ?bold? ?see?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>msg</code></code></td><td class='ruff_defitem'>the message</td></tr>
 <tr><td class='ruff_defitem'><code><code>inf</code></code></td><td class='ruff_defitem'>additional data for the message (1st line of unit etc.); <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>bold</code></code></td><td class='ruff_defitem'>if yes, displays the message bolded; <i>optional, default</i> <code>no</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>see</code></code></td><td class='ruff_defitem'>if yes, makes the message seen; <i>optional, default</i> <code>no</code></td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_218' href="javascript:toggleSource('218')">Show source</a></p>
-<div id='218' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::info::Put {msg {inf {}} {bold no}} {
+<div id='218' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::info::Put {msg {inf {}} {bold no} {see no}} {
 
   <i><font color=#4b5d50># Puts a message to the info listbox widget.</font></i>
   <i><font color=#4b5d50>#   msg - the message</font></i>
   <i><font color=#4b5d50>#   inf - additional data for the message (1st line of unit etc.)</font></i>
   <i><font color=#4b5d50>#   bold - if yes, displays the message bolded</font></i>
+  <i><font color=#4b5d50>#   see - if yes, makes the message seen</font></i>
 
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited obPav obPav
   <b><font color=#3a6797>variable</font></b> list
   <b><font color=#3a6797>variable</font></b> info
   <b><font color=#3a6797>lappend</font></b> list <font color=#1b1baa>$msg</font>
   <b><font color=#3a6797>lappend</font></b> info <font color=#1b1baa>$inf</font>
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$bold</font>} {
-    <b><font color=#3a6797>namespace</font></b> upvar ::alited obPav obPav
+  <b><font color=#3a6797>set</font></b> lbx [<font color=#1b1baa>$obPav</font> LbxInfo]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$see</font>} {
+    <b><font color=#3a6797>lassign</font></b> [::hl_tcl::addingColors] -&gt; fgbold
+    <font color=#1b1baa>$lbx</font> see end
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$bold</font>} {
     <b><font color=#3a6797>lassign</font></b> [alited::FgFgBold] -&gt; fgbold
-    [<font color=#1b1baa>$obPav</font> LbxInfo] itemconfigure end <font color=#6c3e67>-foreground</font> <font color=#1b1baa>$fgbold</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#ca14ca>return</font></b>
   }
+  <font color=#1b1baa>$lbx</font> itemconfigure end <font color=#6c3e67>-foreground</font> <font color=#1b1baa>$fgbold</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::info::SwitchFocustext'>SwitchFocustext</a><span class='ns_scope'> [<a href="alited.html#::alited::info" title="::alited::info" class='ruff_cmd'>::alited::info</a>]</span><span class='tinylink'><a href='alited.html#::alited::info'>info</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -6723,48 +6759,37 @@ padding: 0%;
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_226' href="javascript:toggleSource('226')">Show source</a></p>
 <div id='226' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::ini::InitFonts {} {
 
-    <i><font color=#4b5d50># Loads main fonts for alited to use as default and mono.</font></i>
+  <i><font color=#4b5d50># Loads main fonts for alited to use as default and mono.</font></i>
 
-    <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
-  <i><font color=#4b5d50>#  if {[catch {</font></i>
-  <i><font color=#4b5d50>#    package require extrafont</font></i>
-  <i><font color=#4b5d50>#    set ttflist [glob [file join $alited::DATADIR fonts *]]</font></i>
-  <i><font color=#4b5d50>#  }]} {</font></i>
-  <i><font color=#4b5d50>#    set ttflist [list]</font></i>
-  <i><font color=#4b5d50>#  }</font></i>
-  <i><font color=#4b5d50>#  foreach ttf $ttflist {</font></i>
-  <i><font color=#4b5d50>#    catch {extrafont::load $ttf}</font></i>
-  <i><font color=#4b5d50>#puts &quot;[incr ::-ALE-] ini::InitFonts $ttf&quot;</font></i>
-  <i><font color=#4b5d50>#  }</font></i>
-  <i><font color=#4b5d50>#puts &quot;[incr ::-ALE-] ini::InitFonts ....[font families]&quot;</font></i>
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
 
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(FONT)</font> ne {}} {
-      <b><font color=#3a6797>catch</font></b> {
-        ::apave::obj basicDefFont [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$al(FONT)</font> <font color=#6c3e67>-family</font>]
-      }
-      <b><font color=#3a6797>set</font></b> smallfont <font color=#1b1baa>$al(FONT)</font>
-      <b><font color=#3a6797>catch</font></b> {
-        <b><font color=#3a6797>set</font></b> smallfont [<b><font color=#3a6797>dict</font></b> set smallfont <font color=#6c3e67>-size</font> <font color=#1b1baa>$al(FONTSIZE,small)</font>]
-      }
-      <b><font color=#3a6797>foreach</font></b> font {TkDefaultFont TkMenuFont TkHeadingFont TkCaptionFont} {
-        <b><font color=#134070>font</font></b> configure <font color=#1b1baa>$font</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$al(FONT)</font>
-      }
-      <b><font color=#3a6797>foreach</font></b> font {TkSmallCaptionFont TkIconFont TkTooltipFont} {
-        <b><font color=#134070>font</font></b> configure <font color=#1b1baa>$font</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$smallfont</font>
-      }
-      ::baltip::configure <font color=#6c3e67>-font</font> <font color=#1b1baa>$smallfont</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(FONT)</font> ne {}} {
+    <b><font color=#3a6797>catch</font></b> {
+      ::apave::obj basicDefFont [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$al(FONT)</font> <font color=#6c3e67>-family</font>]
     }
-    ::apave::obj basicFontSize <font color=#1b1baa>$al(FONTSIZE,std)</font>
-    <b><font color=#3a6797>set</font></b> gl [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$alited::MSGSDIR</font> <font color=#1b1baa>$al(LOCAL)</font>]
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>glob</font></b> <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>gl.msg&quot;</font>}]} {<b><font color=#3a6797>set</font></b> al(LOCAL) en}
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(LOCAL)</font> ni {en {}}} {
-      <i><font color=#4b5d50># load localized messages</font></i>
-      msgcat::mcload <font color=#1b1baa>$alited::MSGSDIR</font>
-      msgcat::mclocale <font color=#1b1baa>$al(LOCAL)</font>
-      alited::msgcatMessages
-    } <b><font color=#3a6797>else</font></b> {
-      msgcat::mclocale en
+    <b><font color=#3a6797>set</font></b> smallfont <font color=#1b1baa>$al(FONT)</font>
+    <b><font color=#3a6797>catch</font></b> {
+      <b><font color=#3a6797>set</font></b> smallfont [<b><font color=#3a6797>dict</font></b> set smallfont <font color=#6c3e67>-size</font> <font color=#1b1baa>$al(FONTSIZE,small)</font>]
     }
+    <b><font color=#3a6797>foreach</font></b> font {TkDefaultFont TkMenuFont TkHeadingFont TkCaptionFont} {
+      <b><font color=#134070>font</font></b> configure <font color=#1b1baa>$font</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$al(FONT)</font>
+    }
+    <b><font color=#3a6797>foreach</font></b> font {TkSmallCaptionFont TkIconFont TkTooltipFont} {
+      <b><font color=#134070>font</font></b> configure <font color=#1b1baa>$font</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$smallfont</font>
+    }
+    ::baltip::configure <font color=#6c3e67>-font</font> <font color=#1b1baa>$smallfont</font>
+  }
+  ::apave::obj basicFontSize <font color=#1b1baa>$al(FONTSIZE,std)</font>
+  <b><font color=#3a6797>set</font></b> gl [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$alited::MSGSDIR</font> <font color=#1b1baa>$al(LOCAL)</font>]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>glob</font></b> <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>gl.msg&quot;</font>}]} {<b><font color=#3a6797>set</font></b> al(LOCAL) en}
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(LOCAL)</font> ni {en {}}} {
+    <i><font color=#4b5d50># load localized messages</font></i>
+    msgcat::mcload <font color=#1b1baa>$alited::MSGSDIR</font>
+    msgcat::mclocale <font color=#1b1baa>$al(LOCAL)</font>
+    alited::msgcatMessages
+  } <b><font color=#3a6797>else</font></b> {
+    msgcat::mclocale en
+  }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::ini::InitGUI'>InitGUI</a><span class='ns_scope'> [<a href="alited.html#::alited::ini" title="::alited::ini" class='ruff_cmd'>::alited::ini</a>]</span><span class='tinylink'><a href='alited.html#::alited::ini'>ini</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -6779,7 +6804,7 @@ padding: 0%;
   ::apave::obj basicFontSize <font color=#1b1baa>$al(FONTSIZE,std)</font>
   ::apave::obj csSet <font color=#1b1baa>$al(INI,CS)</font> . <font color=#6c3e67>-doit</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(INI,HUE)</font>} {::apave::obj csToned <font color=#1b1baa>$al(INI,CS)</font> <font color=#1b1baa>$al(INI,HUE)</font>}
-  <b><font color=#3a6797>set</font></b> Dark [::apave::obj csDarkEdit]
+  <b><font color=#3a6797>set</font></b> Dark [::apave::obj csDark]
   <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists al(ED,clrCOM)] || ![<b><font color=#3a6797>info</font></b> exists al(ED,CclrCOM)] ||  ![<b><font color=#3a6797>info</font></b> exists al(ED,Dark)] || <font color=#1b1baa>$al(ED,Dark)</font> != <font color=#1b1baa>$Dark</font>} {
     alited::pref::Tcl_Default <font color=#1b1baa>$al(syntaxidx)</font> yes
     alited::pref::C_Default <font color=#1b1baa>$al(syntaxidx)</font> yes
@@ -6915,6 +6940,7 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(INI,belltoll)</font>} {
     <b><font color=#ca14ca>proc</font></b> ::bell args {}  ;<i><font color=#4b5d50># no bells</font></i>
   }
+  <b><font color=#3a6797>set</font></b> al(ini_file) {}  ;<i><font color=#4b5d50># to reread alited.ini contents, at need in next time</font></i>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::ini::ReadIniEM'>ReadIniEM</a><span class='ns_scope'> [<a href="alited.html#::alited::ini" title="::alited::ini" class='ruff_cmd'>::alited::ini</a>]</span><span class='tinylink'><a href='alited.html#::alited::ini'>ini</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -7965,10 +7991,10 @@ padding: 0%;
     {.fraBot.fra.sbv .fraBot.fra.LbxInfo L - - {<b><font color=#134070>pack</font></b>}}
     {.fraBot.fra.SbhInfo .fraBot.fra.LbxInfo T - - {<b><font color=#134070>pack</font></b> <font color=#6c3e67>-side</font> bottom <font color=#6c3e67>-before</font> %w}}
     {.fraBot.stat - - - - {<b><font color=#134070>pack</font></b> <font color=#6c3e67>-side</font> bottom} {<font color=#6c3e67>-array</font> {
-      {{<font color=#1b1baa>$alited::al(MC,Row:)</font>}} 12
-      {{<font color=#1b1baa>$alited::al(MC,Col:)</font>}} 5
+      {{<font color=#1b1baa>$alited::al(MC,Row:)</font>}} 13
+      {{<font color=#1b1baa>$alited::al(MC,Col:)</font>}} 4
       {{} <font color=#6c3e67>-anchor</font> w <font color=#6c3e67>-expand</font> 1} 50
-      {{} <font color=#6c3e67>-anchor</font> e} 18
+      {{} <font color=#6c3e67>-anchor</font> e} 21
     }}}
   }
   UpdateProjectInfo
@@ -8142,13 +8168,13 @@ padding: 0%;
 <p class='ruff'>Sets a focus on a current text.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>FocusText</span> <span class='ruff_arg'>?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>contains tab's ID and a cursor positition.</td></tr>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>contains tab's ID and a cursor position.</td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_264' href="javascript:toggleSource('264')">Show source</a></p>
 <div id='264' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::main::FocusText {args} {
 
   <i><font color=#4b5d50># Sets a focus on a current text.</font></i>
-  <i><font color=#4b5d50>#   args - contains tab's ID and a cursor positition.</font></i>
+  <i><font color=#4b5d50>#   args - contains tab's ID and a cursor position.</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
   <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$args</font> TID pos
@@ -8448,9 +8474,9 @@ padding: 0%;
       <b><font color=#3a6797>lappend</font></b> <font color=#7d1a1a>&quot;<font color=#1b1baa>${</font>lng<font color=#1b1baa>}</font>colors&quot;</font> <font color=#1b1baa>$clrCURL</font>
     }
     <b><font color=#3a6797>if</font></b> {[alited::file::IsClang <font color=#1b1baa>$curfile</font>]} {
-      ::hl_c::hl_init <font color=#1b1baa>$wtxt</font> <font color=#6c3e67>-dark</font> [<font color=#1b1baa>$obPav</font> csDarkEdit]  <font color=#6c3e67>-multiline</font> 1 <font color=#6c3e67>-keywords</font> <font color=#1b1baa>$al(ED,CKeyWords)</font>  <font color=#6c3e67>-cmd</font> <font color=#7d1a1a>&quot;::alited::edit::Modified <font color=#1b1baa>$</font>TID&quot;</font>  <font color=#6c3e67>-cmdpos</font> ::alited::main::CursorPos  <font color=#6c3e67>-font</font> <font color=#1b1baa>$al(FONT,txt)</font> <font color=#6c3e67>-colors</font> <font color=#1b1baa>$Ccolors</font>  <font color=#6c3e67>-insertwidth</font> <font color=#1b1baa>$al(CURSORWIDTH)</font>
+      ::hl_c::hl_init <font color=#1b1baa>$wtxt</font> <font color=#6c3e67>-dark</font> [<font color=#1b1baa>$obPav</font> csDark]  <font color=#6c3e67>-multiline</font> 1 <font color=#6c3e67>-keywords</font> <font color=#1b1baa>$al(ED,CKeyWords)</font>  <font color=#6c3e67>-cmd</font> <font color=#7d1a1a>&quot;::alited::edit::Modified <font color=#1b1baa>$</font>TID&quot;</font>  <font color=#6c3e67>-cmdpos</font> ::alited::main::CursorPos  <font color=#6c3e67>-font</font> <font color=#1b1baa>$al(FONT,txt)</font> <font color=#6c3e67>-colors</font> <font color=#1b1baa>$Ccolors</font>  <font color=#6c3e67>-insertwidth</font> <font color=#1b1baa>$al(CURSORWIDTH)</font>
     } <b><font color=#3a6797>else</font></b> {
-      ::hl_tcl::hl_init <font color=#1b1baa>$wtxt</font> <font color=#6c3e67>-dark</font> [<font color=#1b1baa>$obPav</font> csDarkEdit]  <font color=#6c3e67>-multiline</font> <font color=#1b1baa>$al(prjmultiline)</font> <font color=#6c3e67>-keywords</font> <font color=#1b1baa>$al(ED,TclKeyWords)</font>  <font color=#6c3e67>-cmd</font> <font color=#7d1a1a>&quot;::alited::edit::Modified <font color=#1b1baa>$</font>TID&quot;</font>  <font color=#6c3e67>-cmdpos</font> ::alited::main::CursorPos  <font color=#6c3e67>-plaintext</font> [<b><font color=#3a6797>expr</font></b> {![alited::file::IsTcl <font color=#1b1baa>$curfile</font>]}]  <font color=#6c3e67>-font</font> <font color=#1b1baa>$al(FONT,txt)</font> <font color=#6c3e67>-colors</font> <font color=#1b1baa>$colors</font>  <font color=#6c3e67>-insertwidth</font> <font color=#1b1baa>$al(CURSORWIDTH)</font>
+      ::hl_tcl::hl_init <font color=#1b1baa>$wtxt</font> <font color=#6c3e67>-dark</font> [<font color=#1b1baa>$obPav</font> csDark]  <font color=#6c3e67>-multiline</font> <font color=#1b1baa>$al(prjmultiline)</font> <font color=#6c3e67>-keywords</font> <font color=#1b1baa>$al(ED,TclKeyWords)</font>  <font color=#6c3e67>-cmd</font> <font color=#7d1a1a>&quot;::alited::edit::Modified <font color=#1b1baa>$</font>TID&quot;</font>  <font color=#6c3e67>-cmdpos</font> ::alited::main::CursorPos  <font color=#6c3e67>-plaintext</font> [<b><font color=#3a6797>expr</font></b> {![alited::file::IsTcl <font color=#1b1baa>$curfile</font>]}]  <font color=#6c3e67>-font</font> <font color=#1b1baa>$al(FONT,txt)</font> <font color=#6c3e67>-colors</font> <font color=#1b1baa>$colors</font>  <font color=#6c3e67>-insertwidth</font> <font color=#1b1baa>$al(CURSORWIDTH)</font>
     }
     UpdateText <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$curfile</font>
   }
@@ -8539,16 +8565,25 @@ padding: 0%;
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
   <i><font color=#4b5d50># only for unit tree and not navigation key and not Alt/Ctrl pressed</font></i>
-  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(TREE,isunits)</font> || (<font color=#1b1baa>$s</font>!=0 && <font color=#1b1baa>$s</font>!=1) ||  <font color=#1b1baa>$K</font> in {Up Down Left Right Next Prior Home End}} {
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(TREE,isunits)</font> || (<font color=#1b1baa>$s</font>!=0 && <font color=#1b1baa>$s</font>!=1 && <font color=#1b1baa>$s</font>!=8) ||  (<font color=#1b1baa>$K</font> in {Up Down Left Right Next Prior Home End} && <font color=#1b1baa>$s</font>!=8)} {
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <i><font color=#4b5d50># check for current text and current unit's lines</font></i>
+  <b><font color=#3a6797>set</font></b> wcur [CurrentWTXT]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtxt</font> eq {}} {
+    <b><font color=#3a6797>set</font></b> wtxt <font color=#1b1baa>$wcur</font>
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$wtxt</font> ne <font color=#1b1baa>$wcur</font>} {
     <b><font color=#ca14ca>return</font></b>
   }
   <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> Tree]
-  <i><font color=#4b5d50># check for current text and current unit's lines</font></i>
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtxt</font> eq {}} {<b><font color=#3a6797>set</font></b> wtxt [CurrentWTXT]}
   <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$wtxt</font> index insert]
   <b><font color=#3a6797>lassign</font></b> [alited::tree::CurrentItemByLine <font color=#1b1baa>$pos</font> 1] itemID - - - name l1
   <b><font color=#3a6797>set</font></b> header [alited::unit::GetHeader <font color=#1b1baa>$wtree</font> <font color=#1b1baa>$itemID</font>]
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$K</font> eq {}} {
+  <b><font color=#3a6797>set</font></b> gokeys [<b><font color=#3a6797>list</font></b> {}]
+  <b><font color=#3a6797>foreach</font></b> gk {F3 AltQ AltW} {
+    <b><font color=#3a6797>lappend</font></b> gokeys {<b><font color=#3a6797>*</font></b>}[apave::getTextHotkeys <font color=#1b1baa>$gk</font>]
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$K</font> in <font color=#1b1baa>$gokeys</font> || <font color=#1b1baa>$s</font>==8} {
     <b><font color=#3a6797>set</font></b> l1 -1 ;<i><font color=#4b5d50># to avoid a unit's name spawned in last visits at its change</font></i>
   }
   alited::favor::LastVisited [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$itemID</font>] <font color=#1b1baa>$header</font> <font color=#1b1baa>$l1</font>
@@ -9249,7 +9284,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   cs - the color scheme's index (if omitted, the chosen one's)</font></i>
 
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$cs</font> eq {}} {<b><font color=#3a6797>set</font></b> cs [GetCS]}
-  <b><font color=#ca14ca>return</font></b> [::apave::obj csDarkEdit <font color=#1b1baa>$cs</font>]
+  <b><font color=#ca14ca>return</font></b> [::apave::obj csDark <font color=#1b1baa>$cs</font>]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::pref::Edit_Tab1'>Edit_Tab1</a><span class='ns_scope'> [<a href="alited.html#::alited::pref" title="::alited::pref" class='ruff_cmd'>::alited::pref</a>]</span><span class='tinylink'><a href='alited.html#::alited::pref'>pref</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -9825,6 +9860,7 @@ padding: 0%;
       <b><font color=#3a6797>lappend</font></b> locales <font color=#1b1baa>$loc</font>
     }
   }
+  <b><font color=#3a6797>set</font></b> locales [<b><font color=#3a6797>lsort</font></b> <font color=#1b1baa>$locales</font>]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::pref::InitSyntax'>InitSyntax</a><span class='ns_scope'> [<a href="alited.html#::alited::pref" title="::alited::pref" class='ruff_cmd'>::alited::pref</a>]</span><span class='tinylink'><a href='alited.html#::alited::pref'>pref</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -12856,7 +12892,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   wtree - the tree's path</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
-  <b><font color=#3a6797>lassign</font></b> [::hl_tcl::hl_colors {<font color=#6c3e67>-AddTags</font>} [::apave::obj csDarkEdit]] - - fgbr - - fgred
+  <b><font color=#3a6797>lassign</font></b> [::hl_tcl::hl_colors {<font color=#6c3e67>-AddTags</font>} [::apave::obj csDark]] - - fgbr - - fgred
   <b><font color=#3a6797>append</font></b> fontN <font color=#7d1a1a>&quot;-font <font color=#1b1baa>$</font>alited::al(FONT,defsmall)&quot;</font>
   <b><font color=#3a6797>append</font></b> fontS <font color=#1b1baa>$fontN</font> <font color=#7d1a1a>&quot; -foreground <font color=#1b1baa>$</font>fgred&quot;</font>
   <font color=#1b1baa>$wtree</font> tag configure tagNorm {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$fontN</font>
@@ -14209,32 +14245,44 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::unit::GetHeader'>GetHeader</a><span class='ns_scope'> [<a href="alited.html#::alited::unit" title="::alited::unit" class='ruff_cmd'>::alited::unit</a>]</span><span class='tinylink'><a href='alited.html#::alited::unit'>unit</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Gets a header of unit: declaration + initial comments.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>GetHeader</span> <span class='ruff_arg'>wtree ID ?NC?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>GetHeader</span> <span class='ruff_arg'>wtree ID ?NC? ?wtxt? ?tip? ?l1? ?l2?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>wtree</code></code></td><td class='ruff_defitem'>unit tree widget</td></tr>
 <tr><td class='ruff_defitem'><code><code>ID</code></code></td><td class='ruff_defitem'>ID of item in the unit tree</td></tr>
 <tr><td class='ruff_defitem'><code><code>NC</code></code></td><td class='ruff_defitem'>index of column of the unit tree; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>wtxt</code></code></td><td class='ruff_defitem'>text widget; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>tip</code></code></td><td class='ruff_defitem'>unit's name; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>l1</code></code></td><td class='ruff_defitem'>1st line of unit; <i>optional, default</i> <code>0</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>l2</code></code></td><td class='ruff_defitem'>last line of unit; <i>optional, default</i> <code>0</code></td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_480' href="javascript:toggleSource('480')">Show source</a></p>
-<div id='480' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit::GetHeader {wtree ID {NC {}}} {
+<div id='480' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit::GetHeader {wtree ID {NC {}} {wtxt {}} {tip {}} {l1 0} {l2 0}} {
 
   <i><font color=#4b5d50># Gets a header of unit: declaration + initial comments.</font></i>
   <i><font color=#4b5d50>#   wtree - unit tree widget</font></i>
   <i><font color=#4b5d50>#   ID - ID of item in the unit tree</font></i>
   <i><font color=#4b5d50>#   NC - index of column of the unit tree</font></i>
+  <i><font color=#4b5d50>#   wtxt - text widget</font></i>
+  <i><font color=#4b5d50>#   tip - unit's name</font></i>
+  <i><font color=#4b5d50>#   l1 - 1st line of unit</font></i>
+  <i><font color=#4b5d50>#   l2 - last line of unit</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
-  <b><font color=#3a6797>set</font></b> tip [<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$ID</font> <font color=#6c3e67>-text</font>]]
-  <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$ID</font> <font color=#6c3e67>-values</font>] l1 l2 - id
-  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(TREE,isunits)</font>} {
-    <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$l2</font>  ;<i><font color=#4b5d50># for file tree, it's a full file name</font></i>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtree</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> tip [<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$ID</font> <font color=#6c3e67>-text</font>]]
+    <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$ID</font> <font color=#6c3e67>-values</font>] l1 l2 - id
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(TREE,isunits)</font>} {
+      <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$l2</font>  ;<i><font color=#4b5d50># for file tree, it's a full file name</font></i>
+    }
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$NC</font> eq {#1}} {
     <b><font color=#3a6797>set</font></b> tip <font color=#7d1a1a>&quot;<font color=#1b1baa>[</font>string map <font color=#1b1baa>{</font>al #<font color=#1b1baa>}</font> <font color=#1b1baa>$</font>id<font color=#1b1baa>]</font>\n<font color=#1b1baa>$</font>l1 - <font color=#1b1baa>[</font>expr <font color=#1b1baa>{</font>max(<font color=#1b1baa>$</font>l1,<font color=#1b1baa>$</font>l2)<font color=#1b1baa>}]</font>&quot;</font>
     <b><font color=#3a6797>set</font></b> ID {}
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>catch</font></b> {
-      <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtxt</font> eq {}} {
+        <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+      }
       <b><font color=#3a6797>set</font></b> tip2 [<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$l1</font>.0 <font color=#1b1baa>$l1</font>.end]]
       <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match <font color=#7d1a1a>&quot;*\{&quot;</font> <font color=#1b1baa>$tip2</font>]} {
         <b><font color=#3a6797>set</font></b> tip [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$tip2</font> <font color=#7d1a1a>&quot; \{&quot;</font>]
@@ -14650,31 +14698,12 @@ padding: 0%;
   }
   <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>lsearch</font></b> <font color=#6c3e67>-exact</font> <font color=#6c3e67>-index</font> 2 <font color=#1b1baa>$branch</font> <font color=#1b1baa>$unit</font>]
 }<br><br></code></pre></div>
-</div><br><br><br><h4 class='ruffproc'><a name='::alited::unit::SelectByHeader'>SelectByHeader</a><span class='ns_scope'> [<a href="alited.html#::alited::unit" title="::alited::unit" class='ruff_cmd'>::alited::unit</a>]</span><span class='tinylink'><a href='alited.html#::alited::unit'>unit</a>, <a href='#top'>Top</a></span></h4>
-<div style='clear:both;'></div>
-<p class='ruff'>Selects a unit in the text, by the unit's header.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>SelectByHeader</span> <span class='ruff_arg'>header line</span></div>
-<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td class='ruff_defitem'><code><code>header</code></code></td><td class='ruff_defitem'>unit's header (declaration+initial comment)</td></tr>
-<tr><td class='ruff_defitem'><code><code>line</code></code></td><td class='ruff_defitem'>relational line number inside the unit</td></tr>
-</table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_488' href="javascript:toggleSource('488')">Show source</a></p>
-<div id='488' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit::SelectByHeader {header line} {
-
-  <i><font color=#4b5d50># Selects a unit in the text, by the unit's header.</font></i>
-  <i><font color=#4b5d50>#   header - unit's header (declaration+initial comment)</font></i>
-  <i><font color=#4b5d50>#   line - relational line number inside the unit</font></i>
-
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> ID [SearchByHeader <font color=#1b1baa>$header</font>]] ne <font color=#7d1a1a>&quot;&quot;</font>} {
-    <b><font color=#3a6797>after</font></b> idle <font color=#7d1a1a>&quot;alited::tree::NewSelection <font color=#1b1baa>$</font>ID <font color=#1b1baa>$</font>line&quot;</font>
-  }
-}<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::unit::SwitchUnits'>SwitchUnits</a><span class='ns_scope'> [<a href="alited.html#::alited::unit" title="::alited::unit" class='ruff_cmd'>::alited::unit</a>]</span><span class='tinylink'><a href='alited.html#::alited::unit'>unit</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Switches between last two active units.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>SwitchUnits</span> </div>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_489' href="javascript:toggleSource('489')">Show source</a></p>
-<div id='489' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit::SwitchUnits {} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_488' href="javascript:toggleSource('488')">Show source</a></p>
+<div id='488' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit::SwitchUnits {} {
 
   <i><font color=#4b5d50># Switches between last two active units.</font></i>
 
@@ -14693,8 +14722,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>l1</code></code></td><td class='ruff_defitem'>1st line of current unit</td></tr>
 <tr><td class='ruff_defitem'><code><code>tpldata</code></code></td><td class='ruff_defitem'>template</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_490' href="javascript:toggleSource('490')">Show source</a></p>
-<div id='490' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit::TemplateData {wtxt l1 tpldata} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_489' href="javascript:toggleSource('489')">Show source</a></p>
+<div id='489' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit::TemplateData {wtxt l1 tpldata} {
 
   <i><font color=#4b5d50># Replaces the template wildcards with data of current text and unit.</font></i>
   <i><font color=#4b5d50>#   wtxt - text's path</font></i>
@@ -14751,8 +14780,8 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>geom</code></code></td><td class='ruff_defitem'>&quot;-geometry&quot; option for showModal; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_491' href="javascript:toggleSource('491')">Show source</a></p>
-<div id='491' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::_create {{geom {}}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_490' href="javascript:toggleSource('490')">Show source</a></p>
+<div id='490' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::_create {{geom {}}} {
 
   <i><font color=#4b5d50># Creates &quot;Templates&quot; dialogue.</font></i>
   <i><font color=#4b5d50>#   geom - &quot;-geometry&quot; option for showModal</font></i>
@@ -14830,8 +14859,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>doselect</code></code></td><td class='ruff_defitem'>if yes, enables &quot;Select&quot; action; <i>optional, default</i> <code>yes</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>geom</code></code></td><td class='ruff_defitem'>&quot;-geometry&quot; option for showModal; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_492' href="javascript:toggleSource('492')">Show source</a></p>
-<div id='492' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::_run {{doselect yes} {geom {}}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_491' href="javascript:toggleSource('491')">Show source</a></p>
+<div id='491' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::_run {{doselect yes} {geom {}}} {
 
   <i><font color=#4b5d50># Runs &quot;Templates&quot; dialogue.</font></i>
   <i><font color=#4b5d50>#   doselect - if yes, enables &quot;Select&quot; action</font></i>
@@ -14852,8 +14881,8 @@ padding: 0%;
 <div style='clear:both;'></div>
 <p class='ruff'>Handles &quot;Add template&quot; button.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>Add</span> </div>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_493' href="javascript:toggleSource('493')">Show source</a></p>
-<div id='493' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Add {} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_492' href="javascript:toggleSource('492')">Show source</a></p>
+<div id='492' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Add {} {
 
   <i><font color=#4b5d50># Handles &quot;Add template&quot; button.</font></i>
 
@@ -14918,8 +14947,8 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>Optional arguments.</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_494' href="javascript:toggleSource('494')">Show source</a></p>
-<div id='494' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Cancel {args} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_493' href="javascript:toggleSource('493')">Show source</a></p>
+<div id='493' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Cancel {args} {
 
   <i><font color=#4b5d50># Handles &quot;Cancel&quot; button.</font></i>
 
@@ -14932,8 +14961,8 @@ padding: 0%;
 <div style='clear:both;'></div>
 <p class='ruff'>Handles &quot;Change template&quot; button.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>Change</span> </div>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_495' href="javascript:toggleSource('495')">Show source</a></p>
-<div id='495' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Change {} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_494' href="javascript:toggleSource('494')">Show source</a></p>
+<div id='494' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Change {} {
 
   <i><font color=#4b5d50># Handles &quot;Change template&quot; button.</font></i>
 
@@ -14962,8 +14991,8 @@ padding: 0%;
 <div style='clear:both;'></div>
 <p class='ruff'>Helper to clear the combobox's selection.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>ClearCbx</span> </div>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_496' href="javascript:toggleSource('496')">Show source</a></p>
-<div id='496' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::ClearCbx {} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_495' href="javascript:toggleSource('495')">Show source</a></p>
+<div id='495' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::ClearCbx {} {
 
   <i><font color=#4b5d50># Helper to clear the combobox's selection.</font></i>
 
@@ -14974,8 +15003,8 @@ padding: 0%;
 <div style='clear:both;'></div>
 <p class='ruff'>Handles &quot;Delete template&quot; button.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>Delete</span> </div>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_497' href="javascript:toggleSource('497')">Show source</a></p>
-<div id='497' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Delete {} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_496' href="javascript:toggleSource('496')">Show source</a></p>
+<div id='496' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Delete {} {
 
   <i><font color=#4b5d50># Handles &quot;Delete template&quot; button.</font></i>
 
@@ -15011,8 +15040,8 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>isel</code></code></td><td class='ruff_defitem'>index of item</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_498' href="javascript:toggleSource('498')">Show source</a></p>
-<div id='498' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Focus {isel} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_497' href="javascript:toggleSource('497')">Show source</a></p>
+<div id='497' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Focus {isel} {
 
   <i><font color=#4b5d50># Sets the focus on the template list's item.</font></i>
   <i><font color=#4b5d50>#   isel - index of item</font></i>
@@ -15027,8 +15056,8 @@ padding: 0%;
 <div style='clear:both;'></div>
 <p class='ruff'>Creates a key list for &quot;Keys&quot; combobox.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>GetKeyList</span> </div>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_499' href="javascript:toggleSource('499')">Show source</a></p>
-<div id='499' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::GetKeyList {} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_498' href="javascript:toggleSource('498')">Show source</a></p>
+<div id='498' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::GetKeyList {} {
 
   <i><font color=#4b5d50># Creates a key list for &quot;Keys&quot; combobox.</font></i>
 
@@ -15044,8 +15073,8 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>Optional arguments.</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_500' href="javascript:toggleSource('500')">Show source</a></p>
-<div id='500' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Help {args} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_499' href="javascript:toggleSource('499')">Show source</a></p>
+<div id='499' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Help {args} {
 
   <i><font color=#4b5d50># Handles &quot;Help&quot; button.</font></i>
 
@@ -15059,8 +15088,8 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>Optional arguments.</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_501' href="javascript:toggleSource('501')">Show source</a></p>
-<div id='501' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::HelpMe {args} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_500' href="javascript:toggleSource('500')">Show source</a></p>
+<div id='500' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::HelpMe {args} {
 
   <i><font color=#4b5d50># 'Help' for start.</font></i>
 
@@ -15074,8 +15103,8 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>wtxt</code></code></td><td class='ruff_defitem'>text's path</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_502' href="javascript:toggleSource('502')">Show source</a></p>
-<div id='502' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::InText {wtxt} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_501' href="javascript:toggleSource('501')">Show source</a></p>
+<div id='501' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::InText {wtxt} {
 
   <i><font color=#4b5d50># Goes into the template's text and sets the cursor on it.</font></i>
   <i><font color=#4b5d50>#   wtxt - text's path</font></i>
@@ -15094,8 +15123,8 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>Optional arguments.</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_503' href="javascript:toggleSource('503')">Show source</a></p>
-<div id='503' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Ok {args} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_502' href="javascript:toggleSource('502')">Show source</a></p>
+<div id='502' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Ok {args} {
 
   <i><font color=#4b5d50># Handles &quot;OK&quot; button.</font></i>
 
@@ -15123,8 +15152,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>pos</code></code></td><td class='ruff_defitem'>if not &quot;&quot;, it's a position to be returned by default; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns a cursor position in the template's text.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_504' href="javascript:toggleSource('504')">Show source</a></p>
-<div id='504' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Pos {{pos {}}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_503' href="javascript:toggleSource('503')">Show source</a></p>
+<div id='503' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Pos {{pos {}}} {
 
   <i><font color=#4b5d50># Returns a cursor position in the template's text.</font></i>
   <i><font color=#4b5d50>#   pos - if not &quot;&quot;, it's a position to be returned by default</font></i>
@@ -15140,8 +15169,8 @@ padding: 0%;
 <div style='clear:both;'></div>
 <p class='ruff'>Gets templates' data from al(TPL,list) saved in alited.ini.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>ReadIni</span> </div>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_505' href="javascript:toggleSource('505')">Show source</a></p>
-<div id='505' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::ReadIni {} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_504' href="javascript:toggleSource('504')">Show source</a></p>
+<div id='504' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::ReadIni {} {
 
   <i><font color=#4b5d50># Gets templates' data from al(TPL,list) saved in alited.ini.</font></i>
 
@@ -15168,8 +15197,8 @@ padding: 0%;
 <div style='clear:both;'></div>
 <p class='ruff'>Registers key bindings of templates, to save them to alited.ini afterwards.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>RegisterKeys</span> </div>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_506' href="javascript:toggleSource('506')">Show source</a></p>
-<div id='506' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::RegisterKeys {} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_505' href="javascript:toggleSource('505')">Show source</a></p>
+<div id='505' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::RegisterKeys {} {
 
   <i><font color=#4b5d50># Registers key bindings of templates, to save them to alited.ini afterwards.</font></i>
 
@@ -15192,8 +15221,8 @@ padding: 0%;
 <div style='clear:both;'></div>
 <p class='ruff'>Puts templates' data to al(TPL,list) to save in alited.ini.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>SaveIni</span> </div>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_507' href="javascript:toggleSource('507')">Show source</a></p>
-<div id='507' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::SaveIni {} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_506' href="javascript:toggleSource('506')">Show source</a></p>
+<div id='506' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::SaveIni {} {
 
   <i><font color=#4b5d50># Puts templates' data to al(TPL,list) to save in alited.ini.</font></i>
 
@@ -15208,8 +15237,8 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>item</code></code></td><td class='ruff_defitem'>index (ID) of template list; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_508' href="javascript:toggleSource('508')">Show source</a></p>
-<div id='508' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Select {{item {}}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_507' href="javascript:toggleSource('507')">Show source</a></p>
+<div id='507' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Select {{item {}}} {
 
   <i><font color=#4b5d50># Selects an item of the template list.</font></i>
   <i><font color=#4b5d50>#   item - index (ID) of template list</font></i>
@@ -15251,8 +15280,8 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>what</code></code></td><td class='ruff_defitem'>if &quot;index&quot;, gets a current item's index</td></tr>
 <tr><td class='ruff_defitem'><code><code>domsg</code></code></td><td class='ruff_defitem'>if yes, shows a message about the selection; <i>optional, default</i> <code>yes</code></td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_509' href="javascript:toggleSource('509')">Show source</a></p>
-<div id='509' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Selected {what {domsg yes}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_508' href="javascript:toggleSource('508')">Show source</a></p>
+<div id='508' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Selected {what {domsg yes}} {
 
   <i><font color=#4b5d50># Gets ID or index of currently selected item of the template list.</font></i>
   <i><font color=#4b5d50>#   what - if &quot;index&quot;, gets a current item's index</font></i>
@@ -15274,8 +15303,8 @@ padding: 0%;
 <p class='ruff'>Returns the contents of the template's text.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>Text</span> </div>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns the contents of the template's text.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_510' href="javascript:toggleSource('510')">Show source</a></p>
-<div id='510' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Text {} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_509' href="javascript:toggleSource('509')">Show source</a></p>
+<div id='509' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::Text {} {
 
   <i><font color=#4b5d50># Returns the contents of the template's text.</font></i>
 
@@ -15286,8 +15315,8 @@ padding: 0%;
 <div style='clear:both;'></div>
 <p class='ruff'>Updates the template list.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>UpdateTree</span> </div>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_511' href="javascript:toggleSource('511')">Show source</a></p>
-<div id='511' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::UpdateTree {} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_510' href="javascript:toggleSource('510')">Show source</a></p>
+<div id='510' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit_tpl::UpdateTree {} {
 
   <i><font color=#4b5d50># Updates the template list.</font></i>
 
@@ -15782,7 +15811,6 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::unit::MoveUnits'>MoveUnits</a><span class='tooltiptext'>Moves selected units up/down the unit tree.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::unit::SearchByHeader'>SearchByHeader</a><span class='tooltiptext'>Gets tree item ID of a units by its header (declaration+initial comment).
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::unit::SearchInBranch'>SearchInBranch</a><span class='tooltiptext'>Checks whether a unit is in a branch.
-</span></h4><h4 class='tooltip'><a href='alited.html#::alited::unit::SelectByHeader'>SelectByHeader</a><span class='tooltiptext'>Selects a unit in the text, by the unit's header.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::unit::SwitchUnits'>SwitchUnits</a><span class='tooltiptext'>Switches between last two active units.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::unit::TemplateData'>TemplateData</a><span class='tooltiptext'>Replaces the template wildcards with data of current text and unit.
 </span></h4><h1><a href='#::alited::unit_tpl'>alited::unit_tpl</a></h1><h2><a href='#::alited::unit_tpl-Commands'>Commands</a></h2><h4 class='tooltip'><a href='alited.html#::alited::unit_tpl::_create'>_create</a><span class='tooltiptext'>Creates &quot;Templates&quot; dialogue.
