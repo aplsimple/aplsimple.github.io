@@ -1,5 +1,5 @@
 //"домашний сайт"  
-  var MY_SITE = "https://aplsimple.bitbucket.io/ru";
+  var MY_SITE = "https://aplsimple.github.io/ru";
 
 //скрыть опции ("род.падеж", "контроль")
     var OPTS_HIDDEN=false;

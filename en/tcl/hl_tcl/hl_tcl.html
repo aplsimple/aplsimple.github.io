@@ -489,10 +489,11 @@ padding: 0%;
 <br><br><br><h4 class='ruffproc'><a name='::hl_tcl::addingColors'>addingColors</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl" title="::hl_tcl" class='ruff_cmd'>::hl_tcl</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl'>hl_tcl</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Sets/gets colors for a text syntax highlighting.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>addingColors</span> <span class='ruff_arg'>?dark? ?txt?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>addingColors</span> <span class='ruff_arg'>?dark? ?txt? ?cs?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>dark</code></code></td><td class='ruff_defitem'>yes, if the current theme is dark; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>path to the text or {}; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>cs</code></code></td><td class='ruff_defitem'>color scheme; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>If <em>txt</em> omitted, returns a list of resting colors. The resting colors are:</p>
 <ul class='ruff'>
@@ -500,11 +501,12 @@ padding: 0%;
 <li>#TODO and #! comment's foreground</li>
 </ul>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_1' href="javascript:toggleSource('1')">Show source</a></p>
-<div id='1' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::hl_tcl::addingColors {{dark {}} {txt {}}} {
+<div id='1' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::hl_tcl::addingColors {{dark {}} {txt {}} {cs {}}} {
 
   <i><font color=#4b5d50># Sets/gets colors for a text syntax highlighting.</font></i>
   <i><font color=#4b5d50>#   dark - yes, if the current theme is dark</font></i>
   <i><font color=#4b5d50>#   txt - path to the text or {}</font></i>
+  <i><font color=#4b5d50>#   cs - color scheme</font></i>
   <i><font color=#4b5d50># If *txt* omitted, returns a list of resting colors.</font></i>
   <i><font color=#4b5d50># The resting colors are:</font></i>
   <i><font color=#4b5d50>#   - current line's background</font></i>
@@ -512,7 +514,7 @@ padding: 0%;
 
   <b><font color=#3a6797>variable</font></b> my::data
   <i><font color=#4b5d50># try to get color options from current apave settings</font></i>
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> clrCURL [<b><font color=#3a6797>lindex</font></b> [::apave::obj csGet] 16]}]} {
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> clrCURL [<b><font color=#3a6797>lindex</font></b> [::apave::obj csGet <font color=#1b1baa>$cs</font>] 16]}]} {
     <b><font color=#3a6797>set</font></b> clrCURL {}
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dark</font> eq {}} {
@@ -531,7 +533,6 @@ padding: 0%;
     <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$clrCURL</font> <font color=#1b1baa>$clrCMN2</font>]
   }
   <b><font color=#3a6797>set</font></b> my::data(COLORS,<font color=#1b1baa>$txt</font>) [<b><font color=#3a6797>list</font></b> {<b><font color=#3a6797>*</font></b>}[hl_colors <font color=#1b1baa>$txt</font>] <font color=#1b1baa>$clrCURL</font> <font color=#1b1baa>$clrCMN2</font>]
-  <b><font color=#ca14ca>return</font></b>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::hl_all'>hl_all</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl" title="::hl_tcl" class='ruff_cmd'>::hl_tcl</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl'>hl_tcl</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -623,12 +624,13 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code>-multiline</code></td><td class='ruff_defitem'>flag &quot;allowed multi-line strings&quot;</td></tr>
 <tr><td class='ruff_defitem'><code>-cmd</code></td><td class='ruff_defitem'>command to watch editing/viewing</td></tr>
 <tr><td class='ruff_defitem'><code>-cmdpos</code></td><td class='ruff_defitem'>command to watch cursor positioning</td></tr>
-<tr><td class='ruff_defitem'><code>-colors</code></td><td class='ruff_defitem'>list of colors: clrCOM, clrCOMTK, clrSTR, clrVAR, clrCMN, clrPROC</td></tr>
+<tr><td class='ruff_defitem'><code>-colors</code></td><td class='ruff_defitem'>list of colors as set in hl_tcl::hl_colorNames</td></tr>
 <tr><td class='ruff_defitem'><code>-font</code></td><td class='ruff_defitem'>attributes of font</td></tr>
 <tr><td class='ruff_defitem'><code>-seen</code></td><td class='ruff_defitem'>lines seen at start</td></tr>
 <tr><td class='ruff_defitem'><code>-keywords</code></td><td class='ruff_defitem'>additional commands to highlight (as Tk ones)</td></tr>
 </table>
 <p class='ruff'>This procedure has to be called before writing a text in the text widget.</p>
+<h5 class='ruff'>See also</h5><p class='ruff'><a href="hl_tcl.html#::hl_tcl::hl_colorNames" title="hl_colorNames" class='ruff_cmd'>hl_colorNames</a></p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_5' href="javascript:toggleSource('5')">Show source</a></p>
 <div id='5' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::hl_tcl::hl_init {txt args} {
 
@@ -643,11 +645,12 @@ padding: 0%;
   <i><font color=#4b5d50>#   -multiline - flag &quot;allowed multi-line strings&quot;</font></i>
   <i><font color=#4b5d50>#   -cmd - command to watch editing/viewing</font></i>
   <i><font color=#4b5d50>#   -cmdpos - command to watch cursor positioning</font></i>
-  <i><font color=#4b5d50>#   -colors - list of colors: clrCOM, clrCOMTK, clrSTR, clrVAR, clrCMN, clrPROC</font></i>
+  <i><font color=#4b5d50>#   -colors - list of colors as set in hl_tcl::hl_colorNames</font></i>
   <i><font color=#4b5d50>#   -font - attributes of font</font></i>
   <i><font color=#4b5d50>#   -seen - lines seen at start</font></i>
   <i><font color=#4b5d50>#   -keywords - additional commands to highlight (as Tk ones)</font></i>
   <i><font color=#4b5d50># This procedure has to be called before writing a text in the text widget.</font></i>
+  <i><font color=#4b5d50># See also: hl_colorNames</font></i>
 
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> setonly [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$args</font> 0] eq {--}}]]} {
     <b><font color=#3a6797>set</font></b> args [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$args</font> 1 end]
@@ -666,9 +669,12 @@ padding: 0%;
   <b><font color=#3a6797>unset</font></b> ::hl_tcl::my::data(KEYWORDS,<font color=#1b1baa>$txt</font>)
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$args</font> <font color=#6c3e67>-colors</font>]} {
     <b><font color=#3a6797>set</font></b> colors [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$args</font> <font color=#6c3e67>-colors</font>]
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$colors</font>]==9} {
-      <b><font color=#3a6797>lassign</font></b> [addingColors <font color=#1b1baa>$::hl_tcl::my::data(DARK,$txt)</font>] -&gt; clrCMN2
-      <b><font color=#3a6797>lappend</font></b> colors <font color=#1b1baa>$clrCMN2</font>  ;<i><font color=#4b5d50># if #TODO color omitted, add it</font></i>
+    <b><font color=#3a6797>lassign</font></b> [addingColors <font color=#1b1baa>$::hl_tcl::my::data(DARK,$txt)</font>] clrCURL clrCMN2
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> llen [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$colors</font>]]==8} {
+      <b><font color=#3a6797>lappend</font></b> colors <font color=#1b1baa>$clrCURL</font>  ;<i><font color=#4b5d50># add curr.line color if omitted</font></i>
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$llen</font>==9} {
+      <b><font color=#3a6797>lappend</font></b> colors <font color=#1b1baa>$clrCMN2</font>  ;<i><font color=#4b5d50># add #TODO color if omitted</font></i>
     }
     <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(COLORS,<font color=#1b1baa>$txt</font>) <font color=#1b1baa>$colors</font>
     <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(SETCOLORS,<font color=#1b1baa>$txt</font>) 1
@@ -1593,7 +1599,7 @@ padding: 0%;
         <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$w</font> search <font color=#6c3e67>-exact</font> \&quot; <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>npos +1 char&quot;</font> end] eq {}} {
           <b><font color=#3a6797>set</font></b> dir -1
         } <b><font color=#3a6797>else</font></b> {
-          <b><font color=#3a6797>set</font></b> lfnd [<font color=#1b1baa>$w</font> search <font color=#6c3e67>-backwards</font> <font color=#6c3e67>-all</font> <font color=#6c3e67>-exact</font> \&quot; <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>npos -1 char&quot;</font> 1.0]
+          <b><font color=#3a6797>set</font></b> lfnd [<font color=#1b1baa>$w</font> search <font color=#6c3e67>-backwards</font> <font color=#6c3e67>-all</font> <font color=#6c3e67>-exact</font> \&quot; <font color=#1b1baa>$npos</font> 1.0]
           <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$lfnd</font>] % 2} {
             <b><font color=#3a6797>set</font></b> dir -1
           }
