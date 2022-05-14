@@ -2236,7 +2236,7 @@ padding: 0%;
     <b><font color=#3a6797>set</font></b> nchooser <font color=#7d1a1a>&quot;my <font color=#1b1baa>$</font>choosname <font color=#1b1baa>$</font>tvar&quot;</font>
   } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$choosname</font> in {<b><font color=#134070>tk_getOpenFile</font></b> tk_getSaveFile}} {
     <b><font color=#3a6797>set</font></b> vargeo <font color=#1b1baa>$filvar</font>
-    <b><font color=#3a6797>set</font></b> widname [<b><font color=#ca14ca>my</font></b> AuxSetChooserGeometry <font color=#1b1baa>$vargeo</font> <font color=#1b1baa>$parent</font> __tk_filedialog]
+    <b><font color=#3a6797>set</font></b> widname [<b><font color=#ca14ca>my</font></b> AuxSetChooserGeometry <font color=#1b1baa>$vargeo</font> <font color=#1b1baa>$dirvar</font> <font color=#1b1baa>$parent</font> __tk_filedialog]
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> fn [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$tvar</font>]] eq {}} {
       <b><font color=#3a6797>set</font></b> dn [<b><font color=#3a6797>pwd</font></b>]
     } <b><font color=#3a6797>else</font></b> {
@@ -2248,7 +2248,7 @@ padding: 0%;
     <b><font color=#3a6797>incr</font></b> isfilename
   } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$nchooser</font> eq {<b><font color=#134070>tk_chooseDirectory</font></b>}} {
     <b><font color=#3a6797>set</font></b> vargeo <font color=#1b1baa>$dirvar</font>
-    <b><font color=#3a6797>set</font></b> widname [<b><font color=#ca14ca>my</font></b> AuxSetChooserGeometry <font color=#1b1baa>$vargeo</font> <font color=#1b1baa>$parent</font> __tk_choosedir]
+    <b><font color=#3a6797>set</font></b> widname [<b><font color=#ca14ca>my</font></b> AuxSetChooserGeometry <font color=#1b1baa>$vargeo</font> <font color=#1b1baa>$filvar</font> <font color=#1b1baa>$parent</font> __tk_choosedir]
     <b><font color=#3a6797>set</font></b> args <font color=#7d1a1a>&quot;-initialdir \&quot;<font color=#1b1baa>[</font>set <font color=#1b1baa>$</font>tvar<font color=#1b1baa>]</font>\&quot; <font color=#1b1baa>$</font>parent <font color=#1b1baa>$</font>args&quot;</font>
     <b><font color=#3a6797>incr</font></b> isfilename
   }
@@ -4244,12 +4244,16 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> err [<b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$txt</font> tag ranges sel} sel]
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$err</font> && [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$sel</font>]==2} {
     <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$sel</font> pos pos2
-    <b><font color=#3a6797>set</font></b> pos3 <font color=#7d1a1a>&quot;insert&quot;</font>  ;<i><font color=#4b5d50># single selection</font></i>
+    <b><font color=#3a6797>set</font></b> pos3 insert  ;<i><font color=#4b5d50># single selection</font></i>
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> GetLinePosition <font color=#1b1baa>$txt</font> insert] pos pos2  ;<i><font color=#4b5d50># current line</font></i>
     <b><font color=#3a6797>set</font></b> pos3 <font color=#1b1baa>$pos2</font>
   }
   <b><font color=#3a6797>set</font></b> duptext [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pos2</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$pos3</font> ne {insert} && <font color=#1b1baa>$pos2</font>==[<font color=#1b1baa>$txt</font> index end]} {
+    <i><font color=#4b5d50># current line is the last one: duplicate it properly</font></i>
+    <b><font color=#3a6797>set</font></b> duptext \n[<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$duptext</font> 0 end-1]
+  }
   <font color=#1b1baa>$txt</font> insert <font color=#1b1baa>$pos3</font> <font color=#1b1baa>$duptext</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dobreak</font>} {<b><font color=#ca14ca>return</font></b> <font color=#6c3e67>-code</font> break}
   <b><font color=#ca14ca>return</font></b>
