@@ -823,19 +823,21 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::iconImage'>iconImage</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Gets a defined icon's image or list of icons. If <em>icon</em> equals to &quot;-init&quot;, initializes apave's icon set.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>iconImage</span> <span class='ruff_arg'>?icon? ?iconset?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>iconImage</span> <span class='ruff_arg'>?icon? ?iconset? ?doit?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>icon</code></code></td><td class='ruff_defitem'>icon's name; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>iconset</code></code></td><td class='ruff_defitem'>one of small/middle/large; <i>optional, default</i> <code>small</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>doit</code></code></td><td class='ruff_defitem'>force the initialization; <i>optional, default</i> <code>no</code></td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns the icon's image or, if <em>icon</em> is blank, a list of icons available in <em>apave</em>.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_20' href="javascript:toggleSource('20')">Show source</a></p>
-<div id='20' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::iconImage {{icon {}} {iconset small}} {
+<div id='20' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::iconImage {{icon {}} {iconset small} {doit no}} {
 
   <i><font color=#4b5d50># Gets a defined icon's image or list of icons.</font></i>
   <i><font color=#4b5d50># If *icon* equals to &quot;-init&quot;, initializes apave's icon set.</font></i>
   <i><font color=#4b5d50>#   icon - icon's name</font></i>
   <i><font color=#4b5d50>#   iconset - one of small/middle/large</font></i>
+  <i><font color=#4b5d50>#   doit - force the initialization</font></i>
   <i><font color=#4b5d50># Returns the icon's image or, if *icon* is blank, a list of icons</font></i>
   <i><font color=#4b5d50># available in *apave*.</font></i>
 
@@ -846,7 +848,7 @@ padding: 0%;
     <b><font color=#ca14ca>return</font></b> _AP_IMG(img<font color=#1b1baa>$icon</font>)
   }
   <b><font color=#3a6797>variable</font></b> apaveDir
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>array</font></b> size _AP_IMG] == 0} {
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>array</font></b> size _AP_IMG] || <font color=#1b1baa>$doit</font>} {
     <i><font color=#4b5d50># Make images of icons</font></i>
     <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$apaveDir</font> apaveimg.tcl]
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$iconset</font> ne <font color=#7d1a1a>&quot;small&quot;</font>} {
@@ -3430,12 +3432,15 @@ padding: 0%;
     <b><font color=#3a6797>set</font></b> res <font color=#7d1a1a>&quot;  ::apave::bindToEvent <font color=#1b1baa>$</font>wt &lt;&lt;Paste&gt;&gt; <font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> pasteText <font color=#1b1baa>$</font>wt ; ::apave::bindToEvent <font color=#1b1baa>$</font>wt &lt;KP_Enter&gt; <font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> onKeyTextM <font color=#1b1baa>$</font>wt %K %s ; ::apave::bindToEvent <font color=#1b1baa>$</font>wt &lt;Return&gt; <font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> onKeyTextM <font color=#1b1baa>$</font>wt %K %s ; catch <font color=#1b1baa>{</font>::apave::bindToEvent <font color=#1b1baa>$</font>wt &lt;braceright&gt; <font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> onKeyTextM <font color=#1b1baa>$</font>wt %K<font color=#1b1baa>}</font>&quot;</font>
   }
   <b><font color=#3a6797>foreach</font></b> k [::apave::getTextHotkeys CtrlD] {
-    <b><font color=#3a6797>append</font></b> res <font color=#7d1a1a>&quot; ; bind <font color=#1b1baa>$</font>wt &lt;<font color=#1b1baa>$</font>k&gt; <font color=#1b1baa>{[</font>self<font color=#1b1baa>]</font> doubleText <font color=#1b1baa>$</font>wt<font color=#1b1baa>}</font>&quot;</font>
+    <b><font color=#3a6797>append</font></b> res <font color=#7d1a1a>&quot; ; ::apave::bindToEvent <font color=#1b1baa>$</font>wt &lt;<font color=#1b1baa>$</font>k&gt; <font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> doubleText <font color=#1b1baa>$</font>wt&quot;</font>
   }
   <b><font color=#3a6797>foreach</font></b> k [::apave::getTextHotkeys CtrlY] {
-    <b><font color=#3a6797>append</font></b> res <font color=#7d1a1a>&quot; ; bind <font color=#1b1baa>$</font>wt &lt;<font color=#1b1baa>$</font>k&gt; <font color=#1b1baa>{[</font>self<font color=#1b1baa>]</font> deleteLine <font color=#1b1baa>$</font>wt<font color=#1b1baa>}</font>&quot;</font>
+    <b><font color=#3a6797>append</font></b> res <font color=#7d1a1a>&quot; ; ::apave::bindToEvent <font color=#1b1baa>$</font>wt &lt;<font color=#1b1baa>$</font>k&gt; <font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> deleteLine <font color=#1b1baa>$</font>wt&quot;</font>
   }
-  <b><font color=#3a6797>append</font></b> res <font color=#7d1a1a>&quot; ; bind <font color=#1b1baa>$</font>wt &lt;Alt-Up&gt; <font color=#1b1baa>{[</font>self<font color=#1b1baa>]</font> linesMove <font color=#1b1baa>$</font>wt -1<font color=#1b1baa>}</font> ; bind <font color=#1b1baa>$</font>wt &lt;Alt-Down&gt; <font color=#1b1baa>{[</font>self<font color=#1b1baa>]</font> linesMove <font color=#1b1baa>$</font>wt +1<font color=#1b1baa>}</font> ; bind <font color=#1b1baa>$</font>wt &lt;Control-a&gt; \&quot;<font color=#1b1baa>$</font>wt tag add sel 1.0 end; break\&quot;&quot;</font>
+  <b><font color=#3a6797>foreach</font></b> k [::apave::getTextHotkeys CtrlA] {
+    <b><font color=#3a6797>append</font></b> res <font color=#7d1a1a>&quot; ; ::apave::bindToEvent <font color=#1b1baa>$</font>wt &lt;<font color=#1b1baa>$</font>k&gt; <font color=#1b1baa>$</font>wt tag add sel 1.0 end <font color=#1b1baa>{</font>;<font color=#1b1baa>}</font> break&quot;</font>
+  }
+  <b><font color=#3a6797>append</font></b> res <font color=#7d1a1a>&quot; ; ::apave::bindToEvent <font color=#1b1baa>$</font>wt &lt;Alt-Up&gt; <font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> linesMove <font color=#1b1baa>$</font>wt -1 ; ::apave::bindToEvent <font color=#1b1baa>$</font>wt &lt;Alt-Down&gt; <font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> linesMove <font color=#1b1baa>$</font>wt +1&quot;</font>
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APave::showModal'>showModal</a><span class='ns_scope'> [<a href="apave.html#::apave::APave" title="::apave::APave" class='ruff_cmd'>::apave::APave</a>]</span><span class='tinylink'><a href='apave.html#::apave::APave'>APave</a>, <a href='#top'>Top</a></span></h4>
@@ -4901,6 +4906,7 @@ padding: 0%;
   <i><font color=#4b5d50># Creates bindings to highlight matches in a text.</font></i>
   <i><font color=#4b5d50>#   w - path to the text</font></i>
 
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$w</font>]} <b><font color=#ca14ca>return</font></b>
   <font color=#1b1baa>$w</font> tag configure hilited <font color=#6c3e67>-foreground</font> #1f0000 <font color=#6c3e67>-background</font> #ffa073
   <font color=#1b1baa>$w</font> tag configure hilited2 <font color=#6c3e67>-foreground</font> #1f0000 <font color=#6c3e67>-background</font> #ff6b85
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> &lt;Double-ButtonPress-1&gt; [<b><font color=#3a6797>list</font></b> [<b><font color=#ca14ca>self</font></b>] highlight_matches <font color=#1b1baa>$w</font>]
