@@ -3295,6 +3295,15 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>list</font></b>]
   <b><font color=#3a6797>set</font></b> wmain [<b><font color=#3a6797>set</font></b> wdia {}]
   <b><font color=#3a6797>foreach</font></b> {w lwidgets} <font color=#1b1baa>$args</font> {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$lwidgets</font> 0 0] eq {<b><font color=#3a6797>after</font></b>}} {
+      <i><font color=#4b5d50># if 1st item is &quot;after idle&quot; or like &quot;after 1000&quot;, layout the window after...</font></i>
+      <i><font color=#4b5d50># (fit for &quot;invisible independent&quot; windows/frames/tabs)</font></i>
+      <b><font color=#3a6797>set</font></b> what [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$lwidgets</font> 0 1]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$what</font> eq {idle} || [<b><font color=#3a6797>string</font></b> is integer <font color=#6c3e67>-strict</font> <font color=#1b1baa>$what</font>]} {
+        <b><font color=#3a6797>after</font></b> <font color=#1b1baa>$what</font> [<b><font color=#3a6797>list</font></b> [<b><font color=#ca14ca>self</font></b>] paveWindow <font color=#1b1baa>$w</font> [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$lwidgets</font> 1 end]]
+      }
+      <b><font color=#3a6797>continue</font></b>
+    }
     <b><font color=#3a6797>lappend</font></b> res {<b><font color=#3a6797>*</font></b>}[<b><font color=#ca14ca>my</font></b> Window <font color=#1b1baa>$w</font> <font color=#1b1baa>$lwidgets</font>]
     <b><font color=#3a6797>lappend</font></b> _pav(lwidgets) <font color=#1b1baa>$lwidgets</font> ;<i><font color=#4b5d50># possibly useful</font></i>
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> ifnd [<b><font color=#3a6797>regexp</font></b> <font color=#6c3e67>-indices</font> <font color=#6c3e67>-inline</font> {[.]dia\d+} <font color=#1b1baa>$w</font>]] ne {}} {
@@ -4781,14 +4790,16 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> val [<b><font color=#3a6797>expr</font></b> {min(100,int(100*<font color=#1b1baa>$value</font>/<font color=#1b1baa>$::apave::_AP_VARS(ProSplash,maxvalue)</font>))}]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$val</font>!=<font color=#1b1baa>$::apave::_AP_VARS(ProSplash,value)</font>} {
     <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(ProSplash,value) <font color=#1b1baa>$val</font>
-    <font color=#1b1baa>$::apave::_AP_VARS(ProSplash,wid2)</font> configure <font color=#6c3e67>-value</font> <font color=#1b1baa>$val</font>
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$msg1</font> ne {}} {
-      <font color=#1b1baa>$::apave::_AP_VARS(ProSplash,wid1)</font> configure <font color=#6c3e67>-text</font> <font color=#1b1baa>$msg1</font>
+    <b><font color=#3a6797>catch</font></b> {  ;<i><font color=#4b5d50># there might be no splash widgets, then let it run dry</font></i>
+      <font color=#1b1baa>$::apave::_AP_VARS(ProSplash,wid2)</font> configure <font color=#6c3e67>-value</font> <font color=#1b1baa>$val</font>
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$msg1</font> ne {}} {
+        <font color=#1b1baa>$::apave::_AP_VARS(ProSplash,wid1)</font> configure <font color=#6c3e67>-text</font> <font color=#1b1baa>$msg1</font>
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$msg2</font> ne {}} {
+        <font color=#1b1baa>$::apave::_AP_VARS(ProSplash,wid3)</font> configure <font color=#6c3e67>-text</font> <font color=#1b1baa>$msg2</font>
+      }
+      <b><font color=#3a6797>update</font></b>
     }
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$msg2</font> ne {}} {
-      <font color=#1b1baa>$::apave::_AP_VARS(ProSplash,wid3)</font> configure <font color=#6c3e67>-text</font> <font color=#1b1baa>$msg2</font>
-    }
-    <b><font color=#3a6797>update</font></b>
   }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$val</font>
 }<br><br></code></pre></div>
