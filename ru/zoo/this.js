@@ -1,8 +1,6 @@
 /*
- 
  Functions specific to this site.
- 
-  */
+*/
 //---------------------------------------------
 // header of page
 function writeHeader(prntdir) {
@@ -29,7 +27,7 @@ function writeHeader(prntdir) {
     </header>');
 }
 
- 
+
 //---------------------------------------------
 // footer of page
 function writeFooter(pageinfo) {
