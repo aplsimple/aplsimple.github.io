@@ -1,7 +1,7 @@
 /*
- 
+
  Functions specific to this site.
- 
+
   */
 //---------------------------------------------
 // header of page
@@ -20,6 +20,7 @@ function writeHeader() {
         <a href="en/misc/news/news.html"  id=nav1   title="News and views">News</a> \
         <a href="en/misc/links/links.html" id=nav2   title="Some links">Links</a> \
         <a href="en/misc/gallery/gallery.html" id=nav3   title="Some demos">Gallery</a> \
+        <a href="'+homeLINK+'/ru/misc/stream/stream.html"   id=nav2   title="Sort of blog">Streams</a> \
         <a href="en/misc/springs/springs.html" id=nav4   title="Springs of words">Springs</a> \
         <a href='+homeLINK+'/ru/index.html id=helpme title="Switch to Russian pages"> \
         <img id="flagimg" height=14 width=14 src="en/zoo/ru.png"> \
@@ -28,7 +29,7 @@ function writeHeader() {
     </header>');
 }
 
- 
+
 //---------------------------------------------
 // footer of page
 function writeFooter(pageinfo) {
