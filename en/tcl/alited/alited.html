@@ -907,6 +907,7 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> al(MC,otherfiles)  [msgcat::mc {Do it in other files}]
   <b><font color=#3a6797>set</font></b> al(MC,inconsole)   [msgcat::mc {in console}]
   <b><font color=#3a6797>set</font></b> al(MC,intkcon)     [msgcat::mc {in Tkcon}]
+  <b><font color=#3a6797>set</font></b> al(MC,on)          [msgcat::mc on]
 
   <i><font color=#4b5d50>## _  menu items _ ##</font></i>
   <b><font color=#3a6797>set</font></b> al(MC,lookdecl)    [msgcat::mc {Look for Declaration}]
@@ -951,7 +952,7 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> al(MC,prjupd)      [msgcat::mc <font color=#7d1a1a>&quot;The project \&quot;%n\&quot; updated&quot;</font>]
   <b><font color=#3a6797>set</font></b> al(MC,prjdel2)     [msgcat::mc <font color=#7d1a1a>&quot;The project \&quot;%n\&quot; removed&quot;</font>]
   <b><font color=#3a6797>set</font></b> al(MC,prjOptions)  [msgcat::mc Options]
-  <b><font color=#3a6797>set</font></b> al(MC,prjName)     [msgcat::mc {Project name:}]
+  <b><font color=#3a6797>set</font></b> al(MC,prjName)     [msgcat::mc {Project:}]
   <b><font color=#3a6797>set</font></b> al(MC,prjsavfl)    [msgcat::mc <font color=#7d1a1a>&quot;You can\n  - add the current one to\n  - substitute with the current one\n  - delete\n  - not change\nthe file list of the project.\n&quot;</font>]
   <b><font color=#3a6797>set</font></b> al(MC,prjaddfl)    [msgcat::mc Add]
   <b><font color=#3a6797>set</font></b> al(MC,prjsubstfl)  [msgcat::mc Substitute]
@@ -1143,7 +1144,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   args - script's name and arguments</font></i>
 
   <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> trimright <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>args&quot;</font> &]
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>pid</font></b> [<b><font color=#3a6797>open</font></b> <font color=#7d1a1a>&quot;|<font color=#1b1baa>[</font>Tclexe<font color=#1b1baa>]</font> <font color=#1b1baa>$</font>com&quot;</font>]]
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>pid</font></b> [<b><font color=#3a6797>open</font></b> <font color=#7d1a1a>&quot;|\&quot;<font color=#1b1baa>[</font>Tclexe<font color=#1b1baa>]</font>\&quot; <font color=#1b1baa>$</font>com&quot;</font>]]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::run_remote'>run_remote</a><span class='ns_scope'> [<a href="alited.html#::alited" title="::alited" class='ruff_cmd'>::alited</a>]</span><span class='tinylink'><a href='alited.html#::alited'>alited</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -2351,7 +2352,7 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$alited::complete::comms</font>]} {<b><font color=#ca14ca>return</font></b> {}}
   <b><font color=#3a6797>set</font></b> win .pickcommand
   <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$win</font>}
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::tcl_platform(platform)</font> eq {windows}} {
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::alited::al(IsWindows)</font>} {
     <b><font color=#134070>toplevel</font></b> <font color=#1b1baa>$win</font>
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#134070>frame</font></b> <font color=#1b1baa>$win</font>
@@ -2379,7 +2380,7 @@ padding: 0%;
     <b><font color=#134070>bell</font></b>
     <b><font color=#3a6797>set</font></b> res {}
   } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::tcl_platform(platform)</font> eq {windows}} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::alited::al(IsWindows)</font>} {
       <b><font color=#3a6797>incr</font></b> X 10
       <b><font color=#3a6797>incr</font></b> Y 40
       <b><font color=#3a6797>after</font></b> 100 <font color=#7d1a1a>&quot;wm deiconify <font color=#1b1baa>$</font>win&quot;</font>
@@ -5142,7 +5143,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   docheck - yes for &quot;do check&quot;, no for &quot;just save the file's mtime&quot;</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists .em]} {
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists .em] || [<b><font color=#3a6797>info</font></b> exists al(_NO_OUTWARD_)]} {
     <b><font color=#ca14ca>return</font></b>  ;<i><font color=#4b5d50># no actions if &quot;internal&quot; e_menu is open</font></i>
   }
   <b><font color=#3a6797>lassign</font></b> [FileAttrs <font color=#1b1baa>$TID</font>] fname isfile mtime mtimefile curtime
@@ -5172,8 +5173,8 @@ padding: 0%;
       }
     }
     <b><font color=#3a6797>set</font></b> do_update_tree yes
+    <b><font color=#3a6797>lassign</font></b> [FileAttrs <font color=#1b1baa>$TID</font>] fname isfile mtime mtimefile curtime
   }
-  <b><font color=#3a6797>lassign</font></b> [FileAttrs <font color=#1b1baa>$TID</font>] fname isfile mtime mtimefile curtime
   alited::bar::BAR <font color=#1b1baa>$TID</font> configure -<font color=#6c3e67>-mtime</font> <font color=#1b1baa>$curtime</font> -<font color=#6c3e67>-mtimefile</font> <font color=#1b1baa>$fname</font>  <font color=#6c3e67>-tip</font> [FileStat <font color=#1b1baa>$fname</font>]
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists do_update_tree]} {
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(TREE,isunits)</font>} {<b><font color=#3a6797>set</font></b> fname {}}
@@ -5462,13 +5463,16 @@ padding: 0%;
   <i><font color=#4b5d50>#   doit - flag &quot;do save now, without any GUI&quot;</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> al(_NO_OUTWARD_) {}
   <b><font color=#3a6797>set</font></b> wtxt [alited::main::GetWTXT <font color=#1b1baa>$TID</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(prjtrailwhite)</font>} {alited::edit::RemoveTrailWhites <font color=#1b1baa>$TID</font> yes <font color=#1b1baa>$doit</font>}
   <b><font color=#3a6797>set</font></b> fcont [<font color=#1b1baa>$wtxt</font> get 1.0 <font color=#7d1a1a>&quot;end - 1 chars&quot;</font>]  ;<i><font color=#4b5d50># last \n excluded</font></i>
   <b><font color=#3a6797>if</font></b> {![::apave::writeTextFile <font color=#1b1baa>$fname</font> fcont]} {
     alited::msg ok err [::apave::error <font color=#1b1baa>$fname</font>] <font color=#6c3e67>-w</font> 50 <font color=#6c3e67>-text</font> 1
+    <b><font color=#3a6797>unset</font></b> al(_NO_OUTWARD_)
     <b><font color=#ca14ca>return</font></b> 0
   }
+  <b><font color=#3a6797>unset</font></b> al(_NO_OUTWARD_)
   OutwardChange <font color=#1b1baa>$TID</font> no
   alited::edit::BackupFile <font color=#1b1baa>$TID</font>
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$doit</font>} {
@@ -9223,20 +9227,21 @@ padding: 0%;
   <i><font color=#4b5d50># Initializes working with a main form of alited.</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <i><font color=#4b5d50># fill the main menu of alited</font></i>
   alited::bar::FillBar [<font color=#1b1baa>$obPav</font> BtsBar]
-  <i><font color=#4b5d50># check for outdated TODOs</font></i>
-  <b><font color=#3a6797>if</font></b> {[alited::project::IsOutdated <font color=#1b1baa>$al(prjname)</font>]} {
-    <i><font color=#4b5d50># current project has outdated TODOs</font></i>
-    alited::project::_run no
+  <i><font color=#4b5d50># check for outdated TODOs for current project</font></i>
+  <b><font color=#3a6797>lassign</font></b> [alited::project::IsOutdated <font color=#1b1baa>$al(prjname)</font> yes] is date todo
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$is</font>} {
+    ShowOutdatedTODO <font color=#1b1baa>$al(prjname)</font> <font color=#1b1baa>$date</font> <font color=#1b1baa>$todo</font>
   } <b><font color=#3a6797>else</font></b> {
-    <i><font color=#4b5d50># check other projects (after showing a text)</font></i>
-    <b><font color=#3a6797>after</font></b> 200 [<b><font color=#3a6797>list</font></b> after idle {
-      alited::project::SaveSettings
-      alited::project::GetProjects
-      <b><font color=#3a6797>if</font></b> {[alited::project::CheckOutdated] ne {}} {
-        alited::project::_run
-      }
-    }]
+    <i><font color=#4b5d50># check other projects</font></i>
+    alited::project::SaveSettings
+    alited::project::GetProjects
+    <b><font color=#3a6797>set</font></b> prjname [alited::project::CheckOutdated]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$prjname</font> ne {}} {
+      <b><font color=#3a6797>lassign</font></b> [alited::project::IsOutdated <font color=#1b1baa>$prjname</font> yes] is date todo
+      ShowOutdatedTODO <font color=#1b1baa>$prjname</font> <font color=#1b1baa>$date</font> <font color=#1b1baa>$todo</font>
+    }
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::main::InsertLine'>InsertLine</a><span class='ns_scope'> [<a href="alited.html#::alited::main" title="::alited::main" class='ruff_cmd'>::alited::main</a>]</span><span class='tinylink'><a href='alited.html#::alited::main'>main</a>, <a href='#top'>Top</a></span></h4>
@@ -9368,6 +9373,30 @@ padding: 0%;
     <b><font color=#134070>wm</font></b> title <font color=#1b1baa>$al(WIN)</font> [<b><font color=#3a6797>string</font></b> trim <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>modif<font color=#1b1baa>$</font>ttl&quot;</font>]
   }
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::main::ShowOutdatedTODO'>ShowOutdatedTODO</a><span class='ns_scope'> [<a href="alited.html#::alited::main" title="::alited::main" class='ruff_cmd'>::alited::main</a>]</span><span class='tinylink'><a href='alited.html#::alited::main'>main</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Shows a balloon with outdated TODO.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>ShowOutdatedTODO</span> <span class='ruff_arg'>prj date todo</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>prj</code></code></td><td class='ruff_defitem'>project's name</td></tr>
+<tr><td class='ruff_defitem'><code><code>date</code></code></td><td class='ruff_defitem'>date of TODO</td></tr>
+<tr><td class='ruff_defitem'><code><code>todo</code></code></td><td class='ruff_defitem'>text of TODO</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_main_ShowOutdatedTODO' href="javascript:toggleSource('alited_main_ShowOutdatedTODO')">Show source</a></p>
+<div id='alited_main_ShowOutdatedTODO' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::main::ShowOutdatedTODO {prj date todo} {
+
+  <i><font color=#4b5d50># Shows a balloon with outdated TODO.</font></i>
+  <i><font color=#4b5d50>#   prj - project's name</font></i>
+  <i><font color=#4b5d50>#   date - date of TODO</font></i>
+  <i><font color=#4b5d50>#   todo - text of TODO</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#134070>winfo</font></b> geometry <font color=#1b1baa>$al(WIN)</font>] x+] w h x y
+  <b><font color=#3a6797>set</font></b> geo <font color=#7d1a1a>&quot;+(<font color=#1b1baa>[</font>expr <font color=#1b1baa>{$</font>w+<font color=#1b1baa>$</font>x<font color=#1b1baa>}]</font>-W-8)+<font color=#1b1baa>$</font>y-20&quot;</font>
+  <b><font color=#3a6797>set</font></b> todo <font color=#7d1a1a>&quot;\n<font color=#1b1baa>$</font>al(MC,prjName) <font color=#1b1baa>$</font>prj\n\n<font color=#1b1baa>$</font>al(MC,on) <font color=#1b1baa>$</font>date\n\n<font color=#1b1baa>$</font>todo\n&quot;</font>
+  <b><font color=#3a6797>set</font></b> todo [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \n <font color=#7d1a1a>&quot;  \n  &quot;</font>] <font color=#1b1baa>$todo</font>]
+  <b><font color=#3a6797>after</font></b> 2500 [<b><font color=#3a6797>list</font></b> after idle [<b><font color=#3a6797>list</font></b> ::baltip tip <font color=#1b1baa>$al(WIN)</font> <font color=#1b1baa>$todo</font>  <font color=#6c3e67>-alpha</font> 0.8 <font color=#6c3e67>-fg</font> white <font color=#6c3e67>-bg</font> red  <font color=#6c3e67>-font</font> {<font color=#6c3e67>-weight</font> bold <font color=#6c3e67>-size</font> 11} <font color=#6c3e67>-per10</font> 2500 <font color=#6c3e67>-pause</font> 2500 <font color=#6c3e67>-fade</font> 2500  <font color=#6c3e67>-geometry</font> <font color=#1b1baa>$geo</font> <font color=#6c3e67>-bell</font> yes <font color=#6c3e67>-on</font> yes <font color=#6c3e67>-padding</font> 2 <font color=#6c3e67>-relief</font> sunken]]
+}<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::main::ShowText'>ShowText</a><span class='ns_scope'> [<a href="alited.html#::alited::main" title="::alited::main" class='ruff_cmd'>::alited::main</a>]</span><span class='tinylink'><a href='alited.html#::alited::main'>main</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Displays a current text.</p>
@@ -9418,9 +9447,10 @@ padding: 0%;
   <i><font color=#4b5d50># Gets a tip for a status bar's short info.</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(IsWindows)</font>} {<b><font color=#3a6797>set</font></b> term <font color=#1b1baa>$al(EM,wt=)</font>} {<b><font color=#3a6797>set</font></b> term <font color=#1b1baa>$al(EM,tt=)</font>}
   <b><font color=#3a6797>set</font></b> tip [[<font color=#1b1baa>$obPav</font> Labstat4] cget <font color=#6c3e67>-text</font>]
   <b><font color=#3a6797>set</font></b> run <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>al(MC,run): &quot;</font>
-  <b><font color=#3a6797>set</font></b> tip [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b>  force <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>run<font color=#1b1baa>[</font>msgcat::mc Setup<font color=#1b1baa>]</font> / <font color=#1b1baa>$</font>al(MC,beforerun)\n<font color=#1b1baa>$</font>run<font color=#1b1baa>$</font>al(comForce)\n&quot;</font>  cons  <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>run<font color=#1b1baa>$</font>al(MC,inconsole)&quot;</font>  tkcon <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>run<font color=#1b1baa>$</font>al(MC,intkcon)&quot;</font>  eol= <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>al(MC,EOL:) &quot;</font>  ind= <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>al(MC,indent:) &quot;</font>  {, } \n  ] <font color=#1b1baa>$tip</font>]
+  <b><font color=#3a6797>set</font></b> tip [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b>  force <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>run<font color=#1b1baa>[</font>msgcat::mc Setup<font color=#1b1baa>]</font> / <font color=#1b1baa>$</font>al(MC,beforerun)\n<font color=#1b1baa>$</font>run<font color=#1b1baa>$</font>al(comForce)\n&quot;</font>  cons  <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>run<font color=#1b1baa>$</font>al(MC,inconsole) <font color=#1b1baa>$</font>term&quot;</font>  tkcon <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>run<font color=#1b1baa>$</font>al(MC,intkcon)&quot;</font>  eol= <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>al(MC,EOL:) &quot;</font>  ind= <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>al(MC,indent:) &quot;</font>  {, } \n  ] <font color=#1b1baa>$tip</font>]
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$tip</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::main::UpdateAll'>UpdateAll</a><span class='ns_scope'> [<a href="alited.html#::alited::main" title="::alited::main" class='ruff_cmd'>::alited::main</a>]</span><span class='tinylink'><a href='alited.html#::alited::main'>main</a>, <a href='#top'>Top</a></span></h4>
@@ -11811,6 +11841,7 @@ padding: 0%;
   <b><font color=#3a6797>update</font></b>  ;<i><font color=#4b5d50># if run from menu: there may be unupdated space under it (in some DE)</font></i>
   SaveSettings
   GetProjects
+  ::baltip hide <font color=#1b1baa>$alited::al(WIN)</font>  ;<i><font color=#4b5d50># hide a TODO balloon if shown</font></i>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$checktodo</font> && ![IsOutdated <font color=#1b1baa>$al(prjname)</font>]} {
     <b><font color=#3a6797>after</font></b> 200 {
       <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> prj [alited::project::CheckOutdated]] ne {}} {
@@ -12363,18 +12394,26 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::project::IsOutdated'>IsOutdated</a><span class='ns_scope'> [<a href="alited.html#::alited::project" title="::alited::project" class='ruff_cmd'>::alited::project</a>]</span><span class='tinylink'><a href='alited.html#::alited::project'>project</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Checks for outdated TODOs of a project.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>IsOutdated</span> <span class='ruff_arg'>prj</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>IsOutdated</span> <span class='ruff_arg'>prj ?todo?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>prj</code></code></td><td class='ruff_defitem'>project's name</td></tr>
+<tr><td class='ruff_defitem'><code><code>todo</code></code></td><td class='ruff_defitem'>if yes, gets also date and todo; <i>optional, default</i> <code>no</code></td></tr>
 </table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Returns 0, if no todo for the project, 1 otherwise; if todo=yes, adds also date and todo outdated (if there is).</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_project_IsOutdated' href="javascript:toggleSource('alited_project_IsOutdated')">Show source</a></p>
-<div id='alited_project_IsOutdated' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::project::IsOutdated {prj} {
+<div id='alited_project_IsOutdated' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::project::IsOutdated {prj {todo no}} {
 
   <i><font color=#4b5d50># Checks for outdated TODOs of a project.</font></i>
   <i><font color=#4b5d50>#   prj - project's name</font></i>
+  <i><font color=#4b5d50>#   todo - if yes, gets also date and todo</font></i>
+  <i><font color=#4b5d50># Returns 0, if no todo for the project, 1 otherwise; if todo=yes, adds also date and todo outdated (if there is).</font></i>
 
-  <b><font color=#3a6797>set</font></b> rems [ReadRems <font color=#1b1baa>$prj</font>]
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>lindex</font></b> [SortRems <font color=#1b1baa>$rems</font>] 2]
+  <b><font color=#3a6797>set</font></b> rems [SortRems [ReadRems <font color=#1b1baa>$prj</font>]]
+  <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$rems</font> 2]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$todo</font>} {
+    <b><font color=#3a6797>lappend</font></b> res {<b><font color=#3a6797>*</font></b>}[<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$rems</font> 1 0]
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::project::Klnd_button'>Klnd_button</a><span class='ns_scope'> [<a href="alited.html#::alited::project" title="::alited::project" class='ruff_cmd'>::alited::project</a>]</span><span class='tinylink'><a href='alited.html#::alited::project'>project</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -13854,7 +13893,7 @@ padding: 0%;
     <b><font color=#3a6797>if</font></b> {[RunTcl <font color=#1b1baa>$runmode</font>]} <b><font color=#ca14ca>return</font></b>
     <b><font color=#3a6797>set</font></b> opts {EX=1 PI=1}
   }
-  e_menu {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font>
+  e_menu {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font> tc=[alited::Tclexe]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::tool::AfterStart'>AfterStart</a><span class='ns_scope'> [<a href="alited.html#::alited::tool" title="::alited::tool" class='ruff_cmd'>::alited::tool</a>]</span><span class='tinylink'><a href='alited.html#::alited::tool'>tool</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -14969,7 +15008,7 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {![<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$al(movWin)</font>]} {
     <i><font color=#4b5d50># make the tab's replica to be dragged</font></i>
     <b><font color=#134070>toplevel</font></b> <font color=#1b1baa>$al(movWin)</font>
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::tcl_platform(platform)</font> eq {windows}} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(IsWindows)</font>} {
       <b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$al(movWin)</font> <font color=#6c3e67>-alpha</font> 0.0
     } <b><font color=#3a6797>else</font></b> {
       <b><font color=#134070>wm</font></b> withdraw <font color=#1b1baa>$al(movWin)</font>
@@ -14991,7 +15030,7 @@ padding: 0%;
   }
   <b><font color=#3a6797>set</font></b> ID [<font color=#1b1baa>$wtree</font> identify item <font color=#1b1baa>$x</font> <font color=#1b1baa>$y</font>]
   <b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$al(movWin)</font> +[<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$X</font>+10}]+[<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$Y</font>+10}]
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::tcl_platform(platform)</font> eq {windows}} {
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(IsWindows)</font>} {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$al(movWin)</font> <font color=#6c3e67>-alpha</font>] &lt; 0.1} {<b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$al(movWin)</font> <font color=#6c3e67>-alpha</font> 1.0}
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>wm</font></b> deiconify <font color=#1b1baa>$al(movWin)</font> ; <b><font color=#134070>raise</font></b> <font color=#1b1baa>$al(movWin)</font>}
@@ -17698,6 +17737,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::main::PackTextWidgets'>PackTextWidgets</a><span class='tooltiptext'>Packs a text and its scrollbar.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::main::SaveVisitInfo'>SaveVisitInfo</a><span class='tooltiptext'>Remembers data about current unit.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::main::ShowHeader'>ShowHeader</a><span class='tooltiptext'>Displays a file's name and modification flag (*) in alited's title.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::main::ShowOutdatedTODO'>ShowOutdatedTODO</a><span class='tooltiptext'>Shows a balloon with outdated TODO.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::main::ShowText'>ShowText</a><span class='tooltiptext'>Displays a current text.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::main::TipStatus'>TipStatus</a><span class='tooltiptext'>Gets a tip for a status bar's short info.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::main::UpdateAll'>UpdateAll</a><span class='tooltiptext'>Updates tree, text and gutter.
