@@ -445,6 +445,11 @@ padding: 0%;
 <p class='ruff'>When you click on a widget with its tip being displayed, the tip is hidden. It is the default behavior of <em>baltip</em>, but sometimes you need to re-display the hidden tip. If the widget is a button, you can include the following command in <code>-command</code> of the button:</p>
 <pre class='ruff'><br><code class="tcl">  ::baltip::repaint widgetpath
 <br></code></pre>
+<p class='ruff'>To show a tip under the mouse pointer, e.g. on clicking, timeout, processing etc.:</p>
+<pre class='ruff'><br><code class="tcl">  ::baltip::show text ?options?
+<br></code></pre>
+<br><h2 class='ruff'><a name='::baltip-Some special tips'></a>Some special tips<span class='tinylink'><a href='baltip.html#::baltip'>baltip</a>, <a href='#top'>Top</a></span></h2>
+<div style='clear:both;'></div>
 <p class='ruff'>The &quot;text&quot; for <em>listbox</em> can contain %i wildcard - and in such cases the text means a callback receiving a current index of item to tip:</p>
 <pre class='ruff'><br><code class="tcl">  <b><font color=#ca14ca>proc</font></b> ::lbxTip {idx} {
   <b><font color=#3a6797>set</font></b> item [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$::lbxlist</font> <font color=#1b1baa>$idx</font>]
@@ -584,7 +589,7 @@ this option with baltip instead of BWidget and tklib's tooltip.
 <div style='clear:both;'></div>
 <p class='ruff'>The <em>baltip</em> package has been developed with help of these kind people:</p>
 <ul class='ruff'>
-<li><a href="https://github.com/sl1200mk2" >Nicolas Bats</a> prompted to add canvas tags' tips and tested <em>baltip</em> in MacOS</li>
+<li><a href="https://github.com/sl1200mk2" >Nicolas Bats</a> prompted to add canvas tags' tips, baltip::show procedure and tested <em>baltip</em> in MacOS</li>
 <li><a href="https://www.nemethi.de/" >Csaba Nemethi</a> sent several bug fixes and advices, especially on listbox, treeview and menu tips</li>
 </ul>
 <br><h2 class='ruff'><a name='::baltip-Links'></a>Links<span class='tinylink'><a href='baltip.html#::baltip'>baltip</a>, <a href='#top'>Top</a></span></h2>
@@ -777,19 +782,19 @@ this option with baltip instead of BWidget and tklib's tooltip.
 <tr><td class='ruff_defitem'><code><code>tip</code></code></td><td class='ruff_defitem'>text of tip</td></tr>
 <tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>miscellaneous options of baltip</td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>Can be used on those widgets that need to show tips on clicking them.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>Can be used to show tips on clicking, timeout, processing etc.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_baltip_show' href="javascript:toggleSource('baltip_show')">Show source</a></p>
 <div id='baltip_show' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::baltip::show {tip args} {
 
   <i><font color=#4b5d50># Shows a tip under the pointer.</font></i>
   <i><font color=#4b5d50>#   tip - text of tip</font></i>
   <i><font color=#4b5d50>#   args - miscellaneous options of baltip</font></i>
-  <i><font color=#4b5d50># Can be used on those widgets that need to show tips on clicking them.</font></i>
+  <i><font color=#4b5d50># Can be used to show tips on clicking, timeout, processing etc.</font></i>
 
   <b><font color=#3a6797>variable</font></b> my::ttdata
   <b><font color=#3a6797>set</font></b> w .
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#134070>winfo</font></b> pointerxy <font color=#1b1baa>$w</font>] x y
-  <b><font color=#3a6797>set</font></b> geo +[<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$x</font>+2}]+[<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$y</font>-<font color=#1b1baa>$my::ttdata(under)</font>}]
+  <b><font color=#3a6797>set</font></b> geo +[<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$x</font>-int(<font color=#1b1baa>$my::ttdata(under)</font>/2)}]+[<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$y</font>-<font color=#1b1baa>$my::ttdata(under)</font>}]
   tip <font color=#1b1baa>$w</font> <font color=#1b1baa>$tip</font> <font color=#6c3e67>-geometry</font> <font color=#1b1baa>$geo</font> <font color=#6c3e67>-pause</font> 0 <font color=#6c3e67>-fade</font> 0 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::baltip::sleep'>sleep</a><span class='ns_scope'> [<a href="baltip.html#::baltip" title="::baltip" class='ruff_cmd'>::baltip</a>]</span><span class='tinylink'><a href='baltip.html#::baltip'>baltip</a>, <a href='#top'>Top</a></span></h4>
@@ -2022,7 +2027,7 @@ this option with baltip instead of BWidget and tklib's tooltip.
   <b><font color=#3a6797>set</font></b> inside [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$x</font>&gt;-1 && <font color=#1b1baa>$x</font>&lt;<font color=#1b1baa>$width</font> && <font color=#1b1baa>$y</font>&gt;-1 && <font color=#1b1baa>$y</font>&lt;<font color=#1b1baa>$height</font>}]
   <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$x</font> <font color=#1b1baa>$y</font> <font color=#1b1baa>$inside</font>]
 }<br><br></code></pre></div>
-</div></div></div><div class='yui-b navbox' ><h1><a href='#::baltip'>baltip</a></h1><h2><a href='#::baltip-Usage'>Usage</a></h2><h2><a href='#::baltip-Balloon'>Balloon</a></h2><h2><a href='#::baltip-Command'>Command</a></h2><h2><a href='#::baltip-Options'>Options</a></h2><h2><a href='#::baltip-Acknowledgements'>Acknowledgements</a></h2><h2><a href='#::baltip-Links'>Links</a></h2><h2><a href='#::baltip-Commands'>Commands</a></h2><h4 class='tooltip'><a href='baltip.html#::baltip::cget'>cget</a><span class='tooltiptext'>Gets global option values or a widget's option value.
+</div></div></div><div class='yui-b navbox' ><h1><a href='#::baltip'>baltip</a></h1><h2><a href='#::baltip-Usage'>Usage</a></h2><h2><a href='#::baltip-Some special tips'>Some special tips</a></h2><h2><a href='#::baltip-Balloon'>Balloon</a></h2><h2><a href='#::baltip-Command'>Command</a></h2><h2><a href='#::baltip-Options'>Options</a></h2><h2><a href='#::baltip-Acknowledgements'>Acknowledgements</a></h2><h2><a href='#::baltip-Links'>Links</a></h2><h2><a href='#::baltip-Commands'>Commands</a></h2><h4 class='tooltip'><a href='baltip.html#::baltip::cget'>cget</a><span class='tooltiptext'>Gets global option values or a widget's option value.
 </span></h4><h4 class='tooltip'><a href='baltip.html#::baltip::clear'>clear</a><span class='tooltiptext'>Removes tip bindings for a widget.
 </span></h4><h4 class='tooltip'><a href='baltip.html#::baltip::configure'>configure</a><span class='tooltiptext'>Configurates the tip for all widgets or for a widget.
 </span></h4><h4 class='tooltip'><a href='baltip.html#::baltip::hide'>hide</a><span class='tooltiptext'>Destroys the tip's window.
