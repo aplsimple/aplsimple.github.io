@@ -3,17 +3,18 @@
 */
 //---------------------------------------------
 // header of page
-function writeHeader(prntdir) {
+function writeHeader() {
   homeLINK = document.baseURI;
   ilen = 19
   ibase = homeLINK.indexOf('aplsimple.github');
   if (ibase<0) { ibase = homeLINK.indexOf('aplsimple_github'); ilen += 10 };
   if (ibase>=0) { homeLINK = homeLINK.substring(0,ibase+ilen) };
+  prntdir = homeLINK+"/ru/"
   document.write(' \
     <head><meta name="viewport" content="initial-scale=1.0"></head> \
     <header> \
       <div id=nav> \
-        <a href='+homeLINK+'/ru/index.html id=tohome title="до дому, до хаты"><img id="flagimg" height=14 width=14 src="../'+prntdir+'zoo/favicon.jpg"> \
+        <a href='+prntdir+'index.html id=tohome title="до дому, до хаты"><img id="flagimg" height=14 width=14 src="'+homeLINK+'/zoo/favicon.jpg"> \
         <span id=flagcont>&nbsp;Домой</span></a> \
         <a href="'+prntdir+'misc/news/news.html"       id=nav1   title="Вести с полей">Новости</a> \
         <a href="'+prntdir+'misc/links/links.html"     id=nav2   title="Авторские сайты">Авторы</a> \
@@ -56,5 +57,4 @@ window.onload = function() {
 // operations before unloading
 window.onbeforeunload = function() {
 }
-if (prntdir==="undefined") {prntdir = '../../';}
-writeHeader(prntdir);
+writeHeader();
