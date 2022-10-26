@@ -377,7 +377,6 @@ padding: 0%;
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_transpops_run' href="javascript:toggleSource('transpops_run')">Show source</a></p>
 <div id='transpops_run' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::transpops::run {fname events win {fg1 #000000} {bg1 #FBFB95}} {
-
   <i><font color=#4b5d50># Initializes and runs the popup messages.</font></i>
   <i><font color=#4b5d50>#   fname - name of file containing the messages</font></i>
   <i><font color=#4b5d50>#   events - events on the window to run bound popups</font></i>
@@ -395,16 +394,33 @@ padding: 0%;
     <i><font color=#4b5d50># skip comments</font></i>
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$line</font> 0] eq {#}} {
       <i><font color=#4b5d50># comments may be valuable</font></i>
-      <b><font color=#3a6797>catch</font></b> {
-        <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#3a6797>string</font></b> trim [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> 1 end]]] o v
-        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$o</font> in {fg bg}} {
-          <i><font color=#4b5d50># reset colors of transpops e.g.</font></i>
-          <i><font color=#4b5d50>#   by this line: # fg #000</font></i>
-          <i><font color=#4b5d50>#   or this line: # bg #fff</font></i>
-          <b><font color=#3a6797>set</font></b> [my::ColorVar <font color=#1b1baa>$o</font> [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$::transpops::my::msgs</font>]] <font color=#1b1baa>$v</font>
+      <b><font color=#3a6797>set</font></b> ov [<b><font color=#3a6797>split</font></b> [<b><font color=#3a6797>string</font></b> trim [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> 1 end]]]
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$ov</font> o v
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match TRANSPOP* <font color=#1b1baa>$o</font>]} {
+        <i><font color=#4b5d50># set/use options of transpops</font></i>
+        <i><font color=#4b5d50># e.g.</font></i>
+        <i><font color=#4b5d50>#   # TRANSPOPred -foreground #000 -background red</font></i>
+        <i><font color=#4b5d50>#   # TRANSPOP2   -foreground #fff -background black</font></i>
+        <i><font color=#4b5d50># then using them:</font></i>
+        <i><font color=#4b5d50>#   # TRANSPOP2</font></i>
+        <i><font color=#4b5d50>#   # TRANSPOPred</font></i>
+        <b><font color=#3a6797>set</font></b> varOPTS [my::OptionVar <font color=#1b1baa>$o</font>]
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$v</font> ne {}} {
+          <i><font color=#4b5d50># setting options</font></i>
+          <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$varOPTS</font> [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$ov</font> 1 end]
+        } <b><font color=#3a6797>elseif</font></b> {[<b><font color=#3a6797>info</font></b> exists <font color=#1b1baa>$varOPTS</font>]} {
+          <i><font color=#4b5d50># using options</font></i>
+          <b><font color=#3a6797>set</font></b> llen [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$::transpops::my::msgs</font>]
+          <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$merge</font>} {<b><font color=#3a6797>incr</font></b> llen}
+          <b><font color=#3a6797>set</font></b> [my::OptionVar <font color=#1b1baa>$llen</font>] [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$varOPTS</font>]
         }
       }
       <b><font color=#3a6797>continue</font></b>
+    }
+    <i><font color=#4b5d50># if it's a list of items, mark them accordingly</font></i>
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> {^\s*[<b><font color=#3a6797>*</font></b>]\s+} <font color=#1b1baa>$line</font>]} {
+      <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>string</font></b> first * <font color=#1b1baa>$line</font>]
+      <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> 0 <font color=#1b1baa>$i</font>-1]\u2022[<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> <font color=#1b1baa>$i</font>+1 end]
     }
     <i><font color=#4b5d50># if line has &quot;\&quot; at its end, it continues a message</font></i>
     <b><font color=#3a6797>set</font></b> line2 [<b><font color=#3a6797>string</font></b> map {{ } {} - {} + {} / {} \\ {} <b><font color=#3a6797>*</font></b> {} = {}} <font color=#1b1baa>$line</font>]
@@ -434,22 +450,19 @@ padding: 0%;
 <p class='ruff'>The <em>::transpops::my</em> namespace contains procedures for internal usage by <em>transpops</em> package.</p>
 <br><h2 class='ruff'><a name='::transpops::my-Commands'></a>Commands<span class='tinylink'><a href='transpops.html#::transpops::my'>my</a>, <a href='#top'>Top</a></span></h2>
 <div style='clear:both;'></div>
-<br><br><br><h4 class='ruffproc'><a name='::transpops::my::ColorVar'>ColorVar</a><span class='ns_scope'> [<a href="transpops.html#::transpops::my" title="::transpops::my" class='ruff_cmd'>::transpops::my</a>]</span><span class='tinylink'><a href='transpops.html#::transpops::my'>my</a>, <a href='#top'>Top</a></span></h4>
+<br><br><br><h4 class='ruffproc'><a name='::transpops::my::OptionVar'>OptionVar</a><span class='ns_scope'> [<a href="transpops.html#::transpops::my" title="::transpops::my" class='ruff_cmd'>::transpops::my</a>]</span><span class='tinylink'><a href='transpops.html#::transpops::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
-<p class='ruff'>Name of color variable for a message</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>ColorVar</span> <span class='ruff_arg'>nam idx</span></div>
+<p class='ruff'>Name of variable for transpops options.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OptionVar</span> <span class='ruff_arg'>tag</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td class='ruff_defitem'><code><code>nam</code></code></td><td class='ruff_defitem'>color's name</td></tr>
-<tr><td class='ruff_defitem'><code><code>idx</code></code></td><td class='ruff_defitem'>message's index</td></tr>
+<tr><td class='ruff_defitem'><code><code>tag</code></code></td><td class='ruff_defitem'>options' tag (common name or message's index)</td></tr>
 </table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_transpops_my_ColorVar' href="javascript:toggleSource('transpops_my_ColorVar')">Show source</a></p>
-<div id='transpops_my_ColorVar' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::transpops::my::ColorVar {nam idx} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_transpops_my_OptionVar' href="javascript:toggleSource('transpops_my_OptionVar')">Show source</a></p>
+<div id='transpops_my_OptionVar' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::transpops::my::OptionVar {tag} {
+  <i><font color=#4b5d50># Name of variable for transpops options.</font></i>
+  <i><font color=#4b5d50>#   tag - options' tag (common name or message's index)</font></i>
 
-  <i><font color=#4b5d50># Name of color variable for a message</font></i>
-  <i><font color=#4b5d50>#   nam - color's name</font></i>
-  <i><font color=#4b5d50>#   idx - message's index</font></i>
-
-  <b><font color=#ca14ca>return</font></b> <font color=#7d1a1a>&quot;::transpops::my::<font color=#1b1baa>${</font>nam<font color=#1b1baa>}</font>_<font color=#1b1baa>$</font>idx&quot;</font>
+  <b><font color=#ca14ca>return</font></b> <font color=#923B23>&quot;::transpops::my::_TP_OPTIONS_<font color=#1b1baa>$</font>tag&quot;</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::transpops::my::Popup'>Popup</a><span class='ns_scope'> [<a href="transpops.html#::transpops::my" title="::transpops::my" class='ruff_cmd'>::transpops::my</a>]</span><span class='tinylink'><a href='transpops.html#::transpops::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -460,7 +473,6 @@ padding: 0%;
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_transpops_my_Popup' href="javascript:toggleSource('transpops_my_Popup')">Show source</a></p>
 <div id='transpops_my_Popup' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::transpops::my::Popup {msg} {
-
   <i><font color=#4b5d50># Popups a message in the popup window.</font></i>
   <i><font color=#4b5d50>#   msg - the message</font></i>
 
@@ -484,7 +496,7 @@ padding: 0%;
     }
     <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$wmsgs</font> <font color=#6c3e67>-alpha</font> <font color=#1b1baa>$alpha</font>}
   }
-  <b><font color=#3a6797>after</font></b> 10 <font color=#7d1a1a>&quot;::transpops::my::Popup <font color=#1b1baa>{$</font>msg<font color=#1b1baa>}</font>&quot;</font>
+  <b><font color=#3a6797>after</font></b> 10 <font color=#923B23>&quot;::transpops::my::Popup <font color=#1b1baa>{$</font>msg<font color=#1b1baa>}</font>&quot;</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::transpops::my::Run'>Run</a><span class='ns_scope'> [<a href="transpops.html#::transpops::my" title="::transpops::my" class='ruff_cmd'>::transpops::my</a>]</span><span class='tinylink'><a href='transpops.html#::transpops::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -498,7 +510,6 @@ padding: 0%;
 <h5 class='ruff'>Description</h5><p class='ruff'>The binding is made only on an existing window. If the window doesn't exist, the binding is postponed for next 'after' cycle.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_transpops_my_Run' href="javascript:toggleSource('transpops_my_Run')">Show source</a></p>
 <div id='transpops_my_Run' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::transpops::my::Run {w ev scrp} {
-
   <i><font color=#4b5d50># Binds an event on a window to a script.</font></i>
   <i><font color=#4b5d50>#   w - the window's path</font></i>
   <i><font color=#4b5d50>#   ev - event on the window</font></i>
@@ -507,7 +518,7 @@ padding: 0%;
   <i><font color=#4b5d50># If the window doesn't exist, the binding is postponed for next 'after' cycle.</font></i>
 
   <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$w</font>] && [<b><font color=#3a6797>string</font></b> first <font color=#1b1baa>$scrp</font> [<b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font>]]==-1} {
-    <b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font> <font color=#7d1a1a>&quot;<font color=#1b1baa>$</font>scrp ; break&quot;</font>
+    <b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font> <font color=#923B23>&quot;<font color=#1b1baa>$</font>scrp ; break&quot;</font>
   }
   <b><font color=#3a6797>after</font></b> 100 [<b><font color=#3a6797>list</font></b> ::transpops::my::Run <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font> <font color=#1b1baa>$scrp</font>]
 }<br><br></code></pre></div>
@@ -521,7 +532,6 @@ padding: 0%;
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_transpops_my_Show' href="javascript:toggleSource('transpops_my_Show')">Show source</a></p>
 <div id='transpops_my_Show' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::transpops::my::Show {win evn} {
-
   <i><font color=#4b5d50># Makes the popup toplevel window and starts popups.</font></i>
   <i><font color=#4b5d50>#   win - parent window's path</font></i>
   <i><font color=#4b5d50>#   evn - index of event (2nd sets the geometry)</font></i>
@@ -550,19 +560,13 @@ padding: 0%;
   <b><font color=#134070>wm</font></b> withdraw <font color=#1b1baa>$wmsgs</font>
   <b><font color=#134070>wm</font></b> overrideredirect <font color=#1b1baa>$wmsgs</font> 1
   <b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$wmsgs</font> <font color=#6c3e67>-topmost</font> yes
-  <b><font color=#3a6797>set</font></b> varFG [ColorVar fg <font color=#1b1baa>$imsgs</font>]
-  <b><font color=#3a6797>set</font></b> varBG [ColorVar bg <font color=#1b1baa>$imsgs</font>]
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists <font color=#1b1baa>$varFG</font>]} {
-    <b><font color=#3a6797>set</font></b> fg2 [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$varFG</font>]
+  <b><font color=#3a6797>set</font></b> varOPTS [OptionVar <font color=#1b1baa>$imsgs</font>]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists <font color=#1b1baa>$varOPTS</font>]} {
+    <b><font color=#3a6797>set</font></b> opts [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$varOPTS</font>]
   } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>set</font></b> fg2 <font color=#1b1baa>$fg</font>
+    <b><font color=#3a6797>set</font></b> opts {}
   }
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists <font color=#1b1baa>$varBG</font>]} {
-    <b><font color=#3a6797>set</font></b> bg2 [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$varBG</font>]
-  } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>set</font></b> bg2 <font color=#1b1baa>$bg</font>
-  }
-  <b><font color=#134070>label</font></b> <font color=#1b1baa>$wmsgs</font>.l <font color=#6c3e67>-padx</font> 30 <font color=#6c3e67>-pady</font> 30 <font color=#6c3e67>-foreground</font> <font color=#1b1baa>$fg2</font> <font color=#6c3e67>-background</font> <font color=#1b1baa>$bg2</font>  <font color=#6c3e67>-font</font> {<font color=#6c3e67>-weight</font> bold <font color=#6c3e67>-size</font> 20 <font color=#6c3e67>-family</font> Quicksand} <font color=#6c3e67>-relief</font> solid <font color=#6c3e67>-text</font> <font color=#1b1baa>$msg</font> <font color=#6c3e67>-justify</font> left
+  <b><font color=#134070>label</font></b> <font color=#1b1baa>$wmsgs</font>.l <font color=#6c3e67>-padx</font> 30 <font color=#6c3e67>-pady</font> 30 <font color=#6c3e67>-foreground</font> <font color=#1b1baa>$fg</font> <font color=#6c3e67>-background</font> <font color=#1b1baa>$bg</font>  <font color=#6c3e67>-font</font> {<font color=#6c3e67>-weight</font> bold <font color=#6c3e67>-size</font> 20 <font color=#6c3e67>-family</font> Quicksand}  <font color=#6c3e67>-relief</font> solid <font color=#6c3e67>-text</font> <font color=#1b1baa>$msg</font> <font color=#6c3e67>-justify</font> left {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font>
   <b><font color=#3a6797>set</font></b> alpha 0.0
   <b><font color=#3a6797>set</font></b> alphaincr [<b><font color=#3a6797>expr</font></b> {abs(<font color=#1b1baa>$alphaincr</font>)}]
   <b><font color=#134070>pack</font></b> <font color=#1b1baa>$wmsgs</font>.l <font color=#6c3e67>-fill</font> both <font color=#6c3e67>-expand</font> true
@@ -572,18 +576,18 @@ padding: 0%;
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wmsgs</font> &lt;ButtonPress&gt; {<b><font color=#3a6797>set</font></b> ::transpops::my::cntwait 0}
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> {^http[s]?://\S+$} <font color=#1b1baa>$msg</font>]} {
     <b><font color=#3a6797>catch</font></b> {
-      ::apave::obj makeLabelLinked <font color=#1b1baa>$wmsgs</font>.l  <font color=#7d1a1a>&quot;::apave::openDoc <font color=#1b1baa>$</font>msg@@<font color=#1b1baa>$</font>msg@@&quot;</font> <font color=#1b1baa>$fg</font> <font color=#1b1baa>$bg</font> <font color=#1b1baa>$fg</font> yellow
+      ::apave::obj makeLabelLinked <font color=#1b1baa>$wmsgs</font>.l  <font color=#923B23>&quot;::apave::openDoc <font color=#1b1baa>$</font>msg@@<font color=#1b1baa>$</font>msg@@&quot;</font> <font color=#1b1baa>$fg</font> <font color=#1b1baa>$bg</font> <font color=#1b1baa>$fg</font> yellow
     }
   }
   <b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> {[<b><font color=#134070>winfo</font></b> pointerx <font color=#1b1baa>$win</font>]+10}]
   <b><font color=#3a6797>set</font></b> y [<b><font color=#3a6797>expr</font></b> {[<b><font color=#134070>winfo</font></b> pointery <font color=#1b1baa>$win</font>]+10}]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$geom</font> eq {} || <font color=#1b1baa>$evn</font>==2} {<b><font color=#3a6797>set</font></b> geom +<font color=#1b1baa>$x</font>+<font color=#1b1baa>$y</font>}
   <b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$wmsgs</font> <font color=#1b1baa>$geom</font>
-  <b><font color=#3a6797>after</font></b> 10 <font color=#7d1a1a>&quot;wm deiconify <font color=#1b1baa>$</font>wmsgs; wm attributes <font color=#1b1baa>$</font>wmsgs -alpha 0.0 -topmost 1&quot;</font>
-  <b><font color=#3a6797>after</font></b> 15 <font color=#7d1a1a>&quot;::transpops::my::Popup <font color=#1b1baa>{$</font>msg<font color=#1b1baa>}</font>&quot;</font>
+  <b><font color=#3a6797>after</font></b> 10 <font color=#923B23>&quot;wm deiconify <font color=#1b1baa>$</font>wmsgs; wm attributes <font color=#1b1baa>$</font>wmsgs -alpha 0.0 -topmost 1&quot;</font>
+  <b><font color=#3a6797>after</font></b> 15 <font color=#923B23>&quot;::transpops::my::Popup <font color=#1b1baa>{$</font>msg<font color=#1b1baa>}</font>&quot;</font>
 }<br><br></code></pre></div>
 </div></div></div><div class='yui-b navbox' ><h1><a href='#::transpops'>transpops</a></h1><h2><a href='#::transpops-Commands'>Commands</a></h2><h4 class='tooltip'><a href='transpops.html#::transpops::run'>run</a><span class='tooltiptext'>Initializes and runs the popup messages.
-</span></h4><h1><a href='#::transpops::my'>transpops::my</a></h1><h2><a href='#::transpops::my-Commands'>Commands</a></h2><h4 class='tooltip'><a href='transpops.html#::transpops::my::ColorVar'>ColorVar</a><span class='tooltiptext'>Name of color variable for a message
+</span></h4><h1><a href='#::transpops::my'>transpops::my</a></h1><h2><a href='#::transpops::my-Commands'>Commands</a></h2><h4 class='tooltip'><a href='transpops.html#::transpops::my::OptionVar'>OptionVar</a><span class='tooltiptext'>Name of variable for transpops options.
 </span></h4><h4 class='tooltip'><a href='transpops.html#::transpops::my::Popup'>Popup</a><span class='tooltiptext'>Popups a message in the popup window.
 </span></h4><h4 class='tooltip'><a href='transpops.html#::transpops::my::Run'>Run</a><span class='tooltiptext'>Binds an event on a window to a script.
 </span></h4><h4 class='tooltip'><a href='transpops.html#::transpops::my::Show'>Show</a><span class='tooltiptext'>Makes the popup toplevel window and starts popups.
