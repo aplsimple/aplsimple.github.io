@@ -1807,6 +1807,28 @@ padding: 0%;
 
   <b><font color=#ca14ca>return</font></b> [IntStatus <font color=#1b1baa>$w</font> SHADOW <font color=#1b1baa>$val</font>]
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::apave::splitGeometry'>splitGeometry</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Gets widget's geometry components.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>splitGeometry</span> <span class='ruff_arg'>geom</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>geom</code></code></td><td class='ruff_defitem'>geometry</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a list of width, height, X and Y (coordinates are always with + or -).</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_splitGeometry' href="javascript:toggleSource('apave_splitGeometry')">Show source</a></p>
+<div id='apave_splitGeometry' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::splitGeometry {geom} {
+  <i><font color=#4b5d50># Gets widget's geometry components.</font></i>
+  <i><font color=#4b5d50>#   geom - geometry</font></i>
+  <i><font color=#4b5d50># Returns a list of width, height, X and Y (coordinates are always with + or -).</font></i>
+
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$geom</font> x+-] w h
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>regexp</font></b> <font color=#6c3e67>-inline</font> <font color=#6c3e67>-all</font> {([+-][[:digit:]]+)} <font color=#1b1baa>$geom</font>] -&gt; x y
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$geom</font> ne {}} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$x</font> in {<font color=#923B23>&quot;&quot;</font> 0} || [<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$x</font>+0}}]} {<b><font color=#3a6797>set</font></b> x {+0}}
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$y</font> in {<font color=#923B23>&quot;&quot;</font> 0} || [<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$y</font>+0}}]} {<b><font color=#3a6797>set</font></b> y {+0}}
+  }
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$w</font> <font color=#1b1baa>$h</font> <font color=#1b1baa>$x</font> <font color=#1b1baa>$y</font>]
+}<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::textChanConfigure'>textChanConfigure</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Configures a channel for text file.</p>
@@ -2180,15 +2202,15 @@ padding: 0%;
     <i><font color=#4b5d50># Restricts the window's sizes (thus fixing Tk's issue with a menubar)</font></i>
     <i><font color=#4b5d50>#   win - path to a window to be of restricted sizes</font></i>
 
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lindex</font></b> [<font color=#1b1baa>$win</font> configure <font color=#6c3e67>-menu</font>] 4] ne {}} {
-      <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font>] x+] w y
-      <b><font color=#3a6797>lassign</font></b> [<b><font color=#134070>wm</font></b> minsize <font color=#1b1baa>$win</font>] wmin ymin
-      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$w</font>&lt;<font color=#1b1baa>$wmin</font> && <font color=#1b1baa>$y</font>&lt;<font color=#1b1baa>$ymin</font>} {
-        <b><font color=#3a6797>set</font></b> corrgeom <font color=#1b1baa>${wmin}</font>x<font color=#1b1baa>${ymin}</font>
+    <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$win</font> cget <font color=#6c3e67>-menu</font>] ne {}} {
+      <b><font color=#3a6797>lassign</font></b> [::apave::splitGeometry [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font>]] w h
+      <b><font color=#3a6797>lassign</font></b> [<b><font color=#134070>wm</font></b> minsize <font color=#1b1baa>$win</font>] wmin hmin
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$w</font>&lt;<font color=#1b1baa>$wmin</font> && <font color=#1b1baa>$h</font>&lt;<font color=#1b1baa>$hmin</font>} {
+        <b><font color=#3a6797>set</font></b> corrgeom <font color=#1b1baa>${wmin}</font>x<font color=#1b1baa>$hmin</font>
       } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$w</font>&lt;<font color=#1b1baa>$wmin</font>} {
-        <b><font color=#3a6797>set</font></b> corrgeom <font color=#1b1baa>${wmin}</font>x<font color=#1b1baa>${y}</font>
-      } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$y</font>&lt;<font color=#1b1baa>$ymin</font>} {
-        <b><font color=#3a6797>set</font></b> corrgeom <font color=#1b1baa>${w}</font>x<font color=#1b1baa>${ymin}</font>
+        <b><font color=#3a6797>set</font></b> corrgeom <font color=#1b1baa>${wmin}</font>x<font color=#1b1baa>$h</font>
+      } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$h</font>&lt;<font color=#1b1baa>$hmin</font>} {
+        <b><font color=#3a6797>set</font></b> corrgeom <font color=#1b1baa>${w}</font>x<font color=#1b1baa>$hmin</font>
       } <b><font color=#3a6797>else</font></b> {
         <b><font color=#ca14ca>return</font></b>
       }
@@ -2271,7 +2293,9 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {(<font color=#1b1baa>$y</font> + <font color=#1b1baa>$h</font>) &gt; <font color=#1b1baa>$scrh</font> } {
     <b><font color=#3a6797>set</font></b> y [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$scrh</font> - <font color=#1b1baa>$h</font>}]
   }
-  <b><font color=#ca14ca>return</font></b> +<font color=#1b1baa>$x</font>+<font color=#1b1baa>$y</font>
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> match -* <font color=#1b1baa>$x</font>]} {<b><font color=#3a6797>set</font></b> x +[<b><font color=#3a6797>string</font></b> trimleft <font color=#1b1baa>$x</font> +]}
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> match -* <font color=#1b1baa>$y</font>]} {<b><font color=#3a6797>set</font></b> y +[<b><font color=#3a6797>string</font></b> trimleft <font color=#1b1baa>$y</font> +]}
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$x$y</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APave::chooser'>chooser</a><span class='ns_scope'> [<a href="apave.html#::apave::APave" title="::apave::APave" class='ruff_cmd'>::apave::APave</a>]</span><span class='tinylink'><a href='apave.html#::apave::APave'>APave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -3662,8 +3686,8 @@ padding: 0%;
   }
   <b><font color=#3a6797>set</font></b> minsize [::apave::getOption <font color=#6c3e67>-minsize</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
   <b><font color=#3a6797>set</font></b> args [::apave::removeOptions <font color=#1b1baa>$args</font> <font color=#6c3e67>-centerme</font> <font color=#6c3e67>-ontop</font> <font color=#6c3e67>-modal</font> <font color=#6c3e67>-minsize</font> <font color=#6c3e67>-themed</font>]
-  <b><font color=#3a6797>array</font></b> set opt [<b><font color=#3a6797>list</font></b> <font color=#6c3e67>-focus</font> {} <font color=#6c3e67>-onclose</font> {} <font color=#6c3e67>-geometry</font> {} <font color=#6c3e67>-decor</font> 1  <font color=#6c3e67>-root</font> <font color=#1b1baa>$root</font> <font color=#6c3e67>-resizable</font> {} <font color=#6c3e67>-variable</font> {} <font color=#6c3e67>-escape</font> 1 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
-  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$root</font>] x+] rw rh rx ry
+  <b><font color=#3a6797>array</font></b> set opt [<b><font color=#3a6797>list</font></b> <font color=#6c3e67>-focus</font> {} <font color=#6c3e67>-onclose</font> {} <font color=#6c3e67>-geometry</font> {} <font color=#6c3e67>-decor</font> 1  <font color=#6c3e67>-root</font> <font color=#1b1baa>$root</font> <font color=#6c3e67>-resizable</font> {} <font color=#6c3e67>-variable</font> {} <font color=#6c3e67>-escape</font> 1 <font color=#6c3e67>-checkgeometry</font> 1 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
+  <b><font color=#3a6797>lassign</font></b> [::apave::splitGeometry [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$root</font>]] rw rh rx ry
   <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> parent <font color=#1b1baa>$win</font>] ni {{} .}} {
     <b><font color=#3a6797>set</font></b> opt(-decor) 0
   }
@@ -3676,7 +3700,10 @@ padding: 0%;
     <b><font color=#3a6797>set</font></b> opt(-onclose) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$opt(-onclose)</font> <font color=#1b1baa>${_pav(ns)}</font>PN::AR(<font color=#1b1baa>$win</font>)]
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$opt(-resizable)</font> ne {}} {
-     <b><font color=#134070>wm</font></b> resizable <font color=#1b1baa>$win</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opt(-resizable)</font>
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is boolean <font color=#1b1baa>$opt(-resizable)</font>]} {
+      <b><font color=#3a6797>set</font></b> opt(-resizable) <font color=#923B23>&quot;<font color=#1b1baa>$</font>opt(-resizable) <font color=#1b1baa>$</font>opt(-resizable)&quot;</font>
+    }
+    <b><font color=#134070>wm</font></b> resizable <font color=#1b1baa>$win</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opt(-resizable)</font>
   }
   <b><font color=#3a6797>set</font></b> opt(-onclose) <font color=#923B23>&quot;::apave::obj EXPORT CleanUps <font color=#1b1baa>$</font>win; <font color=#1b1baa>$</font>opt(-onclose)&quot;</font>
   <b><font color=#134070>wm</font></b> protocol <font color=#1b1baa>$win</font> WM_DELETE_WINDOW <font color=#1b1baa>$opt(-onclose)</font>
@@ -3693,8 +3720,9 @@ padding: 0%;
     <b><font color=#3a6797>set</font></b> root .[<b><font color=#3a6797>string</font></b> trimleft [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$inpgeom</font> 5 end] .]
     <b><font color=#3a6797>set</font></b> opt(-geometry) [<b><font color=#3a6797>set</font></b> inpgeom {}]
   }
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> pp [<b><font color=#3a6797>string</font></b> first + <font color=#1b1baa>$opt(-geometry)</font>]]&gt;=0} {
-    <b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font> [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$opt(-geometry)</font> <font color=#1b1baa>$pp</font> end]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$opt(-geometry)</font> ne {}} {
+    <b><font color=#3a6797>lassign</font></b> [::apave::splitGeometry <font color=#1b1baa>$opt(-geometry)</font>] - - x y
+    <b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font> <font color=#1b1baa>$x$y</font>
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$opt(-focus)</font> eq {}} {
     <b><font color=#3a6797>set</font></b> opt(-focus) <font color=#1b1baa>$win</font>
@@ -3713,8 +3741,8 @@ padding: 0%;
       ::tk::PlaceWindow <font color=#1b1baa>$win</font> widget <font color=#1b1baa>$root</font>
     }
   } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>lrange</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$inpgeom</font> +] end-1 end] x y
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$x</font> ne {} && <font color=#1b1baa>$y</font> ne {} && [<b><font color=#3a6797>string</font></b> first x <font color=#1b1baa>$inpgeom</font>]&lt;0} {
+    <b><font color=#3a6797>lassign</font></b> [::apave::splitGeometry <font color=#1b1baa>$inpgeom</font>] - - x y
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$x</font> ne {} && <font color=#1b1baa>$y</font> ne {} && [<b><font color=#3a6797>string</font></b> first x <font color=#1b1baa>$inpgeom</font>]&lt;0 && <font color=#1b1baa>$opt(-checkgeometry)</font>} {
       <b><font color=#3a6797>set</font></b> inpgeom [<b><font color=#ca14ca>my</font></b> checkXY <font color=#1b1baa>$w</font> <font color=#1b1baa>$h</font> <font color=#1b1baa>$x</font> <font color=#1b1baa>$y</font>]
     }
     <b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font> <font color=#1b1baa>$inpgeom</font>
@@ -6808,6 +6836,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::setTextHotkeys'>setTextHotkeys</a><span class='tooltiptext'>Sets new key combinations for some operations on text widgets.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::setTextIndent'>setTextIndent</a><span class='tooltiptext'>Sets an indenting for text widgets.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::shadowAllowed'>shadowAllowed</a><span class='tooltiptext'>Sets/gets &quot;shadowing&quot; mode.
+</span></h4><h4 class='tooltip'><a href='apave.html#::apave::splitGeometry'>splitGeometry</a><span class='tooltiptext'>Gets widget's geometry components.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::textChanConfigure'>textChanConfigure</a><span class='tooltiptext'>Configures a channel for text file.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::textEOL'>textEOL</a><span class='tooltiptext'>Gets/sets End-of-Line for text reqding/writing.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::textsplit'>textsplit</a><span class='tooltiptext'>Splits a text's contents by EOLs. Those inventors of EOLs...
