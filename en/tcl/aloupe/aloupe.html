@@ -457,7 +457,7 @@ padding: 0%;
     <b><font color=#3a6797>set</font></b> my::data(<font color=#1b1baa>$an</font>) [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>${svd}</font>(<font color=#1b1baa>$an</font>)] ;<i><font color=#4b5d50># a bit of addresses</font></i>
   }
   <b><font color=#3a6797>foreach</font></b> {a v} <font color=#1b1baa>$args</font> {
-    <b><font color=#3a6797>if</font></b> {(<font color=#1b1baa>$v</font> ne <font color=#923B23>&quot;&quot;</font> || <font color=#1b1baa>$a</font> in {<font color=#6c3e67>-geometry</font>}) &&  [<b><font color=#3a6797>info</font></b> exists my::data(<font color=#1b1baa>$a</font>)] && [<b><font color=#3a6797>string</font></b> is lower [<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$a</font> 1]]} {
+    <b><font color=#3a6797>if</font></b> {(<font color=#1b1baa>$v</font> ne <font color=#923B23>&quot;&quot;</font> || <font color=#1b1baa>$a</font> in {<font color=#6c3e67>-geometry</font> <font color=#6c3e67>-fcgeom</font>}) &&  [<b><font color=#3a6797>info</font></b> exists my::data(<font color=#1b1baa>$a</font>)] && [<b><font color=#3a6797>string</font></b> is lower [<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$a</font> 1]]} {
       <b><font color=#3a6797>set</font></b> my::data(<font color=#1b1baa>$a</font>) <font color=#1b1baa>$v</font>
     } <b><font color=#3a6797>else</font></b> {
       <b><font color=#3a6797>puts</font></b> <font color=#923B23>&quot;Bad option: <font color=#1b1baa>$</font>a \&quot;<font color=#1b1baa>$</font>v\&quot;&quot;</font>
@@ -474,6 +474,11 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> my::size [<b><font color=#3a6797>set</font></b> my::data(PREVSIZE) <font color=#1b1baa>$my::data(-size)</font>]
   <b><font color=#3a6797>set</font></b> my::zoom [<b><font color=#3a6797>set</font></b> my::data(PREVZOOM) <font color=#1b1baa>$my::data(-zoom)</font>]
   <b><font color=#3a6797>set</font></b> my::pause <font color=#1b1baa>$my::data(-pause)</font>
+  <b><font color=#3a6797>set</font></b> my::data(WDISP) <font color=#923B23>&quot;<font color=#1b1baa>$</font>data(-parent)._a_loupe_disp&quot;</font>
+  <b><font color=#3a6797>set</font></b> my::data(WLOUP) <font color=#923B23>&quot;<font color=#1b1baa>$</font>data(-parent)._a_loupe_loup&quot;</font>
+  <b><font color=#3a6797>set</font></b> my::data(LABEL) <font color=#923B23>&quot;<font color=#1b1baa>$</font>data(WDISP).label&quot;</font>
+  <b><font color=#3a6797>set</font></b> my::data(COLOR) [<b><font color=#3a6797>set</font></b> data(CAPTURE) <font color=#923B23>&quot;&quot;</font>]
+  my::Theme
   my::Create yes
 }<br><br></code></pre></div>
 </div><br><br><h1 class='ruff'><a name='::aloupe::my'></a>::aloupe::my<span class='tinylink'><a href='#top'>Top</a></span></h1>
@@ -537,10 +542,6 @@ padding: 0%;
   <b><font color=#3a6797>variable</font></b> data
   <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$data(WLOUP)</font>}
   <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$data(WDISP)</font>}
-  <b><font color=#3a6797>set</font></b> data(WLOUP) <font color=#923B23>&quot;<font color=#1b1baa>$</font>data(-parent)._a_loupe_loup&quot;</font>
-  <b><font color=#3a6797>set</font></b> data(WDISP) <font color=#923B23>&quot;<font color=#1b1baa>$</font>data(-parent)._a_loupe_disp&quot;</font>
-  <b><font color=#3a6797>set</font></b> data(LABEL) <font color=#923B23>&quot;<font color=#1b1baa>$</font>data(WDISP).label&quot;</font>
-  <b><font color=#3a6797>set</font></b> data(COLOR) [<b><font color=#3a6797>set</font></b> data(CAPTURE) <font color=#923B23>&quot;&quot;</font>]
   <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>image</font></b> delete <font color=#1b1baa>$data(IMAGE)</font>}
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> wgr [<b><font color=#134070>grab</font></b> current]] ne <font color=#923B23>&quot;&quot;</font>} {<b><font color=#134070>grab</font></b> release <font color=#1b1baa>$wgr</font>}
   CreateDisplay <font color=#1b1baa>$start</font>
@@ -566,21 +567,27 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> data(IMAGE) [<b><font color=#134070>image</font></b> create photo <font color=#6c3e67>-width</font> <font color=#1b1baa>$sZ</font> <font color=#6c3e67>-height</font> <font color=#1b1baa>$sZ</font>]
   <b><font color=#134070>toplevel</font></b> <font color=#1b1baa>$data(WDISP)</font>
   <b><font color=#134070>wm</font></b> title <font color=#1b1baa>$data(WDISP)</font> [::msgcat::mc Loupe]
-  <font color=#1b1baa>$data(WDISP)</font> configure <font color=#6c3e67>-background</font> [<b><font color=#134070>ttk::style</font></b> configure . <font color=#6c3e67>-background</font>]
-  <b><font color=#134070>grid</font></b> [<b><font color=#134070>ttk::label</font></b> <font color=#1b1baa>$data(WDISP)</font>.lab1 <font color=#6c3e67>-text</font> <font color=#923B23>&quot; <font color=#1b1baa>[</font>::msgcat::mc Size<font color=#1b1baa>]</font>&quot;</font>] <font color=#6c3e67>-row</font> 0 <font color=#6c3e67>-column</font> 0 <font color=#6c3e67>-sticky</font> e
-  <b><font color=#134070>grid</font></b> [<b><font color=#134070>ttk::spinbox</font></b> <font color=#1b1baa>$data(WDISP)</font>.sp1 <font color=#6c3e67>-from</font> 8 <font color=#6c3e67>-to</font> 500 <font color=#6c3e67>-justify</font> center  <font color=#6c3e67>-width</font> 4 <font color=#6c3e67>-textvariable</font> ::aloupe::my::size <font color=#6c3e67>-command</font> ::aloupe::my::SizeLoupe]  <font color=#6c3e67>-row</font> 0 <font color=#6c3e67>-column</font> 1 <font color=#6c3e67>-sticky</font> w
-  <b><font color=#134070>grid</font></b> [<b><font color=#134070>ttk::label</font></b> <font color=#1b1baa>$data(WDISP)</font>.lab2 <font color=#6c3e67>-text</font> <font color=#923B23>&quot; <font color=#1b1baa>[</font>::msgcat::mc Zoom<font color=#1b1baa>]</font>&quot;</font>] <font color=#6c3e67>-row</font> 0 <font color=#6c3e67>-column</font> 2 <font color=#6c3e67>-sticky</font> e
-  <b><font color=#134070>grid</font></b> [<b><font color=#134070>ttk::spinbox</font></b> <font color=#1b1baa>$data(WDISP)</font>.sp2 <font color=#6c3e67>-from</font> 1 <font color=#6c3e67>-to</font> 50 <font color=#6c3e67>-justify</font> center  <font color=#6c3e67>-width</font> 2 <font color=#6c3e67>-textvariable</font> ::aloupe::my::zoom] <font color=#6c3e67>-row</font> 0 <font color=#6c3e67>-column</font> 3 <font color=#6c3e67>-sticky</font> w
-  <b><font color=#134070>grid</font></b> [<b><font color=#134070>ttk::label</font></b> <font color=#1b1baa>$data(WDISP)</font>.lab3 <font color=#6c3e67>-text</font> <font color=#923B23>&quot; <font color=#1b1baa>[</font>::msgcat::mc Pause<font color=#1b1baa>]</font>&quot;</font>] <font color=#6c3e67>-row</font> 0 <font color=#6c3e67>-column</font> 4 <font color=#6c3e67>-sticky</font> e
-  <b><font color=#134070>grid</font></b> [<b><font color=#134070>ttk::spinbox</font></b> <font color=#1b1baa>$data(WDISP)</font>.sp3 <font color=#6c3e67>-from</font> 0 <font color=#6c3e67>-to</font> 60 <font color=#6c3e67>-justify</font> center  <font color=#6c3e67>-width</font> 2 <font color=#6c3e67>-textvariable</font> ::aloupe::my::pause] <font color=#6c3e67>-row</font> 0 <font color=#6c3e67>-column</font> 5 <font color=#6c3e67>-sticky</font> w
-  <b><font color=#134070>grid</font></b> [<b><font color=#134070>ttk::separator</font></b> <font color=#1b1baa>$data(WDISP)</font>.sep1 <font color=#6c3e67>-orient</font> horizontal] <font color=#6c3e67>-row</font> 1 <font color=#6c3e67>-columnspan</font> 6 <font color=#6c3e67>-sticky</font> we <font color=#6c3e67>-pady</font> 2
-  <b><font color=#134070>grid</font></b> [<b><font color=#134070>ttk::label</font></b> <font color=#1b1baa>$data(LABEL)</font> <font color=#6c3e67>-image</font> <font color=#1b1baa>$data(IMAGE)</font> <font color=#6c3e67>-relief</font> flat  <font color=#6c3e67>-style</font> [<b><font color=#3a6797>lindex</font></b> [SetStyle TLabel no <font color=#6c3e67>-bd</font> 0] 1]] <font color=#6c3e67>-row</font> 2 <font color=#6c3e67>-columnspan</font> 6 <font color=#6c3e67>-padx</font> 2
+  <b><font color=#3a6797>set</font></b> fg [<b><font color=#134070>ttk::style</font></b> configure . <font color=#6c3e67>-foreground</font>]
+  <b><font color=#3a6797>set</font></b> bg [<b><font color=#134070>ttk::style</font></b> configure . <font color=#6c3e67>-background</font>]
+  <b><font color=#3a6797>set</font></b> opts [<b><font color=#134070>ttk::style</font></b> config TButton]
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> fg [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$opts</font> <font color=#6c3e67>-foreground</font>]}
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> bg [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$opts</font> <font color=#6c3e67>-background</font>]}
+  <font color=#1b1baa>$data(WDISP)</font> configure <font color=#6c3e67>-background</font> <font color=#1b1baa>$bg</font>
+  <b><font color=#134070>grid</font></b> [<b><font color=#134070>label</font></b> <font color=#1b1baa>$data(WDISP)</font>.l <font color=#6c3e67>-fg</font> <font color=#1b1baa>$fg</font> <font color=#6c3e67>-bg</font> <font color=#1b1baa>$bg</font>] <font color=#6c3e67>-row</font> 0 <font color=#6c3e67>-columnspan</font> 2 <font color=#6c3e67>-sticky</font> we
+  <b><font color=#134070>pack</font></b> [<b><font color=#134070>label</font></b> <font color=#1b1baa>$data(WDISP)</font>.l.lab1 <font color=#6c3e67>-text</font> <font color=#923B23>&quot; <font color=#1b1baa>[</font>::msgcat::mc Size<font color=#1b1baa>]</font>&quot;</font> <font color=#6c3e67>-fg</font> <font color=#1b1baa>$fg</font> <font color=#6c3e67>-bg</font> <font color=#1b1baa>$bg</font>] <font color=#6c3e67>-side</font> left <font color=#6c3e67>-anchor</font> e <font color=#6c3e67>-expand</font> 1
+  <b><font color=#134070>pack</font></b> [<b><font color=#134070>ttk::spinbox</font></b> <font color=#1b1baa>$data(WDISP)</font>.l.sp1 <font color=#6c3e67>-from</font> 8 <font color=#6c3e67>-to</font> 500 <font color=#6c3e67>-justify</font> center  <font color=#6c3e67>-width</font> 4 <font color=#6c3e67>-textvariable</font> ::aloupe::my::size <font color=#6c3e67>-command</font> ::aloupe::my::ShowLoupe] <font color=#6c3e67>-side</font> left
+  <b><font color=#134070>pack</font></b> [<b><font color=#134070>label</font></b> <font color=#1b1baa>$data(WDISP)</font>.l.lab2 <font color=#6c3e67>-text</font> <font color=#923B23>&quot; <font color=#1b1baa>[</font>::msgcat::mc Zoom<font color=#1b1baa>]</font>&quot;</font> <font color=#6c3e67>-fg</font> <font color=#1b1baa>$fg</font> <font color=#6c3e67>-bg</font> <font color=#1b1baa>$bg</font>] <font color=#6c3e67>-side</font> left <font color=#6c3e67>-anchor</font> e <font color=#6c3e67>-expand</font> 1
+  <b><font color=#134070>pack</font></b> [<b><font color=#134070>ttk::spinbox</font></b> <font color=#1b1baa>$data(WDISP)</font>.l.sp2 <font color=#6c3e67>-from</font> 1 <font color=#6c3e67>-to</font> 50 <font color=#6c3e67>-justify</font> center  <font color=#6c3e67>-width</font> 2 <font color=#6c3e67>-textvariable</font> ::aloupe::my::zoom] <font color=#6c3e67>-side</font> left
+  <b><font color=#134070>pack</font></b> [<b><font color=#134070>label</font></b> <font color=#1b1baa>$data(WDISP)</font>.l.lab3 <font color=#6c3e67>-text</font> <font color=#923B23>&quot; <font color=#1b1baa>[</font>::msgcat::mc Pause<font color=#1b1baa>]</font>&quot;</font> <font color=#6c3e67>-fg</font> <font color=#1b1baa>$fg</font> <font color=#6c3e67>-bg</font> <font color=#1b1baa>$bg</font>] <font color=#6c3e67>-side</font> left <font color=#6c3e67>-anchor</font> e <font color=#6c3e67>-expand</font> 1
+  <b><font color=#134070>pack</font></b> [<b><font color=#134070>ttk::spinbox</font></b> <font color=#1b1baa>$data(WDISP)</font>.l.sp3 <font color=#6c3e67>-from</font> 0 <font color=#6c3e67>-to</font> 60 <font color=#6c3e67>-justify</font> center  <font color=#6c3e67>-width</font> 2 <font color=#6c3e67>-textvariable</font> ::aloupe::my::pause] <font color=#6c3e67>-side</font> left
+  <b><font color=#134070>grid</font></b> [<b><font color=#134070>ttk::separator</font></b> <font color=#1b1baa>$data(WDISP)</font>.sep1 <font color=#6c3e67>-orient</font> horizontal] <font color=#6c3e67>-row</font> 1 <font color=#6c3e67>-columnspan</font> 2 <font color=#6c3e67>-sticky</font> we <font color=#6c3e67>-pady</font> 2
+  <b><font color=#134070>grid</font></b> [<b><font color=#134070>ttk::label</font></b> <font color=#1b1baa>$data(LABEL)</font> <font color=#6c3e67>-image</font> <font color=#1b1baa>$data(IMAGE)</font> <font color=#6c3e67>-relief</font> flat  <font color=#6c3e67>-style</font> [<b><font color=#3a6797>lindex</font></b> [SetStyle TLabel no <font color=#6c3e67>-bd</font> 0] 1]] <font color=#6c3e67>-row</font> 2 <font color=#6c3e67>-columnspan</font> 2 <font color=#6c3e67>-padx</font> 2
   <b><font color=#3a6797>set</font></b> data(BUT2) <font color=#1b1baa>$data(WDISP)</font>.but2
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> but2text <font color=#1b1baa>$data(-commandname)</font>] eq <font color=#923B23>&quot;&quot;</font>} {
     <b><font color=#3a6797>set</font></b> but2text [::msgcat::mc <font color=#923B23>&quot;To clipboard&quot;</font>]
   }
-  <b><font color=#134070>grid</font></b> [<b><font color=#134070>ttk::button</font></b> <font color=#1b1baa>$data(BUT2)</font> <font color=#6c3e67>-text</font> <font color=#1b1baa>$but2text</font>  <font color=#6c3e67>-command</font> ::aloupe::my::Button2Click] <font color=#6c3e67>-row</font> 3 <font color=#6c3e67>-column</font> 0 <font color=#6c3e67>-columnspan</font> 3 <font color=#6c3e67>-sticky</font> ew
-  <b><font color=#134070>grid</font></b> [<b><font color=#134070>ttk::button</font></b> <font color=#1b1baa>$data(WDISP)</font>.but1 <font color=#6c3e67>-text</font> [::msgcat::mc Save]  <font color=#6c3e67>-command</font> ::aloupe::my::Save] <font color=#6c3e67>-row</font> 3 <font color=#6c3e67>-column</font> 3 <font color=#6c3e67>-columnspan</font> 3 <font color=#6c3e67>-sticky</font> ew
+  <b><font color=#134070>grid</font></b> [<b><font color=#134070>ttk::button</font></b> <font color=#1b1baa>$data(BUT2)</font> <font color=#6c3e67>-text</font> <font color=#1b1baa>$but2text</font>  <font color=#6c3e67>-command</font> ::aloupe::my::Button2Click] <font color=#6c3e67>-row</font> 3 <font color=#6c3e67>-column</font> 0 <font color=#6c3e67>-sticky</font> ew
+  <b><font color=#134070>grid</font></b> [<b><font color=#134070>ttk::button</font></b> <font color=#1b1baa>$data(WDISP)</font>.but1 <font color=#6c3e67>-text</font> [::msgcat::mc Save]  <font color=#6c3e67>-command</font> ::aloupe::my::Save] <font color=#6c3e67>-row</font> 3 <font color=#6c3e67>-column</font> 1 <font color=#6c3e67>-sticky</font> ew
   <b><font color=#3a6797>set</font></b> data(-geometry) [<b><font color=#3a6797>regexp</font></b> <font color=#6c3e67>-inline</font> \\+.* <font color=#1b1baa>$data(-geometry)</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$data(-geometry)</font> ne <font color=#923B23>&quot;&quot;</font>} {
     <b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$data(WDISP)</font> <font color=#1b1baa>$data(-geometry)</font>
@@ -590,7 +597,7 @@ padding: 0%;
     ::tk::PlaceWindow <font color=#1b1baa>$data(WDISP)</font>
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$start</font>} {
-    <b><font color=#3a6797>set</font></b> defargs [<b><font color=#3a6797>list</font></b>  <font color=#6c3e67>-foreground</font> [<b><font color=#134070>ttk::style</font></b> configure . <font color=#6c3e67>-foreground</font>]  <font color=#6c3e67>-background</font> [<b><font color=#134070>ttk::style</font></b> configure . <font color=#6c3e67>-background</font>] ]
+    <b><font color=#3a6797>set</font></b> defargs [<b><font color=#3a6797>list</font></b> <font color=#6c3e67>-foreground</font> <font color=#1b1baa>$fg</font> <font color=#6c3e67>-background</font> <font color=#1b1baa>$bg</font>]
     <b><font color=#3a6797>set</font></b> data(BUTCFG) [StyleButton2 no {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$defargs</font>]
     <b><font color=#3a6797>lappend</font></b> data(BUTCFG) {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$defargs</font> <font color=#6c3e67>-text</font> <font color=#1b1baa>$but2text</font>
   }
@@ -949,9 +956,16 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {![IsCapture]} <b><font color=#ca14ca>return</font></b>
   <b><font color=#134070>wm</font></b> withdraw <font color=#1b1baa>$data(WLOUP)</font>
   <b><font color=#3a6797>set</font></b> filetypes { {<font color=#923B23>&quot;PNG Images&quot;</font> .png} {<font color=#923B23>&quot;All Image Files&quot;</font> {.png .gif}} }
-  <b><font color=#3a6797>catch</font></b> {::apave::obj themeExternal <font color=#923B23>&quot;<font color=#1b1baa>$</font>data(WLOUP)*&quot;</font>}  ;<i><font color=#4b5d50># theme the file chooser</font></i>
-  <b><font color=#3a6797>set</font></b> file [<b><font color=#134070>tk_getSaveFile</font></b> <font color=#6c3e67>-parent</font> <font color=#1b1baa>$data(WDISP)</font>  <font color=#6c3e67>-title</font> [::msgcat::mc <font color=#923B23>&quot;Save the Loupe&quot;</font>] <font color=#6c3e67>-filetypes</font> <font color=#1b1baa>$filetypes</font>]
+  <b><font color=#3a6797>set</font></b> file [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$::aloupe::filename</font>]
+  <b><font color=#3a6797>set</font></b> argl [<b><font color=#3a6797>list</font></b> <font color=#6c3e67>-parent</font> <font color=#1b1baa>$data(WDISP)</font> <font color=#6c3e67>-title</font> [::msgcat::mc <font color=#923B23>&quot;Save the Loupe&quot;</font>]  <font color=#6c3e67>-filetypes</font> <font color=#1b1baa>$filetypes</font> <font color=#6c3e67>-defaultextension</font> .png <font color=#6c3e67>-initialfile</font> <font color=#1b1baa>$file</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$data(-fcgeom)</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> file [::apave::obj chooser tk_getSaveFile ::aloupe::filename {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$argl</font>]
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>catch</font></b> {::apave::obj themeExternal <font color=#923B23>&quot;<font color=#1b1baa>$</font>data(WLOUP)*&quot;</font>}  ;<i><font color=#4b5d50># theme the file chooser</font></i>
+    <b><font color=#3a6797>set</font></b> file [<b><font color=#134070>tk_getSaveFile</font></b> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$argl</font>]
+  }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$file</font> ne <font color=#923B23>&quot;&quot;</font>} {
+    <b><font color=#3a6797>set</font></b> ::aloupe::filename <font color=#1b1baa>$file</font>
     <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>regexp</font></b> <font color=#6c3e67>-nocase</font> {\.(png|gif)$} <font color=#1b1baa>$file</font> -&gt; ext]} {
       <b><font color=#3a6797>set</font></b> ext <font color=#923B23>&quot;png&quot;</font>
       <b><font color=#3a6797>append</font></b> file <font color=#923B23>&quot;.<font color=#1b1baa>${</font>ext<font color=#1b1baa>}</font>&quot;</font>
@@ -960,7 +974,7 @@ padding: 0%;
       Message <font color=#6c3e67>-title</font> <font color=#923B23>&quot;Error Writing File&quot;</font> <font color=#6c3e67>-icon</font> error  <font color=#6c3e67>-message</font> <font color=#923B23>&quot;Error writing to file \&quot;<font color=#1b1baa>$</font>file\&quot;:\n<font color=#1b1baa>$</font>err&quot;</font>
     }
   }
-  <b><font color=#134070>wm</font></b> deiconify <font color=#1b1baa>$data(WLOUP)</font>
+  ShowLoupe
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::aloupe::my::SaveGeometry'>SaveGeometry</a><span class='ns_scope'> [<a href="aloupe.html#::aloupe::my" title="::aloupe::my" class='ruff_cmd'>::aloupe::my</a>]</span><span class='tinylink'><a href='aloupe.html#::aloupe::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -1043,12 +1057,12 @@ padding: 0%;
   <b><font color=#134070>ttk::style</font></b> layout <font color=#1b1baa>$new</font> [<b><font color=#134070>ttk::style</font></b> layout <font color=#1b1baa>$type</font>]
   <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$config</font> <font color=#1b1baa>$new</font>]
 }<br><br></code></pre></div>
-</div><br><br><br><h4 class='ruffproc'><a name='::aloupe::my::SizeLoupe'>SizeLoupe</a><span class='ns_scope'> [<a href="aloupe.html#::aloupe::my" title="::aloupe::my" class='ruff_cmd'>::aloupe::my</a>]</span><span class='tinylink'><a href='aloupe.html#::aloupe::my'>my</a>, <a href='#top'>Top</a></span></h4>
+</div><br><br><br><h4 class='ruffproc'><a name='::aloupe::my::ShowLoupe'>ShowLoupe</a><span class='ns_scope'> [<a href="aloupe.html#::aloupe::my" title="::aloupe::my" class='ruff_cmd'>::aloupe::my</a>]</span><span class='tinylink'><a href='aloupe.html#::aloupe::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Re-displays the loupe at changing its size.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>SizeLoupe</span> </div>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_aloupe_my_SizeLoupe' href="javascript:toggleSource('aloupe_my_SizeLoupe')">Show source</a></p>
-<div id='aloupe_my_SizeLoupe' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::aloupe::my::SizeLoupe {} {
+<div class='ruff_synopsis'><span class='ruff_cmd'>ShowLoupe</span> </div>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_aloupe_my_ShowLoupe' href="javascript:toggleSource('aloupe_my_ShowLoupe')">Show source</a></p>
+<div id='aloupe_my_ShowLoupe' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::aloupe::my::ShowLoupe {} {
   <i><font color=#4b5d50># Re-displays the loupe at changing its size.</font></i>
 
   <b><font color=#3a6797>variable</font></b> data
@@ -1100,6 +1114,22 @@ padding: 0%;
 <font color=#923B23>&quot;</font>
   <b><font color=#3a6797>exit</font></b>
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::aloupe::my::Theme'>Theme</a><span class='ns_scope'> [<a href="aloupe.html#::aloupe::my" title="::aloupe::my" class='ruff_cmd'>::aloupe::my</a>]</span><span class='tinylink'><a href='aloupe.html#::aloupe::my'>my</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Themes the utility</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>Theme</span> </div>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_aloupe_my_Theme' href="javascript:toggleSource('aloupe_my_Theme')">Show source</a></p>
+<div id='aloupe_my_Theme' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::aloupe::my::Theme {} {
+  <i><font color=#4b5d50># Themes the utility</font></i>
+
+  <b><font color=#3a6797>variable</font></b> data
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$data(-apavedir)</font> eq {}} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$data(-apavedir)</font> apaveinput.tcl]
+  ::apave::initWM <font color=#6c3e67>-cs</font> <font color=#1b1baa>$data(-cs)</font> <font color=#6c3e67>-theme</font> alt
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$data(-fcgeom)</font> ne {}} {
+    ::apave::obj chooserGeomVars {} ::aloupe::my::data(-fcgeom)
+  }
+}<br><br></code></pre></div>
 </div></div></div><div class='yui-b navbox' ><h1><a href='#::aloupe'>aloupe</a></h1><h2><a href='#::aloupe-Usage'>Usage</a></h2><h2><a href='#::aloupe-Options'>Options</a></h2><h2><a href='#::aloupe-Links'>Links</a></h2><h2><a href='#::aloupe-License'>License</a></h2><h2><a href='#::aloupe-Commands'>Commands</a></h2><h4 class='tooltip'><a href='aloupe.html#::aloupe::option'>option</a><span class='tooltiptext'>Returns a value of aloupe option.
 </span></h4><h4 class='tooltip'><a href='aloupe.html#::aloupe::run'>run</a><span class='tooltiptext'>Runs the loupe.
 </span></h4><h1><a href='#::aloupe::my'>aloupe::my</a></h1><h2><a href='#::aloupe::my-Commands'>Commands</a></h2><h4 class='tooltip'><a href='aloupe.html#::aloupe::my::Button2Click'>Button2Click</a><span class='tooltiptext'>Processes the click on 'Clipboard' button.
@@ -1123,8 +1153,9 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='aloupe.html#::aloupe::my::SaveGeometry'>SaveGeometry</a><span class='tooltiptext'>Saves the displaying window's geometry.
 </span></h4><h4 class='tooltip'><a href='aloupe.html#::aloupe::my::SaveOptions'>SaveOptions</a><span class='tooltiptext'>Saves options of appearance to a file.
 </span></h4><h4 class='tooltip'><a href='aloupe.html#::aloupe::my::SetStyle'>SetStyle</a><span class='tooltiptext'>Sets a style for of widgets with a type.
-</span></h4><h4 class='tooltip'><a href='aloupe.html#::aloupe::my::SizeLoupe'>SizeLoupe</a><span class='tooltiptext'>Re-displays the loupe at changing its size.
+</span></h4><h4 class='tooltip'><a href='aloupe.html#::aloupe::my::ShowLoupe'>ShowLoupe</a><span class='tooltiptext'>Re-displays the loupe at changing its size.
 </span></h4><h4 class='tooltip'><a href='aloupe.html#::aloupe::my::StyleButton2'>StyleButton2</a><span class='tooltiptext'>Makes a style for Tbutton.
 </span></h4><h4 class='tooltip'><a href='aloupe.html#::aloupe::my::Synopsis'>Synopsis</a><span class='tooltiptext'>Short info about usage.
+</span></h4><h4 class='tooltip'><a href='aloupe.html#::aloupe::my::Theme'>Theme</a><span class='tooltiptext'>Themes the utility
 </span></h4></div></div><div id='ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div></div>
 </div></body></html>

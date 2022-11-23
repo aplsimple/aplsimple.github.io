@@ -615,7 +615,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>atrs</code></code></td><td class='ruff_defitem'>new default attributes; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>widget</code></code></td><td class='ruff_defitem'>Tcl/Tk command for the new registered widget type; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
-<h5 class='ruff'>See also</h5><p class='ruff'><a href="apave.html#::apave::APave::defaultAttrs" title="APave::defaultAttrs" class='ruff_cmd'>APave::defaultAttrs</a></p>
+<h5 class='ruff'>See also</h5><p class='ruff'><a href="apave.html#::apave::APave::defaultATTRS" title="APave::defaultATTRS" class='ruff_cmd'>APave::defaultATTRS</a></p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_defaultAttrs' href="javascript:toggleSource('apave_defaultAttrs')">Show source</a></p>
 <div id='apave_defaultAttrs' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::defaultAttrs {{type {}} {opts {}} {atrs {}} {widget {}}} {
   <i><font color=#4b5d50># Sets, gets or registers default options and attributes for widget type.</font></i>
@@ -623,9 +623,9 @@ padding: 0%;
   <i><font color=#4b5d50>#   opts - new default grid/pack options</font></i>
   <i><font color=#4b5d50>#   atrs - new default attributes</font></i>
   <i><font color=#4b5d50>#   widget - Tcl/Tk command for the new registered widget type</font></i>
-  <i><font color=#4b5d50># See also: APave::defaultAttrs</font></i>
+  <i><font color=#4b5d50># See also: APave::defaultATTRS</font></i>
 
-  <b><font color=#ca14ca>return</font></b> [obj defaultAttrs <font color=#1b1baa>$type</font> <font color=#1b1baa>$opts</font> <font color=#1b1baa>$atrs</font> <font color=#1b1baa>$widget</font>]
+  <b><font color=#ca14ca>return</font></b> [obj defaultATTRS <font color=#1b1baa>$type</font> <font color=#1b1baa>$opts</font> <font color=#1b1baa>$atrs</font> <font color=#1b1baa>$widget</font>]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::deiconify'>deiconify</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -1025,7 +1025,7 @@ padding: 0%;
   <b><font color=#3a6797>variable</font></b> _AP_IMG
   <b><font color=#3a6797>variable</font></b> _AP_ICO
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$icon</font> eq {}} {<b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$_AP_ICO</font>}
-  <b><font color=#ca14ca>proc</font></b> imagename {icon} {   # Get a defined icon's image name
+  ; <b><font color=#ca14ca>proc</font></b> imagename {icon} {   # Get a defined icon's image name
     <b><font color=#ca14ca>return</font></b> _AP_IMG(img<font color=#1b1baa>$icon</font>)
   }
   <b><font color=#3a6797>variable</font></b> apaveDir
@@ -1263,6 +1263,10 @@ padding: 0%;
       <b><font color=#3a6797>set</font></b> lbd 0
     }
     awdark - awlight {
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>package</font></b> forget ttk::theme::<font color=#1b1baa>$intheme</font>}
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>namespace</font></b> delete ttk::theme::<font color=#1b1baa>$intheme</font>}
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>package</font></b> forget awthemes}
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>namespace</font></b> delete awthemes}
       InitAwThemesPath <font color=#1b1baa>$libdir</font>
       <b><font color=#3a6797>package</font></b> require awthemes
       <b><font color=#3a6797>package</font></b> require ttk::theme::<font color=#1b1baa>$intheme</font>
@@ -1297,7 +1301,9 @@ padding: 0%;
   <i><font color=#4b5d50># for default theme: only most common settings</font></i>
   <b><font color=#3a6797>set</font></b> tfg1 <font color=#1b1baa>$::apave::_CS_(!FG)</font>
   <b><font color=#3a6797>set</font></b> tbg1 <font color=#1b1baa>$::apave::_CS_(!BG)</font>
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$theme</font> ne {}} {<b><font color=#3a6797>catch</font></b> {<b><font color=#134070>ttk::style</font></b> theme use <font color=#1b1baa>$theme</font>}}
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$theme</font> ne {} && [<b><font color=#3a6797>catch</font></b> {<b><font color=#134070>ttk::style</font></b> theme use <font color=#1b1baa>$theme</font>}]} {
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>ttk::style</font></b> theme use default}
+  }
   <b><font color=#134070>ttk::style</font></b> map .  <font color=#6c3e67>-selectforeground</font> [<b><font color=#3a6797>list</font></b> !focus <font color=#1b1baa>$tfg1</font> {<b><font color=#134070>focus</font></b> active} <font color=#1b1baa>$tfg1</font>]  <font color=#6c3e67>-selectbackground</font> [<b><font color=#3a6797>list</font></b> !focus <font color=#1b1baa>$tbg1</font> {<b><font color=#134070>focus</font></b> active} <font color=#1b1baa>$tbg1</font>]
   <b><font color=#134070>ttk::style</font></b> configure . <font color=#6c3e67>-selectforeground</font>	<font color=#1b1baa>$tfg1</font> <font color=#6c3e67>-selectbackground</font>	<font color=#1b1baa>$tbg1</font>
 
@@ -1795,18 +1801,55 @@ padding: 0%;
   <i><font color=#4b5d50># To remove an &quot;alone&quot; option, `key` should be a glob pattern with `*`.</font></i>
 
   <b><font color=#3a6797>foreach</font></b> key <font color=#1b1baa>$args</font> {
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#6c3e67>-exact</font> <font color=#1b1baa>$options</font> <font color=#1b1baa>$key</font>]]&gt;-1} {
-      <b><font color=#3a6797>catch</font></b> {
-        <i><font color=#4b5d50># remove a pair &quot;option value&quot;</font></i>
+    <b><font color=#3a6797>while</font></b> {[<b><font color=#3a6797>incr</font></b> maxi]&lt;99} {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#6c3e67>-exact</font> <font color=#1b1baa>$options</font> <font color=#1b1baa>$key</font>]]&gt;-1} {
+        <b><font color=#3a6797>catch</font></b> {
+          <i><font color=#4b5d50># remove a pair &quot;option value&quot;</font></i>
+          <b><font color=#3a6797>set</font></b> options [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$options</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
+          <b><font color=#3a6797>set</font></b> options [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$options</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
+        }
+      } <b><font color=#3a6797>elseif</font></b> {[<b><font color=#3a6797>string</font></b> first * <font color=#1b1baa>$key</font>]&gt;=0 &&  [<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#6c3e67>-glob</font> <font color=#1b1baa>$options</font> <font color=#1b1baa>$key</font>]]&gt;-1} {
+        <i><font color=#4b5d50># remove an option only</font></i>
         <b><font color=#3a6797>set</font></b> options [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$options</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
-        <b><font color=#3a6797>set</font></b> options [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$options</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>break</font></b>
       }
-    } <b><font color=#3a6797>elseif</font></b> {[<b><font color=#3a6797>string</font></b> first * <font color=#1b1baa>$key</font>]&gt;=0 &&  [<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#6c3e67>-glob</font> <font color=#1b1baa>$options</font> <font color=#1b1baa>$key</font>]]&gt;-1} {
-      <i><font color=#4b5d50># remove an option only</font></i>
-      <b><font color=#3a6797>set</font></b> options [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$options</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
     }
   }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$options</font>
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::apave::repaintWindow'>repaintWindow</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Shows a window and, optionally, focuses on a widget of it.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>repaintWindow</span> <span class='ruff_arg'>win ?wfoc?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>win</code></code></td><td class='ruff_defitem'>the window's path</td></tr>
+<tr><td class='ruff_defitem'><code><code>wfoc</code></code></td><td class='ruff_defitem'>the widget's path or a command to get it; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Returns yes, if the window is shown successfully.</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_repaintWindow' href="javascript:toggleSource('apave_repaintWindow')">Show source</a></p>
+<div id='apave_repaintWindow' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::repaintWindow {win {wfoc {}}} {
+  <i><font color=#4b5d50># Shows a window and, optionally, focuses on a widget of it.</font></i>
+  <i><font color=#4b5d50>#   win - the window's path</font></i>
+  <i><font color=#4b5d50>#   wfoc - the widget's path or a command to get it</font></i>
+  <i><font color=#4b5d50># Returns yes, if the window is shown successfully.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$win</font>]} {
+    <i><font color=#4b5d50># esp. for KDE</font></i>
+    <b><font color=#3a6797>if</font></b> {[isKDE]} {
+      <b><font color=#134070>wm</font></b> withdraw <font color=#1b1baa>$win</font>
+      <b><font color=#134070>wm</font></b> deiconify <font color=#1b1baa>$win</font>
+      <i><font color=#4b5d50># KDE is KDE, Tk is Tk, and never the twain shall meet</font></i>
+      <b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$win</font> <font color=#6c3e67>-topmost</font> [<b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$win</font> <font color=#6c3e67>-topmost</font>]
+    }
+    <b><font color=#3a6797>update</font></b>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wfoc</font> ne {}} {
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> wfoc [{<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$wfoc</font>]}
+      <b><font color=#134070>focus</font></b> <font color=#1b1baa>$wfoc</font>
+    }
+    <b><font color=#ca14ca>return</font></b> yes
+  }
+  <b><font color=#ca14ca>return</font></b> no
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::rootModalWindow'>rootModalWindow</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -2246,7 +2289,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>csSet</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::csSet" title="ObjectTheming.csSet" class='ruff_cmd'>ObjectTheming.csSet</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>csToned</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::csToned" title="ObjectTheming.csToned" class='ruff_cmd'>ObjectTheming.csToned</a></td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APave::dateChooser" title="dateChooser" class='ruff_cmd'>dateChooser</a></code></td><td class='ruff_defitem'>Date chooser (calendar widget).</td></tr>
-<tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APave::defaultAttrs" title="defaultAttrs" class='ruff_cmd'>defaultAttrs</a></code></td><td class='ruff_defitem'>Sets, gets or registers default options and attributes for widget type.</td></tr>
+<tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APave::defaultATTRS" title="defaultATTRS" class='ruff_cmd'>defaultATTRS</a></code></td><td class='ruff_defitem'>Sets, gets or registers default options and attributes for widget type.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APave::displayTaggedText" title="displayTaggedText" class='ruff_cmd'>displayTaggedText</a></code></td><td class='ruff_defitem'>Sets the text widget's contents using tags (ornamental details).</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APave::displayText" title="displayText" class='ruff_cmd'>displayText</a></code></td><td class='ruff_defitem'>Sets the text widget's contents.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APave::dlgPath" title="dlgPath" class='ruff_cmd'>dlgPath</a></code></td><td class='ruff_defitem'>Gets a window name of apavedialogue dialogue.</td></tr>
@@ -2290,6 +2333,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>themeWindow</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::themeWindow" title="ObjectTheming.themeWindow" class='ruff_cmd'>ObjectTheming.themeWindow</a></td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APave::timeoutButton" title="timeoutButton" class='ruff_cmd'>timeoutButton</a></code></td><td class='ruff_defitem'>Invokes a button's action after a timeout.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APave::tk_optionCascade" title="tk_optionCascade" class='ruff_cmd'>tk_optionCascade</a></code></td><td class='ruff_defitem'>A bit modified tk_optionCascade widget made by Richard Suchenwirth.</td></tr>
+<tr><td class='ruff_defitem'><code><code>touchWidgets</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::touchWidgets" title="ObjectTheming.touchWidgets" class='ruff_cmd'>ObjectTheming.touchWidgets</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>untouchWidgets</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::untouchWidgets" title="ObjectTheming.untouchWidgets" class='ruff_cmd'>ObjectTheming.untouchWidgets</a></td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APave::validateColorChoice" title="validateColorChoice" class='ruff_cmd'>validateColorChoice</a></code></td><td class='ruff_defitem'>Displays a current color of color chooser's entry.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APave::widgetType" title="widgetType" class='ruff_cmd'>widgetType</a></code></td><td class='ruff_defitem'>Gets the widget type based on 3 initial letters of its name. Also fills the grid/pack options and attributes of the widget.</td></tr>
@@ -2359,7 +2403,7 @@ padding: 0%;
 
   <i><font color=#4b5d50># object's procedures</font></i>
 
-  <b><font color=#ca14ca>proc</font></b> ListboxHandle {W offset maxChars} {
+  ; <b><font color=#ca14ca>proc</font></b> ListboxHandle {W offset maxChars} {
 
     <b><font color=#3a6797>set</font></b> list {}
     <b><font color=#3a6797>foreach</font></b> index [<font color=#1b1baa>$W</font> curselection] { <b><font color=#3a6797>lappend</font></b> list [<font color=#1b1baa>$W</font> get <font color=#1b1baa>$index</font>] }
@@ -2367,7 +2411,7 @@ padding: 0%;
     <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$text</font> <font color=#1b1baa>$offset</font> [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$offset</font>+<font color=#1b1baa>$maxChars</font>-1}]]
   }
 
-  <b><font color=#ca14ca>proc</font></b> ListboxSelect {W} {
+  ; <b><font color=#ca14ca>proc</font></b> ListboxSelect {W} {
     <i><font color=#4b5d50># This code had been taken from Tcl's wiki:</font></i>
     <i><font color=#4b5d50>#   https://wiki.tcl-lang.org/page/listbox+selection</font></i>
 
@@ -2378,7 +2422,7 @@ padding: 0%;
     <b><font color=#ca14ca>return</font></b>
   }
 
-  <b><font color=#ca14ca>proc</font></b> WinResize {win} {
+  ; <b><font color=#ca14ca>proc</font></b> WinResize {win} {
     <i><font color=#4b5d50># Restricts the window's sizes (thus fixing Tk's issue with a menubar)</font></i>
     <i><font color=#4b5d50>#   win - path to a window to be of restricted sizes</font></i>
 
@@ -2516,19 +2560,21 @@ padding: 0%;
   <i><font color=#4b5d50># Returns a selected value.</font></i>
 
   <b><font color=#3a6797>set</font></b> isfilename 0
-  <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions args <font color=#6c3e67>-ftxvar</font> {} <font color=#6c3e67>-tname</font> {}] ftxvar tname
+  <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions args  <font color=#6c3e67>-ftxvar</font> {} <font color=#6c3e67>-tname</font> {} <font color=#6c3e67>-bname</font> {} <font color=#6c3e67>-parent</font> {}] ftxvar tname bname parent
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$parent</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> parent <font color=#923B23>&quot;-parent <font color=#1b1baa>$</font>parent&quot;</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> parent [<b><font color=#ca14ca>my</font></b> ParentOpt]
+  }
   <b><font color=#3a6797>lassign</font></b> [::apave::getProperty DirFilGeoVars] dirvar filvar
-  <b><font color=#3a6797>set</font></b> vargeo [<b><font color=#3a6797>set</font></b> dirgeo [<b><font color=#3a6797>set</font></b> filgeo {}]]
-  <b><font color=#3a6797>set</font></b> parent [<b><font color=#ca14ca>my</font></b> ParentOpt]
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dirvar</font> ne {}} {<b><font color=#3a6797>set</font></b> dirgeo [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$dirvar</font>]}
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$filvar</font> ne {}} {<b><font color=#3a6797>set</font></b> filgeo [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$filvar</font>]}
+  <b><font color=#3a6797>set</font></b> vargeo {}
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$nchooser</font> eq {ftx_OpenFile}} {
     <b><font color=#3a6797>set</font></b> nchooser tk_getOpenFile
   }
   <b><font color=#3a6797>set</font></b> widname {}
   <b><font color=#3a6797>set</font></b> choosname <font color=#1b1baa>$nchooser</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$choosname</font> in {fontChooser colorChooser dateChooser}} {
-    <b><font color=#3a6797>set</font></b> nchooser <font color=#923B23>&quot;my <font color=#1b1baa>$</font>choosname <font color=#1b1baa>$</font>tvar&quot;</font>
+    <b><font color=#3a6797>set</font></b> nchooser <font color=#923B23>&quot;my <font color=#1b1baa>$</font>choosname <font color=#1b1baa>$</font>tvar <font color=#1b1baa>$</font>parent <font color=#1b1baa>$</font>args&quot;</font>
   } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$choosname</font> in {<b><font color=#134070>tk_getOpenFile</font></b> tk_getSaveFile}} {
     <b><font color=#3a6797>set</font></b> vargeo <font color=#1b1baa>$filvar</font>
     <b><font color=#3a6797>set</font></b> widname [<b><font color=#ca14ca>my</font></b> AuxSetChooserGeometry <font color=#1b1baa>$vargeo</font> <font color=#1b1baa>$dirvar</font> <font color=#1b1baa>$parent</font> __tk_filedialog]
@@ -2547,7 +2593,7 @@ padding: 0%;
     <b><font color=#3a6797>set</font></b> args <font color=#923B23>&quot;-initialdir \&quot;<font color=#1b1baa>[</font>set <font color=#1b1baa>$</font>tvar<font color=#1b1baa>]</font>\&quot; <font color=#1b1baa>$</font>parent <font color=#1b1baa>$</font>args&quot;</font>
     <b><font color=#3a6797>incr</font></b> isfilename
   }
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::tcl_platform(platform)</font> eq {unix} && <font color=#1b1baa>$choosname</font> ne {dateChooser}} {
+  <b><font color=#3a6797>if</font></b> {[::islinux] && <font color=#1b1baa>$choosname</font> ne {dateChooser}} {
     <b><font color=#ca14ca>my</font></b> themeExternal *.foc.* *f1.demo  ;<i><font color=#4b5d50># don't touch tkcc's boxes</font></i>
   }
   <b><font color=#3a6797>set</font></b> res [{<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$nchooser</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
@@ -2576,8 +2622,15 @@ padding: 0%;
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tname</font> ne {}} {
     <b><font color=#3a6797>set</font></b> tname [<b><font color=#ca14ca>my</font></b> [<b><font color=#ca14ca>my</font></b> ownWName <font color=#1b1baa>$tname</font>]]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$bname</font> ne {}} {
+      <i><font color=#4b5d50># re-focus to fire invalidation of the entry (esp. for Windows)</font></i>
+      <b><font color=#3a6797>set</font></b> ent [<b><font color=#ca14ca>my</font></b> ownWName <font color=#1b1baa>$tname</font>]
+      <b><font color=#3a6797>set</font></b> but [<b><font color=#ca14ca>my</font></b> ownWName <font color=#1b1baa>$bname</font>]
+      <b><font color=#3a6797>set</font></b> bname [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> .<font color=#1b1baa>$ent</font> .<font color=#1b1baa>$but</font>] <font color=#1b1baa>$tname</font>]
+      <b><font color=#134070>focus</font></b> <font color=#1b1baa>$bname</font>
+    }
     <b><font color=#134070>focus</font></b> <font color=#1b1baa>$tname</font>
-    <b><font color=#3a6797>after</font></b> idle [<font color=#1b1baa>$tname</font> selection range 0 end]
+    <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$tname</font> selection range 0 end]
   }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }<br><br></code></pre></div>
@@ -2644,8 +2697,15 @@ padding: 0%;
   <i><font color=#4b5d50>#</font></i>
   <i><font color=#4b5d50># Returns a selected color.</font></i>
 
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$_pav(initialcolor)</font> eq {} && <font color=#1b1baa>$::tcl_platform(platform)</font> eq {unix}} {
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$_pav(initialcolor)</font> eq {} && [::islinux]} {
     <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::apave::apaveDir</font> pickers color clrpick.tcl]
+  }
+  <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions args <font color=#6c3e67>-entry</font> {}] ent
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ent</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> ent [<b><font color=#ca14ca>my</font></b> [<b><font color=#ca14ca>my</font></b> ownWName <font color=#1b1baa>$ent</font>]]
+    <b><font color=#3a6797>set</font></b> x [<b><font color=#134070>winfo</font></b> rootx <font color=#1b1baa>$ent</font>]
+    <b><font color=#3a6797>set</font></b> y [<b><font color=#3a6797>expr</font></b> {[<b><font color=#134070>winfo</font></b> rooty <font color=#1b1baa>$ent</font>]+32}]
+    <b><font color=#3a6797>dict</font></b> set args <font color=#6c3e67>-geometry</font> +<font color=#1b1baa>$x</font>+<font color=#1b1baa>$y</font>  ;<i><font color=#4b5d50># the same as with date picker</font></i>
   }
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> _ [<b><font color=#3a6797>string</font></b> trim [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$tvar</font>]]] ne {}} {
     <b><font color=#3a6797>set</font></b> ic <font color=#1b1baa>$_</font>
@@ -2660,7 +2720,7 @@ padding: 0%;
     <b><font color=#3a6797>set</font></b> _pav(initialcolor) black
   }
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>lassign</font></b> [<b><font color=#134070>tk_chooseColor</font></b> <font color=#6c3e67>-moveall</font> <font color=#1b1baa>$_pav(moveall)</font>  <font color=#6c3e67>-tonemoves</font> <font color=#1b1baa>$_pav(tonemoves)</font> <font color=#6c3e67>-initialcolor</font> <font color=#1b1baa>$_pav(initialcolor)</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]  res _pav(moveall) _pav(tonemoves)}]} {
-    <b><font color=#3a6797>set</font></b> args [::apave::removeOptions <font color=#1b1baa>$args</font> <font color=#6c3e67>-moveall</font> <font color=#6c3e67>-tonemoves</font>]
+    <b><font color=#3a6797>set</font></b> args [::apave::removeOptions <font color=#1b1baa>$args</font> <font color=#6c3e67>-moveall</font> <font color=#6c3e67>-tonemoves</font> <font color=#6c3e67>-geometry</font>]
     <b><font color=#3a6797>set</font></b> res [<b><font color=#134070>tk_chooseColor</font></b> <font color=#6c3e67>-initialcolor</font> <font color=#1b1baa>$_pav(initialcolor)</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> ne {}} {
@@ -2671,17 +2731,20 @@ padding: 0%;
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APave::colorWindow'>colorWindow</a><span class='ns_scope'> [<a href="apave.html#::apave::APave" title="::apave::APave" class='ruff_cmd'>::apave::APave</a>]</span><span class='tinylink'><a href='apave.html#::apave::APave'>APave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Initialize colors of a window.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT colorWindow</span> <span class='ruff_arg'>win</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT colorWindow</span> <span class='ruff_arg'>win ?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>win</code></code></td><td class='ruff_defitem'>window's path</td></tr>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>arguments for csSet</td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_APave_colorWindow' href="javascript:toggleSource('apave_APave_colorWindow')">Show source</a></p>
-<div id='apave_APave_colorWindow' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> colorWindow {win} {
+<div id='apave_APave_colorWindow' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> colorWindow {win args} {
   <i><font color=#4b5d50># Initialize colors of a window.</font></i>
   <i><font color=#4b5d50>#   win - window's path</font></i>
+  <i><font color=#4b5d50>#   args - arguments for csSet</font></i>
 
   <b><font color=#3a6797>if</font></b> {[<b><font color=#ca14ca>my</font></b> apaveTheme]} {
-    <b><font color=#ca14ca>my</font></b> csSet [<b><font color=#ca14ca>my</font></b> csCurrent] <font color=#1b1baa>$win</font> <font color=#6c3e67>-doit</font>
+    <b><font color=#ca14ca>my</font></b> csSet [<b><font color=#ca14ca>my</font></b> csCurrent] <font color=#1b1baa>$win</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$args</font> ne {<font color=#6c3e67>-doit</font>}} {<b><font color=#ca14ca>my</font></b> themeNonThemed <font color=#1b1baa>$win</font>}
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#ca14ca>my</font></b> themeNonThemed <font color=#1b1baa>$win</font>
   }
@@ -2732,10 +2795,10 @@ padding: 0%;
   }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }<br><br></code></pre></div>
-</div><br><br><h4 class='ruffmethod'><a name='::apave::APave::defaultAttrs'>defaultAttrs</a><span class='ns_scope'> [<a href="apave.html#::apave::APave" title="::apave::APave" class='ruff_cmd'>::apave::APave</a>]</span><span class='tinylink'><a href='apave.html#::apave::APave'>APave</a>, <a href='#top'>Top</a></span></h4>
+</div><br><br><h4 class='ruffmethod'><a name='::apave::APave::defaultATTRS'>defaultATTRS</a><span class='ns_scope'> [<a href="apave.html#::apave::APave" title="::apave::APave" class='ruff_cmd'>::apave::APave</a>]</span><span class='tinylink'><a href='apave.html#::apave::APave'>APave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Sets, gets or registers default options and attributes for widget type.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT defaultAttrs</span> <span class='ruff_arg'>?type? ?opts? ?atrs? ?widget?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT defaultATTRS</span> <span class='ruff_arg'>?type? ?opts? ?atrs? ?widget?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>type</code></code></td><td class='ruff_defitem'>widget type; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>opts</code></code></td><td class='ruff_defitem'>new default grid/pack options; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
@@ -2743,7 +2806,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>widget</code></code></td><td class='ruff_defitem'>Tcl/Tk command for the new registered widget type; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>The <em>type</em> should be a three letter unique string.</p>
-<p class='ruff'>If the <em>type</em> is absent in the registered types and <em>opts</em> and/or <em>atrs</em> is not set to &quot;&quot;, defaultAttrs registers the new <em>type</em> with its grid/pack options and attributes. At that <em>widget</em> is a command for the new widget type. For example, to register &quot;toolbutton&quot; widget: my defaultAttrs tbt {} {-style Toolbutton -compound top} ttk::button</p>
+<p class='ruff'>If the <em>type</em> is absent in the registered types and <em>opts</em> and/or <em>atrs</em> is not set to &quot;&quot;, defaultATTRS registers the new <em>type</em> with its grid/pack options and attributes. At that <em>widget</em> is a command for the new widget type. For example, to register &quot;toolbutton&quot; widget: my defaultATTRS tbt {} {-style Toolbutton -compound top} ttk::button</p>
 <p class='ruff'>Options and attributes may contain data (variables and commands) to be processed by [subst].</p>
 <p class='ruff'>Returns:</p>
 <ul class='ruff'>
@@ -2751,8 +2814,8 @@ padding: 0%;
 <li>if set <em>type</em> only: a list of options, attributes and <em>widget</em></li>
 <li>else: a list of updated options, attributes and <em>widget</em></li>
 </ul>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_APave_defaultAttrs' href="javascript:toggleSource('apave_APave_defaultAttrs')">Show source</a></p>
-<div id='apave_APave_defaultAttrs' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> defaultAttrs {{type {}} {opts {}} {atrs {}} {widget {}}} {
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_APave_defaultATTRS' href="javascript:toggleSource('apave_APave_defaultATTRS')">Show source</a></p>
+<div id='apave_APave_defaultATTRS' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> defaultATTRS {{type {}} {opts {}} {atrs {}} {widget {}}} {
   <i><font color=#4b5d50># Sets, gets or registers default options and attributes for widget type.</font></i>
   <i><font color=#4b5d50>#   type - widget type</font></i>
   <i><font color=#4b5d50>#   opts - new default grid/pack options</font></i>
@@ -2762,10 +2825,10 @@ padding: 0%;
   <i><font color=#4b5d50># The *type* should be a three letter unique string.</font></i>
   <i><font color=#4b5d50>#</font></i>
   <i><font color=#4b5d50># If the *type* is absent in the registered types and *opts* and/or *atrs*</font></i>
-  <i><font color=#4b5d50># is not set to &quot;&quot;, defaultAttrs registers the new *type* with its grid/pack</font></i>
+  <i><font color=#4b5d50># is not set to &quot;&quot;, defaultATTRS registers the new *type* with its grid/pack</font></i>
   <i><font color=#4b5d50># options and attributes. At that *widget* is a command for the new widget</font></i>
   <i><font color=#4b5d50># type. For example, to register &quot;toolbutton&quot; widget:</font></i>
-  <i><font color=#4b5d50>#   my defaultAttrs tbt {} {-style Toolbutton -compound top} ttk::button</font></i>
+  <i><font color=#4b5d50>#   my defaultATTRS tbt {} {-style Toolbutton -compound top} ttk::button</font></i>
   <i><font color=#4b5d50>#</font></i>
   <i><font color=#4b5d50># Options and attributes may contain data (variables and commands)</font></i>
   <i><font color=#4b5d50># to be processed by [subst].</font></i>
@@ -2779,7 +2842,7 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> optatr <font color=#923B23>&quot;<font color=#1b1baa>$</font>opts<font color=#1b1baa>$</font>atrs&quot;</font>
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> def1 [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$::apave::_Defaults</font> <font color=#1b1baa>$type</font>]}]} {
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$optatr</font> eq {}} {
-      <b><font color=#3a6797>set</font></b> err <font color=#923B23>&quot;defaultAttrs: \&quot;<font color=#1b1baa>$</font>type\&quot; widget type not registered.&quot;</font>
+      <b><font color=#3a6797>set</font></b> err <font color=#923B23>&quot;<font color=#1b1baa>[</font>self method<font color=#1b1baa>]</font>: \&quot;<font color=#1b1baa>$</font>type\&quot; widget type not registered.&quot;</font>
       <b><font color=#3a6797>puts</font></b> <font color=#6c3e67>-nonewline</font> stderr <font color=#1b1baa>$err</font>
       <b><font color=#ca14ca>return</font></b> <font color=#6c3e67>-code</font> error <font color=#1b1baa>$err</font>
     }
@@ -2806,10 +2869,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>contsName</code></code></td><td class='ruff_defitem'>variable name for contents to be set in the widget</td></tr>
 <tr><td class='ruff_defitem'><code><code>tags</code></code></td><td class='ruff_defitem'>list of tags to be applied to the text; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>The lines in <em>text contents</em> are divided by \n and can include <em>tags</em> like in a html layout, e.g. <red>RED ARMY</red>.</p>
-<p class='ruff'>The <em>tags</em> is a list of &quot;name/value&quot; pairs. 1st is a tag's name, 2nd is a tag's value.</p>
-<p class='ruff'>The tag's name is &quot;pure&quot; one (without &lt;&gt;) so e.g.for <b>..</b> the tag list contains &quot;b&quot;.</p>
-<p class='ruff'>The tag's value is a string of text attributes (-font etc.).</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>The lines in <em>text contents</em> are divided by \n and can include <em>tags</em> like in a html layout, e.g. <red>RED ARMY</red>. The <em>tags</em> is a list of &quot;name/value&quot; pairs. 1st is a tag's name, 2nd is a tag's value. The tag's name is &quot;pure&quot; one (without &lt;&gt;) so e.g.for <b>..</b> the tag list contains &quot;b&quot;. The tag's value is a string of text attributes (-font etc.). If the tag's name is FG, FG2, BG or BG2, then it is really a link color.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_APave_displayTaggedText' href="javascript:toggleSource('apave_APave_displayTaggedText')">Show source</a></p>
 <div id='apave_APave_displayTaggedText' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> displayTaggedText {w contsName {tags {}}} {
   <i><font color=#4b5d50># Sets the text widget's contents using tags (ornamental details).</font></i>
@@ -2819,27 +2879,28 @@ padding: 0%;
   <i><font color=#4b5d50>#</font></i>
   <i><font color=#4b5d50># The lines in *text contents* are divided by \n and can include</font></i>
   <i><font color=#4b5d50># *tags* like in a html layout, e.g. &lt;red&gt;RED ARMY&lt;/red&gt;.</font></i>
-  <i><font color=#4b5d50>#</font></i>
   <i><font color=#4b5d50># The *tags* is a list of &quot;name/value&quot; pairs. 1st is a tag's name, 2nd</font></i>
   <i><font color=#4b5d50># is a tag's value.</font></i>
-  <i><font color=#4b5d50>#</font></i>
   <i><font color=#4b5d50># The tag's name is &quot;pure&quot; one (without &lt;&gt;) so e.g.for &lt;b&gt;..&lt;/b&gt; the tag</font></i>
   <i><font color=#4b5d50># list contains &quot;b&quot;.</font></i>
-  <i><font color=#4b5d50>#</font></i>
   <i><font color=#4b5d50># The tag's value is a string of text attributes (-font etc.).</font></i>
+  <i><font color=#4b5d50># If the tag's name is FG, FG2, BG or BG2, then it is really a link color.</font></i>
 
   <b><font color=#3a6797>upvar</font></b> <font color=#1b1baa>$contsName</font> conts
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tags</font> eq {}} {
     <b><font color=#ca14ca>my</font></b> displayText <font color=#1b1baa>$w</font> <font color=#1b1baa>$conts</font>
     <b><font color=#ca14ca>return</font></b>
   }
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> csGet] fg fg2 bg bg2
   <b><font color=#3a6797>if</font></b> { [<b><font color=#3a6797>set</font></b> state [<font color=#1b1baa>$w</font> cget <font color=#6c3e67>-state</font>]] ne {normal}} {
     <font color=#1b1baa>$w</font> configure <font color=#6c3e67>-state</font> normal
   }
   <b><font color=#3a6797>set</font></b> taglist [<b><font color=#3a6797>set</font></b> tagpos [<b><font color=#3a6797>set</font></b> taglen [<b><font color=#3a6797>list</font></b>]]]
   <b><font color=#3a6797>foreach</font></b> tagi <font color=#1b1baa>$tags</font> {
     <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$tagi</font> tag opts
-    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> match link* <font color=#1b1baa>$tag</font>]} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tag</font> in {FG FG2 BG BG2} } {
+      <b><font color=#3a6797>set</font></b> [<b><font color=#3a6797>string</font></b> tolower <font color=#1b1baa>$tag</font>] <font color=#1b1baa>$opts</font>
+    } <b><font color=#3a6797>elseif</font></b> {![<b><font color=#3a6797>string</font></b> match link* <font color=#1b1baa>$tag</font>]} {
       <font color=#1b1baa>$w</font> tag config <font color=#1b1baa>$tag</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font>
     }
     <b><font color=#3a6797>lappend</font></b> tagpos 0
@@ -2892,7 +2953,6 @@ padding: 0%;
     <b><font color=#3a6797>incr</font></b> irow
   }
   <font color=#1b1baa>$w</font> replace 1.0 end <font color=#1b1baa>$disptext</font>
-  <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> csGet] fg fg2 bg bg2
   <b><font color=#3a6797>set</font></b> lfont [<font color=#1b1baa>$w</font> cget <font color=#6c3e67>-font</font>]
   <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> lfont [<b><font color=#134070>font</font></b> actual <font color=#1b1baa>$lfont</font>]}
   <b><font color=#3a6797>foreach</font></b> {o v} [<b><font color=#ca14ca>my</font></b> initLinkFont] {<b><font color=#3a6797>dict</font></b> set lfont <font color=#1b1baa>$o</font> <font color=#1b1baa>$v</font>}
@@ -3108,7 +3168,7 @@ padding: 0%;
   <i><font color=#4b5d50># Returns a selected font.</font></i>
 
   <b><font color=#3a6797>set</font></b> parw [::apave::parseOptions <font color=#1b1baa>$args</font> <font color=#6c3e67>-parent</font> [::apave::rootModalWindow .]]
-  <b><font color=#ca14ca>proc</font></b> [<b><font color=#3a6797>namespace</font></b> current]::applyFont {<b><font color=#134070>font</font></b>} <font color=#923B23>&quot;  set <font color=#1b1baa>$</font>tvar \[font actual \$font\];  focus -force <font color=#1b1baa>$</font>parw&quot;</font>
+  ; <b><font color=#ca14ca>proc</font></b> [<b><font color=#3a6797>namespace</font></b> current]::applyFont {<b><font color=#134070>font</font></b>} <font color=#923B23>&quot;  set <font color=#1b1baa>$</font>tvar \[font actual \$font\];  focus -force <font color=#1b1baa>$</font>parw&quot;</font>
   <b><font color=#3a6797>set</font></b> font [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$tvar</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$font</font> eq {}} {
     <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>font</font></b> create fontchoose {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$::apave::FONTMAIN</font>}
@@ -3118,7 +3178,7 @@ padding: 0%;
   }
   <b><font color=#134070>tk</font></b> fontchooser configure <font color=#6c3e67>-font</font> fontchoose {<b><font color=#3a6797>*</font></b>}[<b><font color=#ca14ca>my</font></b> ParentOpt]  {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font> <font color=#6c3e67>-command</font> [<b><font color=#3a6797>namespace</font></b> current]::applyFont
   <b><font color=#3a6797>set</font></b> res [<b><font color=#134070>tk</font></b> fontchooser show]
-  <i><font color=#4b5d50># core Tk font chooser is bad with focusing in and out, it isn't modal :(</font></i>
+  <i><font color=#4b5d50># core Tk font chooser is bad with focusing in and out, it isn't modal</font></i>
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> foc [<b><font color=#3a6797>info</font></b> commands *__tk__fontchooser.ok]] ne {}} {
     <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> after 0 [<b><font color=#3a6797>list</font></b> catch <font color=#923B23>&quot;focus -force <font color=#1b1baa>$</font>foc&quot;</font>]]
   }
@@ -3463,10 +3523,14 @@ padding: 0%;
     <b><font color=#3a6797>set</font></b> wtop [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$w</font> 0 <font color=#1b1baa>$pp</font>-1]
   }
   <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$wtop</font>}
+  <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions args <font color=#6c3e67>-type</font> {}] type
   <b><font color=#134070>toplevel</font></b> <font color=#1b1baa>$wtop</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
-  ::apave::withdraw <font color=#1b1baa>$wtop</font> ;<i><font color=#4b5d50># nice to hide all windows manipulations</font></i>
+  ::apave::withdraw <font color=#1b1baa>$wtop</font> ;<i><font color=#4b5d50># nice to hide all gui manipulations</font></i>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$type</font> ne {} && [<b><font color=#134070>tk</font></b> windowingsystem] eq {x11}} {
+    <b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$wtop</font> <font color=#6c3e67>-type</font> <font color=#1b1baa>$type</font>
+  }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$withfr</font>} {
-    <b><font color=#134070>pack</font></b> [<b><font color=#134070>ttk::frame</font></b> <font color=#1b1baa>$w</font>] <font color=#6c3e67>-expand</font> 1 <font color=#6c3e67>-fill</font> both
+    <b><font color=#134070>pack</font></b> [<b><font color=#134070>frame</font></b> <font color=#1b1baa>$w</font> <font color=#6c3e67>-background</font> [<b><font color=#3a6797>lindex</font></b> [<b><font color=#ca14ca>my</font></b> csGet] 3]] <font color=#6c3e67>-expand</font> 1 <font color=#6c3e67>-fill</font> both
   }
   <b><font color=#134070>wm</font></b> title <font color=#1b1baa>$wtop</font> <font color=#1b1baa>$ttl</font>
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$wtop</font>
@@ -3724,7 +3788,7 @@ padding: 0%;
       <b><font color=#3a6797>set</font></b> what [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$lwidgets</font> 0 1]
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$what</font> eq {idle} || [<b><font color=#3a6797>string</font></b> is integer <font color=#6c3e67>-strict</font> <font color=#1b1baa>$what</font>]} {
         <b><font color=#3a6797>after</font></b> <font color=#1b1baa>$what</font> [<b><font color=#3a6797>list</font></b> [<b><font color=#ca14ca>self</font></b>] paveWindow <font color=#1b1baa>$w</font> [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$lwidgets</font> 1 end]]
-        <b><font color=#3a6797>after</font></b> <font color=#1b1baa>$what</font> [<b><font color=#3a6797>list</font></b> [<b><font color=#ca14ca>self</font></b>] colorWindow <font color=#1b1baa>$w</font>]
+        <b><font color=#3a6797>after</font></b> <font color=#1b1baa>$what</font> [<b><font color=#3a6797>list</font></b> [<b><font color=#ca14ca>self</font></b>] colorWindow <font color=#1b1baa>$w</font> <font color=#6c3e67>-doit</font>]
       }
       <b><font color=#3a6797>continue</font></b>
     }
@@ -3918,29 +3982,34 @@ padding: 0%;
     ;<i><font color=#4b5d50># forced centering relative to a caller's window</font></i>
     <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exist <font color=#1b1baa>$centerme</font>]} {<b><font color=#3a6797>set</font></b> root <font color=#1b1baa>$centerme</font>}
   }
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> ontop [::apave::getOption <font color=#6c3e67>-ontop</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]] eq {}} {
-    <b><font color=#3a6797>set</font></b> ontop no
-    <b><font color=#3a6797>catch</font></b> {
-      <b><font color=#3a6797>set</font></b> ontop [<b><font color=#134070>wm</font></b> attributes [<b><font color=#134070>winfo</font></b> parent <font color=#1b1baa>$win</font>] <font color=#6c3e67>-topmost</font>]
-    }
-    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$ontop</font>} {
-      <i><font color=#4b5d50># find if a window child of &quot;.&quot; is topmost</font></i>
-      <i><font color=#4b5d50># if so, let this one be topmost too</font></i>
-      <b><font color=#3a6797>foreach</font></b> w [<b><font color=#134070>winfo</font></b> children .] {
-        <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> ontop [<b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$w</font> <font color=#6c3e67>-topmost</font>]}
-        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ontop</font>} <b><font color=#3a6797>break</font></b>
-      }
-    }
-  }
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> modal [::apave::getOption <font color=#6c3e67>-modal</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]] eq {}} {
     <b><font color=#3a6797>set</font></b> modal yes
   }
   <b><font color=#3a6797>set</font></b> minsize [::apave::getOption <font color=#6c3e67>-minsize</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
+  <b><font color=#3a6797>set</font></b> ontop [::apave::getOption <font color=#6c3e67>-ontop</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
   <b><font color=#3a6797>set</font></b> args [::apave::removeOptions <font color=#1b1baa>$args</font> <font color=#6c3e67>-centerme</font> <font color=#6c3e67>-ontop</font> <font color=#6c3e67>-modal</font> <font color=#6c3e67>-minsize</font> <font color=#6c3e67>-themed</font>]
-  <b><font color=#3a6797>foreach</font></b> {o v} [<b><font color=#3a6797>list</font></b> <font color=#6c3e67>-focus</font> {} <font color=#6c3e67>-onclose</font> {} <font color=#6c3e67>-geometry</font> {} <font color=#6c3e67>-decor</font> 1  <font color=#6c3e67>-root</font> <font color=#1b1baa>$root</font> <font color=#6c3e67>-resizable</font> {} <font color=#6c3e67>-variable</font> {} <font color=#6c3e67>-escape</font> 1 <font color=#6c3e67>-checkgeometry</font> 1] {
+  <b><font color=#3a6797>foreach</font></b> {o v} [<b><font color=#3a6797>list</font></b> <font color=#6c3e67>-focus</font> {} <font color=#6c3e67>-onclose</font> {} <font color=#6c3e67>-geometry</font> {} <font color=#6c3e67>-decor</font> 1  <font color=#6c3e67>-root</font> <font color=#1b1baa>$root</font> <font color=#6c3e67>-resizable</font> {} <font color=#6c3e67>-ontop</font> 0 <font color=#6c3e67>-variable</font> {} <font color=#6c3e67>-escape</font> 1 <font color=#6c3e67>-checkgeometry</font> 1] {
     <b><font color=#3a6797>lappend</font></b> defargs <font color=#1b1baa>$o</font> [<b><font color=#ca14ca>my</font></b> getShowOption <font color=#1b1baa>$o</font> <font color=#1b1baa>$v</font>]
   }
   <b><font color=#3a6797>array</font></b> set opt [<b><font color=#3a6797>list</font></b> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$defargs</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ontop</font> eq {}} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$opt(-ontop)</font>} {
+      <b><font color=#3a6797>set</font></b> ontop yes
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> ontop no
+      <b><font color=#3a6797>catch</font></b> {
+        <b><font color=#3a6797>set</font></b> ontop [<b><font color=#134070>wm</font></b> attributes [<b><font color=#134070>winfo</font></b> parent <font color=#1b1baa>$win</font>] <font color=#6c3e67>-topmost</font>]
+      }
+      <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$ontop</font>} {
+        <i><font color=#4b5d50># find if a window child of &quot;.&quot; is topmost</font></i>
+        <i><font color=#4b5d50># if so, let this one be topmost too</font></i>
+        <b><font color=#3a6797>foreach</font></b> w [<b><font color=#134070>winfo</font></b> children .] {
+          <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> ontop [<b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$w</font> <font color=#6c3e67>-topmost</font>]}
+          <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ontop</font>} <b><font color=#3a6797>break</font></b>
+        }
+      }
+    }
+  }
   <b><font color=#3a6797>lassign</font></b> [::apave::splitGeometry [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$root</font>]] rw rh rx ry
   <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> parent <font color=#1b1baa>$win</font>] ni {{} .}} {
     <b><font color=#3a6797>set</font></b> opt(-decor) 0
@@ -4237,10 +4306,7 @@ padding: 0%;
   }
   <b><font color=#3a6797>set</font></b> nam3 [<b><font color=#3a6797>string</font></b> tolower [<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$name</font> 0]][<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$name</font> 1 2]
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$nam3</font> 1] eq <font color=#923B23>&quot;_&quot;</font>} {<b><font color=#3a6797>set</font></b> k [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$nam3</font> 0 1]} {<b><font color=#3a6797>set</font></b> k <font color=#1b1baa>$nam3</font>}
-<i><font color=#ff0000>#!    if #\{[catch #\{lassign [dict get $::apave::_Defaults $k] defopts defattrs#\}]#\} #\{</font></i>
-<i><font color=#ff0000>#!      set defopts [set defattrs #\{#\}]</font></i>
-<i><font color=#ff0000>#!    #\}</font></i>
-  <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> defaultAttrs <font color=#1b1baa>$k</font>] defopts defattrs newtype
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> defaultATTRS <font color=#1b1baa>$k</font>] defopts defattrs newtype
   <b><font color=#3a6797>set</font></b> options <font color=#923B23>&quot;<font color=#1b1baa>$</font>defopts <font color=#1b1baa>$</font>options&quot;</font>
   <b><font color=#3a6797>set</font></b> attrs <font color=#923B23>&quot;<font color=#1b1baa>$</font>defattrs <font color=#1b1baa>$</font>attrs&quot;</font>
   <b><font color=#3a6797>switch</font></b> <font color=#6c3e67>-glob</font> -- <font color=#1b1baa>$nam3</font> {
@@ -4496,7 +4562,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>csSet</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::csSet" title="ObjectTheming.csSet" class='ruff_cmd'>ObjectTheming.csSet</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>csToned</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::csToned" title="ObjectTheming.csToned" class='ruff_cmd'>ObjectTheming.csToned</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>dateChooser</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APave::dateChooser" title="APave.dateChooser" class='ruff_cmd'>APave.dateChooser</a></td></tr>
-<tr><td class='ruff_defitem'><code><a href="apave.html#::apave::defaultAttrs" title="defaultAttrs" class='ruff_cmd'>defaultAttrs</a></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APave::defaultAttrs" title="APave.defaultAttrs" class='ruff_cmd'>APave.defaultAttrs</a></td></tr>
+<tr><td class='ruff_defitem'><code><code>defaultATTRS</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APave::defaultATTRS" title="APave.defaultATTRS" class='ruff_cmd'>APave.defaultATTRS</a></td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveDialog::deleteLine" title="deleteLine" class='ruff_cmd'>deleteLine</a></code></td><td class='ruff_defitem'>Deletes a current line of text widget.</td></tr>
 <tr><td class='ruff_defitem'><code><code>displayTaggedText</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APave::displayTaggedText" title="APave.displayTaggedText" class='ruff_cmd'>APave.displayTaggedText</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>displayText</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APave::displayText" title="APave.displayText" class='ruff_cmd'>APave.displayText</a></td></tr>
@@ -4562,6 +4628,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>themeWindow</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::themeWindow" title="ObjectTheming.themeWindow" class='ruff_cmd'>ObjectTheming.themeWindow</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>timeoutButton</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APave::timeoutButton" title="APave.timeoutButton" class='ruff_cmd'>APave.timeoutButton</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>tk_optionCascade</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APave::tk_optionCascade" title="APave.tk_optionCascade" class='ruff_cmd'>APave.tk_optionCascade</a></td></tr>
+<tr><td class='ruff_defitem'><code><code>touchWidgets</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::touchWidgets" title="ObjectTheming.touchWidgets" class='ruff_cmd'>ObjectTheming.touchWidgets</a></td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveDialog::unhighlight_matches" title="unhighlight_matches" class='ruff_cmd'>unhighlight_matches</a></code></td><td class='ruff_defitem'>Unhighlights matches of selected word in a text.</td></tr>
 <tr><td class='ruff_defitem'><code><code>untouchWidgets</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::untouchWidgets" title="ObjectTheming.untouchWidgets" class='ruff_cmd'>ObjectTheming.untouchWidgets</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>validateColorChoice</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APave::validateColorChoice" title="APave.validateColorChoice" class='ruff_cmd'>APave.validateColorChoice</a></td></tr>
@@ -4725,21 +4792,24 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>path to the text widget; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>varFind</code></code></td><td class='ruff_defitem'>variable; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Returns yes, if found (or nothing to find), otherwise returns &quot;no&quot;; also, if there was a real search, the search string is added.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_APaveDialog_findInText' href="javascript:toggleSource('apave_APaveDialog_findInText')">Show source</a></p>
 <div id='apave_APaveDialog_findInText' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> findInText {{donext 0} {txt {}} {varFind {}}} {
   <i><font color=#4b5d50># Finds a string in text widget.</font></i>
   <i><font color=#4b5d50>#   donext - &quot;1&quot; means 'from a current position'</font></i>
   <i><font color=#4b5d50>#   txt - path to the text widget</font></i>
   <i><font color=#4b5d50>#   varFind - variable</font></i>
+  <i><font color=#4b5d50># Returns yes, if found (or nothing to find), otherwise returns &quot;no&quot;;</font></i>
+  <i><font color=#4b5d50># also, if there was a real search, the search string is added.</font></i>
 
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$txt</font> eq {}} {
-    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists <font color=#1b1baa>${_pdg(ns)}</font>PD::fnd]} <b><font color=#ca14ca>return</font></b>
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists <font color=#1b1baa>${_pdg(ns)}</font>PD::fnd]} {<b><font color=#ca14ca>return</font></b> yes}
     <b><font color=#3a6797>set</font></b> txt [<b><font color=#ca14ca>my</font></b> TexM]
     <b><font color=#3a6797>set</font></b> sel [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>${_pdg(ns)}</font>PD::fnd]
   } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$donext</font> && [<b><font color=#3a6797>set</font></b> sel [<b><font color=#ca14ca>my</font></b> get_HighlightedString]] ne {}} {
     <i><font color=#4b5d50># find a string got with alt+left/right</font></i>
   } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$varFind</font> eq {}} {
-    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists <font color=#1b1baa>${_pdg(ns)}</font>PD::fnd]} <b><font color=#ca14ca>return</font></b>
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists <font color=#1b1baa>${_pdg(ns)}</font>PD::fnd]} {<b><font color=#ca14ca>return</font></b> yes}
     <b><font color=#3a6797>set</font></b> sel [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>${_pdg(ns)}</font>PD::fnd]
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>set</font></b> sel [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$varFind</font>]
@@ -4761,10 +4831,12 @@ padding: 0%;
     ::tk::TextSetCursor <font color=#1b1baa>$txt</font> <font color=#1b1baa>$pos</font>
     <font color=#1b1baa>$txt</font> tag add sel <font color=#1b1baa>$pos</font> [<font color=#1b1baa>$txt</font> index <font color=#923B23>&quot;<font color=#1b1baa>$</font>pos + <font color=#1b1baa>[</font>string length <font color=#1b1baa>$</font>sel<font color=#1b1baa>]</font> chars&quot;</font>]
     <b><font color=#134070>focus</font></b> <font color=#1b1baa>$txt</font>
+    <b><font color=#3a6797>set</font></b> res yes
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#134070>bell</font></b> <font color=#6c3e67>-nice</font>
+    <b><font color=#3a6797>set</font></b> res no
   }
-  <b><font color=#ca14ca>return</font></b>
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font> <font color=#1b1baa>$sel</font>]
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveDialog::get_highlighted'>get_highlighted</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveDialog" title="::apave::APaveDialog" class='ruff_cmd'>::apave::APaveDialog</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveDialog'>APaveDialog</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -5486,7 +5558,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>csSet</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::csSet" title="ObjectTheming.csSet" class='ruff_cmd'>ObjectTheming.csSet</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>csToned</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::csToned" title="ObjectTheming.csToned" class='ruff_cmd'>ObjectTheming.csToned</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>dateChooser</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APave::dateChooser" title="APave.dateChooser" class='ruff_cmd'>APave.dateChooser</a></td></tr>
-<tr><td class='ruff_defitem'><code><a href="apave.html#::apave::defaultAttrs" title="defaultAttrs" class='ruff_cmd'>defaultAttrs</a></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APave::defaultAttrs" title="APave.defaultAttrs" class='ruff_cmd'>APave.defaultAttrs</a></td></tr>
+<tr><td class='ruff_defitem'><code><code>defaultATTRS</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APave::defaultATTRS" title="APave.defaultATTRS" class='ruff_cmd'>APave.defaultATTRS</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>deleteLine</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveDialog::deleteLine" title="APaveDialog.deleteLine" class='ruff_cmd'>APaveDialog.deleteLine</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>displayTaggedText</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APave::displayTaggedText" title="APave.displayTaggedText" class='ruff_cmd'>APave.displayTaggedText</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>displayText</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APave::displayText" title="APave.displayText" class='ruff_cmd'>APave.displayText</a></td></tr>
@@ -5555,6 +5627,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>themeWindow</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::themeWindow" title="ObjectTheming.themeWindow" class='ruff_cmd'>ObjectTheming.themeWindow</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>timeoutButton</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APave::timeoutButton" title="APave.timeoutButton" class='ruff_cmd'>APave.timeoutButton</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>tk_optionCascade</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APave::tk_optionCascade" title="APave.tk_optionCascade" class='ruff_cmd'>APave.tk_optionCascade</a></td></tr>
+<tr><td class='ruff_defitem'><code><code>touchWidgets</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::touchWidgets" title="ObjectTheming.touchWidgets" class='ruff_cmd'>ObjectTheming.touchWidgets</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>unhighlight_matches</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveDialog::unhighlight_matches" title="APaveDialog.unhighlight_matches" class='ruff_cmd'>APaveDialog.unhighlight_matches</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>untouchWidgets</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::untouchWidgets" title="ObjectTheming.untouchWidgets" class='ruff_cmd'>ObjectTheming.untouchWidgets</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>validateColorChoice</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APave::validateColorChoice" title="APave.validateColorChoice" class='ruff_cmd'>APave.validateColorChoice</a></td></tr>
@@ -6061,6 +6134,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::ObjectTheming::themeNonThemed" title="themeNonThemed" class='ruff_cmd'>themeNonThemed</a></code></td><td class='ruff_defitem'>Updates the appearances of currently used widgets (non-themed).</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::ObjectTheming::themePopup" title="themePopup" class='ruff_cmd'>themePopup</a></code></td><td class='ruff_defitem'>Configures a popup menu so that its colors accord with a current CS.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::ObjectTheming::themeWindow" title="themeWindow" class='ruff_cmd'>themeWindow</a></code></td><td class='ruff_defitem'>Changes a Tk style (theming a bit)</td></tr>
+<tr><td class='ruff_defitem'><code><a href="apave.html#::apave::ObjectTheming::touchWidgets" title="touchWidgets" class='ruff_cmd'>touchWidgets</a></code></td><td class='ruff_defitem'>Makes non-ttk widgets to be touched again.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::ObjectTheming::untouchWidgets" title="untouchWidgets" class='ruff_cmd'>untouchWidgets</a></code></td><td class='ruff_defitem'>Makes non-ttk widgets to be untouched by coloring or gets their list.</td></tr>
 </table>
 <h5 class='ruff'>Mixins</h5><p class='ruff'><a href="apave.html#::apave::ObjectProperty" title="ObjectProperty" class='ruff_cmd'>ObjectProperty</a></p>
@@ -6555,21 +6629,23 @@ padding: 0%;
 </div><br><br><h4 class='ruffmethod'><a name='::apave::ObjectTheming::csToned'>csToned</a><span class='ns_scope'> [<a href="apave.html#::apave::ObjectTheming" title="::apave::ObjectTheming" class='ruff_cmd'>::apave::ObjectTheming</a>]</span><span class='tinylink'><a href='apave.html#::apave::ObjectTheming'>ObjectTheming</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Make an external CS that has tones (hues) of colors for a CS.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT csToned</span> <span class='ruff_arg'>cs hue</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT csToned</span> <span class='ruff_arg'>cs hue ?doit?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>cs</code></code></td><td class='ruff_defitem'>internal apave CS to be toned</td></tr>
 <tr><td class='ruff_defitem'><code><code>hue</code></code></td><td class='ruff_defitem'>a percent to get light (&gt; 0) or dark (&lt; 0) tones</td></tr>
+<tr><td class='ruff_defitem'><code><code>doit</code></code></td><td class='ruff_defitem'>flag &quot;do it anyway&quot; <i>optional, default</i> <code>no</code></td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>This method allows only one external CS, eliminating others. Returns: &quot;yes&quot; if the CS was toned</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_ObjectTheming_csToned' href="javascript:toggleSource('apave_ObjectTheming_csToned')">Show source</a></p>
-<div id='apave_ObjectTheming_csToned' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> csToned {cs hue} {
+<div id='apave_ObjectTheming_csToned' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> csToned {cs hue {doit no}} {
   <i><font color=#4b5d50># Make an external CS that has tones (hues) of colors for a CS.</font></i>
   <i><font color=#4b5d50>#   cs - internal apave CS to be toned</font></i>
   <i><font color=#4b5d50>#   hue - a percent to get light (&gt; 0) or dark (&lt; 0) tones</font></i>
+  <i><font color=#4b5d50>#   doit - flag &quot;do it anyway&quot;</font></i>
   <i><font color=#4b5d50># This method allows only one external CS, eliminating others.</font></i>
   <i><font color=#4b5d50># Returns: &quot;yes&quot; if the CS was toned</font></i>
 
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#ca14ca>my</font></b> csCurrent] &gt; <font color=#1b1baa>$::apave::_CS_(NONCS)</font>} {
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$doit</font> && [<b><font color=#ca14ca>my</font></b> csCurrent] &gt; <font color=#1b1baa>$::apave::_CS_(NONCS)</font>} {
     <b><font color=#3a6797>puts</font></b> [<b><font color=#3a6797>set</font></b> msg <font color=#923B23>&quot;\napave method csToned must be run before csSet!\n&quot;</font>]
     <b><font color=#ca14ca>return</font></b> <font color=#6c3e67>-code</font> error <font color=#1b1baa>$msg</font>
   }
@@ -6693,15 +6769,24 @@ padding: 0%;
     }
     <b><font color=#3a6797>set</font></b> tch 1
     <b><font color=#3a6797>foreach</font></b> u <font color=#1b1baa>$::apave::_CS_(untouch)</font> {
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$u</font> u addopts
       <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match <font color=#1b1baa>$u</font> <font color=#1b1baa>$w1</font>]} {<b><font color=#3a6797>set</font></b> tch 0; <b><font color=#3a6797>break</font></b>}
     }
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tch</font> && [<b><font color=#3a6797>info</font></b> exist ::apave::_C_(<font color=#1b1baa>$ts</font>,0)] &&  [<b><font color=#3a6797>lsearch</font></b> <font color=#6c3e67>-exact</font> <font color=#1b1baa>$wtypes</font> <font color=#1b1baa>$ts</font>]&gt;-1} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exist ::apave::_C_(<font color=#1b1baa>$ts</font>,0)] && [<b><font color=#3a6797>lsearch</font></b> <font color=#6c3e67>-exact</font> <font color=#1b1baa>$wtypes</font> <font color=#1b1baa>$ts</font>]&gt;-1} {
       <b><font color=#3a6797>set</font></b> i 0
-      <b><font color=#3a6797>while</font></b> {[<b><font color=#3a6797>incr</font></b> i] &lt;= <font color=#1b1baa>$::apave::_C_($ts,0)</font>} {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tch</font>} {
+        <b><font color=#3a6797>set</font></b> tch <font color=#1b1baa>$::apave::_C_($ts,0)</font>
+        <b><font color=#3a6797>set</font></b> addopts {}
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$addopts</font> ne {}} {
+          <b><font color=#3a6797>set</font></b> tch <font color=#1b1baa>$::apave::_C_($ts,0)</font>
+        }
+      }
+      <b><font color=#3a6797>while</font></b> {[<b><font color=#3a6797>incr</font></b> i] &lt;= <font color=#1b1baa>$tch</font>} {
         <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$::apave::_C_($ts,$i)</font> opt val
         <b><font color=#3a6797>catch</font></b> {
           <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first __tooltip__.label <font color=#1b1baa>$w1</font>]&lt;0} {
-            <font color=#1b1baa>$w1</font> configure <font color=#1b1baa>$opt</font> <font color=#1b1baa>$val</font>
+            <font color=#1b1baa>$w1</font> configure <font color=#1b1baa>$opt</font> <font color=#1b1baa>$val</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$addopts</font>
             <b><font color=#3a6797>switch</font></b> <font color=#6c3e67>-exact</font> -- [<font color=#1b1baa>$w1</font> cget <font color=#6c3e67>-state</font>] {
               disabled {
                 <font color=#1b1baa>$w1</font> configure {<b><font color=#3a6797>*</font></b>}[<b><font color=#ca14ca>my</font></b> NonTtkStyle <font color=#1b1baa>$w1</font> 1]
@@ -6850,11 +6935,12 @@ padding: 0%;
     <b><font color=#ca14ca>my</font></b> Ttk_style map <font color=#1b1baa>$ts</font> <font color=#6c3e67>-foreground</font> [<b><font color=#3a6797>list</font></b> {selected !active} <font color=#1b1baa>$tfgS</font> {!selected !active} <font color=#1b1baa>$tfgM</font> active <font color=#1b1baa>$aclr</font> {selected active} <font color=#1b1baa>$aclr</font>]
     <b><font color=#ca14ca>my</font></b> Ttk_style map <font color=#1b1baa>$ts</font> <font color=#6c3e67>-background</font> [<b><font color=#3a6797>list</font></b> {selected !active} <font color=#1b1baa>$tbgS</font> {!selected !active} <font color=#1b1baa>$tbgM</font> {!selected active} <font color=#1b1baa>$tbg2</font> {selected active} <font color=#1b1baa>$tbg2</font>]
   }
-  <b><font color=#3a6797>foreach</font></b> ts {TEntry Treeview TSpinbox TCombobox TCombobox.Spinbox TMatchbox TNotebook.Tab TScrollbar TScale} {
+  <b><font color=#3a6797>foreach</font></b> ts {TEntry Treeview TSpinbox TCombobox TCombobox.Spinbox TMatchbox TNotebook.Tab TScale} {
     <b><font color=#ca14ca>my</font></b> Ttk_style map <font color=#1b1baa>$ts</font> <font color=#6c3e67>-lightcolor</font> [<b><font color=#3a6797>list</font></b> focus <font color=#1b1baa>$bclr</font> active <font color=#1b1baa>$bclr</font>]
     <b><font color=#ca14ca>my</font></b> Ttk_style map <font color=#1b1baa>$ts</font> <font color=#6c3e67>-darkcolor</font> [<b><font color=#3a6797>list</font></b> focus <font color=#1b1baa>$bclr</font> active <font color=#1b1baa>$bclr</font>]
   }
   <b><font color=#ca14ca>my</font></b> Ttk_style map TScrollbar <font color=#6c3e67>-troughcolor</font> [<b><font color=#3a6797>list</font></b> !active <font color=#1b1baa>$tbg1</font> active <font color=#1b1baa>$tbg2</font>]
+  <b><font color=#ca14ca>my</font></b> Ttk_style map TScrollbar <font color=#6c3e67>-background</font> [<b><font color=#3a6797>list</font></b> !active <font color=#1b1baa>$tbg1</font> disabled <font color=#1b1baa>$tbg1</font> {!selected !disabled active} <font color=#1b1baa>$tbgS</font>]
   <b><font color=#ca14ca>my</font></b> Ttk_style map TProgressbar <font color=#6c3e67>-troughcolor</font> [<b><font color=#3a6797>list</font></b> !active <font color=#1b1baa>$tbg2</font> active <font color=#1b1baa>$tbg1</font>]
   <b><font color=#ca14ca>my</font></b> Ttk_style configure TProgressbar <font color=#6c3e67>-background</font> <font color=#1b1baa>$tbgS</font>
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> cs [<b><font color=#ca14ca>my</font></b> csCurrent]]&lt;20} {
@@ -6937,9 +7023,9 @@ padding: 0%;
         <b><font color=#3a6797>set</font></b> ::apave::_C_(<font color=#1b1baa>$ts</font>,7) <font color=#923B23>&quot;-selectcolor <font color=#1b1baa>$</font>tbg1&quot;</font>
         <b><font color=#3a6797>set</font></b> ::apave::_C_(<font color=#1b1baa>$ts</font>,8) <font color=#923B23>&quot;-highlightbackground <font color=#1b1baa>$</font>tbg1&quot;</font>
       }
-      <b><font color=#134070>frame</font></b> - scrollbar - scale - tframe - tnotebook {
+      <b><font color=#134070>frame</font></b> - scrollbar - scale {
         <b><font color=#3a6797>set</font></b> ::apave::_C_(<font color=#1b1baa>$ts</font>,0) 8
-        <b><font color=#3a6797>set</font></b> ::apave::_C_(<font color=#1b1baa>$ts</font>,4) <font color=#923B23>&quot;-activebackground <font color=#1b1baa>$</font>bclr&quot;</font>
+        <b><font color=#3a6797>set</font></b> ::apave::_C_(<font color=#1b1baa>$ts</font>,4) <font color=#923B23>&quot;-activebackground <font color=#1b1baa>$</font>tbgS&quot;</font>
         <b><font color=#3a6797>set</font></b> ::apave::_C_(<font color=#1b1baa>$ts</font>,7) <font color=#923B23>&quot;-troughcolor <font color=#1b1baa>$</font>tbg1&quot;</font>
         <b><font color=#3a6797>set</font></b> ::apave::_C_(<font color=#1b1baa>$ts</font>,8) <font color=#923B23>&quot;-elementborderwidth 2&quot;</font>
       }
@@ -7027,6 +7113,32 @@ padding: 0%;
   <b><font color=#ca14ca>my</font></b> themeMandatory <font color=#1b1baa>$win</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
   <b><font color=#ca14ca>return</font></b>
 }<br><br></code></pre></div>
+</div><br><br><h4 class='ruffmethod'><a name='::apave::ObjectTheming::touchWidgets'>touchWidgets</a><span class='ns_scope'> [<a href="apave.html#::apave::ObjectTheming" title="::apave::ObjectTheming" class='ruff_cmd'>::apave::ObjectTheming</a>]</span><span class='tinylink'><a href='apave.html#::apave::ObjectTheming'>ObjectTheming</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Makes non-ttk widgets to be touched again.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT touchWidgets</span> <span class='ruff_arg'>?args?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>list of widget globs (e.g. {.em.fr.win.* .em.fr.h1 .em.fr.h2})</td></tr>
+</table>
+<h5 class='ruff'>Description</h5><p class='ruff'>If args not set, returns the list of untouched widgets.</p>
+<h5 class='ruff'>See also</h5><p class='ruff'><a href="apave.html#::apave::ObjectTheming::untouchWidgets" title="untouchWidgets" class='ruff_cmd'>untouchWidgets</a>, <a href="apave.html#::apave::ObjectTheming::themeNonThemed" title="themeNonThemed" class='ruff_cmd'>themeNonThemed</a></p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_ObjectTheming_touchWidgets' href="javascript:toggleSource('apave_ObjectTheming_touchWidgets')">Show source</a></p>
+<div id='apave_ObjectTheming_touchWidgets' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> touchWidgets {args} {
+  <i><font color=#4b5d50># Makes non-ttk widgets to be touched again.</font></i>
+  <i><font color=#4b5d50>#   args - list of widget globs (e.g. {.em.fr.win.* .em.fr.h1 .em.fr.h2})</font></i>
+  <i><font color=#4b5d50># If args not set, returns the list of untouched widgets.</font></i>
+  <i><font color=#4b5d50># See also:</font></i>
+  <i><font color=#4b5d50>#   untouchWidgets</font></i>
+  <i><font color=#4b5d50>#   themeNonThemed</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$args</font>]==0} {<b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$::apave::_CS_(untouch)</font>}
+  <b><font color=#3a6797>foreach</font></b> u <font color=#1b1baa>$args</font> {
+    <b><font color=#3a6797>set</font></b> u [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$u</font> 0]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#6c3e67>-index</font> 0 <font color=#6c3e67>-exact</font> <font color=#1b1baa>$::apave::_CS_(untouch)</font> <font color=#1b1baa>$u</font>]]&gt;-1} {
+      <b><font color=#3a6797>set</font></b> ::apave::_CS_(untouch) [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$::apave::_CS_(untouch)</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
+    }
+  }
+}<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::ObjectTheming::untouchWidgets'>untouchWidgets</a><span class='ns_scope'> [<a href="apave.html#::apave::ObjectTheming" title="::apave::ObjectTheming" class='ruff_cmd'>::apave::ObjectTheming</a>]</span><span class='tinylink'><a href='apave.html#::apave::ObjectTheming'>ObjectTheming</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Makes non-ttk widgets to be untouched by coloring or gets their list.</p>
@@ -7034,15 +7146,24 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>list of widget globs (e.g. {.em.fr.win.* .em.fr.h1 .em.fr.h2})</td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>If args not set, returns the list of untouched widgets.</p>
-<h5 class='ruff'>See also</h5><p class='ruff'><a href="apave.html#::apave::ObjectTheming::themeNonThemed" title="themeNonThemed" class='ruff_cmd'>themeNonThemed</a></p>
+<h5 class='ruff'>Description</h5><p class='ruff'>If args not set, returns the list of untouched widgets. Items of <em>args</em> can have 2 components:</p>
+<ul class='ruff'>
+<li>widget glob</li>
+<li>list of option+value pairs, e.g. &quot;*.textWidget {-fg white -bg black}&quot;</li>
+</ul>
+<p class='ruff'>2nd component defines additional attributes that override the defaults.</p>
+<h5 class='ruff'>See also</h5><p class='ruff'><a href="apave.html#::apave::ObjectTheming::touchWidgets" title="touchWidgets" class='ruff_cmd'>touchWidgets</a>, <a href="apave.html#::apave::ObjectTheming::themeNonThemed" title="themeNonThemed" class='ruff_cmd'>themeNonThemed</a></p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_ObjectTheming_untouchWidgets' href="javascript:toggleSource('apave_ObjectTheming_untouchWidgets')">Show source</a></p>
 <div id='apave_ObjectTheming_untouchWidgets' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> untouchWidgets {args} {
   <i><font color=#4b5d50># Makes non-ttk widgets to be untouched by coloring or gets their list.</font></i>
   <i><font color=#4b5d50>#   args - list of widget globs (e.g. {.em.fr.win.* .em.fr.h1 .em.fr.h2})</font></i>
   <i><font color=#4b5d50># If args not set, returns the list of untouched widgets.</font></i>
-  <i><font color=#4b5d50>#</font></i>
+  <i><font color=#4b5d50># Items of *args* can have 2 components:</font></i>
+  <i><font color=#4b5d50>#   - widget glob</font></i>
+  <i><font color=#4b5d50>#   - list of option+value pairs, e.g. &quot;*.textWidget {-fg white -bg black}&quot;</font></i>
+  <i><font color=#4b5d50># 2nd component defines additional attributes that override the defaults.</font></i>
   <i><font color=#4b5d50># See also:</font></i>
+  <i><font color=#4b5d50>#   touchWidgets</font></i>
   <i><font color=#4b5d50>#   themeNonThemed</font></i>
 
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$args</font>]==0} {<b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$::apave::_CS_(untouch)</font>}
@@ -7103,6 +7224,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::putOption'>putOption</a><span class='tooltiptext'>Replaces or adds one option to an option list.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::readTextFile'>readTextFile</a><span class='tooltiptext'>Reads a text file.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::removeOptions'>removeOptions</a><span class='tooltiptext'>Removes some options from a list of options.
+</span></h4><h4 class='tooltip'><a href='apave.html#::apave::repaintWindow'>repaintWindow</a><span class='tooltiptext'>Shows a window and, optionally, focuses on a widget of it.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::rootModalWindow'>rootModalWindow</a><span class='tooltiptext'>Gets a parent modal window for a given one.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::setAppIcon'>setAppIcon</a><span class='tooltiptext'>Sets application's icon.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::setProperty'>setProperty</a><span class='tooltiptext'>Sets a property's value as &quot;application-wide&quot;.
@@ -7131,7 +7253,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APave::colorWindow'>colorWindow</a><span class='tooltiptext'>Initialize colors of a window.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APave::configure'>configure</a><span class='tooltiptext'>Configures the apave object (all of <em>_pav</em> array may be changed).
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APave::dateChooser'>dateChooser</a><span class='tooltiptext'>Date chooser (calendar widget).
-</span></h4><h4 class='tooltip'><a href='apave.html#::apave::APave::defaultAttrs'>defaultAttrs</a><span class='tooltiptext'>Sets, gets or registers default options and attributes for widget type.
+</span></h4><h4 class='tooltip'><a href='apave.html#::apave::APave::defaultATTRS'>defaultATTRS</a><span class='tooltiptext'>Sets, gets or registers default options and attributes for widget type.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APave::displayTaggedText'>displayTaggedText</a><span class='tooltiptext'>Sets the text widget's contents using tags (ornamental details).
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APave::displayText'>displayText</a><span class='tooltiptext'>Sets the text widget's contents.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APave::dlgPath'>dlgPath</a><span class='tooltiptext'>Gets a window name of apavedialogue dialogue.
@@ -7238,6 +7360,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::ObjectTheming::themeNonThemed'>themeNonThemed</a><span class='tooltiptext'>Updates the appearances of currently used widgets (non-themed).
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::ObjectTheming::themePopup'>themePopup</a><span class='tooltiptext'>Configures a popup menu so that its colors accord with a current CS.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::ObjectTheming::themeWindow'>themeWindow</a><span class='tooltiptext'>Changes a Tk style (theming a bit)
+</span></h4><h4 class='tooltip'><a href='apave.html#::apave::ObjectTheming::touchWidgets'>touchWidgets</a><span class='tooltiptext'>Makes non-ttk widgets to be touched again.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::ObjectTheming::untouchWidgets'>untouchWidgets</a><span class='tooltiptext'>Makes non-ttk widgets to be untouched by coloring or gets their list.
 </span></h4></div></div><div id='ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div></div>
 </div></body></html>
