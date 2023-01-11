@@ -481,6 +481,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><a href="bartabs.html#::bartabs::Bar::insertTab" title="insertTab" class='ruff_cmd'>insertTab</a></code></td><td class='ruff_defitem'>Inserts a new tab into a bar.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="bartabs.html#::bartabs::Bar::listFlag" title="listFlag" class='ruff_cmd'>listFlag</a></code></td><td class='ruff_defitem'>Gets a list of TID + flags &quot;visible&quot;, &quot;marked&quot;, &quot;selected&quot;, &quot;disabled&quot;.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="bartabs.html#::bartabs::Bar::listTab" title="listTab" class='ruff_cmd'>listTab</a></code></td><td class='ruff_defitem'>Gets a list of tabs.</td></tr>
+<tr><td class='ruff_defitem'><code><a href="bartabs.html#::bartabs::Bar::moveTab" title="moveTab" class='ruff_cmd'>moveTab</a></code></td><td class='ruff_defitem'>Moves a tab to a new position in the bar.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="bartabs.html#::bartabs::Bar::popList" title="popList" class='ruff_cmd'>popList</a></code></td><td class='ruff_defitem'>Shows a menu of tabs.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="bartabs.html#::bartabs::Bar::remove" title="remove" class='ruff_cmd'>remove</a></code></td><td class='ruff_defitem'>Removes a bar.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="bartabs.html#::bartabs::Bar::scrollLeft" title="scrollLeft" class='ruff_cmd'>scrollLeft</a></code></td><td class='ruff_defitem'>Scrolls tabs to the left.</td></tr>
@@ -672,7 +673,7 @@ padding: 0%;
 
   <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> it1 [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$it1</font> <font color=#6c3e67>-text</font>]}
   <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> it2 [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$it2</font> <font color=#6c3e67>-text</font>]}
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> compare <font color=#1b1baa>$it1</font> <font color=#1b1baa>$it2</font>]
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> compare <font color=#6c3e67>-nocase</font> <font color=#1b1baa>$it1</font> <font color=#1b1baa>$it2</font>]
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::bartabs::Bar::configure'>configure</a><span class='ns_scope'> [<a href="bartabs.html#::bartabs::Bar" title="::bartabs::Bar" class='ruff_cmd'>::bartabs::Bar</a>]</span><span class='tinylink'><a href='bartabs.html#::bartabs::Bar'>Bar</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -800,6 +801,27 @@ padding: 0%;
   <b><font color=#3a6797>foreach</font></b> tab [<b><font color=#ca14ca>my</font></b> [<b><font color=#ca14ca>my</font></b> ID] cget <font color=#6c3e67>-TABS</font>] {<b><font color=#3a6797>lappend</font></b> res [<b><font color=#ca14ca>my</font></b> Tab_DictItem <font color=#1b1baa>$tab</font>]}
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }<br><br></code></pre></div>
+</div><br><br><h4 class='ruffmethod'><a name='::bartabs::Bar::moveTab'>moveTab</a><span class='ns_scope'> [<a href="bartabs.html#::bartabs::Bar" title="::bartabs::Bar" class='ruff_cmd'>::bartabs::Bar</a>]</span><span class='tinylink'><a href='bartabs.html#::bartabs::Bar'>Bar</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Moves a tab to a new position in the bar.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT moveTab</span> <span class='ruff_arg'>TID pos</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>TID</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
+<tr><td class='ruff_defitem'><code><code>pos</code></code></td><td class='ruff_defitem'>the new position</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_bartabs_Bar_moveTab' href="javascript:toggleSource('bartabs_Bar_moveTab')">Show source</a></p>
+<div id='bartabs_Bar_moveTab' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> moveTab {TID pos} {
+  <i><font color=#4b5d50># Moves a tab to a new position in the bar.</font></i>
+  <i><font color=#4b5d50>#   pos - the new position</font></i>
+
+  <b><font color=#3a6797>set</font></b> BID [<b><font color=#ca14ca>my</font></b> ID]
+  <b><font color=#3a6797>set</font></b> tabs [<b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$BID</font> cget <font color=#6c3e67>-TABS</font>]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#6c3e67>-index</font> 0 <font color=#1b1baa>$tabs</font> <font color=#1b1baa>$TID</font>]]&gt;-1} {
+    <b><font color=#3a6797>set</font></b> tab [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tabs</font> <font color=#1b1baa>$i</font>]
+    <b><font color=#3a6797>set</font></b> tabs [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$tabs</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
+    <b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$BID</font> configure <font color=#6c3e67>-TABS</font> [<b><font color=#3a6797>linsert</font></b> <font color=#1b1baa>$tabs</font> <font color=#1b1baa>$pos</font> <font color=#1b1baa>$tab</font>]
+  }
+}<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::bartabs::Bar::popList'>popList</a><span class='ns_scope'> [<a href="bartabs.html#::bartabs::Bar" title="::bartabs::Bar" class='ruff_cmd'>::bartabs::Bar</a>]</span><span class='tinylink'><a href='bartabs.html#::bartabs::Bar'>Bar</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Shows a menu of tabs.</p>
@@ -912,21 +934,27 @@ padding: 0%;
 </div><br><br><h4 class='ruffmethod'><a name='::bartabs::Bar::sort'>sort</a><span class='ns_scope'> [<a href="bartabs.html#::bartabs::Bar" title="::bartabs::Bar" class='ruff_cmd'>::bartabs::Bar</a>]</span><span class='tinylink'><a href='bartabs.html#::bartabs::Bar'>Bar</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Sorts a list of tabs by the tab names.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT sort</span> <span class='ruff_arg'>?mode?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT sort</span> <span class='ruff_arg'>?mode? ?cmd?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>mode</code></code></td><td class='ruff_defitem'>option of sort; <i>optional, default</i> <code>-increasing</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>cmd</code></code></td><td class='ruff_defitem'>command to compare two items; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_bartabs_Bar_sort' href="javascript:toggleSource('bartabs_Bar_sort')">Show source</a></p>
-<div id='bartabs_Bar_sort' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> sort {{mode <font color=#6c3e67>-increasing</font>}} {
+<div id='bartabs_Bar_sort' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> sort {{mode <font color=#6c3e67>-increasing</font>} {cmd {}}} {
 <i><font color=#4b5d50># Sorts a list of tabs by the tab names.</font></i>
 <i><font color=#4b5d50>#   mode - option of sort</font></i>
+<i><font color=#4b5d50>#   cmd - command to compare two items</font></i>
 
   <b><font color=#3a6797>set</font></b> BID [<b><font color=#ca14ca>my</font></b> ID]
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$BID</font> cget <font color=#6c3e67>-tabcurrent</font> <font color=#6c3e67>-lifo</font>] TID lifo
   <b><font color=#3a6797>set</font></b> tabs [<b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$BID</font> cget <font color=#6c3e67>-TABS</font>]
-  <b><font color=#3a6797>set</font></b> tabs [<b><font color=#3a6797>lsort</font></b> <font color=#1b1baa>$mode</font> <font color=#6c3e67>-index</font> 1 <font color=#6c3e67>-dictionary</font> <font color=#6c3e67>-command</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> comparetext&quot;</font> <font color=#1b1baa>$tabs</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$cmd</font> eq {}} {
+    <b><font color=#3a6797>set</font></b> tabs [<b><font color=#3a6797>lsort</font></b> <font color=#1b1baa>$mode</font> <font color=#6c3e67>-index</font> 1 <font color=#6c3e67>-dictionary</font> <font color=#6c3e67>-command</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> comparetext&quot;</font> <font color=#1b1baa>$tabs</font>]
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> tabs [<b><font color=#3a6797>lsort</font></b> <font color=#1b1baa>$mode</font> <font color=#6c3e67>-dictionary</font> <font color=#6c3e67>-command</font> <font color=#1b1baa>$cmd</font> <font color=#1b1baa>$tabs</font>]
+  }
   <b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$BID</font> configure <font color=#6c3e67>-TABS</font> <font color=#1b1baa>$tabs</font> <font color=#6c3e67>-lifo</font> no
-  <b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$TID</font> show
+  <b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$TID</font> show yes yes
   <b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$BID</font> configure <font color=#6c3e67>-lifo</font> <font color=#1b1baa>$lifo</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::bartabs::Bar::tabID'>tabID</a><span class='ns_scope'> [<a href="bartabs.html#::bartabs::Bar" title="::bartabs::Bar" class='ruff_cmd'>::bartabs::Bar</a>]</span><span class='tinylink'><a href='bartabs.html#::bartabs::Bar'>Bar</a>, <a href='#top'>Top</a></span></h4>
@@ -994,6 +1022,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>listTab</code></code></td><td class='ruff_defitem'>See <a href="bartabs.html#::bartabs::Bar::listTab" title="Bar.listTab" class='ruff_cmd'>Bar.listTab</a></td></tr>
 <tr><td class='ruff_defitem'><code><a href="bartabs.html#::bartabs::Bars::markTab" title="markTab" class='ruff_cmd'>markTab</a></code></td><td class='ruff_defitem'>Marks tab(s).</td></tr>
 <tr><td class='ruff_defitem'><code><a href="bartabs.html#::bartabs::Bars::moveSelTab" title="moveSelTab" class='ruff_cmd'>moveSelTab</a></code></td><td class='ruff_defitem'>Changes a tab's or selected tabs' position in bar.</td></tr>
+<tr><td class='ruff_defitem'><code><code>moveTab</code></code></td><td class='ruff_defitem'>See <a href="bartabs.html#::bartabs::Bar::moveTab" title="Bar.moveTab" class='ruff_cmd'>Bar.moveTab</a></td></tr>
 <tr><td class='ruff_defitem'><code><a href="bartabs.html#::bartabs::Bars::onSelectCmd" title="onSelectCmd" class='ruff_cmd'>onSelectCmd</a></code></td><td class='ruff_defitem'>Runs a command on selecting tabs.</td></tr>
 <tr><td class='ruff_defitem'><code><code>popList</code></code></td><td class='ruff_defitem'>See <a href="bartabs.html#::bartabs::Bar::popList" title="Bar.popList" class='ruff_cmd'>Bar.popList</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>remove</code></code></td><td class='ruff_defitem'>See <a href="bartabs.html#::bartabs::Bar::remove" title="Bar.remove" class='ruff_cmd'>Bar.remove</a></td></tr>
@@ -1095,7 +1124,7 @@ padding: 0%;
     <b><font color=#3a6797>after</font></b> 50 [<b><font color=#3a6797>list</font></b> [<b><font color=#ca14ca>self</font></b>] <font color=#1b1baa>$BID</font> NeedDraw ; [<b><font color=#ca14ca>self</font></b>] <font color=#1b1baa>$BID</font> draw]
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>set</font></b> tab1 [<b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$BID</font> tabID <font color=#1b1baa>$tab1</font>]
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tab1</font> ne {}} {<b><font color=#3a6797>after</font></b> 100 <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> <font color=#1b1baa>$</font>BID clear; <font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> <font color=#1b1baa>$</font>BID <font color=#1b1baa>$</font>tab1 show&quot;</font>}
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tab1</font> ne {}} {<b><font color=#3a6797>after</font></b> 100 <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> <font color=#1b1baa>$</font>BID clear; <font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> <font color=#1b1baa>$</font>BID <font color=#1b1baa>$</font>tab1 show yes yes&quot;</font>}
   }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$BID</font>
 }<br><br></code></pre></div>
@@ -1339,7 +1368,7 @@ padding: 0%;
       <b><font color=#ca14ca>my</font></b> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tabs</font> <font color=#1b1baa>$icurr</font> 0] Tab_BeCurrent
     } <b><font color=#3a6797>else</font></b> {
       <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> TID [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tabs</font> end 0]] ne {}} {
-        <b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$TID</font> show 1 ;<i><font color=#4b5d50># last tab deleted: show the new last if any</font></i>
+        <b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$TID</font> show yes yes ;<i><font color=#4b5d50># last tab deleted: show the new last if any</font></i>
       }
     }
   }
@@ -1351,11 +1380,11 @@ padding: 0%;
 <p class='ruff'>Shows a tab in a bar and sets it current.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT show</span> <span class='ruff_arg'>?anyway? ?lifo?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td class='ruff_defitem'><code><code>anyway</code></code></td><td class='ruff_defitem'>if &quot;yes&quot;, refill the bar anyway (for choosing from menu); <i>optional, default</i> <code>yes</code></td></tr>
-<tr><td class='ruff_defitem'><code><code>lifo</code></code></td><td class='ruff_defitem'>Not documented; <i>optional, default</i> <code>yes</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>anyway</code></code></td><td class='ruff_defitem'>if &quot;yes&quot;, refill the bar anyway (for choosing from menu); <i>optional, default</i> <code>no</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>lifo</code></code></td><td class='ruff_defitem'>Not documented; <i>optional, default</i> <code>no</code></td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_bartabs_Tab_show' href="javascript:toggleSource('bartabs_Tab_show')">Show source</a></p>
-<div id='bartabs_Tab_show' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> show {{anyway yes} {lifo yes}} {
+<div id='bartabs_Tab_show' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> show {{anyway no} {lifo no}} {
 <i><font color=#4b5d50># Shows a tab in a bar and sets it current.</font></i>
 <i><font color=#4b5d50>#   anyway - if &quot;yes&quot;, refill the bar anyway (for choosing from menu)</font></i>
 
@@ -1371,8 +1400,9 @@ padding: 0%;
     <b><font color=#3a6797>incr</font></b> itab
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$lifo</font> && [<b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$BID</font> cget <font color=#6c3e67>-lifo</font>]} {
-    <b><font color=#3a6797>if</font></b> {![<b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$TID</font> Visible]} {
-      <i><font color=#4b5d50># if the tab is not visible, move it to 0th position and show from there</font></i>
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is true <font color=#6c3e67>-strict</font> [<b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$BID</font> cget <font color=#6c3e67>-lifoest</font>]] || ![<b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$TID</font> Visible]} {
+      <i><font color=#4b5d50># if the tab is not visible or -lifoest option=true,</font></i>
+      <i><font color=#4b5d50># move the tab to 0th position and show from there</font></i>
       <b><font color=#3a6797>set</font></b> tabs [<b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$BID</font> cget <font color=#6c3e67>-TABS</font>]
       <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> Tab_BID <font color=#1b1baa>$TID</font>] -&gt; i tab
       <b><font color=#3a6797>set</font></b> tabs [<b><font color=#3a6797>linsert</font></b> [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$tabs</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>] 0 <font color=#1b1baa>$tab</font>]
@@ -1397,6 +1427,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='bartabs.html#::bartabs::Bar::insertTab'>insertTab</a><span class='tooltiptext'>Inserts a new tab into a bar.
 </span></h4><h4 class='tooltip'><a href='bartabs.html#::bartabs::Bar::listFlag'>listFlag</a><span class='tooltiptext'>Gets a list of TID + flags &quot;visible&quot;, &quot;marked&quot;, &quot;selected&quot;, &quot;disabled&quot;.
 </span></h4><h4 class='tooltip'><a href='bartabs.html#::bartabs::Bar::listTab'>listTab</a><span class='tooltiptext'>Gets a list of tabs.
+</span></h4><h4 class='tooltip'><a href='bartabs.html#::bartabs::Bar::moveTab'>moveTab</a><span class='tooltiptext'>Moves a tab to a new position in the bar.
 </span></h4><h4 class='tooltip'><a href='bartabs.html#::bartabs::Bar::popList'>popList</a><span class='tooltiptext'>Shows a menu of tabs.
 </span></h4><h4 class='tooltip'><a href='bartabs.html#::bartabs::Bar::remove'>remove</a><span class='tooltiptext'>Removes a bar.
 </span></h4><h4 class='tooltip'><a href='bartabs.html#::bartabs::Bar::scrollLeft'>scrollLeft</a><span class='tooltiptext'>Scrolls tabs to the left.
