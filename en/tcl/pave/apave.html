@@ -1247,7 +1247,10 @@ padding: 0%;
       <b><font color=#3a6797>set</font></b> name [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$intheme</font> 0 <font color=#1b1baa>$i</font>-1]
       <b><font color=#3a6797>set</font></b> type [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$intheme</font> <font color=#1b1baa>$i</font>+1 end]
       <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$libdir</font> theme <font color=#1b1baa>$name</font> <font color=#1b1baa>$name</font>.tcl]}
-      <b><font color=#3a6797>catch</font></b> {set_theme <font color=#1b1baa>$type</font>}
+      <b><font color=#3a6797>catch</font></b> {
+        set_theme <font color=#1b1baa>$type</font>
+        <b><font color=#3a6797>set</font></b> theme <font color=#1b1baa>$intheme</font>
+      }
       <b><font color=#3a6797>set</font></b> lbd 0
     }
     forest* {
@@ -1268,6 +1271,12 @@ padding: 0%;
       InitAwThemesPath <font color=#1b1baa>$libdir</font>
       <b><font color=#3a6797>package</font></b> require awthemes
       <b><font color=#3a6797>package</font></b> require ttk::theme::<font color=#1b1baa>$intheme</font>
+      <b><font color=#3a6797>set</font></b> theme <font color=#1b1baa>$intheme</font>
+      <b><font color=#3a6797>set</font></b> lbd 1
+    }
+    plastik - radiance - darkbrown {
+      <b><font color=#3a6797>set</font></b> path [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$libdir</font> theme <font color=#1b1baa>$intheme</font>]
+      <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$path</font> <font color=#1b1baa>$intheme</font>.tcl]
       <b><font color=#3a6797>set</font></b> theme <font color=#1b1baa>$intheme</font>
       <b><font color=#3a6797>set</font></b> lbd 1
     }
@@ -1744,15 +1753,16 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::readTextFile'>readTextFile</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Reads a text file.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>readTextFile</span> <span class='ruff_arg'>fileName ?varName? ?doErr?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>readTextFile</span> <span class='ruff_arg'>fileName ?varName? ?doErr? ?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>fileName</code></code></td><td class='ruff_defitem'>file name</td></tr>
 <tr><td class='ruff_defitem'><code><code>varName</code></code></td><td class='ruff_defitem'>variable name for file content or &quot;&quot; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>doErr</code></code></td><td class='ruff_defitem'>if 'true', exit at errors with error message; <i>optional, default</i> <code>0</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>Optional arguments.</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns file contents or &quot;&quot;.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_readTextFile' href="javascript:toggleSource('apave_readTextFile')">Show source</a></p>
-<div id='apave_readTextFile' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::readTextFile {fileName {varName {}} {doErr 0}} {
+<div id='apave_readTextFile' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::readTextFile {fileName {varName {}} {doErr 0} args} {
   <i><font color=#4b5d50># Reads a text file.</font></i>
   <i><font color=#4b5d50>#   fileName - file name</font></i>
   <i><font color=#4b5d50>#   varName - variable name for file content or &quot;&quot;</font></i>
@@ -1765,7 +1775,10 @@ padding: 0%;
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$doErr</font>} {<b><font color=#3a6797>error</font></b> [::apave::error <font color=#1b1baa>$fileName</font>]}
     <b><font color=#3a6797>set</font></b> fvar {}
   } <b><font color=#3a6797>else</font></b> {
-    ::apave::textChanConfigure <font color=#1b1baa>$chan</font> {} auto ;<i><font color=#4b5d50># let EOL be autodetected</font></i>
+    <b><font color=#3a6797>set</font></b> enc [::apave::getOption <font color=#6c3e67>-encoding</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
+    <b><font color=#3a6797>set</font></b> eol [<b><font color=#3a6797>string</font></b> tolower [::apave::getOption <font color=#6c3e67>-translation</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$eol</font> eq {}} {<b><font color=#3a6797>set</font></b> eol auto} ;<i><font color=#4b5d50># let EOL be autodetected by default</font></i>
+    ::apave::textChanConfigure <font color=#1b1baa>$chan</font> <font color=#1b1baa>$enc</font> <font color=#1b1baa>$eol</font>
     <b><font color=#3a6797>set</font></b> fvar [<b><font color=#3a6797>read</font></b> <font color=#1b1baa>$chan</font>]
     <b><font color=#3a6797>close</font></b> <font color=#1b1baa>$chan</font>
     logMessage <font color=#8b2a0e>&quot;read <font color=#1b1baa>$</font>fileName&quot;</font>
@@ -1947,26 +1960,6 @@ padding: 0%;
   <b><font color=#3a6797>variable</font></b> _AP_VARS
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$padchar</font> ne <font color=#8b2a0e>&quot;\t&quot;</font>} {<b><font color=#3a6797>set</font></b> padchar { }}
   <b><font color=#3a6797>set</font></b> _AP_VARS(INDENT) [<b><font color=#3a6797>string</font></b> repeat <font color=#1b1baa>$padchar</font> <font color=#1b1baa>$len</font>]
-}<br><br></code></pre></div>
-</div><br><br><br><h4 class='ruffproc'><a name='::apave::shadowAllowed'>shadowAllowed</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
-<div style='clear:both;'></div>
-<p class='ruff'>Sets/gets &quot;shadowing&quot; mode.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>shadowAllowed</span> <span class='ruff_arg'>?val? ?w?</span></div>
-<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td class='ruff_defitem'><code><code>val</code></code></td><td class='ruff_defitem'>integer (0/1); <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
-<tr><td class='ruff_defitem'><code><code>w</code></code></td><td class='ruff_defitem'>window's path; <i>optional, default</i> <code>.</code></td></tr>
-</table>
-<h5 class='ruff'>Description</h5><p class='ruff'>The mode may be used at processing &quot;shadow&quot; (grey) of color scheme.</p>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns an old value of shadowing mode.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_shadowAllowed' href="javascript:toggleSource('apave_shadowAllowed')">Show source</a></p>
-<div id='apave_shadowAllowed' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::shadowAllowed {{val {}} {w .}} {
-  <i><font color=#4b5d50># Sets/gets &quot;shadowing&quot; mode.</font></i>
-  <i><font color=#4b5d50>#   val - integer (0/1)</font></i>
-  <i><font color=#4b5d50>#   w - window's path</font></i>
-  <i><font color=#4b5d50># The mode may be used at processing &quot;shadow&quot; (grey) of color scheme.</font></i>
-  <i><font color=#4b5d50># Returns an old value of shadowing mode.</font></i>
-
-  <b><font color=#ca14ca>return</font></b> [IntStatus <font color=#1b1baa>$w</font> SHADOW <font color=#1b1baa>$val</font>]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::splitGeometry'>splitGeometry</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -2196,16 +2189,17 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::writeTextFile'>writeTextFile</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Writes to a text file.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>writeTextFile</span> <span class='ruff_arg'>fileName ?varName? ?doErr? ?doSave?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>writeTextFile</span> <span class='ruff_arg'>fileName ?varName? ?doErr? ?doSave? ?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>fileName</code></code></td><td class='ruff_defitem'>file name</td></tr>
 <tr><td class='ruff_defitem'><code><code>varName</code></code></td><td class='ruff_defitem'>variable name for file content or &quot;&quot; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>doErr</code></code></td><td class='ruff_defitem'>if 'true', exit at errors with error message; <i>optional, default</i> <code>0</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>doSave</code></code></td><td class='ruff_defitem'>if 'true', saves an empty file, else deletes it; <i>optional, default</i> <code>1</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>Optional arguments.</td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns &quot;yes&quot; if the file was saved successfully.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_writeTextFile' href="javascript:toggleSource('apave_writeTextFile')">Show source</a></p>
-<div id='apave_writeTextFile' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::writeTextFile {fileName {varName {}} {doErr 0} {doSave 1}} {
+<div id='apave_writeTextFile' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::writeTextFile {fileName {varName {}} {doErr 0} {doSave 1} args} {
   <i><font color=#4b5d50># Writes to a text file.</font></i>
   <i><font color=#4b5d50>#   fileName - file name</font></i>
   <i><font color=#4b5d50>#   varName - variable name for file content or &quot;&quot;</font></i>
@@ -2229,7 +2223,9 @@ padding: 0%;
   } <b><font color=#3a6797>elseif</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> chan [<b><font color=#3a6797>open</font></b> <font color=#1b1baa>$fileName</font> w]} _PU_opts(_ERROR_)]} {
     <b><font color=#3a6797>set</font></b> res no
   } <b><font color=#3a6797>else</font></b> {
-    ::apave::textChanConfigure <font color=#1b1baa>$chan</font>
+    <b><font color=#3a6797>set</font></b> enc [::apave::getOption <font color=#6c3e67>-encoding</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
+    <b><font color=#3a6797>set</font></b> eol [<b><font color=#3a6797>string</font></b> tolower [::apave::getOption <font color=#6c3e67>-translation</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]]
+    ::apave::textChanConfigure <font color=#1b1baa>$chan</font> <font color=#1b1baa>$enc</font> <font color=#1b1baa>$eol</font>
     <b><font color=#3a6797>puts</font></b> <font color=#6c3e67>-nonewline</font> <font color=#1b1baa>$chan</font> <font color=#1b1baa>$contents</font>
     <b><font color=#3a6797>close</font></b> <font color=#1b1baa>$chan</font>
     logMessage <font color=#8b2a0e>&quot;write <font color=#1b1baa>$</font>fileName&quot;</font>
@@ -3956,7 +3952,6 @@ padding: 0%;
   <i><font color=#4b5d50>#   win - window's name</font></i>
   <i><font color=#4b5d50>#   args - attributes of window (&quot;-name value&quot; pairs)</font></i>
 
-  <b><font color=#3a6797>set</font></b> shal [::apave::shadowAllowed 0]
   <b><font color=#3a6797>if</font></b> {[::apave::getOption <font color=#6c3e67>-themed</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] in {{} {0}} &&  [<b><font color=#ca14ca>my</font></b> csCurrent] != [apave::cs_Non]} {
     <b><font color=#ca14ca>my</font></b> colorWindow <font color=#1b1baa>$win</font>
   }
@@ -4072,7 +4067,6 @@ padding: 0%;
     <b><font color=#ca14ca>my</font></b> GetOutputValues
     <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>set</font></b> [<b><font color=#3a6797>set</font></b> _ <font color=#1b1baa>${_pav(ns)}</font>PN::AR(<font color=#1b1baa>$win</font>)]]
   }
-  ::apave::shadowAllowed <font color=#1b1baa>$shal</font> ;<i><font color=#4b5d50># restore shadowing</font></i>
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APave::showWindow'>showWindow</a><span class='ns_scope'> [<a href="apave.html#::apave::APave" title="::apave::APave" class='ruff_cmd'>::apave::APave</a>]</span><span class='tinylink'><a href='apave.html#::apave::APave'>APave</a>, <a href='#top'>Top</a></span></h4>
@@ -7222,7 +7216,6 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::setProperty'>setProperty</a><span class='tooltiptext'>Sets a property's value as &quot;application-wide&quot;.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::setTextHotkeys'>setTextHotkeys</a><span class='tooltiptext'>Sets new key combinations for some operations on text widgets.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::setTextIndent'>setTextIndent</a><span class='tooltiptext'>Sets an indenting for text widgets.
-</span></h4><h4 class='tooltip'><a href='apave.html#::apave::shadowAllowed'>shadowAllowed</a><span class='tooltiptext'>Sets/gets &quot;shadowing&quot; mode.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::splitGeometry'>splitGeometry</a><span class='tooltiptext'>Gets widget's geometry components.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::textChanConfigure'>textChanConfigure</a><span class='tooltiptext'>Configures a channel for text file.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::textEOL'>textEOL</a><span class='tooltiptext'>Gets/sets End-of-Line for text reqding/writing.
