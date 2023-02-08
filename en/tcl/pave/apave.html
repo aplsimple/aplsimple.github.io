@@ -1148,7 +1148,7 @@ padding: 0%;
 <div id='apave_initBaltip' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::initBaltip {} {
   <i><font color=#4b5d50># Initializes baltip package.</font></i>
 
-  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>namespace</font></b> exists ::baltip]} {
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> command ::baltip] eq {}} {
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::apave::ISBALTIP</font>} {
       <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::apave::SRCDIR</font> baltip baltip.tcl]
     } <b><font color=#3a6797>else</font></b> {
@@ -4008,10 +4008,16 @@ padding: 0%;
   <font color=#1b1baa>$win</font> configure <font color=#6c3e67>-bg</font> <font color=#1b1baa>$bg</font>  ;<i><font color=#4b5d50># removes blinking by default bg</font></i>
   <b><font color=#3a6797>set</font></b> _pav(modalwin) <font color=#1b1baa>$win</font>
   <b><font color=#3a6797>set</font></b> root [<b><font color=#134070>winfo</font></b> parent <font color=#1b1baa>$win</font>]
+  <b><font color=#3a6797>set</font></b> rooted 1
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> centerme [::apave::getOption <font color=#6c3e67>-centerme</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]] ne {}} {
     ;<i><font color=#4b5d50># forced centering relative to a caller's window</font></i>
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exist <font color=#1b1baa>$centerme</font>]} {<b><font color=#3a6797>set</font></b> root <font color=#1b1baa>$centerme</font>}
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$centerme</font> x+] rw rh rx ry
+    <b><font color=#3a6797>set</font></b> rooted [<b><font color=#3a6797>expr</font></b> {![<b><font color=#3a6797>regexp</font></b> {[+|-]+\d+\++} <font color=#1b1baa>$centerme</font>]}]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$rooted</font> && [<b><font color=#134070>winfo</font></b> exist <font color=#1b1baa>$centerme</font>]} {
+      <b><font color=#3a6797>set</font></b> root <font color=#1b1baa>$centerme</font>
+    }
   }
+  <b><font color=#3a6797>set</font></b> input [::apave::extractOptions args <font color=#6c3e67>-input</font> 0]
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> modal [::apave::getOption <font color=#6c3e67>-modal</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]] eq {}} {
     <b><font color=#3a6797>set</font></b> modal yes
   }
@@ -4040,7 +4046,9 @@ padding: 0%;
       }
     }
   }
-  <b><font color=#3a6797>lassign</font></b> [::apave::splitGeometry [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$root</font>]] rw rh rx ry
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$rooted</font>} {
+    <b><font color=#3a6797>lassign</font></b> [::apave::splitGeometry [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$root</font>]] rw rh rx ry
+  }
   <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> parent <font color=#1b1baa>$win</font>] ni {{} .}} {
     <b><font color=#3a6797>set</font></b> opt(-decor) 0
   }
@@ -4083,12 +4091,12 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> <font color=#1b1baa>${_pav(ns)}</font>PN::AR(<font color=#1b1baa>$win</font>) {-}
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$opt(-escape)</font>} {<b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;Escape&gt; <font color=#1b1baa>$opt(-onclose)</font>}
   <b><font color=#3a6797>update</font></b>
-  <b><font color=#3a6797>set</font></b> w [<b><font color=#134070>winfo</font></b> width <font color=#1b1baa>$win</font>]
-  <b><font color=#3a6797>set</font></b> h [<b><font color=#134070>winfo</font></b> height <font color=#1b1baa>$win</font>]
+  <b><font color=#3a6797>set</font></b> w [<b><font color=#134070>winfo</font></b> reqwidth <font color=#1b1baa>$win</font>]
+  <b><font color=#3a6797>set</font></b> h [<b><font color=#134070>winfo</font></b> reqheight <font color=#1b1baa>$win</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$inpgeom</font> eq {}} {  ;<i><font color=#4b5d50># final geometrizing with actual sizes</font></i>
     <b><font color=#3a6797>set</font></b> geo [<b><font color=#ca14ca>my</font></b> CenteredXY <font color=#1b1baa>$rw</font> <font color=#1b1baa>$rh</font> <font color=#1b1baa>$rx</font> <font color=#1b1baa>$ry</font> <font color=#1b1baa>$w</font> <font color=#1b1baa>$h</font>]
     <b><font color=#3a6797>set</font></b> y [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$geo</font> +] end]
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$root</font> ne {.} && ((<font color=#1b1baa>$h</font>/2-<font color=#1b1baa>$ry</font>-<font color=#1b1baa>$rh</font>/2)&gt;30 || [::iswindows] && <font color=#1b1baa>$y</font>&gt;0)} {
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$rooted</font> || <font color=#1b1baa>$root</font> ne {.} && ((<font color=#1b1baa>$h</font>/2-<font color=#1b1baa>$ry</font>-<font color=#1b1baa>$rh</font>/2)&gt;30 || [::iswindows] && <font color=#1b1baa>$y</font>&gt;0)} {
       <i><font color=#4b5d50># ::tk::PlaceWindow needs correcting in rare cases, namely:</font></i>
       <i><font color=#4b5d50># when 'root' is of less sizes than 'win' and at screen top</font></i>
       <b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font> <font color=#1b1baa>$geo</font>
@@ -4110,9 +4118,11 @@ padding: 0%;
   }
   <b><font color=#ca14ca>my</font></b> showWindow <font color=#1b1baa>$win</font> <font color=#1b1baa>$modal</font> <font color=#1b1baa>$ontop</font> <font color=#1b1baa>$var</font> <font color=#1b1baa>$minsize</font>
   <b><font color=#3a6797>set</font></b> res 0
-  <b><font color=#3a6797>catch</font></b> {
-    <b><font color=#ca14ca>my</font></b> GetOutputValues
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$input</font>} {<b><font color=#ca14ca>my</font></b> GetOutputValues}
     <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>set</font></b> [<b><font color=#3a6797>set</font></b> _ <font color=#1b1baa>${_pav(ns)}</font>PN::AR(<font color=#1b1baa>$win</font>)]]
+  } err]} {
+    <b><font color=#3a6797>puts</font></b> stderr <font color=#1b1baa>$err</font>
   }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }<br><br></code></pre></div>
@@ -5069,7 +5079,8 @@ padding: 0%;
   <i><font color=#4b5d50># The *butts* is a list of pairs &quot;title of button&quot; &quot;number/ID of button&quot;</font></i>
 
   <b><font color=#3a6797>foreach</font></b> {nam num} <font color=#1b1baa>$butts</font> {
-    <b><font color=#3a6797>lappend</font></b> apave_msc_bttns But<font color=#1b1baa>$num</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>nam&quot;</font> <font color=#1b1baa>$num</font>
+    <b><font color=#3a6797>set</font></b> but But[<b><font color=#3a6797>namespace</font></b> tail <font color=#1b1baa>$num</font>] ;<i><font color=#4b5d50># for &quot;num&quot; set as a command</font></i>
+    <b><font color=#3a6797>lappend</font></b> apave_msc_bttns <font color=#1b1baa>$but</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>nam&quot;</font> <font color=#1b1baa>$num</font>
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$defb</font> eq {}} {
       <b><font color=#3a6797>set</font></b> defb <font color=#1b1baa>$num</font>
     }
@@ -5760,27 +5771,28 @@ padding: 0%;
   <i><font color=#4b5d50># See also:</font></i>
   <i><font color=#4b5d50># [aplsimple.github.io](https://aplsimple.github.io/en/tcl/pave/index.html)</font></i>
 
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> eq <font color=#8b2a0e>&quot;&quot;</font>} {
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> eq {}} {
     <b><font color=#ca14ca>return</font></b> false
   }
   <b><font color=#3a6797>set</font></b> newfile 0
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> filetxt [::apave::readTextFile <font color=#1b1baa>$fname</font> <font color=#8b2a0e>&quot;&quot;</font> yes]}]} {
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> filetxt [::apave::readTextFile <font color=#1b1baa>$fname</font> {} yes]}]} {
     <b><font color=#ca14ca>return</font></b> false
   }
-  <b><font color=#3a6797>lassign</font></b> [::apave::parseOptions <font color=#1b1baa>$args</font> <font color=#6c3e67>-rotext</font> <font color=#8b2a0e>&quot;&quot;</font> <font color=#6c3e67>-readonly</font> 1 <font color=#6c3e67>-ro</font> 1]  rotext readonly ro
-  <b><font color=#3a6797>set</font></b> btns <font color=#8b2a0e>&quot;Exit 0&quot;</font>  ;<i><font color=#4b5d50># by default 'view' mode</font></i>
+  <b><font color=#3a6797>lassign</font></b> [::apave::parseOptions <font color=#1b1baa>$args</font> <font color=#6c3e67>-rotext</font> {} <font color=#6c3e67>-readonly</font> 1 <font color=#6c3e67>-ro</font> 1] rotext readonly ro
+  <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions args <font color=#6c3e67>-buttons</font> {}] buttadd
+  <b><font color=#3a6797>set</font></b> btns {Exit 0}  ;<i><font color=#4b5d50># by default 'view' mode</font></i>
   <b><font color=#3a6797>set</font></b> oper VIEW
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$rotext</font> eq <font color=#8b2a0e>&quot;&quot;</font> || !<font color=#1b1baa>$readonly</font> || !<font color=#1b1baa>$ro</font>} {
-    <b><font color=#3a6797>set</font></b> btns <font color=#8b2a0e>&quot;Save 1 Cancel 0&quot;</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$rotext</font> eq {} && (!<font color=#1b1baa>$readonly</font> || !<font color=#1b1baa>$ro</font>)} {
+    <b><font color=#3a6797>set</font></b> btns {Save 1 Cancel 0}
     <b><font color=#3a6797>set</font></b> oper EDIT
   }
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fg</font> eq <font color=#8b2a0e>&quot;&quot;</font>} {
-    <b><font color=#3a6797>set</font></b> tclr <font color=#8b2a0e>&quot;&quot;</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fg</font> eq {}} {
+    <b><font color=#3a6797>set</font></b> tclr {}
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>set</font></b> tclr <font color=#8b2a0e>&quot;-fg <font color=#1b1baa>$</font>fg -bg <font color=#1b1baa>$</font>bg -cc <font color=#1b1baa>$</font>cc&quot;</font>
   }
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$prepost</font> eq <font color=#8b2a0e>&quot;&quot;</font>} {<b><font color=#3a6797>set</font></b> aa <font color=#8b2a0e>&quot;&quot;</font>} {<b><font color=#3a6797>set</font></b> aa [<font color=#1b1baa>$prepost</font> filetxt]}
-  <b><font color=#3a6797>set</font></b> res [<b><font color=#ca14ca>my</font></b> misc <font color=#8b2a0e>&quot;&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>oper: <font color=#1b1baa>$</font>fname&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>filetxt&quot;</font> <font color=#1b1baa>$btns</font>  TEXT <font color=#6c3e67>-text</font> 1 <font color=#6c3e67>-w</font> {100 80} <font color=#6c3e67>-h</font> 32 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$tclr</font>  <font color=#6c3e67>-post</font> <font color=#1b1baa>$prepost</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$aa</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$prepost</font> eq {}} {<b><font color=#3a6797>set</font></b> aa {}} {<b><font color=#3a6797>set</font></b> aa [<font color=#1b1baa>$prepost</font> filetxt]}
+  <b><font color=#3a6797>set</font></b> res [<b><font color=#ca14ca>my</font></b> misc {} <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>oper: <font color=#1b1baa>$</font>fname&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>filetxt&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>buttadd <font color=#1b1baa>$</font>btns&quot;</font>  TEXT <font color=#6c3e67>-text</font> 1 <font color=#6c3e67>-w</font> {100 80} <font color=#6c3e67>-h</font> 32 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$tclr</font>  <font color=#6c3e67>-post</font> <font color=#1b1baa>$prepost</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$aa</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
   <b><font color=#3a6797>set</font></b> data [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$res</font> 2 end]
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$res</font> 0]] eq <font color=#8b2a0e>&quot;1&quot;</font>} {
     <b><font color=#3a6797>set</font></b> data [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$data</font> [<b><font color=#3a6797>string</font></b> first <font color=#8b2a0e>&quot; &quot;</font> <font color=#1b1baa>$data</font>]+1 end]
@@ -5843,14 +5855,14 @@ padding: 0%;
     <b><font color=#ca14ca>my</font></b> initInput  ;<i><font color=#4b5d50># clear away all internal vars</font></i>
   }
   <b><font color=#3a6797>set</font></b> pady <font color=#8b2a0e>&quot;-pady 2&quot;</font>
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> focusopt [::apave::getOption <font color=#6c3e67>-focus</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]] ne <font color=#8b2a0e>&quot;&quot;</font>} {
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> focusopt [::apave::getOption <font color=#6c3e67>-focus</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]] ne {}} {
     <b><font color=#3a6797>set</font></b> focusopt <font color=#8b2a0e>&quot;-focus <font color=#1b1baa>$</font>focusopt&quot;</font>
   }
   <b><font color=#3a6797>lappend</font></b> inopts [<b><font color=#3a6797>list</font></b> fraM + T 1 98 <font color=#8b2a0e>&quot;-st nsew <font color=#1b1baa>$</font>pady -rw 1&quot;</font>]
   <b><font color=#3a6797>set</font></b> savedvv [<b><font color=#3a6797>list</font></b>]
-  <b><font color=#3a6797>set</font></b> frameprev <font color=#8b2a0e>&quot;&quot;</font>
+  <b><font color=#3a6797>set</font></b> frameprev {}
   <b><font color=#3a6797>foreach</font></b> {name prompt valopts} <font color=#1b1baa>$iopts</font> {
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$name</font> eq <font color=#8b2a0e>&quot;&quot;</font>} <b><font color=#ca14ca>continue</font></b>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$name</font> eq {}} <b><font color=#ca14ca>continue</font></b>
     <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$prompt</font> prompt gopts attrs
     <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions attrs <font color=#6c3e67>-method</font> {} <font color=#6c3e67>-toprev</font> {}] ismeth toprev
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> toupper <font color=#1b1baa>$name</font> 0] eq <font color=#1b1baa>$name</font>} {
@@ -5882,7 +5894,7 @@ padding: 0%;
     }
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$typ</font> ne {la} && <font color=#1b1baa>$toprev</font> eq {}} {
       <b><font color=#3a6797>set</font></b> takfoc [::apave::parseOptions <font color=#1b1baa>$attrs</font> <font color=#6c3e67>-takefocus</font> 1]
-      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$focusopt</font> eq <font color=#8b2a0e>&quot;&quot;</font> && <font color=#1b1baa>$takfoc</font>} {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$focusopt</font> eq {} && <font color=#1b1baa>$takfoc</font>} {
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$typ</font> in {fi di cl fo da}} {
           <b><font color=#3a6797>set</font></b> _ en*<font color=#1b1baa>$name</font>  ;<i><font color=#4b5d50># 'entry-like mega-widgets'</font></i>
         } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$typ</font> eq <font color=#8b2a0e>&quot;ft&quot;</font>} {
@@ -5904,7 +5916,7 @@ padding: 0%;
       <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> vsel [<b><font color=#3a6797>subst</font></b> <font color=#6c3e67>-nocommands</font> <font color=#6c3e67>-nobackslashes</font> <font color=#1b1baa>$vsel</font>]}
       <b><font color=#3a6797>set</font></b> vlist [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$valopts</font> 1 end]
     }
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> msgLab [::apave::getOption <font color=#6c3e67>-msgLab</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$attrs</font>]] ne <font color=#8b2a0e>&quot;&quot;</font>} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> msgLab [::apave::getOption <font color=#6c3e67>-msgLab</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$attrs</font>]] ne {}} {
       <b><font color=#3a6797>set</font></b> attrs [::apave::removeOptions <font color=#1b1baa>$attrs</font> <font color=#6c3e67>-msgLab</font>]
     }
     <i><font color=#4b5d50># define a current widget's info</font></i>
@@ -5912,7 +5924,7 @@ padding: 0%;
       lb - tb {
         <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$vv</font> <font color=#1b1baa>$vlist</font>
         <b><font color=#3a6797>lappend</font></b> attrs <font color=#6c3e67>-lvar</font> <font color=#1b1baa>$vv</font>
-        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$vsel</font> ni {<font color=#8b2a0e>&quot;&quot;</font> <font color=#8b2a0e>&quot;-&quot;</font>}} {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$vsel</font> ni {{} -}} {
           <b><font color=#3a6797>lappend</font></b> attrs <font color=#6c3e67>-lbxsel</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>::apave::UFF<font color=#1b1baa>$</font>vsel<font color=#1b1baa>$</font>::apave::UFF&quot;</font>
         }
         <b><font color=#3a6797>lappend</font></b> inopts [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$ff</font> - - - -  <font color=#8b2a0e>&quot;pack -side left -expand 1 -fill both <font color=#1b1baa>$</font>gopts&quot;</font> <font color=#1b1baa>$attrs</font>]
@@ -5927,7 +5939,7 @@ padding: 0%;
         <b><font color=#3a6797>lappend</font></b> inopts [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$ff</font> - - - - <font color=#8b2a0e>&quot;pack -side left -expand 1 -fill x <font color=#1b1baa>$</font>gopts&quot;</font> <font color=#1b1baa>$attrs</font>]
       }
       fc {
-        <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exist <font color=#1b1baa>$vv</font>]} {<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$vv</font> <font color=#8b2a0e>&quot;&quot;</font>}}
+        <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exist <font color=#1b1baa>$vv</font>]} {<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$vv</font> {}}}
         <b><font color=#3a6797>lappend</font></b> inopts [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$ff</font> - - - - <font color=#8b2a0e>&quot;pack -side left -expand 1 -fill x <font color=#1b1baa>$</font>gopts&quot;</font> <font color=#8b2a0e>&quot;-tvar <font color=#1b1baa>$</font>vv -values \{<font color=#1b1baa>$</font>valopts\} <font color=#1b1baa>$</font>attrs&quot;</font>]
       }
       op {
@@ -5953,18 +5965,18 @@ padding: 0%;
           <b><font color=#3a6797>set</font></b> disattr <font color=#8b2a0e>&quot;-rotext \{<font color=#1b1baa>[</font>set <font color=#1b1baa>$</font>vv<font color=#1b1baa>]</font>\}&quot;</font>
           <b><font color=#3a6797>set</font></b> attrs [::apave::removeOptions <font color=#1b1baa>$attrs</font> <font color=#6c3e67>-readonly</font> <font color=#6c3e67>-ro</font>]
         } <b><font color=#3a6797>else</font></b> {
-          <b><font color=#3a6797>set</font></b> disattr <font color=#8b2a0e>&quot;&quot;</font>
+          <b><font color=#3a6797>set</font></b> disattr {}
         }
         <b><font color=#3a6797>lappend</font></b> inopts [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$ff</font> - - - - <font color=#8b2a0e>&quot;pack -side left -expand 1 -fill both <font color=#1b1baa>$</font>gopts&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>attrs <font color=#1b1baa>$</font>disattr&quot;</font>]
         <b><font color=#3a6797>lappend</font></b> inopts [<b><font color=#3a6797>list</font></b> fraM.fra<font color=#1b1baa>$name</font>.sbv<font color=#1b1baa>$name</font> <font color=#1b1baa>$ff</font> L - - <font color=#8b2a0e>&quot;pack -fill y&quot;</font>]
       }
       la {
-        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$prompt</font> ne <font color=#8b2a0e>&quot;&quot;</font>} { <b><font color=#3a6797>set</font></b> prompt <font color=#8b2a0e>&quot;-t \&quot;<font color=#1b1baa>$</font>prompt\&quot; &quot;</font> } ;<i><font color=#4b5d50># prompt as -text</font></i>
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$prompt</font> ne {}} { <b><font color=#3a6797>set</font></b> prompt <font color=#8b2a0e>&quot;-t \&quot;<font color=#1b1baa>$</font>prompt\&quot; &quot;</font> } ;<i><font color=#4b5d50># prompt as -text</font></i>
         <b><font color=#3a6797>lappend</font></b> inopts [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$ff</font> - - - - <font color=#8b2a0e>&quot;pack -anchor w <font color=#1b1baa>$</font>gopts&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>prompt<font color=#1b1baa>$</font>attrs&quot;</font>]
         <b><font color=#ca14ca>continue</font></b>
       }
       bu - bt - ch {
-        <b><font color=#3a6797>set</font></b> prompt <font color=#8b2a0e>&quot;&quot;</font>
+        <b><font color=#3a6797>set</font></b> prompt {}
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$toprev</font> eq {}} {
           <b><font color=#3a6797>lappend</font></b> inopts [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$ff</font> - - - -  <font color=#8b2a0e>&quot;pack -side left -expand 1 -fill both <font color=#1b1baa>$</font>gopts&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>tvar <font color=#1b1baa>$</font>vv <font color=#1b1baa>$</font>attrs&quot;</font>]
         } <b><font color=#3a6797>else</font></b> {
@@ -5973,7 +5985,7 @@ padding: 0%;
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$vv</font> ne {}} {
           <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exist <font color=#1b1baa>$vv</font>]} {
             <b><font color=#3a6797>catch</font></b> {
-              <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$vsel</font> eq <font color=#8b2a0e>&quot;&quot;</font>} {<b><font color=#3a6797>set</font></b> vsel 0}
+              <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$vsel</font> eq {}} {<b><font color=#3a6797>set</font></b> vsel 0}
               <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$vv</font> <font color=#1b1baa>$vsel</font>
             }
           }
@@ -5982,19 +5994,19 @@ padding: 0%;
       <b><font color=#3a6797>default</font></b> {
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$vlist</font> ne {}} {<b><font color=#3a6797>lappend</font></b> attrs <font color=#6c3e67>-values</font> <font color=#1b1baa>$vlist</font>}
         <b><font color=#3a6797>lappend</font></b> inopts [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$ff</font> - - - -  <font color=#8b2a0e>&quot;pack -side left -expand 1 -fill x <font color=#1b1baa>$</font>gopts&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>tvar <font color=#1b1baa>$</font>vv <font color=#1b1baa>$</font>attrs&quot;</font>]
-        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$vv</font> ne <font color=#8b2a0e>&quot;&quot;</font>} {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$vv</font> ne {}} {
           <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exist <font color=#1b1baa>$vv</font>]} {<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$vv</font> <font color=#1b1baa>$vsel</font>}}
         }
       }
     }
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$msgLab</font> ne <font color=#8b2a0e>&quot;&quot;</font>} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$msgLab</font> ne {}} {
       <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$msgLab</font> lab msg attlab
       <b><font color=#3a6797>set</font></b> lab [<b><font color=#ca14ca>my</font></b> parentWName [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$inopts</font> end 0]].<font color=#1b1baa>$lab</font>
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$msg</font> ne {}} {<b><font color=#3a6797>set</font></b> msg <font color=#8b2a0e>&quot;-t <font color=#1b1baa>{$</font>msg<font color=#1b1baa>}</font>&quot;</font>}
       <b><font color=#3a6797>append</font></b> msg <font color=#8b2a0e>&quot; <font color=#1b1baa>$</font>attlab&quot;</font>
       <b><font color=#3a6797>lappend</font></b> inopts [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$lab</font> - - - - <font color=#8b2a0e>&quot;pack -side left -expand 1 -fill x&quot;</font> <font color=#1b1baa>$msg</font>]
     }
-    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exist <font color=#1b1baa>$vv</font>]} {<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$vv</font> <font color=#8b2a0e>&quot;&quot;</font>}
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exist <font color=#1b1baa>$vv</font>]} {<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$vv</font> {}}
     <b><font color=#3a6797>lappend</font></b> _savedvv <font color=#1b1baa>$vv</font> [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$vv</font>]
     <b><font color=#3a6797>set</font></b> frameprev <font color=#1b1baa>$framename</font>
   }
@@ -6017,7 +6029,7 @@ padding: 0%;
   }
   <b><font color=#3a6797>set</font></b> args [::apave::removeOptions <font color=#1b1baa>$args</font>  <font color=#6c3e67>-titleHELP</font> <font color=#6c3e67>-buttons</font> <font color=#6c3e67>-titleOK</font> <font color=#6c3e67>-titleCANCEL</font> <font color=#6c3e67>-centerme</font>]
   <b><font color=#3a6797>lappend</font></b> args {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$focusopt</font>
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {  <b><font color=#3a6797>set</font></b> res [<b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> {} <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>butHelp <font color=#1b1baa>$</font>buttons butOK <font color=#1b1baa>$</font>titleOK 1 <font color=#1b1baa>$</font>butCancel&quot;</font>  butOK <font color=#1b1baa>$inopts</font> [<b><font color=#ca14ca>my</font></b> PrepArgs <font color=#1b1baa>$args</font>] <font color=#8b2a0e>&quot;&quot;</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$centerme</font>]} e]} {
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {  <b><font color=#3a6797>set</font></b> res [<b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> {} <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>butHelp <font color=#1b1baa>$</font>buttons butOK <font color=#1b1baa>$</font>titleOK 1 <font color=#1b1baa>$</font>butCancel&quot;</font>  butOK <font color=#1b1baa>$inopts</font> [<b><font color=#ca14ca>my</font></b> PrepArgs <font color=#1b1baa>$args</font>] {} {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$centerme</font> <font color=#6c3e67>-input</font> yes]} e]} {
     <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$_pdg(dlg)</font>}  ;<i><font color=#4b5d50># Query's window</font></i>
     ::apave::obj ok err <font color=#8b2a0e>&quot;ERROR&quot;</font> <font color=#8b2a0e>&quot;\n<font color=#1b1baa>$</font>e\n&quot;</font>  <font color=#6c3e67>-t</font> 1 <font color=#6c3e67>-head</font> <font color=#8b2a0e>&quot;\nAPaveInput returned an error: \n&quot;</font> <font color=#6c3e67>-hfg</font> red <font color=#6c3e67>-weight</font> bold
     <b><font color=#ca14ca>return</font></b> 0
@@ -6076,7 +6088,7 @@ padding: 0%;
   <i><font color=#4b5d50># It's a sort of stub for calling *editfile* method.</font></i>
   <i><font color=#4b5d50># See also: editfile</font></i>
 
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#ca14ca>my</font></b> editfile <font color=#1b1baa>$fname</font> <font color=#8b2a0e>&quot;&quot;</font> <font color=#8b2a0e>&quot;&quot;</font> <font color=#8b2a0e>&quot;&quot;</font> <font color=#1b1baa>$prepost</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#ca14ca>my</font></b> editfile <font color=#1b1baa>$fname</font> {} {} {} <font color=#1b1baa>$prepost</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
 }<br><br></code></pre></div>
 </div><br><br><h3 class='ruffclass'><a name='::apave::ObjectProperty'>ObjectProperty</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h3>
 <div style='clear:both;'></div>
