@@ -342,106 +342,46 @@ padding: 0%;
 <div id='bd'><div id='yui-main'><div class='yui-b'><h1 class='ruff'><a name='::transpops'></a>::transpops<span class='tinylink'><a href='#top'>Top</a></span></h1>
 <div style='clear:both;'></div>
 <p class='ruff'>The Tcl/Tk <em>transpops</em> package displays popup messages. Fit for demos, though may be used otherwise.</p>
-<p class='ruff'>The messages are read from a <em>text file</em> and after pressing a <em>hotkey</em> are shown one by one, in transparent mode. The most representative examples of the <em>text files</em> are in demos/alited/ subdirectories.</p>
+<p class='ruff'>The messages are read from a <em>text file</em> and after pressing a <em>hotkey</em> are shown one by one, in transparent mode. The most representative examples of the <em>text files</em> are in demos/alited/ subdirectories which result in <a href="https://github.com/aplsimple/alited/releases/download/Demos_of_alited-1.3.5/2.Units_alited-1.3.5.mp4" >alited's units demo</a>, for example.</p>
 <p class='ruff'>First called, the popup message is displayed under the mouse pointer. The following messages will be displayed at the same screen coordinates if not reset with an <em>alternative hotkey</em>.</p>
 <p class='ruff'>The popup messages will be hidden at clicking them.</p>
+<p class='ruff'>Also, you can draw on the screen, by means of <a href="https://chiselapp.com/user/aplsimple/repository/drawscreen" >drawscreen</a>.</p>
 <p class='ruff'><em>Note for apave package</em>. The apave's showModal method includes a specific bind of Ctrl-Alt-0 keys to hide the transpops messages with these keys (because a modal window captures any clicks).</p>
 <p class='ruff'><hr></p>
 <p class='ruff'>Runs this way:</p>
 <pre class='ruff'><br><code class="tcl"><b><font color=#3a6797>package</font></b> require transpops
-::transpops::run transpops.txt {&lt;Alt-t&gt; &lt;Alt-y&gt;} {.w1 .w2} ?fg? ?bg?
+::transpops::run transpops.txt wins ?events? ?fg? ?bg? ?events2? ?options?
 <br></code></pre>
 <p class='ruff'>where:</p>
 <ul class='ruff'>
 <li><em>transpops.txt</em> - name of <em>text file</em> containing messages</li>
-<li><em>Alt-t</em> - <em>hotkey</em> event to start the pop-up of messages</li>
-<li><em>Alt-y</em> - <em>alternative hotkey</em> event to restart the pop-up of messages at new coordinates</li>
-<li><em>.w1 .w2</em> - list of toplevel windows the events are bound to</li>
+<li><em>wins</em> - list of toplevel windows the events are bound to</li>
+<li><em>events</em> - events to show messages at mouse pointer as last and forced, default &quot;Alt-t Alt-y&quot;</li>
 <li><em>fg, bg</em> - foreground and background colors</li>
+<li><em>events2</em> - list of events to start drawing on the screen, default &quot;Control-x Control-X&quot;</li>
+<li><em>options</em> - options of <a href="https://chiselapp.com/user/aplsimple/repository/drawscreen" >drawscreen</a></li>
 </ul>
-<p class='ruff'>Of course, those <code>&lt;Alt-t&gt;</code> and <code>&lt;Alt-y&gt;</code> may be substituted with other events specific for the application.</p>
 <p class='ruff'><hr></p>
 <p class='ruff'>License: MIT.</p>
 <br><h2 class='ruff'><a name='::transpops-Commands'></a>Commands<span class='tinylink'><a href='transpops.html#::transpops'>transpops</a>, <a href='#top'>Top</a></span></h2>
 <div style='clear:both;'></div>
 <br><br><br><h4 class='ruffproc'><a name='::transpops::run'>run</a><span class='ns_scope'> [<a href="transpops.html#::transpops" title="::transpops" class='ruff_cmd'>::transpops</a>]</span><span class='tinylink'><a href='transpops.html#::transpops'>transpops</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
-<p class='ruff'>Initializes and runs the popup messages.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>run</span> <span class='ruff_arg'>fname events win ?fg1? ?bg1?</span></div>
+<p class='ruff'>Runs my::Run and catches errors. Logs errors to a log file.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>run</span> <span class='ruff_arg'>?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td class='ruff_defitem'><code><code>fname</code></code></td><td class='ruff_defitem'>name of file containing the messages</td></tr>
-<tr><td class='ruff_defitem'><code><code>events</code></code></td><td class='ruff_defitem'>events on the window to run bound popups</td></tr>
-<tr><td class='ruff_defitem'><code><code>win</code></code></td><td class='ruff_defitem'>the window's path</td></tr>
-<tr><td class='ruff_defitem'><code><code>fg1</code></code></td><td class='ruff_defitem'>foreground of popups; <i>optional, default</i> <code>#000000</code></td></tr>
-<tr><td class='ruff_defitem'><code><code>bg1</code></code></td><td class='ruff_defitem'>background of popups; <i>optional, default</i> <code>#FBFB95</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>arguments of my::Run.</td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_transpops_run' href="javascript:toggleSource('transpops_run')">Show source</a></p>
-<div id='transpops_run' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::transpops::run {fname events win {fg1 #000000} {bg1 #FBFB95}} {
-  <i><font color=#4b5d50># Initializes and runs the popup messages.</font></i>
-  <i><font color=#4b5d50>#   fname - name of file containing the messages</font></i>
-  <i><font color=#4b5d50>#   events - events on the window to run bound popups</font></i>
-  <i><font color=#4b5d50>#   win - the window's path</font></i>
-  <i><font color=#4b5d50>#   fg1 - foreground of popups</font></i>
-  <i><font color=#4b5d50>#   bg1 - background of popups</font></i>
+<div id='transpops_run' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::transpops::run {args} {
+  <i><font color=#4b5d50># Runs my::Run and catches errors. Logs errors to a log file.</font></i>
+  <i><font color=#4b5d50>#   args - arguments of my::Run.</font></i>
 
-  <b><font color=#3a6797>set</font></b> ::transpops::my::fg <font color=#1b1baa>$fg1</font>
-  <b><font color=#3a6797>set</font></b> ::transpops::my::bg <font color=#1b1baa>$bg1</font>
-  <b><font color=#3a6797>set</font></b> chan [<b><font color=#3a6797>open</font></b> <font color=#1b1baa>$fname</font>]
-  <b><font color=#3a6797>chan</font></b> configure <font color=#1b1baa>$chan</font> <font color=#6c3e67>-encoding</font> utf-8
-  <b><font color=#3a6797>set</font></b> ::transpops::my::msgs [<b><font color=#3a6797>list</font></b>]
-  <b><font color=#3a6797>set</font></b> merge no
-  <b><font color=#3a6797>foreach</font></b> line [<b><font color=#3a6797>split</font></b> [<b><font color=#3a6797>read</font></b> <font color=#1b1baa>$chan</font>] \n] {
-    <i><font color=#4b5d50># skip comments</font></i>
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$line</font> 0] eq {#}} {
-      <i><font color=#4b5d50># comments may be valuable</font></i>
-      <b><font color=#3a6797>set</font></b> ov [<b><font color=#3a6797>split</font></b> [<b><font color=#3a6797>string</font></b> trim [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> 1 end]]]
-      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$ov</font> o v
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match TRANSPOP* <font color=#1b1baa>$o</font>]} {
-        <i><font color=#4b5d50># set/use options of transpops</font></i>
-        <i><font color=#4b5d50># e.g.</font></i>
-        <i><font color=#4b5d50>#   # TRANSPOPred -foreground #000 -background red</font></i>
-        <i><font color=#4b5d50>#   # TRANSPOP2   -foreground #fff -background black</font></i>
-        <i><font color=#4b5d50># then using them:</font></i>
-        <i><font color=#4b5d50>#   # TRANSPOP2</font></i>
-        <i><font color=#4b5d50>#   # TRANSPOPred</font></i>
-        <b><font color=#3a6797>set</font></b> varOPTS [my::OptionVar <font color=#1b1baa>$o</font>]
-        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$v</font> ne {}} {
-          <i><font color=#4b5d50># setting options</font></i>
-          <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$varOPTS</font> [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$ov</font> 1 end]
-        } <b><font color=#3a6797>elseif</font></b> {[<b><font color=#3a6797>info</font></b> exists <font color=#1b1baa>$varOPTS</font>]} {
-          <i><font color=#4b5d50># using options</font></i>
-          <b><font color=#3a6797>set</font></b> llen [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$::transpops::my::msgs</font>]
-          <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$merge</font>} {<b><font color=#3a6797>incr</font></b> llen}
-          <b><font color=#3a6797>set</font></b> [my::OptionVar <font color=#1b1baa>$llen</font>] [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$varOPTS</font>]
-        }
-      }
-      <b><font color=#ca14ca>continue</font></b>
-    }
-    <i><font color=#4b5d50># if it's a list of items, mark them accordingly</font></i>
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> {^\s*[<b><font color=#3a6797>*</font></b>]\s+} <font color=#1b1baa>$line</font>]} {
-      <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>string</font></b> first * <font color=#1b1baa>$line</font>]
-      <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> 0 <font color=#1b1baa>$i</font>-1]\u2022[<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> <font color=#1b1baa>$i</font>+1 end]
-    }
-    <i><font color=#4b5d50># if line has &quot;\&quot; at its end, it continues a message</font></i>
-    <b><font color=#3a6797>set</font></b> line2 [<b><font color=#3a6797>string</font></b> map {{ } {} - {} + {} / {} \\ {} <b><font color=#3a6797>*</font></b> {} = {}} <font color=#1b1baa>$line</font>]
-    <b><font color=#3a6797>set</font></b> continued [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$line2</font> ne {} || <font color=#1b1baa>$line</font> eq {}}]
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$continued</font>} {
-      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$merge</font>} {
-        <b><font color=#3a6797>set</font></b> last [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$::transpops::my::msgs</font> end]
-        <b><font color=#3a6797>append</font></b> last \n <font color=#1b1baa>$line</font>
-        <b><font color=#3a6797>set</font></b> ::transpops::my::msgs [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$::transpops::my::msgs</font> end end <font color=#1b1baa>$last</font>]
-      } <b><font color=#3a6797>else</font></b> {
-        <b><font color=#3a6797>lappend</font></b> ::transpops::my::msgs <font color=#1b1baa>$line</font>
-      }
-    }
-    <b><font color=#3a6797>set</font></b> merge <font color=#1b1baa>$continued</font>
-  }
-  <b><font color=#3a6797>close</font></b> <font color=#1b1baa>$chan</font>
-  <b><font color=#3a6797>set</font></b> ::transpops::my::imsgs 0
-  <b><font color=#3a6797>foreach</font></b> w <font color=#1b1baa>$win</font> {
-    <b><font color=#3a6797>set</font></b> ei 0
-    <b><font color=#3a6797>foreach</font></b> ev <font color=#1b1baa>$events</font> {
-      <b><font color=#3a6797>after</font></b> 300 [<b><font color=#3a6797>list</font></b> ::transpops::my::Run <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font> [<b><font color=#3a6797>list</font></b> ::transpops::my::Show <font color=#1b1baa>$w</font> [<b><font color=#3a6797>incr</font></b> ei]]]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {my::Run {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>} err]} {
+    <b><font color=#3a6797>catch</font></b> {
+      <b><font color=#3a6797>set</font></b> ch [<b><font color=#3a6797>open</font></b> ~/TMP/transpops.log a]
+      <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$ch</font> <font color=#1b1baa>$err</font>
+      <b><font color=#3a6797>close</font></b> <font color=#1b1baa>$ch</font>
     }
   }
 }<br><br></code></pre></div>
@@ -500,27 +440,129 @@ padding: 0%;
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::transpops::my::Run'>Run</a><span class='ns_scope'> [<a href="transpops.html#::transpops::my" title="::transpops::my" class='ruff_cmd'>::transpops::my</a>]</span><span class='tinylink'><a href='transpops.html#::transpops::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
+<p class='ruff'>Initializes and runs the popup messages.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>Run</span> <span class='ruff_arg'>fname wins ?events? ?fg1? ?bg1? ?events2? ?args?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>fname</code></code></td><td class='ruff_defitem'>name of file containing the messages</td></tr>
+<tr><td class='ruff_defitem'><code><code>wins</code></code></td><td class='ruff_defitem'>the list of parent window pathes</td></tr>
+<tr><td class='ruff_defitem'><code><code>events</code></code></td><td class='ruff_defitem'>events on the window to run bound popups; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>fg1</code></code></td><td class='ruff_defitem'>foreground of popups; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>bg1</code></code></td><td class='ruff_defitem'>background of popups; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>events2</code></code></td><td class='ruff_defitem'>events to start drawing; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>options of <em>drawscreen</em></td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_transpops_my_Run' href="javascript:toggleSource('transpops_my_Run')">Show source</a></p>
+<div id='transpops_my_Run' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::transpops::my::Run {fname wins {events {}} {fg1 {}} {bg1 {}} {events2 {}} args} {
+  <i><font color=#4b5d50># Initializes and runs the popup messages.</font></i>
+  <i><font color=#4b5d50>#   fname - name of file containing the messages</font></i>
+  <i><font color=#4b5d50>#   events - events on the window to run bound popups</font></i>
+  <i><font color=#4b5d50>#   wins - the list of parent window pathes</font></i>
+  <i><font color=#4b5d50>#   fg1 - foreground of popups</font></i>
+  <i><font color=#4b5d50>#   bg1 - background of popups</font></i>
+  <i><font color=#4b5d50>#   events2 - events to start drawing</font></i>
+  <i><font color=#4b5d50>#   args -  options of *drawscreen*</font></i>
+
+  <b><font color=#3a6797>variable</font></b> draw
+  <b><font color=#3a6797>variable</font></b> msgs
+  <b><font color=#3a6797>variable</font></b> imsgs
+  <b><font color=#3a6797>variable</font></b> fg
+  <b><font color=#3a6797>variable</font></b> bg
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$events</font> eq {}} {<b><font color=#3a6797>set</font></b> events {Alt-t Alt-y}}
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fg1</font> eq {}} {<b><font color=#3a6797>set</font></b> fg1 #000000}
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$bg1</font> eq {}} {<b><font color=#3a6797>set</font></b> bg1 #FBFB95}
+  <b><font color=#3a6797>set</font></b> fg <font color=#1b1baa>$fg1</font>
+  <b><font color=#3a6797>set</font></b> bg <font color=#1b1baa>$bg1</font>
+  <b><font color=#3a6797>set</font></b> chan [<b><font color=#3a6797>open</font></b> <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>chan</font></b> configure <font color=#1b1baa>$chan</font> <font color=#6c3e67>-encoding</font> utf-8
+  <b><font color=#3a6797>set</font></b> msgs [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>set</font></b> merge no
+  <b><font color=#3a6797>foreach</font></b> line [<b><font color=#3a6797>split</font></b> [<b><font color=#3a6797>read</font></b> <font color=#1b1baa>$chan</font>] \n] {
+    <i><font color=#4b5d50># skip comments</font></i>
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$line</font> 0] eq {#}} {
+      <i><font color=#4b5d50># comments may be valuable</font></i>
+      <b><font color=#3a6797>set</font></b> ov [<b><font color=#3a6797>split</font></b> [<b><font color=#3a6797>string</font></b> trim [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> 1 end]]]
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$ov</font> o v
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match TRANSPOP* <font color=#1b1baa>$o</font>]} {
+        <i><font color=#4b5d50># set/use options of transpops</font></i>
+        <i><font color=#4b5d50># e.g.</font></i>
+        <i><font color=#4b5d50>#   # TRANSPOPred -foreground #000 -background red</font></i>
+        <i><font color=#4b5d50>#   # TRANSPOP2   -foreground #fff -background black</font></i>
+        <i><font color=#4b5d50># then using them:</font></i>
+        <i><font color=#4b5d50>#   # TRANSPOP2</font></i>
+        <i><font color=#4b5d50>#   # TRANSPOPred</font></i>
+        <b><font color=#3a6797>set</font></b> varOPTS [OptionVar <font color=#1b1baa>$o</font>]
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$v</font> ne {}} {
+          <i><font color=#4b5d50># setting options</font></i>
+          <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$varOPTS</font> [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$ov</font> 1 end]
+        } <b><font color=#3a6797>elseif</font></b> {[<b><font color=#3a6797>info</font></b> exists <font color=#1b1baa>$varOPTS</font>]} {
+          <i><font color=#4b5d50># using options</font></i>
+          <b><font color=#3a6797>set</font></b> llen [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$msgs</font>]
+          <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$merge</font>} {<b><font color=#3a6797>incr</font></b> llen}
+          <b><font color=#3a6797>set</font></b> [OptionVar <font color=#1b1baa>$llen</font>] [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$varOPTS</font>]
+        }
+      }
+      <b><font color=#ca14ca>continue</font></b>
+    }
+    <i><font color=#4b5d50># if it's a list of items, mark them accordingly</font></i>
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> {^\s*[<b><font color=#3a6797>*</font></b>]\s+} <font color=#1b1baa>$line</font>]} {
+      <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>string</font></b> first * <font color=#1b1baa>$line</font>]
+      <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> 0 <font color=#1b1baa>$i</font>-1]\u2022[<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> <font color=#1b1baa>$i</font>+1 end]
+    }
+    <i><font color=#4b5d50># if line has &quot;\\&quot; at its end, it continues a message</font></i>
+    <b><font color=#3a6797>set</font></b> line2 [<b><font color=#3a6797>string</font></b> map {{ } {} - {} + {} / {} \\ {} <b><font color=#3a6797>*</font></b> {} = {}} <font color=#1b1baa>$line</font>]
+    <b><font color=#3a6797>set</font></b> continued [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$line2</font> ne {} || <font color=#1b1baa>$line</font> eq {}}]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$continued</font>} {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$merge</font>} {
+        <b><font color=#3a6797>set</font></b> last [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$msgs</font> end]
+        <b><font color=#3a6797>append</font></b> last \n <font color=#1b1baa>$line</font>
+        <b><font color=#3a6797>set</font></b> msgs [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$msgs</font> end end <font color=#1b1baa>$last</font>]
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>lappend</font></b> msgs <font color=#1b1baa>$line</font>
+      }
+    }
+    <b><font color=#3a6797>set</font></b> merge <font color=#1b1baa>$continued</font>
+  }
+  <b><font color=#3a6797>close</font></b> <font color=#1b1baa>$chan</font>
+  <b><font color=#3a6797>set</font></b> imsgs 0
+  <b><font color=#3a6797>set</font></b> timo 300
+  <b><font color=#3a6797>set</font></b> draw(events) <font color=#1b1baa>$events2</font>
+  <b><font color=#3a6797>set</font></b> draw(opts) <font color=#1b1baa>$args</font>
+  <b><font color=#3a6797>foreach</font></b> w <font color=#1b1baa>$wins</font> {
+    <b><font color=#3a6797>set</font></b> ei 0
+    <b><font color=#3a6797>foreach</font></b> ev <font color=#1b1baa>$events</font> {
+      <b><font color=#3a6797>after</font></b> <font color=#1b1baa>$timo</font> [<b><font color=#3a6797>list</font></b> ::transpops::my::RunMe <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font> [<b><font color=#3a6797>list</font></b> ::transpops::my::Show <font color=#1b1baa>$w</font> [<b><font color=#3a6797>incr</font></b> ei]]]
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$draw(app)</font>} {<b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> &lt;Escape&gt; <b><font color=#3a6797>exit</font></b>}
+  }
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::transpops::my::RunMe'>RunMe</a><span class='ns_scope'> [<a href="transpops.html#::transpops::my" title="::transpops::my" class='ruff_cmd'>::transpops::my</a>]</span><span class='tinylink'><a href='transpops.html#::transpops::my'>my</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
 <p class='ruff'>Binds an event on a window to a script.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>Run</span> <span class='ruff_arg'>w ev scrp</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>RunMe</span> <span class='ruff_arg'>w ev scrp</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>w</code></code></td><td class='ruff_defitem'>the window's path</td></tr>
 <tr><td class='ruff_defitem'><code><code>ev</code></code></td><td class='ruff_defitem'>event on the window</td></tr>
 <tr><td class='ruff_defitem'><code><code>scrp</code></code></td><td class='ruff_defitem'>the bound script</td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>The binding is made only on an existing window. If the window doesn't exist, the binding is postponed for next 'after' cycle.</p>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_transpops_my_Run' href="javascript:toggleSource('transpops_my_Run')">Show source</a></p>
-<div id='transpops_my_Run' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::transpops::my::Run {w ev scrp} {
+<h5 class='ruff'>Description</h5><p class='ruff'>The binding is made only on an existing window. The windows may be created and destroyed, so Run watches if they are available.</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_transpops_my_RunMe' href="javascript:toggleSource('transpops_my_RunMe')">Show source</a></p>
+<div id='transpops_my_RunMe' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::transpops::my::RunMe {w ev scrp} {
   <i><font color=#4b5d50># Binds an event on a window to a script.</font></i>
   <i><font color=#4b5d50>#   w - the window's path</font></i>
   <i><font color=#4b5d50>#   ev - event on the window</font></i>
   <i><font color=#4b5d50>#   scrp - the bound script</font></i>
   <i><font color=#4b5d50># The binding is made only on an existing window.</font></i>
-  <i><font color=#4b5d50># If the window doesn't exist, the binding is postponed for next 'after' cycle.</font></i>
+  <i><font color=#4b5d50># The windows may be created and destroyed, so Run watches if they are available.</font></i>
 
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$w</font>] && [<b><font color=#3a6797>string</font></b> first <font color=#1b1baa>$scrp</font> [<b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font>]]==-1} {
-    <b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>scrp ; break&quot;</font>
+  <b><font color=#3a6797>variable</font></b> draw
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$w</font>]} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first <font color=#1b1baa>$scrp</font> [<b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font>]]==-1} {
+      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> match &lt;<b><font color=#3a6797>*</font></b>&gt; <font color=#1b1baa>$ev</font>]} {<b><font color=#3a6797>set</font></b> ev &lt;<font color=#1b1baa>$ev</font>&gt;}
+      <b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>scrp ; break&quot;</font>
+    }
+    ::drawscreen run <font color=#1b1baa>$w</font> <font color=#1b1baa>$draw(events)</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$draw(opts)</font>
   }
-  <b><font color=#3a6797>after</font></b> 100 [<b><font color=#3a6797>list</font></b> ::transpops::my::Run <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font> <font color=#1b1baa>$scrp</font>]
+  <b><font color=#3a6797>after</font></b> 200 [<b><font color=#3a6797>list</font></b> ::transpops::my::RunMe <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font> <font color=#1b1baa>$scrp</font>]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::transpops::my::Show'>Show</a><span class='ns_scope'> [<a href="transpops.html#::transpops::my" title="::transpops::my" class='ruff_cmd'>::transpops::my</a>]</span><span class='tinylink'><a href='transpops.html#::transpops::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -566,17 +608,17 @@ padding: 0%;
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>set</font></b> opts {}
   }
-  <b><font color=#134070>label</font></b> <font color=#1b1baa>$wmsgs</font>.l <font color=#6c3e67>-padx</font> 30 <font color=#6c3e67>-pady</font> 30 <font color=#6c3e67>-foreground</font> <font color=#1b1baa>$fg</font> <font color=#6c3e67>-background</font> <font color=#1b1baa>$bg</font>  <font color=#6c3e67>-font</font> {<font color=#6c3e67>-weight</font> bold <font color=#6c3e67>-size</font> 20 <font color=#6c3e67>-family</font> Quicksand}  <font color=#6c3e67>-relief</font> solid <font color=#6c3e67>-text</font> <font color=#1b1baa>$msg</font> <font color=#6c3e67>-justify</font> left {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font>
+  <b><font color=#134070>label</font></b> <font color=#1b1baa>$wmsgs</font>.labtrans <font color=#6c3e67>-padx</font> 30 <font color=#6c3e67>-pady</font> 30 <font color=#6c3e67>-foreground</font> <font color=#1b1baa>$fg</font> <font color=#6c3e67>-background</font> <font color=#1b1baa>$bg</font>  <font color=#6c3e67>-font</font> {<font color=#6c3e67>-weight</font> bold <font color=#6c3e67>-size</font> 20 <font color=#6c3e67>-family</font> Quicksand}  <font color=#6c3e67>-relief</font> solid <font color=#6c3e67>-text</font> <font color=#1b1baa>$msg</font> <font color=#6c3e67>-justify</font> left {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font>
   <b><font color=#3a6797>set</font></b> alpha 0.0
   <b><font color=#3a6797>set</font></b> alphaincr [<b><font color=#3a6797>expr</font></b> {abs(<font color=#1b1baa>$alphaincr</font>)}]
-  <b><font color=#134070>pack</font></b> <font color=#1b1baa>$wmsgs</font>.l <font color=#6c3e67>-fill</font> both <font color=#6c3e67>-expand</font> true
+  <b><font color=#134070>pack</font></b> <font color=#1b1baa>$wmsgs</font>.labtrans <font color=#6c3e67>-fill</font> both <font color=#6c3e67>-expand</font> true
   <b><font color=#3a6797>set</font></b> alpha 0.0
   <b><font color=#3a6797>set</font></b> alphaincr 0.007
   <b><font color=#3a6797>set</font></b> cntwait 0
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wmsgs</font> &lt;ButtonPress&gt; {<b><font color=#3a6797>set</font></b> ::transpops::my::cntwait 0}
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> {^http[s]?://\S+$} <font color=#1b1baa>$msg</font>]} {
     <b><font color=#3a6797>catch</font></b> {
-      ::apave::obj makeLabelLinked <font color=#1b1baa>$wmsgs</font>.l  <font color=#8b2a0e>&quot;::apave::openDoc <font color=#1b1baa>$</font>msg@@<font color=#1b1baa>$</font>msg@@&quot;</font> <font color=#1b1baa>$fg</font> <font color=#1b1baa>$bg</font> <font color=#1b1baa>$fg</font> yellow
+      ::apave::obj makeLabelLinked <font color=#1b1baa>$wmsgs</font>.labtrans  <font color=#8b2a0e>&quot;::apave::openDoc <font color=#1b1baa>$</font>msg@@<font color=#1b1baa>$</font>msg@@&quot;</font> <font color=#1b1baa>$fg</font> <font color=#1b1baa>$bg</font> <font color=#1b1baa>$fg</font> yellow
     }
   }
   <b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> {[<b><font color=#134070>winfo</font></b> pointerx <font color=#1b1baa>$win</font>]+10}]
@@ -586,10 +628,11 @@ padding: 0%;
   <b><font color=#3a6797>after</font></b> 10 <font color=#8b2a0e>&quot;wm deiconify <font color=#1b1baa>$</font>wmsgs; wm attributes <font color=#1b1baa>$</font>wmsgs -alpha 0.0 -topmost 1&quot;</font>
   <b><font color=#3a6797>after</font></b> 15 <font color=#8b2a0e>&quot;::transpops::my::Popup <font color=#1b1baa>{$</font>msg<font color=#1b1baa>}</font>&quot;</font>
 }<br><br></code></pre></div>
-</div></div></div><div class='yui-b navbox' ><h1><a href='#::transpops'>transpops</a></h1><h2><a href='#::transpops-Commands'>Commands</a></h2><h4 class='tooltip'><a href='transpops.html#::transpops::run'>run</a><span class='tooltiptext'>Initializes and runs the popup messages.
+</div></div></div><div class='yui-b navbox' ><h1><a href='#::transpops'>transpops</a></h1><h2><a href='#::transpops-Commands'>Commands</a></h2><h4 class='tooltip'><a href='transpops.html#::transpops::run'>run</a><span class='tooltiptext'>Runs my::Run and catches errors. Logs errors to a log file.
 </span></h4><h1><a href='#::transpops::my'>transpops::my</a></h1><h2><a href='#::transpops::my-Commands'>Commands</a></h2><h4 class='tooltip'><a href='transpops.html#::transpops::my::OptionVar'>OptionVar</a><span class='tooltiptext'>Name of variable for transpops options.
 </span></h4><h4 class='tooltip'><a href='transpops.html#::transpops::my::Popup'>Popup</a><span class='tooltiptext'>Popups a message in the popup window.
-</span></h4><h4 class='tooltip'><a href='transpops.html#::transpops::my::Run'>Run</a><span class='tooltiptext'>Binds an event on a window to a script.
+</span></h4><h4 class='tooltip'><a href='transpops.html#::transpops::my::Run'>Run</a><span class='tooltiptext'>Initializes and runs the popup messages.
+</span></h4><h4 class='tooltip'><a href='transpops.html#::transpops::my::RunMe'>RunMe</a><span class='tooltiptext'>Binds an event on a window to a script.
 </span></h4><h4 class='tooltip'><a href='transpops.html#::transpops::my::Show'>Show</a><span class='tooltiptext'>Makes the popup toplevel window and starts popups.
 </span></h4></div></div><div id='ft'><div style='float: right;'>Document generated by <a href='https://ruff.magicsplat.com'>Ruff!</a></div></div>
 </div></body></html>
