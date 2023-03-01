@@ -1316,6 +1316,8 @@ padding: 0%;
 
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$args</font> eq {?}} {<b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$::apave::_CS_(initWM)</font>}
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$::apave::_CS_(initWM)</font>} <b><font color=#ca14ca>return</font></b>
+  ::apave::withdraw .
+  ::apave::place . 0 0 center
   <b><font color=#3a6797>lassign</font></b> [parseOptions <font color=#1b1baa>$args</font> <font color=#6c3e67>-cursorwidth</font> <font color=#1b1baa>$::apave::cursorwidth</font> <font color=#6c3e67>-theme</font> default  <font color=#6c3e67>-buttonwidth</font> -8 <font color=#6c3e67>-buttonborder</font> 1 <font color=#6c3e67>-labelborder</font> 0 <font color=#6c3e67>-padding</font> 1 <font color=#6c3e67>-cs</font> -2 <font color=#6c3e67>-isbaltip</font> yes]  cursorwidth theme buttonwidth buttonborder labelborder padding cs ::apave::ISBALTIP
   initBaltip
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$theme</font> eq {}} {<b><font color=#3a6797>set</font></b> theme default}
@@ -1323,7 +1325,6 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> ::apave::_CS_(initWM) 0
   <b><font color=#3a6797>set</font></b> ::apave::_CS_(CURSORWIDTH) <font color=#1b1baa>$cursorwidth</font>
   <b><font color=#3a6797>set</font></b> ::apave::_CS_(LABELBORDER) <font color=#1b1baa>$labelborder</font>
-  ::apave::withdraw .
   <i><font color=#4b5d50># for default theme: only most common settings</font></i>
   <b><font color=#3a6797>set</font></b> tfg1 <font color=#1b1baa>$::apave::_CS_(!FG)</font>
   <b><font color=#3a6797>set</font></b> tbg1 <font color=#1b1baa>$::apave::_CS_(!BG)</font>
@@ -1727,6 +1728,178 @@ padding: 0%;
     }
   }
   <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$retlist</font> [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$retfile</font>]]
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::apave::place'>place</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>place</span> <span class='ruff_arg'>path w h ?args?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>path</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
+<tr><td class='ruff_defitem'><code><code>w</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
+<tr><td class='ruff_defitem'><code><code>h</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>Optional arguments.</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_place' href="javascript:toggleSource('apave_place')">Show source</a></p>
+<div id='apave_place' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::place {path w h args} {
+  <b><font color=#3a6797>update</font></b> idletasks
+
+  <i><font color=#4b5d50># If the window is not mapped, it may have any current size.</font></i>
+  <i><font color=#4b5d50># Then use required size, but bound it to the screen width.</font></i>
+  <i><font color=#4b5d50># This is mostly inexact, because any toolbars will still be removed</font></i>
+  <i><font color=#4b5d50># which may reduce size.</font></i>
+  <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$w</font> == 0 && [<b><font color=#134070>winfo</font></b> ismapped <font color=#1b1baa>$path</font>] } {
+    <b><font color=#3a6797>set</font></b> w [<b><font color=#134070>winfo</font></b> width <font color=#1b1baa>$path</font>]
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$w</font> == 0 } {
+      <b><font color=#3a6797>set</font></b> w [<b><font color=#134070>winfo</font></b> reqwidth <font color=#1b1baa>$path</font>]
+    }
+    <b><font color=#3a6797>set</font></b> vsw [<b><font color=#134070>winfo</font></b> vrootwidth  <font color=#1b1baa>$path</font>]
+    <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$w</font> &gt; <font color=#1b1baa>$vsw</font> } { <b><font color=#3a6797>set</font></b> w <font color=#1b1baa>$vsw</font> }
+  }
+
+  <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$h</font> == 0 && [<b><font color=#134070>winfo</font></b> ismapped <font color=#1b1baa>$path</font>] } {
+    <b><font color=#3a6797>set</font></b> h [<b><font color=#134070>winfo</font></b> height <font color=#1b1baa>$path</font>]
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$h</font> == 0 } {
+      <b><font color=#3a6797>set</font></b> h [<b><font color=#134070>winfo</font></b> reqheight <font color=#1b1baa>$path</font>]
+    }
+    <b><font color=#3a6797>set</font></b> vsh [<b><font color=#134070>winfo</font></b> vrootheight <font color=#1b1baa>$path</font>]
+    <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$h</font> &gt; <font color=#1b1baa>$vsh</font> } { <b><font color=#3a6797>set</font></b> h <font color=#1b1baa>$vsh</font> }
+  }
+
+  <b><font color=#3a6797>set</font></b> arglen [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$args</font>]
+  <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$arglen</font> &gt; 3 } {
+    <b><font color=#ca14ca>return</font></b> <font color=#6c3e67>-code</font> error <font color=#8b2a0e>&quot;apave::place: bad number of argument&quot;</font>
+  }
+
+  <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$arglen</font> &gt; 0 } {
+    <b><font color=#3a6797>set</font></b> where [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$args</font> 0]
+    <b><font color=#3a6797>set</font></b> list  [<b><font color=#3a6797>list</font></b> at center left right above below]
+    <b><font color=#3a6797>set</font></b> idx   [<b><font color=#3a6797>lsearch</font></b> <font color=#1b1baa>$list</font> <font color=#1b1baa>$where</font>]
+    <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$idx</font> == -1 } {
+      <b><font color=#ca14ca>return</font></b> <font color=#6c3e67>-code</font> error <font color=#8b2a0e>&quot;apave::place: bad position: <font color=#1b1baa>$</font>where <font color=#1b1baa>$</font>list&quot;</font>
+    }
+    <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$idx</font> == 0 } {
+      <b><font color=#3a6797>set</font></b> err [<b><font color=#3a6797>catch</font></b> {
+        <i><font color=#4b5d50># purposely removed the {} around these expressions - [PT]</font></i>
+        <b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> int([<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$args</font> 1])]
+        <b><font color=#3a6797>set</font></b> y [<b><font color=#3a6797>expr</font></b> int([<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$args</font> 2])]
+      } e]
+      <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$err</font> } {
+        <b><font color=#ca14ca>return</font></b> <font color=#6c3e67>-code</font> error <font color=#8b2a0e>&quot;apave::place: bad position: <font color=#1b1baa>$</font>e&quot;</font>
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::tcl_platform(platform)</font> eq {windows}} {
+        <i><font color=#4b5d50># handle windows multi-screen. -100 != +-100</font></i>
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> index [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$args</font> 1] 0] ne {-}} {
+          <b><font color=#3a6797>set</font></b> x +<font color=#1b1baa>$x</font>
+        }
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> index [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$args</font> 2] 0] ne {-}} {
+          <b><font color=#3a6797>set</font></b> y +<font color=#1b1baa>$y</font>
+        }
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$x</font> &gt;= 0 } {
+          <b><font color=#3a6797>set</font></b> x +<font color=#1b1baa>$x</font>
+        }
+        <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$y</font> &gt;= 0 } {
+          <b><font color=#3a6797>set</font></b> y +<font color=#1b1baa>$y</font>
+        }
+      }
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$arglen</font> == 2 } {
+        <b><font color=#3a6797>set</font></b> widget [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$args</font> 1]
+        <b><font color=#3a6797>if</font></b> { ![<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$widget</font>] } {
+          <b><font color=#ca14ca>return</font></b> <font color=#6c3e67>-code</font> error <font color=#8b2a0e>&quot;apave::place: \&quot;<font color=#1b1baa>$</font>widget\&quot; does not exist&quot;</font>
+        }
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> widget .
+      }
+      <b><font color=#3a6797>set</font></b> sw [<b><font color=#134070>winfo</font></b> screenwidth  <font color=#1b1baa>$path</font>]
+      <b><font color=#3a6797>set</font></b> sh [<b><font color=#134070>winfo</font></b> screenheight <font color=#1b1baa>$path</font>]
+      <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$idx</font> == 1 } {
+        <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$arglen</font> == 2 } {
+          <i><font color=#4b5d50># center to widget</font></i>
+          <b><font color=#3a6797>set</font></b> x0 [<b><font color=#3a6797>expr</font></b> {[<b><font color=#134070>winfo</font></b> rootx <font color=#1b1baa>$widget</font>] + ([<b><font color=#134070>winfo</font></b> width  <font color=#1b1baa>$widget</font>] - <font color=#1b1baa>$w</font>)/2}]
+          <b><font color=#3a6797>set</font></b> y0 [<b><font color=#3a6797>expr</font></b> {[<b><font color=#134070>winfo</font></b> rooty <font color=#1b1baa>$widget</font>] + ([<b><font color=#134070>winfo</font></b> height <font color=#1b1baa>$widget</font>] - <font color=#1b1baa>$h</font>)/2}]
+        } <b><font color=#3a6797>else</font></b> {
+          <i><font color=#4b5d50># center to screen</font></i>
+          <b><font color=#3a6797>set</font></b> x0 [<b><font color=#3a6797>expr</font></b> {(<font color=#1b1baa>$sw</font> - <font color=#1b1baa>$w</font>)/2 - [<b><font color=#134070>winfo</font></b> vrootx <font color=#1b1baa>$path</font>]}]
+          <b><font color=#3a6797>set</font></b> y0 [<b><font color=#3a6797>expr</font></b> {(<font color=#1b1baa>$sh</font> - <font color=#1b1baa>$h</font>)/2 - [<b><font color=#134070>winfo</font></b> vrooty <font color=#1b1baa>$path</font>]}]
+        }
+        <b><font color=#3a6797>set</font></b> x +<font color=#1b1baa>$x0</font>
+        <b><font color=#3a6797>set</font></b> y +<font color=#1b1baa>$y0</font>
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::tcl_platform(platform)</font> ne {windows}} {
+          <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$x0</font>+<font color=#1b1baa>$w</font> &gt; <font color=#1b1baa>$sw</font> } {<b><font color=#3a6797>set</font></b> x {-0}; <b><font color=#3a6797>set</font></b> x0 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$sw</font>-<font color=#1b1baa>$w</font>}]}
+          <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$x0</font> &lt; 0 }      {<b><font color=#3a6797>set</font></b> x {+0}}
+          <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$y0</font>+<font color=#1b1baa>$h</font> &gt; <font color=#1b1baa>$sh</font> } {<b><font color=#3a6797>set</font></b> y {-0}; <b><font color=#3a6797>set</font></b> y0 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$sh</font>-<font color=#1b1baa>$h</font>}]}
+          <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$y0</font> &lt; 0 }      {<b><font color=#3a6797>set</font></b> y {+0}}
+        }
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> x0 [<b><font color=#134070>winfo</font></b> rootx <font color=#1b1baa>$widget</font>]
+        <b><font color=#3a6797>set</font></b> y0 [<b><font color=#134070>winfo</font></b> rooty <font color=#1b1baa>$widget</font>]
+        <b><font color=#3a6797>set</font></b> x1 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$x0</font> + [<b><font color=#134070>winfo</font></b> width  <font color=#1b1baa>$widget</font>]}]
+        <b><font color=#3a6797>set</font></b> y1 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$y0</font> + [<b><font color=#134070>winfo</font></b> height <font color=#1b1baa>$widget</font>]}]
+        <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$idx</font> == 2 || <font color=#1b1baa>$idx</font> == 3 } {
+          <b><font color=#3a6797>set</font></b> y +<font color=#1b1baa>$y0</font>
+          <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::tcl_platform(platform)</font> ne {windows}} {
+            <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$y0</font>+<font color=#1b1baa>$h</font> &gt; <font color=#1b1baa>$sh</font> } {<b><font color=#3a6797>set</font></b> y {-0}; <b><font color=#3a6797>set</font></b> y0 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$sh</font>-<font color=#1b1baa>$h</font>}]}
+            <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$y0</font> &lt; 0 }      {<b><font color=#3a6797>set</font></b> y {+0}}
+          }
+          <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$idx</font> == 2 } {
+            <i><font color=#4b5d50># try left, then right if out, then 0 if out</font></i>
+            <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$x0</font> &gt;= <font color=#1b1baa>$w</font> } {
+              <b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$x0</font>-<font color=#1b1baa>$w</font>}]
+            } <b><font color=#3a6797>elseif</font></b> { <font color=#1b1baa>$x1</font>+<font color=#1b1baa>$w</font> &lt;= <font color=#1b1baa>$sw</font> } {
+              <b><font color=#3a6797>set</font></b> x +<font color=#1b1baa>$x1</font>
+            } <b><font color=#3a6797>else</font></b> {
+              <b><font color=#3a6797>set</font></b> x {+0}
+            }
+          } <b><font color=#3a6797>else</font></b> {
+            <i><font color=#4b5d50># try right, then left if out, then 0 if out</font></i>
+            <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$x1</font>+<font color=#1b1baa>$w</font> &lt;= <font color=#1b1baa>$sw</font> } {
+              <b><font color=#3a6797>set</font></b> x +<font color=#1b1baa>$x1</font>
+            } <b><font color=#3a6797>elseif</font></b> { <font color=#1b1baa>$x0</font> &gt;= <font color=#1b1baa>$w</font> } {
+              <b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$x0</font>-<font color=#1b1baa>$w</font>}]
+            } <b><font color=#3a6797>else</font></b> {
+              <b><font color=#3a6797>set</font></b> x {-0}
+            }
+          }
+        } <b><font color=#3a6797>else</font></b> {
+          <b><font color=#3a6797>set</font></b> x +<font color=#1b1baa>$x0</font>
+          <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::tcl_platform(platform)</font> ne {windows}} {
+            <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$x0</font>+<font color=#1b1baa>$w</font> &gt; <font color=#1b1baa>$sw</font> } {<b><font color=#3a6797>set</font></b> x {-0}; <b><font color=#3a6797>set</font></b> x0 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$sw</font>-<font color=#1b1baa>$w</font>}]}
+            <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$x0</font> &lt; 0 }      {<b><font color=#3a6797>set</font></b> x {+0}}
+          }
+          <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$idx</font> == 4 } {
+            <i><font color=#4b5d50># try top, then bottom, then 0</font></i>
+            <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$h</font> &lt;= <font color=#1b1baa>$y0</font> } {
+              <b><font color=#3a6797>set</font></b> y [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$y0</font>-<font color=#1b1baa>$h</font>}]
+            } <b><font color=#3a6797>elseif</font></b> { <font color=#1b1baa>$y1</font>+<font color=#1b1baa>$h</font> &lt;= <font color=#1b1baa>$sh</font> } {
+              <b><font color=#3a6797>set</font></b> y +<font color=#1b1baa>$y1</font>
+            } <b><font color=#3a6797>else</font></b> {
+              <b><font color=#3a6797>set</font></b> y {+0}
+            }
+          } <b><font color=#3a6797>else</font></b> {
+            <i><font color=#4b5d50># try bottom, then top, then 0</font></i>
+            <b><font color=#3a6797>if</font></b> { <font color=#1b1baa>$y1</font>+<font color=#1b1baa>$h</font> &lt;= <font color=#1b1baa>$sh</font> } {
+              <b><font color=#3a6797>set</font></b> y +<font color=#1b1baa>$y1</font>
+            } <b><font color=#3a6797>elseif</font></b> { <font color=#1b1baa>$h</font> &lt;= <font color=#1b1baa>$y0</font> } {
+              <b><font color=#3a6797>set</font></b> y [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$y0</font>-<font color=#1b1baa>$h</font>}]
+            } <b><font color=#3a6797>else</font></b> {
+              <b><font color=#3a6797>set</font></b> y {-0}
+            }
+          }
+        }
+      }
+    }
+
+    <i><font color=#4b5d50>## If there's not a + or - in front of the number, we need to add one.</font></i>
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is integer [<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$x</font> 0]]} { <b><font color=#3a6797>set</font></b> x +<font color=#1b1baa>$x</font> }
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is integer [<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$y</font> 0]]} { <b><font color=#3a6797>set</font></b> y +<font color=#1b1baa>$y</font> }
+
+    <b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$path</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>${</font>w<font color=#1b1baa>}</font>x<font color=#1b1baa>${</font>h<font color=#1b1baa>}${</font>x<font color=#1b1baa>}${</font>y<font color=#1b1baa>}</font>&quot;</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$path</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>${</font>w<font color=#1b1baa>}</font>x<font color=#1b1baa>${</font>h<font color=#1b1baa>}</font>&quot;</font>
+  }
+  <b><font color=#3a6797>update</font></b> idletasks
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::precedeWidgetName'>precedeWidgetName</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -3057,8 +3230,8 @@ padding: 0%;
   <i><font color=#4b5d50># Returns new coordinates in +X+Y form.</font></i>
 
   <i><font color=#4b5d50># check for left/right edge of screen (accounting decors)</font></i>
-  <b><font color=#3a6797>set</font></b> scrw [<b><font color=#3a6797>expr</font></b> [<b><font color=#134070>winfo</font></b> screenwidth .] - 12]
-  <b><font color=#3a6797>set</font></b> scrh [<b><font color=#3a6797>expr</font></b> {[<b><font color=#134070>winfo</font></b> screenheight .] - 36}]
+  <b><font color=#3a6797>set</font></b> scrw [<b><font color=#3a6797>expr</font></b> {[<b><font color=#134070>winfo</font></b> vrootwidth .] - 12}]
+  <b><font color=#3a6797>set</font></b> scrh [<b><font color=#3a6797>expr</font></b> {[<b><font color=#134070>winfo</font></b> vrootheight .] - 36}]
   <b><font color=#3a6797>if</font></b> {(<font color=#1b1baa>$x</font> + <font color=#1b1baa>$w</font>) &gt; <font color=#1b1baa>$scrw</font> } {
     <b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$scrw</font> - <font color=#1b1baa>$w</font>}]
   }
@@ -7203,11 +7376,11 @@ padding: 0%;
         <b><font color=#3a6797>if</font></b> {[::iswindows]} {
           <b><font color=#3a6797>set</font></b> ::apave::_C_(<font color=#1b1baa>$ts</font>,0) 6
         } <b><font color=#3a6797>elseif</font></b> {[<b><font color=#ca14ca>my</font></b> apaveTheme]} {
-            <b><font color=#3a6797>set</font></b> ::apave::_C_(<font color=#1b1baa>$ts</font>,7) {<font color=#6c3e67>-borderwidth</font> 2}
-            <b><font color=#3a6797>set</font></b> ::apave::_C_(<font color=#1b1baa>$ts</font>,8) {<font color=#6c3e67>-relief</font> raised}
+          <b><font color=#3a6797>set</font></b> ::apave::_C_(<font color=#1b1baa>$ts</font>,7) {<font color=#6c3e67>-borderwidth</font> 2}
+          <b><font color=#3a6797>set</font></b> ::apave::_C_(<font color=#1b1baa>$ts</font>,8) {<font color=#6c3e67>-relief</font> raised}
         } <b><font color=#3a6797>else</font></b> {
-            <b><font color=#3a6797>set</font></b> ::apave::_C_(<font color=#1b1baa>$ts</font>,7) {<font color=#6c3e67>-borderwidth</font> 1}
-            <b><font color=#3a6797>set</font></b> ::apave::_C_(<font color=#1b1baa>$ts</font>,8) {<font color=#6c3e67>-relief</font> groove}
+          <b><font color=#3a6797>set</font></b> ::apave::_C_(<font color=#1b1baa>$ts</font>,7) {<font color=#6c3e67>-borderwidth</font> 1}
+          <b><font color=#3a6797>set</font></b> ::apave::_C_(<font color=#1b1baa>$ts</font>,8) {<font color=#6c3e67>-relief</font> groove}
         }
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$darkCS</font>} {<b><font color=#3a6797>set</font></b> c white} {<b><font color=#3a6797>set</font></b> c black}
         <b><font color=#3a6797>set</font></b> ::apave::_C_(<font color=#1b1baa>$ts</font>,9) <font color=#8b2a0e>&quot;-selectcolor <font color=#1b1baa>$</font>c&quot;</font>
@@ -7386,7 +7559,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::openDoc'>openDoc</a><span class='tooltiptext'>Opens a document.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::parseOptions'>parseOptions</a><span class='tooltiptext'>Parses argument list containing options.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::parseOptionsFile'>parseOptionsFile</a><span class='tooltiptext'>Parses argument list containing options and (possibly) a file name.
-</span></h4><h4 class='tooltip'><a href='apave.html#::apave::precedeWidgetName'>precedeWidgetName</a><span class='tooltiptext'>Adds a preceding name to a tail name of widget.
+</span></h4><h4><a href='apave.html#::apave::place'>place</a></h4><h4 class='tooltip'><a href='apave.html#::apave::precedeWidgetName'>precedeWidgetName</a><span class='tooltiptext'>Adds a preceding name to a tail name of widget.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::putOption'>putOption</a><span class='tooltiptext'>Replaces or adds one option to an option list.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::readTextFile'>readTextFile</a><span class='tooltiptext'>Reads a text file.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::removeOptions'>removeOptions</a><span class='tooltiptext'>Removes some options from a list of options.

@@ -421,7 +421,7 @@ padding: 0%;
     <b><font color=#3a6797>set</font></b> bg [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$cs</font> 15]
   }
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#134070>winfo</font></b> geometry <font color=#1b1baa>$al(WIN)</font>] x+] w h x y
-  <b><font color=#3a6797>set</font></b> geo <font color=#8b2a0e>&quot;+(<font color=#1b1baa>[</font>expr <font color=#1b1baa>{$</font>w+<font color=#1b1baa>$</font>x<font color=#1b1baa>}]</font>-W-8)+<font color=#1b1baa>$</font>y-20&quot;</font>
+  <b><font color=#3a6797>set</font></b> geo <font color=#8b2a0e>&quot;+(<font color=#1b1baa>[</font>expr <font color=#1b1baa>{$</font>w+<font color=#1b1baa>$</font>x<font color=#1b1baa>}]</font>-W)+<font color=#1b1baa>$</font>y-60&quot;</font>
   <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \n <font color=#8b2a0e>&quot;  \n  &quot;</font>] <font color=#1b1baa>$msg</font>]
   ::baltip clear <font color=#1b1baa>$al(WIN)</font>
   <b><font color=#3a6797>after</font></b> <font color=#1b1baa>$timo</font> [<b><font color=#3a6797>list</font></b> ::baltip tip <font color=#1b1baa>$al(WIN)</font> <font color=#1b1baa>$msg</font> <font color=#6c3e67>-fg</font> <font color=#1b1baa>$fg</font> <font color=#6c3e67>-bg</font> <font color=#1b1baa>$bg</font> <font color=#6c3e67>-alpha</font> 0.9  <font color=#6c3e67>-font</font> {<font color=#6c3e67>-weight</font> bold <font color=#6c3e67>-size</font> 11} <font color=#6c3e67>-pause</font> 1000 <font color=#6c3e67>-fade</font> 1000  <font color=#6c3e67>-geometry</font> <font color=#1b1baa>$geo</font> <font color=#6c3e67>-bell</font> <font color=#1b1baa>$red</font> <font color=#6c3e67>-on</font> yes <font color=#6c3e67>-relief</font> groove]
@@ -1545,7 +1545,7 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> cs [<font color=#1b1baa>$obPav</font> csCurrent]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$cs</font>&gt;-1} {
     <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$obPav</font> csGet <font color=#1b1baa>$cs</font>] cfg2 cfg1 cbg2 cbg1 cfhh - - - - - - - - - - - - fgmark
-    BAR configure <font color=#6c3e67>-fgmark</font> <font color=#1b1baa>$fgmark</font> <font color=#6c3e67>-comlist</font> {::alited::bar::SelFile <font color=#8b2a0e>&quot;%t&quot;</font>}
+    BAR configure <font color=#6c3e67>-fgmark</font> <font color=#1b1baa>$fgmark</font> <font color=#6c3e67>-comlist</font> {::alited::bar::SelFile %ID <font color=#8b2a0e>&quot;%t&quot;</font>}
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::bar::CompareByDate'>CompareByDate</a><span class='ns_scope'> [<a href="alited.html#::alited::bar" title="::alited::bar" class='ruff_cmd'>::alited::bar</a>]</span><span class='tinylink'><a href='alited.html#::alited::bar'>bar</a>, <a href='#top'>Top</a></span></h4>
@@ -1970,6 +1970,9 @@ padding: 0%;
     ::alited::main::UpdateGutter
     ::alited::favor::SkipVisited no
   }
+  <b><font color=#3a6797>if</font></b> {![alited::file::IsNoName <font color=#1b1baa>$fname</font>] && ![<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fname</font>]} {
+    <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> alited::Balloon1 <font color=#1b1baa>$fname</font>]
+  }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::bar::PopupTip'>PopupTip</a><span class='ns_scope'> [<a href="alited.html#::alited::bar" title="::alited::bar" class='ruff_cmd'>::alited::bar</a>]</span><span class='tinylink'><a href='alited.html#::alited::bar'>bar</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -2030,17 +2033,21 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::bar::SelFile'>SelFile</a><span class='ns_scope'> [<a href="alited.html#::alited::bar" title="::alited::bar" class='ruff_cmd'>::alited::bar</a>]</span><span class='tinylink'><a href='alited.html#::alited::bar'>bar</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Open a file from the file list even when it's closed (the file list may be open due to -tearoff option).</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>SelFile</span> <span class='ruff_arg'>tip</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>SelFile</span> <span class='ruff_arg'>TID tip</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>TID</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
 <tr><td class='ruff_defitem'><code><code>tip</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_bar_SelFile' href="javascript:toggleSource('alited_bar_SelFile')">Show source</a></p>
-<div id='alited_bar_SelFile' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::bar::SelFile {tip} {
+<div id='alited_bar_SelFile' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::bar::SelFile {TID tip} {
   <i><font color=#4b5d50># Open a file from the file list even when it's closed</font></i>
   <i><font color=#4b5d50># (the file list may be open due to -tearoff option).</font></i>
 
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$tip</font> \n] fname
-  alited::file::OpenFile <font color=#1b1baa>$fname</font> yes
+  <b><font color=#3a6797>if</font></b> {[alited::file::OpenFile <font color=#1b1baa>$fname</font> yes] eq {}} {
+    BAR <font color=#1b1baa>$TID</font> show
+    <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> alited::Balloon1 <font color=#1b1baa>$fname</font>]
+  }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::bar::SelTab'>SelTab</a><span class='ns_scope'> [<a href="alited.html#::alited::bar" title="::alited::bar" class='ruff_cmd'>::alited::bar</a>]</span><span class='tinylink'><a href='alited.html#::alited::bar'>bar</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -12178,7 +12185,7 @@ padding: 0%;
     {.opc1 + L 1 1 {<font color=#6c3e67>-st</font> sw <font color=#6c3e67>-pady</font> 1} {::alited::pref::opc1 alited::pref::opcThemes {<font color=#6c3e67>-width</font> 21 <font color=#6c3e67>-compound</font> left <font color=#6c3e67>-image</font> alimg_gulls <font color=#6c3e67>-tip</font> {<font color=#6c3e67>-indexedtips</font> 5 <font color=#8b2a0e>&quot;-BALTIP <font color=#1b1baa>{$</font>alited::al(MC,needcs)<font color=#1b1baa>}</font> -MAXEXP 1&quot;</font>}} {}}}
     {.chbPrv + L 1 1 {<font color=#6c3e67>-padx</font> 20} {<font color=#6c3e67>-t</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>alited::al(MC,test)&quot;</font> <font color=#6c3e67>-var</font> alited::pref::preview <font color=#6c3e67>-com</font> {alited::pref::CheckTheming yes yes}}}
     {.labCS .labTheme T 1 1 {<font color=#6c3e67>-st</font> w <font color=#6c3e67>-pady</font> 1 <font color=#6c3e67>-padx</font> 3} {<font color=#6c3e67>-t</font> <font color=#8b2a0e>&quot;Color scheme:&quot;</font>}}
-    {.opc2 + L 1 1 {<font color=#6c3e67>-st</font> sw <font color=#6c3e67>-pady</font> 1} {::alited::pref::opcc alited::pref::opcColors {<font color=#6c3e67>-width</font> 21 <font color=#6c3e67>-compound</font> left <font color=#6c3e67>-image</font> alimg_color <font color=#6c3e67>-tip</font> {<font color=#6c3e67>-indexedtips</font>  0 {<font color=#1b1baa>$alited::al(MC,nocs)</font>}  2 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: awlight}  3 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: azure-light}  4 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: forest-light}  5 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: sun-valley-light}  26 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: sun-valley-dark}  27 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: awdark}  28 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: azure-dark}  29 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: forest-dark}  30 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: sun-valley-dark}  }} {alited::pref::opcToolPre %a}}}
+    {.opc2 + L 1 1 {<font color=#6c3e67>-st</font> sw <font color=#6c3e67>-pady</font> 1} {::alited::pref::opcc alited::pref::opcColors {<font color=#6c3e67>-width</font> 21 <font color=#6c3e67>-compound</font> left <font color=#6c3e67>-image</font> alimg_color <font color=#6c3e67>-tip</font> {<font color=#6c3e67>-indexedtips</font>  0 {<font color=#1b1baa>$alited::al(MC,nocs)</font>}  2 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: awlight}  3 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: azure-light}  4 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: forest-light}  5 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: sun-valley-light}  6 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: lightbrown}  26 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: sun-valley-dark}  27 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: awdark}  28 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: azure-dark}  29 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: forest-dark}  30 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: sun-valley-dark}  31 {<font color=#1b1baa>$alited::al(MC,fitcs)</font>: darkbrown}  }} {alited::pref::opcToolPre %a}}}
     {.labHue .labCS T 1 1 {<font color=#6c3e67>-st</font> w <font color=#6c3e67>-pady</font> 1 <font color=#6c3e67>-padx</font> 3} {<font color=#6c3e67>-t</font> <font color=#8b2a0e>&quot;Tint:&quot;</font>}}
     {.SpxHue + L 1 1 {<font color=#6c3e67>-st</font> sw <font color=#6c3e67>-pady</font> 1} {<font color=#6c3e67>-tvar</font> alited::al(INI,HUE) <font color=#6c3e67>-from</font> -50 <font color=#6c3e67>-to</font> 50 <font color=#6c3e67>-tip</font> {<font color=#1b1baa>$alited::al(MC,hue)</font>}}}
     {seh_ .labHue T 1 2 {<font color=#6c3e67>-pady</font> 4}}
@@ -12893,7 +12900,7 @@ padding: 0%;
   <i><font color=#4b5d50># Returns a list of names of main settings.</font></i>
 
   fetchVars
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>array</font></b> name al]
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>array</font></b> names al]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::pref::SaveSettings'>SaveSettings</a><span class='ns_scope'> [<a href="alited.html#::alited::pref" title="::alited::pref" class='ruff_cmd'>::alited::pref</a>]</span><span class='tinylink'><a href='alited.html#::alited::pref'>pref</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -14534,7 +14541,7 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> N [<b><font color=#3a6797>llength</font></b> [alited::bar::BAR listFlag m]]]} {
     <b><font color=#3a6797>set</font></b> msg [msgcat::mc <font color=#8b2a0e>&quot;All modified files (%n) will be saved.\n\nDo you agree?&quot;</font>]
     <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$N</font>] <font color=#1b1baa>$msg</font>]
-    <b><font color=#3a6797>if</font></b> {![alited::msg yesno ques <font color=#1b1baa>$msg</font> NO <font color=#6c3e67>-centerme</font> <font color=#1b1baa>$win</font>]} <b><font color=#ca14ca>return</font></b>
+    <b><font color=#3a6797>if</font></b> {![alited::msg yesno ques <font color=#1b1baa>$msg</font> YES <font color=#6c3e67>-centerme</font> <font color=#1b1baa>$win</font>]} <b><font color=#ca14ca>return</font></b>
   }
   <b><font color=#3a6797>if</font></b> {![alited::file::SaveAll]} {
     <font color=#1b1baa>$obDl2</font> res <font color=#1b1baa>$win</font> 0
@@ -14543,7 +14550,7 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> N [<b><font color=#3a6797>llength</font></b> [alited::bar::BAR cget <font color=#6c3e67>-select</font>]]]} {
     <b><font color=#3a6797>set</font></b> msg [msgcat::mc <font color=#8b2a0e>&quot;All selected files (%n) will remain open\nin the project you are switching to.\n\nDo you agree?&quot;</font>]
     <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$N</font>] <font color=#1b1baa>$msg</font>]
-    <b><font color=#3a6797>if</font></b> {![alited::msg yesno ques <font color=#1b1baa>$msg</font> NO <font color=#6c3e67>-centerme</font> <font color=#1b1baa>$win</font>]} <b><font color=#ca14ca>return</font></b>
+    <b><font color=#3a6797>if</font></b> {![alited::msg yesno ques <font color=#1b1baa>$msg</font> YES <font color=#6c3e67>-centerme</font> <font color=#1b1baa>$win</font>]} <b><font color=#ca14ca>return</font></b>
   }
   ::apave::withdraw <font color=#1b1baa>$win</font>
   <b><font color=#3a6797>set</font></b> curinfo(_NO2ENT) 1
@@ -18075,9 +18082,9 @@ README.md}
     <b><font color=#3a6797>set</font></b> indent2 [::apave::obj leadingSpaces <font color=#1b1baa>$line2</font>]  ;<i><font color=#4b5d50># indentation of the insert point</font></i>
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>set</font></b> posi [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$posi</font>)}]
-    <b><font color=#3a6797>set</font></b> linei [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$posi</font>.0 <font color=#1b1baa>$posi</font>.end]
+    <b><font color=#3a6797>set</font></b> linei [<b><font color=#3a6797>string</font></b> trimright [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$posi</font>.0 <font color=#1b1baa>$posi</font>.end]]
     <b><font color=#3a6797>set</font></b> indent2 [::apave::obj leadingSpaces <font color=#1b1baa>$linei</font>]
-    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$indent2</font>} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$linei</font> eq {}} {
       <b><font color=#3a6797>foreach</font></b> i {+1 +2 -1 -2} {
         <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>expr</font></b> <font color=#1b1baa>$posi$i</font>]
         <b><font color=#3a6797>set</font></b> ind [::apave::obj leadingSpaces [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$i</font>.0 <font color=#1b1baa>$i</font>.end]]
