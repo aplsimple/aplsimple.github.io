@@ -518,11 +518,11 @@ padding: 0%;
   }
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$ask</font> || !<font color=#1b1baa>$al(INI,confirmexit)</font> ||  [msg okcancel info [msgcat::mc {Quitting alited.}] OK {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$timo</font>]} {
     <b><font color=#3a6797>if</font></b> {[alited::file::AllSaved]} {
-      alited::find::_close
-      alited::tool::_close
-      <b><font color=#3a6797>catch</font></b> {alited::check::Cancel}
-      <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$::alited::al(FN2WINDOW)</font>}
-      <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> [<font color=#1b1baa>$obFN2</font> dlgPath]}
+      alited::tool::_close                     ;<i><font color=#4b5d50># close all of the</font></i>
+      <b><font color=#3a6797>catch</font></b> {alited::check::Cancel}            ;<i><font color=#4b5d50># possibly open</font></i>
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$::alited::find::win</font>}     ;<i><font color=#4b5d50># non-modal</font></i>
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$::alited::find::win2</font>}    ;<i><font color=#4b5d50># windows</font></i>
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$::alited::al(FN2WINDOW)</font>} ;<i><font color=#4b5d50># (and its possible children)</font></i>
       <font color=#1b1baa>$obPav</font> res <font color=#1b1baa>$al(WIN)</font> <font color=#1b1baa>$res</font>
       ::apave::endWM
     }
@@ -827,16 +827,18 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::Msg'>Msg</a><span class='ns_scope'> [<a href="alited.html#::alited" title="::alited" class='ruff_cmd'>::alited</a>]</span><span class='tinylink'><a href='alited.html#::alited'>alited</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Shows a message in text box.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>Msg</span> <span class='ruff_arg'>inf</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>Msg</span> <span class='ruff_arg'>inf ?ic?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>inf</code></code></td><td class='ruff_defitem'>the message</td></tr>
+<tr><td class='ruff_defitem'><code><code>ic</code></code></td><td class='ruff_defitem'>icon; <i>optional, default</i> <code>info</code></td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_Msg' href="javascript:toggleSource('alited_Msg')">Show source</a></p>
-<div id='alited_Msg' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::Msg {inf} {
+<div id='alited_Msg' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::Msg {inf {ic info}} {
   <i><font color=#4b5d50># Shows a message in text box.</font></i>
   <i><font color=#4b5d50>#   inf - the message</font></i>
+  <i><font color=#4b5d50>#   ic - icon</font></i>
 
-  msg ok info <font color=#1b1baa>$inf</font> <font color=#6c3e67>-text</font> 1 <font color=#6c3e67>-w</font> 50
+  msg ok <font color=#1b1baa>$ic</font> <font color=#1b1baa>$inf</font> <font color=#6c3e67>-text</font> 1 <font color=#6c3e67>-w</font> 50
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::msg'>msg</a><span class='ns_scope'> [<a href="alited.html#::alited" title="::alited" class='ruff_cmd'>::alited</a>]</span><span class='tinylink'><a href='alited.html#::alited'>alited</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -971,6 +973,7 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> al(MC,openofdir)   [msgcat::mc <font color=#8b2a0e>&quot;Open All Tcl Files of \&quot;%n\&quot;&quot;</font>]
   <b><font color=#3a6797>set</font></b> al(MC,delitem)     [msgcat::mc <font color=#8b2a0e>&quot;Remove \&quot;%n\&quot;\nfrom \&quot;%f\&quot;?&quot;</font>]
   <b><font color=#3a6797>set</font></b> al(MC,delfile)     [msgcat::mc <font color=#8b2a0e>&quot;Delete \&quot;%f\&quot;?&quot;</font>]
+  <b><font color=#3a6797>set</font></b> al(MC,rewfile)     [msgcat::mc <font color=#8b2a0e>&quot;Rewrite \&quot;%f\&quot;?&quot;</font>]
   <b><font color=#3a6797>set</font></b> al(MC,nodelopen)   [msgcat::mc {An open file can not be deleted:}]
   <b><font color=#3a6797>set</font></b> al(MC,modiffile)   [msgcat::mc <font color=#8b2a0e>&quot;File \&quot;%f\&quot; was modified by some application.\n\nCancel your edition and reload the file?&quot;</font>]
   <b><font color=#3a6797>set</font></b> al(MC,wasdelfile)  [msgcat::mc <font color=#8b2a0e>&quot;File \&quot;%f\&quot; was deleted by some application.\n\nSave the file?&quot;</font>]
@@ -993,6 +996,7 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> al(MC,on)          [msgcat::mc on]
   <b><font color=#3a6797>set</font></b> al(MC,test)        [msgcat::mc Test]
   <b><font color=#3a6797>set</font></b> al(MC,restart)     [msgcat::mc <font color=#8b2a0e>&quot;For the settings to be active,\nalited application should be restarted.&quot;</font>]
+  <b><font color=#3a6797>set</font></b> al(MC,incorrname)  [msgcat::mc {Incorrect name: <font color=#8b2a0e>&quot;%n&quot;</font>}]
 
   <i><font color=#4b5d50>## _  menu items _ ##</font></i>
   <b><font color=#3a6797>set</font></b> al(MC,lookdecl)    [msgcat::mc {Look for Declaration}]
@@ -1001,6 +1005,7 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> al(MC,tomatched)   [msgcat::mc {To Matched Bracket}]
   <b><font color=#3a6797>set</font></b> al(MC,hlcolors)    [msgcat::mc {Display Colors}]
   <b><font color=#3a6797>set</font></b> al(MC,playtkl)     [msgcat::mc {Play Macro}]
+  <b><font color=#3a6797>set</font></b> al(MC,quickmacro)  {Quick macro}
 
   <i><font color=#4b5d50>## _  project options _ ##</font></i>
   <b><font color=#3a6797>set</font></b> al(MC,Ign:)        [msgcat::mc {Skip subdirectories:}]
@@ -1157,6 +1162,7 @@ padding: 0%;
   <i><font color=#4b5d50># Removes spec.characters from a file/dir name (sort of normalizing it).</font></i>
   <i><font color=#4b5d50>#   name - the name of file/dir</font></i>
 
+  <b><font color=#3a6797>set</font></b> name [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$name</font>]
   <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b>  * _ ? _ ~ _ / _ \\ _ \{ _ \} _ \[ _ \] _ \t _ \n _ \r _  | _ &lt; _ &gt; _ & _ , _ : _ \; _ \&quot; _ ' _ ` _] <font color=#1b1baa>$name</font>]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::NormalizeName'>NormalizeName</a><span class='ns_scope'> [<a href="alited.html#::alited" title="::alited" class='ruff_cmd'>::alited</a>]</span><span class='tinylink'><a href='alited.html#::alited'>alited</a>, <a href='#top'>Top</a></span></h4>
@@ -2184,6 +2190,21 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {![BAR isTab <font color=#1b1baa>$TID</font>]} <b><font color=#ca14ca>return</font></b>
   BAR <font color=#1b1baa>$TID</font> configure {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::bar::SleepTreeTips'>SleepTreeTips</a><span class='ns_scope'> [<a href="alited.html#::alited::bar" title="::alited::bar" class='ruff_cmd'>::alited::bar</a>]</span><span class='tinylink'><a href='alited.html#::alited::bar'>bar</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Hides and switches the tree's tips temporarily off. Cause: hovering over the tree may show its tips when they are unnecessary.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>SleepTreeTips</span> </div>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_bar_SleepTreeTips' href="javascript:toggleSource('alited_bar_SleepTreeTips')">Show source</a></p>
+<div id='alited_bar_SleepTreeTips' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::bar::SleepTreeTips {} {
+  <i><font color=#4b5d50># Hides and switches the tree's tips temporarily off.</font></i>
+  <i><font color=#4b5d50># Cause: hovering over the tree may show its tips when they are unnecessary.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>set</font></b> _ <font color=#1b1baa>$al(TIPS,Tree)</font>
+  <b><font color=#3a6797>set</font></b> al(TIPS,Tree) 0
+  ::baltip hide [<font color=#1b1baa>$obPav</font> Tree]
+  <b><font color=#3a6797>after</font></b> 1000 <font color=#8b2a0e>&quot;set ::alited::al(TIPS,Tree) <font color=#1b1baa>$</font>_&quot;</font>
+}<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::bar::Sort'>Sort</a><span class='ns_scope'> [<a href="alited.html#::alited::bar" title="::alited::bar" class='ruff_cmd'>::alited::bar</a>]</span><span class='tinylink'><a href='alited.html#::alited::bar'>bar</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Sorts tabs.</p>
@@ -3181,25 +3202,78 @@ padding: 0%;
 <p class='ruff'>Dispatches macro actions.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>DispatchMacro</span> <span class='ruff_arg'>?mode?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td class='ruff_defitem'><code><code>mode</code></code></td><td class='ruff_defitem'>Not documented; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>mode</code></code></td><td class='ruff_defitem'>what to do; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_edit_DispatchMacro' href="javascript:toggleSource('alited_edit_DispatchMacro')">Show source</a></p>
 <div id='alited_edit_DispatchMacro' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::edit::DispatchMacro {{mode {}}} {
   <i><font color=#4b5d50># Dispatches macro actions.</font></i>
+  <i><font color=#4b5d50>#   mode - what to do</font></i>
 
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   <b><font color=#3a6797>variable</font></b> macrosmode
-  InitMacro
+  alited::bar::SleepTreeTips
+  MacroInit
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mode</font> ne {}} {<b><font color=#3a6797>set</font></b> macrosmode <font color=#1b1baa>$mode</font>}
-  <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$macrosmode</font> {
-    <font color=#8b2a0e>&quot;recquick&quot;</font> {
-    }
-    <font color=#8b2a0e>&quot;quickrecorded&quot;</font> {
-      QuickMacro <font color=#8b2a0e>&quot;playquick&quot;</font>
-    }
-    <b><font color=#3a6797>default</font></b> {
-      QuickMacro
+  <b><font color=#3a6797>switch</font></b> <font color=#6c3e67>-glob</font> <font color=#1b1baa>$macrosmode</font> {
+    <font color=#8b2a0e>&quot;item*&quot;</font>    {InputMacro [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$macrosmode</font> 4 end]}
+    <font color=#8b2a0e>&quot;record&quot;</font>   {::playtkl::end; <b><font color=#3a6797>set</font></b> macrosmode <font color=#8b2a0e>&quot;play&quot;</font>}
+    <font color=#8b2a0e>&quot;play&quot;</font>     {DoMacro play}
+    <font color=#8b2a0e>&quot;quickrec&quot;</font> {DoMacro record <font color=#1b1baa>$al(MC,quickmacro)</font>}
+    <font color=#8b2a0e>&quot;init&quot;</font>     {DoMacro play <font color=#1b1baa>$al(activemacro)</font>}
+  }
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::edit::DoMacro'>DoMacro</a><span class='ns_scope'> [<a href="alited.html#::alited::edit" title="::alited::edit" class='ruff_cmd'>::alited::edit</a>]</span><span class='tinylink'><a href='alited.html#::alited::edit'>edit</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Plays or records a macro.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>DoMacro</span> <span class='ruff_arg'>mode ?fname?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>mode</code></code></td><td class='ruff_defitem'>play / record</td></tr>
+<tr><td class='ruff_defitem'><code><code>fname</code></code></td><td class='ruff_defitem'>name of recorded file; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_edit_DoMacro' href="javascript:toggleSource('alited_edit_DoMacro')">Show source</a></p>
+<div id='alited_edit_DoMacro' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::edit::DoMacro {mode {fname {}}} {
+  <i><font color=#4b5d50># Plays or records a macro.</font></i>
+  <i><font color=#4b5d50>#   mode - play / record</font></i>
+  <i><font color=#4b5d50>#   fname - name of recorded file</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> macrosmode
+  MacroInit
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$macrosmode</font> eq <font color=#8b2a0e>&quot;record&quot;</font>} {  ;<i><font color=#4b5d50># repeated recording?</font></i>
+    ::playtkl::end
+    WatchMacro
+    <b><font color=#ca14ca>return</font></b> no
+  }
+  <b><font color=#3a6797>set</font></b> name [<b><font color=#3a6797>file</font></b> rootname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> fname [MacroFile <font color=#1b1baa>$fname</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mode</font> eq <font color=#8b2a0e>&quot;play&quot;</font> && ![<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fname</font>]} {
+      alited::Balloon1 <font color=#1b1baa>$fname</font>
+      <b><font color=#ca14ca>return</font></b> no
     }
   }
+  <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+  <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;focus <font color=#1b1baa>$</font>wtxt&quot;</font>
+  <b><font color=#3a6797>set</font></b> macrosmode <font color=#1b1baa>$mode</font>
+  <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$mode</font> {
+    <font color=#8b2a0e>&quot;record&quot;</font> {
+      <b><font color=#3a6797>set</font></b> al(activemacro) <font color=#1b1baa>$name</font>
+      <b><font color=#3a6797>after</font></b> 100 [<b><font color=#3a6797>list</font></b> ::playtkl::record <font color=#1b1baa>$fname</font> <font color=#1b1baa>$al(acc_16)</font>]
+      <b><font color=#3a6797>after</font></b> 200 alited::edit::WatchMacro
+      alited::Message <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>msgcat::mc Recording:<font color=#1b1baa>]</font> <font color=#1b1baa>$</font>name&quot;</font> 5; <b><font color=#134070>bell</font></b>
+      <b><font color=#134070>bell</font></b>
+    }
+    <font color=#8b2a0e>&quot;play&quot;</font> {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> ne {}} {
+        alited::Message <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>msgcat::mc Playing:<font color=#1b1baa>]</font> <font color=#1b1baa>$</font>name&quot;</font> 3
+      } <b><font color=#3a6797>else</font></b> {
+        alited::Message {}
+      }
+      ::apave::undoIn <font color=#1b1baa>$wtxt</font>
+      ::playtkl::replay <font color=#1b1baa>$fname</font> <font color=#8b2a0e>&quot;::apave::undoOut <font color=#1b1baa>$</font>wtxt&quot;</font> [<b><font color=#3a6797>list</font></b> *frAText.text* <font color=#1b1baa>$wtxt</font>]
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> yes
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::edit::HideColorValues'>HideColorValues</a><span class='ns_scope'> [<a href="alited.html#::alited::edit" title="::alited::edit" class='ruff_cmd'>::alited::edit</a>]</span><span class='tinylink'><a href='alited.html#::alited::edit'>edit</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -3245,22 +3319,79 @@ padding: 0%;
   }
   alited::main::HighlightLine
 }<br><br></code></pre></div>
-</div><br><br><br><h4 class='ruffproc'><a name='::alited::edit::InitMacro'>InitMacro</a><span class='ns_scope'> [<a href="alited.html#::alited::edit" title="::alited::edit" class='ruff_cmd'>::alited::edit</a>]</span><span class='tinylink'><a href='alited.html#::alited::edit'>edit</a>, <a href='#top'>Top</a></span></h4>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::edit::InputMacro'>InputMacro</a><span class='ns_scope'> [<a href="alited.html#::alited::edit" title="::alited::edit" class='ruff_cmd'>::alited::edit</a>]</span><span class='tinylink'><a href='alited.html#::alited::edit'>edit</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
-<p class='ruff'>Initializes macro stuff.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>InitMacro</span> </div>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_edit_InitMacro' href="javascript:toggleSource('alited_edit_InitMacro')">Show source</a></p>
-<div id='alited_edit_InitMacro' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::edit::InitMacro {} {
-  <i><font color=#4b5d50># Initializes macro stuff.</font></i>
+<p class='ruff'>Enters/changes a macro.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>InputMacro</span> <span class='ruff_arg'>idx</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>idx</code></code></td><td class='ruff_defitem'>index in macro menu</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_edit_InputMacro' href="javascript:toggleSource('alited_edit_InputMacro')">Show source</a></p>
+<div id='alited_edit_InputMacro' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::edit::InputMacro {idx} {
+  <i><font color=#4b5d50># Enters/changes a macro.</font></i>
+  <i><font color=#4b5d50>#   idx - index in macro menu</font></i>
 
-  <b><font color=#3a6797>variable</font></b> macrosfile
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> command ::playtkl::play] eq {}} {
-    <b><font color=#ca14ca>namespace</font></b> eval :: {
-      <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$alited::LIBDIR</font> playtkl playtkl.tcl]
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obDl2 obDl2
+  <b><font color=#3a6797>variable</font></b> macrosmode
+  <b><font color=#3a6797>set</font></b> m <font color=#1b1baa>$al(MENUEDIT)</font>.playtkl
+  <b><font color=#3a6797>incr</font></b> idx ;<i><font color=#4b5d50># for -tearoff menu</font></i>
+  <b><font color=#3a6797>set</font></b> al(tmp) [<font color=#1b1baa>$m</font> entrycget <font color=#1b1baa>$idx</font> <font color=#6c3e67>-label</font>]
+  <b><font color=#3a6797>set</font></b> dir [<b><font color=#3a6797>file</font></b> dirname [MacroFile .]]
+  <b><font color=#3a6797>set</font></b> win <font color=#1b1baa>$al(WIN)</font>.macro
+  <b><font color=#3a6797>set</font></b> head [msgcat::mc <font color=#8b2a0e>&quot;The macro is updated at its recording.\nPress %s to play it.&quot;</font>]
+  <b><font color=#3a6797>set</font></b> head [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %s <font color=#1b1baa>$al(acc_16)</font>] <font color=#1b1baa>$head</font>]
+  <font color=#1b1baa>$obDl2</font> makeWindow <font color=#1b1baa>$win</font>.fra <font color=#1b1baa>$al(MC,playtkl)</font>
+  <font color=#1b1baa>$obDl2</font> paveWindow <font color=#1b1baa>$win</font>.fra [<b><font color=#3a6797>list</font></b>  [<b><font color=#3a6797>list</font></b> lab - - 1 7 {<font color=#6c3e67>-padx</font> 4} [<b><font color=#3a6797>list</font></b> <font color=#6c3e67>-t</font> <font color=#1b1baa>$head</font>]]  [<b><font color=#3a6797>list</font></b> fil + T 1 7 {<font color=#6c3e67>-pady</font> 4 <font color=#6c3e67>-padx</font> 4 <font color=#6c3e67>-st</font> ew}  <font color=#8b2a0e>&quot;-tvar alited::al(tmp) -w 30 -initialdir <font color=#1b1baa>{</font>-<font color=#1b1baa>$</font>dir<font color=#1b1baa>}</font> -filetypes <font color=#1b1baa>{{{</font>Macros<font color=#1b1baa>}</font> <font color=#1b1baa>$</font>al(macroext)<font color=#1b1baa>}</font> <font color=#1b1baa>{{</font>All files<font color=#1b1baa>}</font> .*<font color=#1b1baa>}}</font>&quot;</font>]  {seh + T 1 7 {<font color=#6c3e67>-pady</font> 4}}  {fra + T 1 3 {}}  {.but1 - - - - {<font color=#6c3e67>-padx</font> 4} {<font color=#6c3e67>-com</font> 1 <font color=#6c3e67>-tip</font> <font color=#8b2a0e>&quot;Play Macro&quot;</font> <font color=#6c3e67>-image</font> alimg_run}}  {.but2 + L 1 1 {} {<font color=#6c3e67>-com</font> 2 <font color=#6c3e67>-tip</font> <font color=#8b2a0e>&quot;Record Macro&quot;</font> <font color=#6c3e67>-image</font> alimg_change}}  {.but3 + L 1 1 {<font color=#6c3e67>-padx</font> 4} {<font color=#6c3e67>-com</font> 3 <font color=#6c3e67>-tip</font> <font color=#8b2a0e>&quot;Delete Macro&quot;</font> <font color=#6c3e67>-image</font> alimg_delete}}  {h_ fra L 1 3 {<font color=#6c3e67>-st</font> ew}}  {but + L 1 1 {<font color=#6c3e67>-st</font> e} {<font color=#6c3e67>-com</font> 0 <font color=#6c3e67>-t</font> Close}}  ]
+  <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> bind <font color=#1b1baa>$win</font> &lt;<font color=#1b1baa>$al(acc_16)</font>&gt; <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>win.fra.fra.but1 invoke&quot;</font>]
+  <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$obDl2</font> showModal <font color=#1b1baa>$win</font> <font color=#6c3e67>-resizable</font> {0 0} <font color=#6c3e67>-onclose</font> destroy  <font color=#6c3e67>-geometry</font> pointer+-22+-132 <font color=#6c3e67>-focus</font> <font color=#1b1baa>$win</font>.fra.entfil]
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$win</font>}
+  <b><font color=#3a6797>set</font></b> name [alited::NormalizeFileName [<b><font color=#3a6797>file</font></b> root [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$al(tmp)</font>]]]
+  <b><font color=#3a6797>unset</font></b> al(tmp)
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$res</font>} {
+    <b><font color=#3a6797>set</font></b> macrosmode <font color=#8b2a0e>&quot;init&quot;</font>
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$name</font>]&gt;99 || <font color=#1b1baa>$name</font> eq {}} {
+    alited::Msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$name</font>] <font color=#1b1baa>$al(MC,incorrname)</font>] err
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <b><font color=#3a6797>set</font></b> fname [MacroFile <font color=#1b1baa>$name</font>]
+  <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$res</font> {
+    1 {
+      <b><font color=#3a6797>if</font></b> {[DoMacro play <font color=#1b1baa>$name</font>]} {
+        MacroMenu <font color=#1b1baa>$name</font> no
+        <b><font color=#3a6797>set</font></b> macrosmode <font color=#8b2a0e>&quot;play&quot;</font>
+      }
+    }
+    2 {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fname</font>]} {
+        <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists al(macrotorew)] || <font color=#1b1baa>$al(macrotorew)</font>&lt;10} {
+          <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %f [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]] <font color=#1b1baa>$al(MC,rewfile)</font>]
+          <b><font color=#3a6797>set</font></b> al(macrotorew)  [alited::msg yesno warn <font color=#1b1baa>$msg</font> NO <font color=#6c3e67>-ch</font> <font color=#1b1baa>$al(MC,noask)</font> <font color=#6c3e67>-geometry</font> pointer]
+        }
+        <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(macrotorew)</font>} <b><font color=#ca14ca>return</font></b>
+      }
+      DoMacro record <font color=#1b1baa>$name</font>
+      }
+    3 {
+      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fname</font>]} {
+        alited::Balloon1 <font color=#1b1baa>$fname</font>
+        <b><font color=#ca14ca>return</font></b>
+      }
+      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists al(macrotodel)] || <font color=#1b1baa>$al(macrotodel)</font>&lt;10} {
+        <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %f [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]] <font color=#1b1baa>$al(MC,delfile)</font>]
+        <b><font color=#3a6797>set</font></b> al(macrotodel)  [alited::msg yesno warn <font color=#1b1baa>$msg</font> NO <font color=#6c3e67>-ch</font> <font color=#1b1baa>$al(MC,noask)</font> <font color=#6c3e67>-geometry</font> pointer]
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(macrotodel)</font>} {
+        <b><font color=#3a6797>file</font></b> delete <font color=#1b1baa>$fname</font>
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$name</font> eq <font color=#1b1baa>$al(activemacro)</font>} {
+          <b><font color=#3a6797>set</font></b> al(activemacro) {}
+        }
+        <b><font color=#3a6797>set</font></b> macrosmode <font color=#8b2a0e>&quot;init&quot;</font>
+        <b><font color=#3a6797>after</font></b> idle alited::menu::FillMacroItems
+      }
     }
   }
-  ::playtkl::inform no
-  <b><font color=#3a6797>set</font></b> macrosfile [alited::TmpFile playtkl.log]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::edit::InvertBg'>InvertBg</a><span class='ns_scope'> [<a href="alited.html#::alited::edit" title="::alited::edit" class='ruff_cmd'>::alited::edit</a>]</span><span class='tinylink'><a href='alited.html#::alited::edit'>edit</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -3285,6 +3416,59 @@ padding: 0%;
     (<font color=#1b1baa>$r</font>+<font color=#1b1baa>$g</font>+<font color=#1b1baa>$b</font>)&lt;300 ? 255 : 0}]
   <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>string</font></b> toupper [<b><font color=#3a6797>format</font></b> <font color=#8b2a0e>&quot;#%02x%02x%02x&quot;</font> <font color=#1b1baa>$c</font> <font color=#1b1baa>$c</font> <font color=#1b1baa>$c</font>]]
   <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font> <font color=#1b1baa>$clr</font>]
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::edit::MacroFile'>MacroFile</a><span class='ns_scope'> [<a href="alited.html#::alited::edit" title="::alited::edit" class='ruff_cmd'>::alited::edit</a>]</span><span class='tinylink'><a href='alited.html#::alited::edit'>edit</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Gets a file name for a macro.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>MacroFile</span> <span class='ruff_arg'>name</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>name</code></code></td><td class='ruff_defitem'>macro's name</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_edit_MacroFile' href="javascript:toggleSource('alited_edit_MacroFile')">Show source</a></p>
+<div id='alited_edit_MacroFile' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::edit::MacroFile {name} {
+  <i><font color=#4b5d50># Gets a file name for a macro.</font></i>
+  <i><font color=#4b5d50>#   name - macro's name</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al USERDIR USERDIR
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> extension <font color=#1b1baa>$name</font>] ne <font color=#1b1baa>$al(macroext)</font>} {
+    <b><font color=#3a6797>append</font></b> name <font color=#1b1baa>$al(macroext)</font>
+  }
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$USERDIR</font> macro [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$name</font>]]
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::edit::MacroInit'>MacroInit</a><span class='ns_scope'> [<a href="alited.html#::alited::edit" title="::alited::edit" class='ruff_cmd'>::alited::edit</a>]</span><span class='tinylink'><a href='alited.html#::alited::edit'>edit</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Initializes macro stuff.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>MacroInit</span> </div>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_edit_MacroInit' href="javascript:toggleSource('alited_edit_MacroInit')">Show source</a></p>
+<div id='alited_edit_MacroInit' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::edit::MacroInit {} {
+  <i><font color=#4b5d50># Initializes macro stuff.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> command ::playtkl::play] eq {}} {
+    <b><font color=#ca14ca>namespace</font></b> eval :: {
+      <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$alited::LIBDIR</font> playtkl playtkl.tcl]
+    }
+  }
+  ::playtkl::inform no
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::edit::MacroMenu'>MacroMenu</a><span class='ns_scope'> [<a href="alited.html#::alited::edit" title="::alited::edit" class='ruff_cmd'>::alited::edit</a>]</span><span class='tinylink'><a href='alited.html#::alited::edit'>edit</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Recreate macros' menu</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>MacroMenu</span> <span class='ruff_arg'>name doit</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>name</code></code></td><td class='ruff_defitem'>current macro</td></tr>
+<tr><td class='ruff_defitem'><code><code>doit</code></code></td><td class='ruff_defitem'>yes if update anyway</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_edit_MacroMenu' href="javascript:toggleSource('alited_edit_MacroMenu')">Show source</a></p>
+<div id='alited_edit_MacroMenu' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::edit::MacroMenu {name doit} {
+  <i><font color=#4b5d50># Recreate macros' menu</font></i>
+  <i><font color=#4b5d50>#   name - current macro</font></i>
+  <i><font color=#4b5d50>#   doit - yes if update anyway</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$doit</font> || <font color=#1b1baa>$al(activemacro)</font> ne <font color=#1b1baa>$name</font>} {
+    <b><font color=#3a6797>set</font></b> al(activemacro) <font color=#1b1baa>$name</font>
+    alited::menu::FillMacroItems
+  }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::edit::Modified'>Modified</a><span class='ns_scope'> [<a href="alited.html#::alited::edit" title="::alited::edit" class='ruff_cmd'>::alited::edit</a>]</span><span class='tinylink'><a href='alited.html#::alited::edit'>edit</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -3369,33 +3553,6 @@ padding: 0%;
     }
   }
   alited::indent::normalize
-}<br><br></code></pre></div>
-</div><br><br><br><h4 class='ruffproc'><a name='::alited::edit::QuickMacro'>QuickMacro</a><span class='ns_scope'> [<a href="alited.html#::alited::edit" title="::alited::edit" class='ruff_cmd'>::alited::edit</a>]</span><span class='tinylink'><a href='alited.html#::alited::edit'>edit</a>, <a href='#top'>Top</a></span></h4>
-<div style='clear:both;'></div>
-<p class='ruff'>Creates a quick macro.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>QuickMacro</span> <span class='ruff_arg'>?mode?</span></div>
-<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td class='ruff_defitem'><code><code>mode</code></code></td><td class='ruff_defitem'>Not documented; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
-</table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_edit_QuickMacro' href="javascript:toggleSource('alited_edit_QuickMacro')">Show source</a></p>
-<div id='alited_edit_QuickMacro' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::edit::QuickMacro {{mode {}}} {
-  <i><font color=#4b5d50># Creates a quick macro.</font></i>
-
-  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
-  <b><font color=#3a6797>variable</font></b> macrosmode
-  <b><font color=#3a6797>variable</font></b> macrosfile
-  InitMacro
-  <b><font color=#3a6797>switch</font></b> <font color=#6c3e67>-exact</font> <font color=#1b1baa>$mode</font> {
-    <font color=#8b2a0e>&quot;&quot;</font> {
-      <b><font color=#3a6797>set</font></b> macrosmode <font color=#8b2a0e>&quot;recquick&quot;</font>
-      <b><font color=#3a6797>after</font></b> 100 [<b><font color=#3a6797>list</font></b> ::playtkl::record <font color=#1b1baa>$macrosfile</font> <font color=#1b1baa>$al(acc_16)</font>]
-      <b><font color=#3a6797>after</font></b> 300 alited::edit::WatchMacro
-      <b><font color=#134070>bell</font></b>
-    }
-    <font color=#8b2a0e>&quot;playquick&quot;</font> {
-      ::playtkl::replay
-    }
-  }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::edit::RemoveTrailWhites'>RemoveTrailWhites</a><span class='ns_scope'> [<a href="alited.html#::alited::edit" title="::alited::edit" class='ruff_cmd'>::alited::edit</a>]</span><span class='tinylink'><a href='alited.html#::alited::edit'>edit</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -3642,12 +3799,15 @@ padding: 0%;
 <div id='alited_edit_WatchMacro' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::edit::WatchMacro {} {
   <i><font color=#4b5d50># Watch the end of recording.</font></i>
 
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   <b><font color=#3a6797>variable</font></b> macrosmode
   <b><font color=#3a6797>if</font></b> {[::playtkl::isend]} {
-    <b><font color=#3a6797>set</font></b> macrosmode <font color=#8b2a0e>&quot;quickrecorded&quot;</font>
+    alited::Message {Recording: done} 5; <b><font color=#134070>bell</font></b>
+    MacroMenu <font color=#1b1baa>$al(activemacro)</font> yes
+    <b><font color=#3a6797>set</font></b> macrosmode <font color=#8b2a0e>&quot;play&quot;</font>
     <b><font color=#134070>bell</font></b>
   } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>after</font></b> 300 alited::edit::WatchMacro
+    <b><font color=#3a6797>after</font></b> 200 alited::edit::WatchMacro
   }
 }<br><br></code></pre></div>
 </div><br><br><h1 class='ruff'><a name='::alited::favor'></a>::alited::favor<span class='tinylink'><a href='#top'>Top</a></span></h1>
@@ -6605,19 +6765,7 @@ padding: 0%;
 <div style='clear:both;'></div>
 <br><h2 class='ruff'><a name='::alited::find-Commands'></a>Commands<span class='tinylink'><a href='alited.html#::alited::find'>find</a>, <a href='#top'>Top</a></span></h2>
 <div style='clear:both;'></div>
-<br><br><br><h4 class='ruffproc'><a name='::alited::find::_close'>_close</a><span class='ns_scope'> [<a href="alited.html#::alited::find" title="::alited::find" class='ruff_cmd'>::alited::find</a>]</span><span class='tinylink'><a href='alited.html#::alited::find'>find</a>, <a href='#top'>Top</a></span></h4>
-<div style='clear:both;'></div>
-<p class='ruff'>Closes Find/Replace dialogue.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>_close</span> </div>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_find__close' href="javascript:toggleSource('alited_find__close')">Show source</a></p>
-<div id='alited_find__close' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::find::_close {} {
-  <i><font color=#4b5d50># Closes Find/Replace dialogue.</font></i>
-
-  <b><font color=#3a6797>namespace</font></b> upvar ::alited obFND obFND
-  <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$::alited::find::win</font>}
-  ClearTags
-}<br><br></code></pre></div>
-</div><br><br><br><h4 class='ruffproc'><a name='::alited::find::_create'>_create</a><span class='ns_scope'> [<a href="alited.html#::alited::find" title="::alited::find" class='ruff_cmd'>::alited::find</a>]</span><span class='tinylink'><a href='alited.html#::alited::find'>find</a>, <a href='#top'>Top</a></span></h4>
+<br><br><br><h4 class='ruffproc'><a name='::alited::find::_create'>_create</a><span class='ns_scope'> [<a href="alited.html#::alited::find" title="::alited::find" class='ruff_cmd'>::alited::find</a>]</span><span class='tinylink'><a href='alited.html#::alited::find'>find</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>$ Creates Find/Replace dialogue.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>_create</span> </div>
@@ -8607,6 +8755,7 @@ padding: 0%;
   <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$pobj</font> destroy}
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$res</font>} {<b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$doit</font>} <b><font color=#ca14ca>return</font></b> else exit}
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$updmnu</font> && !<font color=#1b1baa>$updini</font>} <b><font color=#ca14ca>return</font></b>
+  CreatePossibleNewDirs ;<i><font color=#4b5d50># it's good to do it here</font></i>
   <b><font color=#3a6797>set</font></b> err {}
   <b><font color=#3a6797>set</font></b> mnudone 0
   <b><font color=#3a6797>set</font></b> inidone 0
@@ -8659,6 +8808,23 @@ padding: 0%;
   <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>image</font></b> create photo <font color=#1b1baa>$img</font> <font color=#6c3e67>-data</font> [::apave::iconData <font color=#1b1baa>$icon</font> small]}
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$img</font>
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::ini::CreatePossibleNewDirs'>CreatePossibleNewDirs</a><span class='ns_scope'> [<a href="alited.html#::alited::ini" title="::alited::ini" class='ruff_cmd'>::alited::ini</a>]</span><span class='tinylink'><a href='alited.html#::alited::ini'>ini</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Creates a user directories, possibly new after v1.4.0 (e.g. macro).</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>CreatePossibleNewDirs</span> </div>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_ini_CreatePossibleNewDirs' href="javascript:toggleSource('alited_ini_CreatePossibleNewDirs')">Show source</a></p>
+<div id='alited_ini_CreatePossibleNewDirs' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::ini::CreatePossibleNewDirs {} {
+  <i><font color=#4b5d50># Creates a user directories, possibly new after v1.4.0 (e.g. macro).</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al DATAUSER DATAUSER
+  <b><font color=#3a6797>set</font></b> macrodir [<b><font color=#3a6797>file</font></b> dirname [alited::edit::MacroFile -]]
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$macrodir</font>]} {
+    <b><font color=#3a6797>file</font></b> mkdir <font color=#1b1baa>$macrodir</font>
+    <b><font color=#3a6797>foreach</font></b> f [<b><font color=#3a6797>glob</font></b> <font color=#6c3e67>-nocomplain</font> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$DATAUSER</font> macro *]] {
+      <b><font color=#3a6797>file</font></b> copy <font color=#1b1baa>$f</font> <font color=#1b1baa>$macrodir</font>
+    }
+  }
+}<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::ini::CreateUserDirs'>CreateUserDirs</a><span class='ns_scope'> [<a href="alited.html#::alited::ini" title="::alited::ini" class='ruff_cmd'>::alited::ini</a>]</span><span class='tinylink'><a href='alited.html#::alited::ini'>ini</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Creates main directories for settings.</p>
@@ -8683,6 +8849,7 @@ padding: 0%;
     <b><font color=#3a6797>file</font></b> copy <font color=#1b1baa>$MNUDIR</font> <font color=#1b1baa>$emdir</font>
     <b><font color=#3a6797>file</font></b> copy [<b><font color=#3a6797>file</font></b> join [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$MNUDIR</font>] em_projects] <font color=#1b1baa>$emdir</font>
   }
+  CreatePossibleNewDirs
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::ini::EditSettings'>EditSettings</a><span class='ns_scope'> [<a href="alited.html#::alited::ini" title="::alited::ini" class='ruff_cmd'>::alited::ini</a>]</span><span class='tinylink'><a href='alited.html#::alited::ini'>ini</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -9077,7 +9244,7 @@ padding: 0%;
     isfavor {<b><font color=#3a6797>set</font></b> al(FAV,IsFavor) <font color=#1b1baa>$val</font>}
     showinfo {<b><font color=#3a6797>set</font></b> al(TREE,showinfo) <font color=#1b1baa>$val</font>}
     TIPS,* {<b><font color=#3a6797>set</font></b> al(<font color=#1b1baa>$nam</font>) <font color=#1b1baa>$val</font>}
-    listSBL - HelpedMe - checkgeo - tonemoves - moveall - chosencolor - sortList {
+    listSBL - HelpedMe - checkgeo - tonemoves - moveall - chosencolor  - sortList - activemacro {
       <b><font color=#3a6797>set</font></b> al(<font color=#1b1baa>$nam</font>) <font color=#1b1baa>$val</font>
     }
     tplilast {<b><font color=#3a6797>set</font></b> ::alited::unit_tpl::ilast <font color=#1b1baa>$val</font>}
@@ -9541,30 +9708,7 @@ padding: 0%;
   <b><font color=#3a6797>foreach</font></b> k [<b><font color=#3a6797>array</font></b> names al tkcon,*] {
     <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>string range <font color=#1b1baa>$</font>k 6 end<font color=#1b1baa>]</font>=<font color=#1b1baa>$</font>al(<font color=#1b1baa>$</font>k)&quot;</font>
   }
-  <i><font color=#4b5d50># save the geometry options</font></i>
-  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> {}
-  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> {[Geometry]}
-  <b><font color=#3a6797>foreach</font></b> v {Pan PanL PanR PanBM PanTop} {
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists al(width<font color=#1b1baa>$v</font>)]} {
-      <b><font color=#3a6797>set</font></b> w <font color=#1b1baa>$al(width$v)</font>
-    } <b><font color=#3a6797>else</font></b> {
-      <b><font color=#3a6797>set</font></b> w [<b><font color=#134070>winfo</font></b> geometry [<font color=#1b1baa>$obPav</font> <font color=#1b1baa>$v</font>]]
-    }
-    <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#1b1baa>$v</font>=<font color=#1b1baa>$w</font>
-  }
-  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;GEOM=<font color=#1b1baa>[</font>wm geometry <font color=#1b1baa>$</font>al(WIN)<font color=#1b1baa>]</font>&quot;</font>
-  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;geomfind=<font color=#1b1baa>$</font>::alited::find::geo&quot;</font>
-  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;geomfind2=<font color=#1b1baa>$</font>::alited::find::geo2&quot;</font>
-  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;geomproject=<font color=#1b1baa>$</font>::alited::project::geo&quot;</font>
-  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;geompref=<font color=#1b1baa>$</font>::alited::pref::geo&quot;</font>
-  <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> Tree]
-  <b><font color=#3a6797>set</font></b> al(TREE,cw0) [<font color=#1b1baa>$wtree</font> column #0 <font color=#6c3e67>-width</font>]
-  <b><font color=#3a6797>set</font></b> al(TREE,cw1) [<font color=#1b1baa>$wtree</font> column #1 <font color=#6c3e67>-width</font>]
-  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;treecw0=<font color=#1b1baa>$</font>al(TREE,cw0)&quot;</font>
-  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;treecw1=<font color=#1b1baa>$</font>al(TREE,cw1)&quot;</font>
-  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;dirgeometry=<font color=#1b1baa>$</font>::alited::DirGeometry&quot;</font>
-  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;filgeometry=<font color=#1b1baa>$</font>::alited::FilGeometry&quot;</font>
-  <i><font color=#4b5d50># save other options</font></i>
+  <i><font color=#4b5d50># save misc settings</font></i>
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> {}
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> {[Misc]}
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;isfavor=<font color=#1b1baa>$</font>al(FAV,IsFavor)&quot;</font>
@@ -9583,6 +9727,30 @@ padding: 0%;
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;tplilast=<font color=#1b1baa>$</font>::alited::unit_tpl::ilast&quot;</font>
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;incdec=<font color=#1b1baa>$</font>al(incdecName) <font color=#1b1baa>$</font>al(incdecDate) <font color=#1b1baa>$</font>al(incdecSize) <font color=#1b1baa>$</font>al(incdecExtn)&quot;</font>
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;blifo=<font color=#1b1baa>$</font>al(lifo)&quot;</font>
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;activemacro=<font color=#1b1baa>$</font>al(activemacro)&quot;</font>
+  <i><font color=#4b5d50># save the geometry options</font></i>
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> {}
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> {[Geometry]}
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;geomfind=<font color=#1b1baa>$</font>::alited::find::geo&quot;</font>
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;geomfind2=<font color=#1b1baa>$</font>::alited::find::geo2&quot;</font>
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;geomproject=<font color=#1b1baa>$</font>::alited::project::geo&quot;</font>
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;geompref=<font color=#1b1baa>$</font>::alited::pref::geo&quot;</font>
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;dirgeometry=<font color=#1b1baa>$</font>::alited::DirGeometry&quot;</font>
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;filgeometry=<font color=#1b1baa>$</font>::alited::FilGeometry&quot;</font>
+  <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> Tree]
+  <b><font color=#3a6797>set</font></b> al(TREE,cw0) [<font color=#1b1baa>$wtree</font> column #0 <font color=#6c3e67>-width</font>]
+  <b><font color=#3a6797>set</font></b> al(TREE,cw1) [<font color=#1b1baa>$wtree</font> column #1 <font color=#6c3e67>-width</font>]
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;treecw0=<font color=#1b1baa>$</font>al(TREE,cw0)&quot;</font>
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;treecw1=<font color=#1b1baa>$</font>al(TREE,cw1)&quot;</font>
+  <b><font color=#3a6797>foreach</font></b> v {Pan PanL PanR PanBM PanTop} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists al(width<font color=#1b1baa>$v</font>)]} {
+      <b><font color=#3a6797>set</font></b> w <font color=#1b1baa>$al(width$v)</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> w [<b><font color=#134070>winfo</font></b> geometry [<font color=#1b1baa>$obPav</font> <font color=#1b1baa>$v</font>]]
+    }
+    <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#1b1baa>$v</font>=<font color=#1b1baa>$w</font>
+  }
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;GEOM=<font color=#1b1baa>[</font>wm geometry <font color=#1b1baa>$</font>al(WIN)<font color=#1b1baa>]</font>&quot;</font>
   <b><font color=#3a6797>close</font></b> <font color=#1b1baa>$chan</font>
   SaveIniPrj <font color=#1b1baa>$newproject</font>
   <i><font color=#4b5d50># save last directories entered</font></i>
@@ -11197,6 +11365,27 @@ padding: 0%;
     <font color=#1b1baa>$al(SETUP)</font>.tint entryconfigure <font color=#1b1baa>$ti</font> <font color=#6c3e67>-variable</font> alited::menu::tint(<font color=#1b1baa>$i</font>) <font color=#6c3e67>-foreground</font> <font color=#1b1baa>$fg</font>
   }
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::menu::CompareFnames'>CompareFnames</a><span class='ns_scope'> [<a href="alited.html#::alited::menu" title="::alited::menu" class='ruff_cmd'>::alited::menu</a>]</span><span class='tinylink'><a href='alited.html#::alited::menu'>menu</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Comapares two names of files, by their rootnames.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>CompareFnames</span> <span class='ruff_arg'>n1 n2</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>n1</code></code></td><td class='ruff_defitem'>1st name</td></tr>
+<tr><td class='ruff_defitem'><code><code>n2</code></code></td><td class='ruff_defitem'>2nd name</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_menu_CompareFnames' href="javascript:toggleSource('alited_menu_CompareFnames')">Show source</a></p>
+<div id='alited_menu_CompareFnames' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::menu::CompareFnames {n1 n2} {
+  <i><font color=#4b5d50># Comapares two names of files, by their rootnames.</font></i>
+  <i><font color=#4b5d50>#   n1 - 1st name</font></i>
+  <i><font color=#4b5d50>#   n2 - 2nd name</font></i>
+
+  <b><font color=#3a6797>set</font></b> n1 [<b><font color=#3a6797>file</font></b> rootname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$n1</font>]]
+  <b><font color=#3a6797>set</font></b> n2 [<b><font color=#3a6797>file</font></b> rootname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$n2</font>]]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$n1</font> eq <font color=#1b1baa>$n2</font>} {<b><font color=#ca14ca>return</font></b> 0}
+  <b><font color=#3a6797>set</font></b> ls [<b><font color=#3a6797>lsort</font></b> <font color=#6c3e67>-dictionary</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$n1</font> <font color=#1b1baa>$n2</font>]]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$n1</font> eq [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$ls</font> 0]} {<b><font color=#ca14ca>return</font></b> -1}
+  <b><font color=#ca14ca>return</font></b> 1
+}<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::menu::Configurations'>Configurations</a><span class='ns_scope'> [<a href="alited.html#::alited::menu" title="::alited::menu" class='ruff_cmd'>::alited::menu</a>]</span><span class='tinylink'><a href='alited.html#::alited::menu'>menu</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <div class='ruff_synopsis'><span class='ruff_cmd'>Configurations</span> </div>
@@ -11207,6 +11396,43 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {![alited::ini::GetConfiguration]} <b><font color=#ca14ca>return</font></b>
   <b><font color=#3a6797>set</font></b> alited::ARGV <font color=#1b1baa>$::alited::CONFIGDIR</font>
   alited::Exit - 1 no
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::menu::FillMacroItems'>FillMacroItems</a><span class='ns_scope'> [<a href="alited.html#::alited::menu" title="::alited::menu" class='ruff_cmd'>::alited::menu</a>]</span><span class='tinylink'><a href='alited.html#::alited::menu'>menu</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Fills play macro items.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>FillMacroItems</span> </div>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_menu_FillMacroItems' href="javascript:toggleSource('alited_menu_FillMacroItems')">Show source</a></p>
+<div id='alited_menu_FillMacroItems' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::menu::FillMacroItems {} {
+  <i><font color=#4b5d50># Fills play macro items.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> m <font color=#1b1baa>$al(MENUEDIT)</font>.playtkl
+  <b><font color=#3a6797>set</font></b> imax 102
+  <b><font color=#3a6797>set</font></b> pmax 34
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$imax</font>} {<b><font color=#3a6797>incr</font></b> i} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$m</font> delete 1}]} <b><font color=#ca14ca>break</font></b>
+  }
+  <b><font color=#3a6797>set</font></b> isaccel 0
+  <b><font color=#3a6797>set</font></b> pattern [alited::edit::MacroFile *<font color=#1b1baa>$al(macroext)</font>]
+  <b><font color=#3a6797>set</font></b> lmacro [<b><font color=#3a6797>lsort</font></b> <font color=#6c3e67>-command</font> alited::menu::CompareFnames [<b><font color=#3a6797>glob</font></b> <font color=#6c3e67>-nocomplain</font> <font color=#1b1baa>$pattern</font>]]
+  <b><font color=#3a6797>set</font></b> imax [<b><font color=#3a6797>expr</font></b> {min([<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$lmacro</font>],<font color=#1b1baa>$imax</font>-2)}]
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>set</font></b> idx 0]} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$imax</font>} {<b><font color=#3a6797>incr</font></b> i} {
+    <b><font color=#3a6797>set</font></b> am [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$lmacro</font> <font color=#1b1baa>$i</font>]
+    <b><font color=#3a6797>if</font></b> {[alited::edit::MacroFile <font color=#1b1baa>$am</font>] ne [alited::edit::MacroFile <font color=#1b1baa>$al(MC,quickmacro)</font>]} {
+      <b><font color=#3a6797>set</font></b> am [<b><font color=#3a6797>file</font></b> rootname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$am</font>]]
+      <b><font color=#3a6797>set</font></b> opts [MacroOptions item<font color=#1b1baa>$idx</font> <font color=#1b1baa>$am</font>]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> idx]%<font color=#1b1baa>$pmax</font>} {<b><font color=#3a6797>set</font></b> cbr {}} {<b><font color=#3a6797>set</font></b> cbr {<font color=#6c3e67>-columnbreak</font> 1}}
+      <font color=#1b1baa>$m</font> add command {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$cbr</font>
+      <b><font color=#3a6797>if</font></b> {{<font color=#6c3e67>-accelerator</font>} in <font color=#1b1baa>$opts</font>} {<b><font color=#3a6797>set</font></b> isaccel 1}
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$idx</font>} {
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>file</font></b> mkdir [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$pattern</font>]}
+    <font color=#1b1baa>$m</font> add command {<b><font color=#3a6797>*</font></b>}[MacroOptions item0 <font color=#1b1baa>$al(MC,new)</font>]
+  }
+  <font color=#1b1baa>$m</font> add separator
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$isaccel</font>} {<b><font color=#3a6797>set</font></b> al(activemacro) <font color=#1b1baa>$al(MC,quickmacro)</font>}
+  <font color=#1b1baa>$m</font> add command {<b><font color=#3a6797>*</font></b>}[MacroOptions quickrec <font color=#1b1baa>$al(MC,quickmacro)</font>]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::menu::FillMenu'>FillMenu</a><span class='ns_scope'> [<a href="alited.html#::alited::menu" title="::alited::menu" class='ruff_cmd'>::alited::menu</a>]</span><span class='tinylink'><a href='alited.html#::alited::menu'>menu</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -11284,10 +11510,13 @@ padding: 0%;
   <font color=#1b1baa>$m</font> add cascade <font color=#6c3e67>-label</font> [msgcat::mc {Color Values #hhhhhh}] <font color=#6c3e67>-menu</font> <font color=#1b1baa>$m</font>.hlcolors
   <font color=#1b1baa>$m</font>.hlcolors add command <font color=#6c3e67>-label</font> <font color=#1b1baa>$al(MC,hlcolors)</font> <font color=#6c3e67>-command</font> alited::edit::ShowColorValues
   <font color=#1b1baa>$m</font>.hlcolors add command <font color=#6c3e67>-label</font> [msgcat::mc {Hide Colors}] <font color=#6c3e67>-command</font> alited::edit::HideColorValues
+
+  <i><font color=#4b5d50>### ________________________ Macro _________________________ ###</font></i>
+
   <font color=#1b1baa>$m</font> add separator
   <b><font color=#134070>menu</font></b> <font color=#1b1baa>$m</font>.playtkl <font color=#6c3e67>-tearoff</font> 1
   <font color=#1b1baa>$m</font> add cascade <font color=#6c3e67>-label</font> <font color=#1b1baa>$::alited::al(MC,playtkl)</font> <font color=#6c3e67>-menu</font> <font color=#1b1baa>$m</font>.playtkl
-  <font color=#1b1baa>$m</font>.playtkl add command <font color=#6c3e67>-label</font> [msgcat::mc {Quick Macro}] <font color=#6c3e67>-command</font> {alited::edit::DispatchMacro rec} <font color=#6c3e67>-accelerator</font> <font color=#1b1baa>$al(acc_16)</font>
+  FillMacroItems
 
   <i><font color=#4b5d50>## ________________________ Search _________________________ ##</font></i>
 
@@ -11427,6 +11656,29 @@ padding: 0%;
       }
     }
   }
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::menu::MacroOptions'>MacroOptions</a><span class='ns_scope'> [<a href="alited.html#::alited::menu" title="::alited::menu" class='ruff_cmd'>::alited::menu</a>]</span><span class='tinylink'><a href='alited.html#::alited::menu'>menu</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Gets play macro item's options.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>MacroOptions</span> <span class='ruff_arg'>ca am</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>ca</code></code></td><td class='ruff_defitem'>argument of command</td></tr>
+<tr><td class='ruff_defitem'><code><code>am</code></code></td><td class='ruff_defitem'>label of macro</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_menu_MacroOptions' href="javascript:toggleSource('alited_menu_MacroOptions')">Show source</a></p>
+<div id='alited_menu_MacroOptions' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::menu::MacroOptions {ca am} {
+  <i><font color=#4b5d50># Gets play macro item's options.</font></i>
+  <i><font color=#4b5d50>#   ca - argument of command</font></i>
+  <i><font color=#4b5d50>#   am - label of macro</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$am</font> eq <font color=#1b1baa>$al(activemacro)</font>} {
+    <b><font color=#3a6797>set</font></b> fg [<b><font color=#3a6797>lindex</font></b> [alited::FgFgBold] 1]
+    <b><font color=#3a6797>set</font></b> opts <font color=#8b2a0e>&quot;-accelerator <font color=#1b1baa>$</font>al(acc_16) -foreground <font color=#1b1baa>$</font>fg&quot;</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> opts {}
+  }
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#6c3e67>-label</font> <font color=#1b1baa>$am</font> <font color=#6c3e67>-command</font> [<b><font color=#3a6797>list</font></b> alited::edit::DispatchMacro <font color=#1b1baa>$ca</font>] {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font>]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::menu::MapRunItems'>MapRunItems</a><span class='ns_scope'> [<a href="alited.html#::alited::menu" title="::alited::menu" class='ruff_cmd'>::alited::menu</a>]</span><span class='tinylink'><a href='alited.html#::alited::menu'>menu</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -14588,7 +14840,7 @@ padding: 0%;
     {.btTdel - - - - {<b><font color=#134070>pack</font></b> <font color=#6c3e67>-side</font> left} {<font color=#6c3e67>-com</font> ::alited::project::Delete <font color=#6c3e67>-tip</font> {<font color=#1b1baa>$alited::al(MC,prjdel1)</font>} <font color=#6c3e67>-image</font> alimg_delete-big}}
     {.h_ - - - - {<b><font color=#134070>pack</font></b> <font color=#6c3e67>-side</font> left <font color=#6c3e67>-expand</font> 1}}
     {.btTtpl - - - - {<b><font color=#134070>pack</font></b> <font color=#6c3e67>-side</font> left} {<font color=#6c3e67>-com</font> ::alited::project::Template <font color=#6c3e67>-tip</font> {<font color=#1b1baa>$alited::al(MC,CrTemplPrj)</font>} <font color=#6c3e67>-image</font> alimg_plus-big}}
-    {.btTtview - - - - {<b><font color=#134070>pack</font></b> <font color=#6c3e67>-side</font> left <font color=#6c3e67>-padx</font> 4} {<font color=#6c3e67>-image</font> alimg_OpenFile-big <font color=#6c3e67>-com</font> alited::project::ViewDir <font color=#6c3e67>-tip</font> {<font color=#1b1baa>$alited::al(MC,ViewDir)</font>}}}
+    {.btTtview - - - - {<b><font color=#134070>pack</font></b> <font color=#6c3e67>-side</font> left <font color=#6c3e67>-padx</font> 4} {<font color=#6c3e67>-image</font> alimg_folder-big <font color=#6c3e67>-com</font> alited::project::ViewDir <font color=#6c3e67>-tip</font> {<font color=#1b1baa>$alited::al(MC,ViewDir)</font>}}}
     {LabMess fraB1 L 1 1 {<font color=#6c3e67>-st</font> nsew <font color=#6c3e67>-pady</font> 0 <font color=#6c3e67>-padx</font> 3} {<font color=#6c3e67>-style</font> TLabelFS}}
     {seh fraB1 T 1 2 {<font color=#6c3e67>-st</font> nsew <font color=#6c3e67>-pady</font> 2}}
     {fraB2 + T 1 2 {<font color=#6c3e67>-st</font> nsew} {<font color=#6c3e67>-padding</font> {2 2}}}
@@ -15513,7 +15765,7 @@ padding: 0%;
   <b><font color=#3a6797>foreach</font></b> name [<b><font color=#3a6797>split</font></b> [<font color=#1b1baa>$wtpl</font> get 1.0 end] \n] {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> name [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$name</font>]] eq {}} <b><font color=#ca14ca>continue</font></b>
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$name</font> ne [alited::NormalizeFileName <font color=#1b1baa>$name</font>]} {
-      <b><font color=#3a6797>set</font></b> errmess [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$name</font>] [msgcat::mc {Incorrect name: %n}]]
+      <b><font color=#3a6797>set</font></b> errmess [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$name</font>] <font color=#1b1baa>$al(MC,incorrname)</font>]
       <b><font color=#ca14ca>break</font></b>
     }
     <b><font color=#3a6797>set</font></b> sporig [<font color=#1b1baa>$obDl2</font> leadingSpaces <font color=#1b1baa>$name</font>]
@@ -19615,6 +19867,7 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::bar::SelTabVis'>SelTabVis</a><span class='tooltiptext'>Makes visible tabs selected / unselected.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::bar::SetBarState'>SetBarState</a><span class='tooltiptext'>Sets attributes of the tab bar that are specific for alited.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::bar::SetTabState'>SetTabState</a><span class='tooltiptext'>Sets attributes of a tab.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::bar::SleepTreeTips'>SleepTreeTips</a><span class='tooltiptext'>Hides and switches the tree's tips temporarily off. Cause: hovering over the tree may show its tips when they are unnecessary.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::bar::Sort'>Sort</a><span class='tooltiptext'>Sorts tabs.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::bar::SortData'>SortData</a><span class='tooltiptext'>Sets or gets data for sorting bar tabs.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::bar::UniqueListTab'>UniqueListTab</a><span class='tooltiptext'>Returns a unique tab name for a file.
@@ -19644,13 +19897,16 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::edit::Comment'>Comment</a><span class='tooltiptext'>Comments selected lines of text.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::edit::CommentChar'>CommentChar</a><span class='tooltiptext'>Returns the commenting chars for a current file.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::edit::DispatchMacro'>DispatchMacro</a><span class='tooltiptext'>Dispatches macro actions.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::edit::DoMacro'>DoMacro</a><span class='tooltiptext'>Plays or records a macro.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::edit::HideColorValues'>HideColorValues</a><span class='tooltiptext'>Unhighlights color values.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::edit::Indent'>Indent</a><span class='tooltiptext'>Indent selected lines of text.
-</span></h4><h4 class='tooltip'><a href='alited.html#::alited::edit::InitMacro'>InitMacro</a><span class='tooltiptext'>Initializes macro stuff.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::edit::InputMacro'>InputMacro</a><span class='tooltiptext'>Enters/changes a macro.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::edit::InvertBg'>InvertBg</a><span class='tooltiptext'>Gets a &quot;inverted&quot; color (white/black) for an color.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::edit::MacroFile'>MacroFile</a><span class='tooltiptext'>Gets a file name for a macro.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::edit::MacroInit'>MacroInit</a><span class='tooltiptext'>Initializes macro stuff.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::edit::MacroMenu'>MacroMenu</a><span class='tooltiptext'>Recreate macros' menu
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::edit::Modified'>Modified</a><span class='tooltiptext'>Handles a modification of file, recreating the unit tree at need.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::edit::NormIndent'>NormIndent</a><span class='tooltiptext'>Normalizes a current text's indenting.
-</span></h4><h4 class='tooltip'><a href='alited.html#::alited::edit::QuickMacro'>QuickMacro</a><span class='tooltiptext'>Creates a quick macro.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::edit::RemoveTrailWhites'>RemoveTrailWhites</a><span class='tooltiptext'>Removes trailing spaces of lines - all of lines or a selection of lines.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::edit::SelectedLines'>SelectedLines</a><span class='tooltiptext'>Gets a range of lines of text that are selected at least partly.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::edit::SelectLines'>SelectLines</a><span class='tooltiptext'>Selects lines (all their contents) of text.
@@ -19757,8 +20013,7 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::file::ToBeHighlighted'>ToBeHighlighted</a><span class='tooltiptext'>Checks flag &quot;highlight text anyway&quot;.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::file::UpdateFileStat'>UpdateFileStat</a><span class='tooltiptext'>Updates tips in tab bar (file info).
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::file::WrapLines'>WrapLines</a><span class='tooltiptext'>Switches wrap word mode for a current text.
-</span></h4><h1><a href='#::alited::find'>alited::find</a></h1><h2><a href='#::alited::find-Commands'>Commands</a></h2><h4 class='tooltip'><a href='alited.html#::alited::find::_close'>_close</a><span class='tooltiptext'>Closes Find/Replace dialogue.
-</span></h4><h4 class='tooltip'><a href='alited.html#::alited::find::_create'>_create</a><span class='tooltiptext'>$ Creates Find/Replace dialogue.
+</span></h4><h1><a href='#::alited::find'>alited::find</a></h1><h2><a href='#::alited::find-Commands'>Commands</a></h2><h4 class='tooltip'><a href='alited.html#::alited::find::_create'>_create</a><span class='tooltiptext'>$ Creates Find/Replace dialogue.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::find::_run'>_run</a><span class='tooltiptext'>Runs Find/Replace dialogue.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::find::btTPaste'>btTPaste</a><span class='tooltiptext'>Copies text from &quot;Find&quot; to &quot;Replace&quot; field.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::find::btTRetry'>btTRetry</a><span class='tooltiptext'>Resizes Find/Replace dialogue.
@@ -19825,6 +20080,7 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::ini::CheckIni'>CheckIni</a><span class='tooltiptext'>Checks if the configuration directory exists and if not asks for it.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::ini::CheckUpdates'>CheckUpdates</a><span class='tooltiptext'>Updates significant data of current version of alited.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::ini::CreateIcon'>CreateIcon</a><span class='tooltiptext'>Create an icon (of normal and big size).
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::ini::CreatePossibleNewDirs'>CreatePossibleNewDirs</a><span class='tooltiptext'>Creates a user directories, possibly new after v1.4.0 (e.g. macro).
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::ini::CreateUserDirs'>CreateUserDirs</a><span class='tooltiptext'>Creates main directories for settings.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::ini::EditSettings'>EditSettings</a><span class='tooltiptext'>Displays the settings file, just to look behind the wall.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::ini::GetConfiguration'>GetConfiguration</a><span class='tooltiptext'>Gets the configuration directory's name.
@@ -19903,8 +20159,11 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::main::UpdateUnitTree'>UpdateUnitTree</a><span class='tooltiptext'>Redraws unit tree at need.
 </span></h4><h1><a href='#::alited::menu'>alited::menu</a></h1><h2><a href='#::alited::menu-Commands'>Commands</a></h2><h4 class='tooltip'><a href='alited.html#::alited::menu::CheckMenuItems'>CheckMenuItems</a><span class='tooltiptext'>Disables/enables &quot;File/Close All...&quot; menu items.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::menu::CheckTint'>CheckTint</a><span class='tooltiptext'>Sets a check in menu &quot;Tint&quot; according to the current tint.
-</span></h4><h4><a href='alited.html#::alited::menu::Configurations'>Configurations</a></h4><h4 class='tooltip'><a href='alited.html#::alited::menu::FillMenu'>FillMenu</a><span class='tooltiptext'>Populates alited's main menu.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::menu::CompareFnames'>CompareFnames</a><span class='tooltiptext'>Comapares two names of files, by their rootnames.
+</span></h4><h4><a href='alited.html#::alited::menu::Configurations'>Configurations</a></h4><h4 class='tooltip'><a href='alited.html#::alited::menu::FillMacroItems'>FillMacroItems</a><span class='tooltiptext'>Fills play macro items.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::menu::FillMenu'>FillMenu</a><span class='tooltiptext'>Populates alited's main menu.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::menu::FillRunItems'>FillRunItems</a><span class='tooltiptext'>Fills Tools/e_menu items, depending on a currently edited file.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::menu::MacroOptions'>MacroOptions</a><span class='tooltiptext'>Gets play macro item's options.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::menu::MapRunItems'>MapRunItems</a><span class='tooltiptext'>Gets a map list to map %f &amp; %D wildcards to the current file &amp; directory names.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::menu::SetTint'>SetTint</a><span class='tooltiptext'>Sets a tint of a current color scheme.
 </span></h4><h1><a href='#::alited::pref'>alited::pref</a></h1><h2><a href='#::alited::pref-Commands'>Commands</a></h2><h4 class='tooltip'><a href='alited.html#::alited::pref::_create'>_create</a><span class='tooltiptext'>Creates &quot;Preferences&quot; dialogue.
