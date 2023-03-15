@@ -426,11 +426,11 @@ padding: 0%;
 <br></code></pre>
 <p class='ruff'>sets an example of <em>hl_tcl</em> usage. Here are the details:</p>
 <ul class='ruff'>
-<li><strong><code>::stub</code></strong> is a procedure to watch the text editing; here it simply puts out the text's last index;</li>
-<li><strong><code>hl_init</code></strong> is called <em>before</em> filling the text widget with a Tcl code; it sets the highlighting options and disables the highlighting till <em>hl_text</em> runs;</li>
-<li><strong><code>hl_text</code></strong> runs to highlight the Tcl code of the text widget and to view/edit it.</li>
+<li><strong>::stub</strong> is a procedure to watch the text editing; here it simply puts out the text's last index;</li>
+<li><strong>hl_init</strong> is called <em>before</em> filling the text widget with a Tcl code; it sets the highlighting options and disables the highlighting till <em>hl_text</em> runs;</li>
+<li><strong>hl_text</strong> runs to highlight the Tcl code of the text widget and to view/edit it.</li>
 </ul>
-<p class='ruff'>The <strong><code>hl_init</code></strong> takes arguments:</p>
+<p class='ruff'>The <strong>hl_init</strong> takes arguments:</p>
 <ul class='ruff'>
 <li><em>txt</em> is the text widget's path</li>
 <li><em>args</em> contains options of text widget (omittable)</li>
@@ -447,13 +447,17 @@ padding: 0%;
 <li><em>-seen</em> - number of first lines seen at start (default 500)</li>
 <li><em>-optRE</em> - flag &quot;use a regular expression to highlight options&quot; (default &quot;yes&quot;)</li>
 <li><em>-keywords</em> - additional commands to highlight (as Tk ones)</li>
+<li><em>-dobind</em> - if <code>true</code>, forces keys binding at repeating calls of hl_init</li>
+<li><em>-plaintext</em> - <code>true</code> for plain texts with no highlighting</li>
+<li><em>-plaincom</em> - a command for plain highlighting line by line</li>
 </ul>
 <p class='ruff'><strong>Note</strong>: <code>-seen 500</code> and <code>-multiline no</code> can improve the performance a lot. It's recommended to use <code>-seen 500</code> (or any other reasonable limit, e.g. <code>-seen 200</code>) at any rate, except for static html pages.</p>
+<p class='ruff'>A command for <em>-plaincom</em> option has two arguments: a current text's path and a current line's number. It should highlight the current line and return <code>true</code>, otherwise (if the current line is Tcl code) it returns <code>false</code>. An example of its usage is presented by <a href="https://github.com/aplsimple/alited" >alited editor</a> (<code>lib/addon</code> directory).</p>
 <p class='ruff'>The rest of <em>hl_tcl</em> procedures are:</p>
 <ul class='ruff'>
-<li><strong><code>hl_all</code></strong> updates all highlighted existing text widgets, e.g. at changing a color scheme of application</li>
-<li><strong><code>hl_readonly</code></strong> gets/sets a read-only mode and/or a command to watch a text widget at viewing/editing it</li>
-<li><strong><code>hl_colors</code></strong> gets a list of colors for highlighting</li>
+<li><strong>hl_all</strong> updates all highlighted existing text widgets, e.g. at changing a color scheme of application</li>
+<li><strong>hl_readonly</strong> gets/sets a read-only mode and/or a command to watch a text widget at viewing/editing it</li>
+<li><strong>hl_colors</strong> gets a list of colors for highlighting</li>
 </ul>
 <p class='ruff'>See details in <a href="https://aplsimple.github.io/en/tcl/hl_tcl/hl_tcl.html" >Reference</a>.</p>
 <br><h2 class='ruff'><a name='::hl_tcl-Use for static html'></a>Use for static html<span class='tinylink'><a href='hl_tcl.html#::hl_tcl'>hl_tcl</a>, <a href='#top'>Top</a></span></h2>
@@ -635,6 +639,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code>-font</code></td><td class='ruff_defitem'>attributes of font</td></tr>
 <tr><td class='ruff_defitem'><code>-seen</code></td><td class='ruff_defitem'>lines seen at start</td></tr>
 <tr><td class='ruff_defitem'><code>-keywords</code></td><td class='ruff_defitem'>additional commands to highlight (as Tk ones)</td></tr>
+<tr><td class='ruff_defitem'><code>-dobind</code></td><td class='ruff_defitem'>if yes, forces key bindings</td></tr>
 </table>
 <p class='ruff'>This procedure has to be called before writing a text in the text widget.</p>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="hl_tcl.html#::hl_tcl::hl_colorNames" title="hl_colorNames" class='ruff_cmd'>hl_colorNames</a></p>
@@ -655,15 +660,18 @@ padding: 0%;
   <i><font color=#4b5d50>#   -font - attributes of font</font></i>
   <i><font color=#4b5d50>#   -seen - lines seen at start</font></i>
   <i><font color=#4b5d50>#   -keywords - additional commands to highlight (as Tk ones)</font></i>
+  <i><font color=#4b5d50>#   -dobind - if yes, forces key bindings</font></i>
   <i><font color=#4b5d50># This procedure has to be called before writing a text in the text widget.</font></i>
   <i><font color=#4b5d50># See also: hl_colorNames</font></i>
 
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> setonly [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$args</font> 0] eq {--}}]]} {
     <b><font color=#3a6797>set</font></b> args [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$args</font> 1 end]
   }
+  iscurline <font color=#1b1baa>$txt</font> 1
   <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(REG_TXT,<font color=#1b1baa>$txt</font>) {}  ;<i><font color=#4b5d50># disables Modified at changing the text</font></i>
   <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(KEYWORDS,<font color=#1b1baa>$txt</font>) {}
-  <b><font color=#3a6797>foreach</font></b> {opt val} {<font color=#6c3e67>-dark</font> 0 <font color=#6c3e67>-readonly</font> 0 <font color=#6c3e67>-cmd</font> {} <font color=#6c3e67>-cmdpos</font> {} <font color=#6c3e67>-optRE</font> 1  <font color=#6c3e67>-multiline</font> 1 <font color=#6c3e67>-seen</font> 500 <font color=#6c3e67>-plaintext</font> no <font color=#6c3e67>-insertwidth</font> 2 <font color=#6c3e67>-keywords</font> {}} {
+  <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(DOBIND,<font color=#1b1baa>$txt</font>) 0
+  <b><font color=#3a6797>foreach</font></b> {opt val} {<font color=#6c3e67>-dark</font> 0 <font color=#6c3e67>-readonly</font> 0 <font color=#6c3e67>-cmd</font> {} <font color=#6c3e67>-cmdpos</font> {} <font color=#6c3e67>-optRE</font> 1 <font color=#6c3e67>-dobind</font> 0  <font color=#6c3e67>-multiline</font> 1 <font color=#6c3e67>-seen</font> 500 <font color=#6c3e67>-plaintext</font> no <font color=#6c3e67>-plaincom</font> {} <font color=#6c3e67>-insertwidth</font> 2 <font color=#6c3e67>-keywords</font> {}} {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$args</font> <font color=#1b1baa>$opt</font>]} {
       <b><font color=#3a6797>set</font></b> val [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$args</font> <font color=#1b1baa>$opt</font>]
     } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$setonly</font>} {
@@ -695,6 +703,7 @@ padding: 0%;
     } <b><font color=#3a6797>else</font></b> {
       <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(FONT,<font color=#1b1baa>$txt</font>) [<b><font color=#134070>font</font></b> actual TkFixedFont]
     }
+    <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(ISPLAINCOM,<font color=#1b1baa>$txt</font>) [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$::hl_tcl::my::data(PLAINCOM,$txt)</font> ne {}}]
   }
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$setonly</font> || [<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$args</font> <font color=#6c3e67>-readonly</font>]} {
     hl_readonly <font color=#1b1baa>$txt</font> <font color=#1b1baa>$::hl_tcl::my::data(READONLY,$txt)</font>
@@ -796,7 +805,8 @@ padding: 0%;
   <font color=#1b1baa>$txt</font> tag raise tagBRACKETERR
   <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$txt</font> tag raise hilited;  <font color=#1b1baa>$txt</font> tag raise hilited2} ;<i><font color=#4b5d50># for apave package</font></i>
   my::HighlightAll <font color=#1b1baa>$txt</font>
-  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists ::hl_tcl::my::data(BIND_TXT,<font color=#1b1baa>$txt</font>)]} {
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists ::hl_tcl::my::data(BIND_TXT,<font color=#1b1baa>$txt</font>)] ||
+  [<b><font color=#3a6797>info</font></b> exists ::hl_tcl::my::data(DOBIND,<font color=#1b1baa>$txt</font>)] && <font color=#1b1baa>$::hl_tcl::my::data(DOBIND,$txt)</font>} {
     my::BindToEvent <font color=#1b1baa>$txt</font> &lt;FocusIn&gt; ::hl_tcl::my::MemPos <font color=#1b1baa>$txt</font>
     my::BindToEvent <font color=#1b1baa>$txt</font> &lt;KeyPress&gt; ::hl_tcl::my::MemPos1 <font color=#1b1baa>$txt</font> yes %K %s
     my::BindToEvent <font color=#1b1baa>$txt</font> &lt;KeyRelease&gt; ::hl_tcl::my::MemPos <font color=#1b1baa>$txt</font>
@@ -816,6 +826,22 @@ padding: 0%;
   }
   hl_readonly <font color=#1b1baa>$txt</font> <font color=#1b1baa>$ro</font> <font color=#1b1baa>$com2</font>
   <b><font color=#ca14ca>return</font></b>
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::iscurline'>iscurline</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl" title="::hl_tcl" class='ruff_cmd'>::hl_tcl</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl'>hl_tcl</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Sets / gets &quot;highlight a current line&quot; flag for a text.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>iscurline</span> <span class='ruff_arg'>txt ?flag?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>the text's path</td></tr>
+<tr><td class='ruff_defitem'><code><code>flag</code></code></td><td class='ruff_defitem'>the flag; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_hl_tcl_iscurline' href="javascript:toggleSource('hl_tcl_iscurline')">Show source</a></p>
+<div id='hl_tcl_iscurline' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::hl_tcl::iscurline {txt {flag {}}} {
+  <i><font color=#4b5d50># Sets / gets &quot;highlight a current line&quot; flag for a text.</font></i>
+  <i><font color=#4b5d50>#   txt - the text's path</font></i>
+  <i><font color=#4b5d50>#   flag - the flag</font></i>
+
+  <b><font color=#ca14ca>return</font></b> [my::IsCurline <font color=#1b1baa>$txt</font> <font color=#1b1baa>$flag</font>]
 }<br><br></code></pre></div>
 </div><br><br><h1 class='ruff'><a name='::hl_tcl::my'></a>::hl_tcl::my<span class='tinylink'><a href='#top'>Top</a></span></h1>
 <div style='clear:both;'></div>
@@ -900,9 +926,9 @@ padding: 0%;
       RemoveTags <font color=#1b1baa>$txt</font> 1.0 end
       <b><font color=#3a6797>set</font></b> maxl [<b><font color=#3a6797>expr</font></b> {min(<font color=#1b1baa>$data(SEEN,$txt)</font>,<font color=#1b1baa>$tlen</font>)}]
       <b><font color=#3a6797>set</font></b> maxl [<b><font color=#3a6797>expr</font></b> {min(<font color=#1b1baa>$data(SEEN,$txt)</font>,<font color=#1b1baa>$tlen</font>)}]
-      <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> currQtd [<b><font color=#3a6797>set</font></b> ln [<b><font color=#3a6797>set</font></b> lnseen 0]]} {<font color=#1b1baa>$ln</font>&lt;=<font color=#1b1baa>$tlen</font>} {} {
-        <b><font color=#3a6797>set</font></b> currQtd [HighlightLine <font color=#1b1baa>$txt</font> <font color=#1b1baa>$ln</font> <font color=#1b1baa>$currQtd</font>]
+      <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> currQtd [<b><font color=#3a6797>set</font></b> ln [<b><font color=#3a6797>set</font></b> lnseen 0]]} {<font color=#1b1baa>$ln</font>&lt;<font color=#1b1baa>$tlen</font>} {} {
         <b><font color=#3a6797>incr</font></b> ln
+        <b><font color=#3a6797>set</font></b> currQtd [HighlightLine <font color=#1b1baa>$txt</font> <font color=#1b1baa>$ln</font> <font color=#1b1baa>$currQtd</font>]
         <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> lnseen]&gt;<font color=#1b1baa>$data(SEEN,$txt)</font>} {
           <b><font color=#3a6797>set</font></b> lnseen 0
           <b><font color=#3a6797>after</font></b> idle after 1 [<b><font color=#3a6797>info</font></b> coroutine]
@@ -1351,7 +1377,7 @@ padding: 0%;
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::HighlightLine'>HighlightLine</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
-<p class='ruff'>Highlightes a line in text.</p>
+<p class='ruff'>Highlights a line in text.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>HighlightLine</span> <span class='ruff_arg'>txt ln prevQtd</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>text widget's path</td></tr>
@@ -1360,12 +1386,22 @@ padding: 0%;
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_hl_tcl_my_HighlightLine' href="javascript:toggleSource('hl_tcl_my_HighlightLine')">Show source</a></p>
 <div id='hl_tcl_my_HighlightLine' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::hl_tcl::my::HighlightLine {txt ln prevQtd} {
-  <i><font color=#4b5d50># Highlightes a line in text.</font></i>
+  <i><font color=#4b5d50># Highlights a line in text.</font></i>
   <i><font color=#4b5d50>#   txt - text widget's path</font></i>
   <i><font color=#4b5d50>#   ln - line's number</font></i>
   <i><font color=#4b5d50>#   prevQtd - flag of &quot;being quoted&quot; from the previous line</font></i>
 
   <b><font color=#3a6797>variable</font></b> data
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$data(ISPLAINCOM,$txt)</font>} {
+    <i><font color=#4b5d50># plain highlighting: for the current line</font></i>
+    <b><font color=#3a6797>set</font></b> res [{<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$data(PLAINCOM,$txt)</font> <font color=#1b1baa>$txt</font> <font color=#1b1baa>$ln</font> <font color=#1b1baa>$prevQtd</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> in {-1 0 1}} {
+      <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font> ;<i><font color=#4b5d50># to be continued in a next line with prevQtd</font></i>
+    }
+    <i><font color=#4b5d50># if the line was highlighted okay, skip the highlighting as Tcl code</font></i>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font>} {<b><font color=#ca14ca>return</font></b> 0}
+    <i><font color=#4b5d50># otherwise highlight it below as Tcl code</font></i>
+  }
   <b><font color=#3a6797>set</font></b> line [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$ln</font>.0 <font color=#1b1baa>$ln</font>.end]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$prevQtd</font>==-1} {  ;<i><font color=#4b5d50># comments continued</font></i>
     HighlightComment <font color=#1b1baa>$txt</font> <font color=#1b1baa>$line</font> <font color=#1b1baa>$ln</font> 0
@@ -1475,6 +1511,24 @@ padding: 0%;
   <b><font color=#3a6797>incr</font></b> c2 -1 ;<i><font color=#4b5d50># text ranges are not right-inclusive</font></i>
   <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>expr</font></b> {  (<font color=#1b1baa>$l</font>&gt;=<font color=#1b1baa>$l1</font> && <font color=#1b1baa>$l</font>&lt;<font color=#1b1baa>$l2</font> && <font color=#1b1baa>$c</font>&gt;=<font color=#1b1baa>$c1</font>) || (<font color=#1b1baa>$l</font>&gt;<font color=#1b1baa>$l1</font> && <font color=#1b1baa>$l</font>&lt;=<font color=#1b1baa>$l2</font> && <font color=#1b1baa>$c</font>&lt;=<font color=#1b1baa>$c2</font>) ||
     (<font color=#1b1baa>$l</font>==<font color=#1b1baa>$l1</font> && <font color=#1b1baa>$l1</font>==<font color=#1b1baa>$l2</font> && <font color=#1b1baa>$c</font>&gt;=<font color=#1b1baa>$c1</font> && <font color=#1b1baa>$c</font>&lt;=<font color=#1b1baa>$c2</font>) || (<font color=#1b1baa>$l</font>&gt;<font color=#1b1baa>$l1</font> && <font color=#1b1baa>$l</font>&lt;<font color=#1b1baa>$l2</font>)}]
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::IsCurline'>IsCurline</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Sets / gets &quot;highlight a current line&quot; flag for a text.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>IsCurline</span> <span class='ruff_arg'>txt ?flag?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>the text's path</td></tr>
+<tr><td class='ruff_defitem'><code><code>flag</code></code></td><td class='ruff_defitem'>the flag; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_hl_tcl_my_IsCurline' href="javascript:toggleSource('hl_tcl_my_IsCurline')">Show source</a></p>
+<div id='hl_tcl_my_IsCurline' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::hl_tcl::my::IsCurline {txt {flag {}}} {
+  <i><font color=#4b5d50># Sets / gets &quot;highlight a current line&quot; flag for a text.</font></i>
+  <i><font color=#4b5d50>#   txt - the text's path</font></i>
+  <i><font color=#4b5d50>#   flag - the flag</font></i>
+
+  <b><font color=#3a6797>variable</font></b> data
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$flag</font> eq {}} {<b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$data(HL_CURLINE,$txt)</font>}
+  <b><font color=#3a6797>set</font></b> data(HL_CURLINE,<font color=#1b1baa>$txt</font>) <font color=#1b1baa>$flag</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::my::LineState'>LineState</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl::my" title="::hl_tcl::my" class='ruff_cmd'>::hl_tcl::my</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -1913,9 +1967,11 @@ padding: 0%;
     <b><font color=#3a6797>set</font></b> cn2 <font color=#1b1baa>$cn</font>
     <b><font color=#3a6797>set</font></b> data(CURPOS,<font color=#1b1baa>$txt</font>) [<b><font color=#3a6797>set</font></b> data(NLINES,<font color=#1b1baa>$txt</font>) 0]
   }
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$doit</font> || int(<font color=#1b1baa>$data(CURPOS,$txt)</font>)!=<font color=#1b1baa>$ln</font> || <font color=#1b1baa>$data(NLINES,$txt)</font>!=<font color=#1b1baa>$nlines</font>  || <font color=#1b1baa>$ln</font>!=<font color=#1b1baa>$ln2</font> || abs(<font color=#1b1baa>$cn</font>-<font color=#1b1baa>$cn2</font>)&gt;1 || <font color=#1b1baa>$cn</font>&lt;2} {
-    <font color=#1b1baa>$txt</font> tag remove tagCURLINE 1.0 end
-    <font color=#1b1baa>$txt</font> tag add tagCURLINE [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$pos</font> linestart] [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$pos</font> lineend]+1displayindices
+  <b><font color=#3a6797>if</font></b> {[IsCurline <font color=#1b1baa>$txt</font>]} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$doit</font> || int(<font color=#1b1baa>$data(CURPOS,$txt)</font>)!=<font color=#1b1baa>$ln</font> || <font color=#1b1baa>$data(NLINES,$txt)</font>!=<font color=#1b1baa>$nlines</font>  || <font color=#1b1baa>$ln</font>!=<font color=#1b1baa>$ln2</font> || abs(<font color=#1b1baa>$cn</font>-<font color=#1b1baa>$cn2</font>)&gt;1 || <font color=#1b1baa>$cn</font>&lt;2} {
+      <font color=#1b1baa>$txt</font> tag remove tagCURLINE 1.0 end
+      <font color=#1b1baa>$txt</font> tag add tagCURLINE [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$pos</font> linestart] [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$pos</font> lineend]+1displayindices
+    }
   }
   <b><font color=#3a6797>set</font></b> data(NLINES,<font color=#1b1baa>$txt</font>) <font color=#1b1baa>$nlines</font>
   <b><font color=#3a6797>set</font></b> data(CURPOS,<font color=#1b1baa>$txt</font>) <font color=#1b1baa>$pos</font>
@@ -1930,6 +1986,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_line'>hl_line</a><span class='tooltiptext'>Updates a current line's highlighting.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_readonly'>hl_readonly</a><span class='tooltiptext'>Makes the text widget be readonly or gets its 'read-only' state.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_text'>hl_text</a><span class='tooltiptext'>Highlights Tcl code of a text widget.
+</span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::iscurline'>iscurline</a><span class='tooltiptext'>Sets / gets &quot;highlight a current line&quot; flag for a text.
 </span></h4><h1><a href='#::hl_tcl::my'>hl_tcl::my</a></h1><h2><a href='#::hl_tcl::my-Commands'>Commands</a></h2><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::AuxEnding'>AuxEnding</a><span class='tooltiptext'>Auxiliary procedure to process the ending comments in the line.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::BindToEvent'>BindToEvent</a><span class='tooltiptext'>Binds an event on a widget to a command.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::CoroHighlightAll'>CoroHighlightAll</a><span class='tooltiptext'>Highlights all of a text as a coroutine.
@@ -1942,9 +1999,10 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::HighlightBrackets'>HighlightBrackets</a><span class='tooltiptext'>Highlights matching brackets if any.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::HighlightCmd'>HighlightCmd</a><span class='tooltiptext'>Highlights Tcl/Tk commands.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::HighlightComment'>HighlightComment</a><span class='tooltiptext'>Highlights comments.
-</span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::HighlightLine'>HighlightLine</a><span class='tooltiptext'>Highlightes a line in text.
+</span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::HighlightLine'>HighlightLine</a><span class='tooltiptext'>Highlights a line in text.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::HighlightStr'>HighlightStr</a><span class='tooltiptext'>Highlights strings.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::InRange'>InRange</a><span class='tooltiptext'>Checks if a text position is in a range of text positions.
+</span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::IsCurline'>IsCurline</a><span class='tooltiptext'>Sets / gets &quot;highlight a current line&quot; flag for a text.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::LineState'>LineState</a><span class='tooltiptext'>Gets an initial state of line.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::MatchedBrackets'>MatchedBrackets</a><span class='tooltiptext'>Finds a match of characters (dchar for schar).
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::MemPos'>MemPos</a><span class='tooltiptext'>Remembers the state of current line.
