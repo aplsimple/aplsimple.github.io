@@ -1527,6 +1527,19 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists _MC_(<font color=#1b1baa>$msg</font>)]} {<b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$_MC_($msg)</font>}
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$msg</font>
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::apave::msgcatDialogs'>msgcatDialogs</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Prepares localized messages used in dialogues.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>msgcatDialogs</span> </div>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_msgcatDialogs' href="javascript:toggleSource('apave_msgcatDialogs')">Show source</a></p>
+<div id='apave_msgcatDialogs' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::msgcatDialogs {} {
+  <i><font color=#4b5d50># Prepares localized messages used in dialogues.</font></i>
+
+  <b><font color=#3a6797>variable</font></b> msgarray
+  <b><font color=#3a6797>foreach</font></b> n [<b><font color=#3a6797>array</font></b> names msgarray] {
+    <b><font color=#3a6797>set</font></b> msgarray(<font color=#1b1baa>$n</font>) [msgcat::mc <font color=#1b1baa>$msgarray($n)</font>]
+  }
+}<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::obj'>obj</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Calls a method of APave class.</p>
@@ -4031,6 +4044,7 @@ padding: 0%;
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ll</font>%2} {   ;<i><font color=#4b5d50># clear the attributes, if called with &quot;&quot;</font></i>
       <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(LINKFONT) [<b><font color=#3a6797>list</font></b>]
     } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions args <font color=#6c3e67>-foreground</font> {} <font color=#6c3e67>-background</font> {}]  ::apave::_AP_VARS(LINKFG) ::apave::_AP_VARS(LINKBG)
       <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(LINKFONT) <font color=#1b1baa>$args</font>
     }
   }
@@ -4405,10 +4419,16 @@ padding: 0%;
       }
     }
   braceright {
-      <i><font color=#4b5d50># right brace pressed: if no other chars in the line, shift the brace</font></i>
-      <b><font color=#3a6797>set</font></b> idx1 [<font color=#1b1baa>$w</font> index <font color=#8b2a0e>&quot;insert&quot;</font>]
+      <i><font color=#4b5d50># right brace pressed: shift the brace to left</font></i>
+      <b><font color=#3a6797>set</font></b> idx1 [<font color=#1b1baa>$w</font> index insert]
       <b><font color=#3a6797>set</font></b> st [<font color=#1b1baa>$w</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idx1 linestart&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idx1 lineend&quot;</font>]
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$st</font>] eq {} && [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$st</font>]&gt;=<font color=#1b1baa>$lindt</font>} {
+      <b><font color=#3a6797>set</font></b> idx2 [<font color=#1b1baa>$w</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idx1 -1 line&quot;</font>]
+      <b><font color=#3a6797>set</font></b> st2 [<font color=#1b1baa>$w</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idx2 linestart&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idx2 lineend&quot;</font>]
+      <b><font color=#3a6797>set</font></b> nchars [<b><font color=#ca14ca>my</font></b> leadingSpaces <font color=#1b1baa>$st</font>]
+      <b><font color=#3a6797>set</font></b> nchars2 [<b><font color=#ca14ca>my</font></b> leadingSpaces <font color=#1b1baa>$st2</font>]
+      <b><font color=#3a6797>set</font></b> st2 [<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$st2</font> end]
+      <b><font color=#3a6797>if</font></b> {(<font color=#1b1baa>$st2</font> ne <font color=#8b2a0e>&quot;\{&quot;</font> && <font color=#1b1baa>$nchars2</font>&lt;=<font color=#1b1baa>$nchars</font> || <font color=#1b1baa>$st2</font> eq <font color=#8b2a0e>&quot;\{&quot;</font> && <font color=#1b1baa>$nchars2</font>&lt;<font color=#1b1baa>$nchars</font>)  && [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$st</font>] eq {} && [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$st</font>]&gt;=<font color=#1b1baa>$lindt</font>} {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$nchars</font>&gt;<font color=#1b1baa>$nchars2</font>} {<b><font color=#3a6797>set</font></b> lindt [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$nchars</font>-<font color=#1b1baa>$nchars2</font>}]}
         <font color=#1b1baa>$w</font> delete <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idx1 lineend -<font color=#1b1baa>$</font>lindt char&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idx1 lineend&quot;</font>
       }
     }
@@ -5132,7 +5152,7 @@ padding: 0%;
     gut {<b><font color=#3a6797>set</font></b> widget canvas}
     lab {
       <b><font color=#3a6797>set</font></b> widget ttk::label
-      <b><font color=#3a6797>if</font></b> {[::apave::extractOptions attrs <font color=#6c3e67>-state</font> normal] eq <font color=#8b2a0e>&quot;disabled&quot;</font>} {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$disabled</font>} {
         <b><font color=#3a6797>set</font></b> grey [<b><font color=#3a6797>lindex</font></b> [<b><font color=#ca14ca>my</font></b> csGet] 8]
         <b><font color=#3a6797>set</font></b> attrs <font color=#8b2a0e>&quot;-foreground <font color=#1b1baa>$</font>grey <font color=#1b1baa>$</font>attrs&quot;</font>
       }
@@ -5215,14 +5235,17 @@ padding: 0%;
     sev {<b><font color=#3a6797>set</font></b> widget ttk::separator}
     siz {<b><font color=#3a6797>set</font></b> widget ttk::sizegrip}
     spx - spX {
-       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$nam3</font> eq {spx}} {<b><font color=#3a6797>set</font></b> widget ttk::spinbox} {<b><font color=#3a6797>set</font></b> widget spinbox}
-       <b><font color=#3a6797>lassign</font></b> [::apave::parseOptions <font color=#1b1baa>$attrs</font>  <font color=#6c3e67>-command</font> {} <font color=#6c3e67>-com</font> {} <font color=#6c3e67>-from</font> {} <font color=#6c3e67>-to</font> {}] cmd cmd2 from to
-       <b><font color=#3a6797>append</font></b> cmd <font color=#1b1baa>$cmd2</font>
-       <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions attrs <font color=#6c3e67>-tip</font> {} <font color=#6c3e67>-tooltip</font> {}] t1 t2
-       <b><font color=#3a6797>set</font></b> t2 <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>t1<font color=#1b1baa>$</font>t2&quot;</font>
-       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$t2</font> ne {}} {<b><font color=#3a6797>set</font></b> t2 <font color=#8b2a0e>&quot;\n <font color=#1b1baa>$</font>t2&quot;</font>}
-       <b><font color=#3a6797>set</font></b> t2 <font color=#8b2a0e>&quot; <font color=#1b1baa>$</font>from .. <font color=#1b1baa>$</font>to <font color=#1b1baa>$</font>t2&quot;</font>
-       <b><font color=#3a6797>append</font></b> attrs <font color=#8b2a0e>&quot; -onReturn <font color=#1b1baa>{$</font>::apave::UFF<font color=#1b1baa>{$</font>cmd<font color=#1b1baa>}</font> <font color=#1b1baa>{$</font>from<font color=#1b1baa>}</font> <font color=#1b1baa>{$</font>to<font color=#1b1baa>}$</font>::apave::UFF<font color=#1b1baa>}</font> -tip <font color=#1b1baa>{$</font>t2<font color=#1b1baa>}</font>&quot;</font>
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$nam3</font> eq {spx}} {<b><font color=#3a6797>set</font></b> widget ttk::spinbox} {<b><font color=#3a6797>set</font></b> widget spinbox}
+      <b><font color=#3a6797>lassign</font></b> [::apave::parseOptions <font color=#1b1baa>$attrs</font>  <font color=#6c3e67>-command</font> {} <font color=#6c3e67>-com</font> {} <font color=#6c3e67>-from</font> {} <font color=#6c3e67>-to</font> {}] cmd cmd2 from to
+      <b><font color=#3a6797>append</font></b> cmd <font color=#1b1baa>$cmd2</font>
+      <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions attrs <font color=#6c3e67>-tip</font> {} <font color=#6c3e67>-tooltip</font> {}] t1 t2
+      <b><font color=#3a6797>set</font></b> t2 <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>t1<font color=#1b1baa>$</font>t2&quot;</font>
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$from</font> ne {} || <font color=#1b1baa>$to</font> ne {}} {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$t2</font> ne {}} {<b><font color=#3a6797>set</font></b> t2 <font color=#8b2a0e>&quot;\n <font color=#1b1baa>$</font>t2&quot;</font>}
+        <b><font color=#3a6797>set</font></b> t2 <font color=#8b2a0e>&quot; <font color=#1b1baa>$</font>from .. <font color=#1b1baa>$</font>to <font color=#1b1baa>$</font>t2&quot;</font>
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$t2</font> ne {}} {<b><font color=#3a6797>set</font></b> t2 <font color=#8b2a0e>&quot;-tip <font color=#1b1baa>{$</font>t2<font color=#1b1baa>}</font>&quot;</font>}
+      <b><font color=#3a6797>append</font></b> attrs <font color=#8b2a0e>&quot; -onReturn <font color=#1b1baa>{$</font>::apave::UFF<font color=#1b1baa>{$</font>cmd<font color=#1b1baa>}</font> <font color=#1b1baa>{$</font>from<font color=#1b1baa>}</font> <font color=#1b1baa>{$</font>to<font color=#1b1baa>}$</font>::apave::UFF<font color=#1b1baa>}</font> <font color=#1b1baa>$</font>t2&quot;</font>
     }
     tbl { ;<i><font color=#4b5d50># tablelist</font></i>
       <b><font color=#3a6797>package</font></b> require tablelist
@@ -5441,9 +5464,9 @@ padding: 0%;
   ; <b><font color=#ca14ca>proc</font></b> exitEditor {resExit} {
     <b><font color=#3a6797>upvar</font></b> <font color=#1b1baa>$resExit</font> res
     <b><font color=#3a6797>if</font></b> {[[<b><font color=#ca14ca>my</font></b> TexM] edit modified]} {
-      <b><font color=#3a6797>set</font></b> w [<b><font color=#3a6797>set</font></b> [<b><font color=#3a6797>namespace</font></b> current]::_pdg(dlg)]
+      <b><font color=#3a6797>set</font></b> w [<b><font color=#ca14ca>my</font></b> dlgPath]
       <b><font color=#3a6797>set</font></b> pdlg [::apave::APaveDialog new <font color=#1b1baa>$w</font>]
-      <b><font color=#3a6797>set</font></b> r [<font color=#1b1baa>$pdlg</font> misc warn <font color=#8b2a0e>&quot;Save text?&quot;</font>  <font color=#8b2a0e>&quot;\n Save changes made to the text? \n&quot;</font>  {Save 1 <font color=#8b2a0e>&quot;Don't save &quot;</font> Close Cancel 0}  1 <font color=#6c3e67>-focusback</font> [<b><font color=#ca14ca>my</font></b> TexM] <font color=#6c3e67>-centerme</font> <font color=#1b1baa>$w</font>]
+      <b><font color=#3a6797>set</font></b> r [<font color=#1b1baa>$pdlg</font> misc warn <font color=#1b1baa>$::apave::msgarray(savetext)</font>  <font color=#8b2a0e>&quot;\n <font color=#1b1baa>$</font>::apave::msgarray(saveask) \n&quot;</font>  [<b><font color=#3a6797>list</font></b> Save 1 <font color=#1b1baa>$::apave::msgarray(savenot)</font> Close Cancel 0]  1 <font color=#6c3e67>-focusback</font> [<b><font color=#ca14ca>my</font></b> TexM] <font color=#6c3e67>-centerme</font> <font color=#1b1baa>$w</font>]
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$r</font>==1} {
         <b><font color=#3a6797>set</font></b> res 1
       } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$r</font> eq <font color=#8b2a0e>&quot;Close&quot;</font>} {
@@ -5575,19 +5598,21 @@ padding: 0%;
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveDialog::findInText'>findInText</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveDialog" title="::apave::APaveDialog" class='ruff_cmd'>::apave::APaveDialog</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveDialog'>APaveDialog</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Finds a string in text widget.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT findInText</span> <span class='ruff_arg'>?donext? ?txt? ?varFind?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT findInText</span> <span class='ruff_arg'>?donext? ?txt? ?varFind? ?dobell?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>donext</code></code></td><td class='ruff_defitem'>&quot;1&quot; means 'from a current position'; <i>optional, default</i> <code>0</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>path to the text widget; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>varFind</code></code></td><td class='ruff_defitem'>variable; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>dobell</code></code></td><td class='ruff_defitem'>if yes, bells; <i>optional, default</i> <code>yes</code></td></tr>
 </table>
 <h5 class='ruff'>Return value</h5><p class='ruff'>Returns yes, if found (or nothing to find), otherwise returns &quot;no&quot;; also, if there was a real search, the search string is added.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_APaveDialog_findInText' href="javascript:toggleSource('apave_APaveDialog_findInText')">Show source</a></p>
-<div id='apave_APaveDialog_findInText' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> findInText {{donext 0} {txt {}} {varFind {}}} {
+<div id='apave_APaveDialog_findInText' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> findInText {{donext 0} {txt {}} {varFind {}} {dobell yes}} {
   <i><font color=#4b5d50># Finds a string in text widget.</font></i>
   <i><font color=#4b5d50>#   donext - &quot;1&quot; means 'from a current position'</font></i>
   <i><font color=#4b5d50>#   txt - path to the text widget</font></i>
   <i><font color=#4b5d50>#   varFind - variable</font></i>
+  <i><font color=#4b5d50>#   dobell - if yes, bells</font></i>
   <i><font color=#4b5d50># Returns yes, if found (or nothing to find), otherwise returns &quot;no&quot;;</font></i>
   <i><font color=#4b5d50># also, if there was a real search, the search string is added.</font></i>
 
@@ -5622,7 +5647,7 @@ padding: 0%;
     <b><font color=#134070>focus</font></b> <font color=#1b1baa>$txt</font>
     <b><font color=#3a6797>set</font></b> res yes
   } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#134070>bell</font></b> <font color=#6c3e67>-nice</font>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dobell</font>} <b><font color=#134070>bell</font></b>
     <b><font color=#3a6797>set</font></b> res no
   }
   <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font> <font color=#1b1baa>$sel</font>]
@@ -7567,6 +7592,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::logName'>logName</a><span class='tooltiptext'>Sets a log file's name.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::lsearchFile'>lsearchFile</a><span class='tooltiptext'>Searches a file name in a list, using normalized file names.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::mc'>mc</a><span class='tooltiptext'>Gets a localized version of a message.
+</span></h4><h4 class='tooltip'><a href='apave.html#::apave::msgcatDialogs'>msgcatDialogs</a><span class='tooltiptext'>Prepares localized messages used in dialogues.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::obj'>obj</a><span class='tooltiptext'>Calls a method of APave class.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::openDoc'>openDoc</a><span class='tooltiptext'>Opens a document.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::parseOptions'>parseOptions</a><span class='tooltiptext'>Parses argument list containing options.

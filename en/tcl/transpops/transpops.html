@@ -579,6 +579,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   evn - index of event (2nd sets the geometry)</font></i>
 
   <b><font color=#3a6797>variable</font></b> geom
+  <b><font color=#3a6797>variable</font></b> text
   <b><font color=#3a6797>variable</font></b> msgs
   <b><font color=#3a6797>variable</font></b> imsgs
   <b><font color=#3a6797>variable</font></b> wmsgs
@@ -587,12 +588,24 @@ padding: 0%;
   <b><font color=#3a6797>variable</font></b> cntwait
   <b><font color=#3a6797>variable</font></b> fg
   <b><font color=#3a6797>variable</font></b> bg
+  <b><font color=#3a6797>set</font></b> fS red
+  <b><font color=#3a6797>set</font></b> textTags [<b><font color=#3a6797>list</font></b>  [<b><font color=#3a6797>list</font></b> <font color=#8b2a0e>&quot;r&quot;</font> <font color=#8b2a0e>&quot;-font <font color=#1b1baa>{</font>-weight bold -size 16 -family Mono<font color=#1b1baa>}</font> -foreground <font color=#1b1baa>$</font>fS&quot;</font>]  [<b><font color=#3a6797>list</font></b> <font color=#8b2a0e>&quot;b&quot;</font> <font color=#8b2a0e>&quot;-foreground <font color=#1b1baa>$</font>fS&quot;</font>]  [<b><font color=#3a6797>list</font></b> <font color=#8b2a0e>&quot;link&quot;</font> <font color=#8b2a0e>&quot;::apave::openDoc %t@@https://%l@@&quot;</font>]  ]
   <b><font color=#3a6797>set</font></b> wmsgs [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$win</font> .].transpops
   <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$wmsgs</font>}
   <b><font color=#3a6797>while</font></b> {1} {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> imsgs]&gt;[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$msgs</font>]} <b><font color=#ca14ca>return</font></b>
     <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> trim [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$msgs</font> <font color=#1b1baa>$imsgs</font>-1]]
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$msg</font> ne {}} <b><font color=#ca14ca>break</font></b>
+  }
+  <b><font color=#3a6797>set</font></b> rows 0
+  <b><font color=#3a6797>set</font></b> cols 10
+  <b><font color=#3a6797>set</font></b> text {}
+  <b><font color=#3a6797>foreach</font></b> row [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$msg</font> \n] {
+    <b><font color=#3a6797>set</font></b> row [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$row</font>]
+    <b><font color=#3a6797>append</font></b> text <font color=#1b1baa>$row</font> \n
+    <b><font color=#3a6797>set</font></b> row [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> &lt;r&gt; {} &lt;/r&gt; {} &lt;b&gt; {} &lt;/b&gt; {} &lt;link&gt; {} &lt;/link&gt; {}] <font color=#1b1baa>$row</font>]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> c [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$row</font>]]&gt;<font color=#1b1baa>$cols</font>} {<b><font color=#3a6797>set</font></b> cols <font color=#1b1baa>$c</font>}
+    <b><font color=#3a6797>incr</font></b> rows
   }
   <b><font color=#3a6797>catch</font></b> {
     <i><font color=#4b5d50># when used within apave theme, disable theming transpops</font></i>
@@ -608,17 +621,28 @@ padding: 0%;
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>set</font></b> opts {}
   }
-  <b><font color=#134070>label</font></b> <font color=#1b1baa>$wmsgs</font>.labtrans <font color=#6c3e67>-padx</font> 30 <font color=#6c3e67>-pady</font> 30 <font color=#6c3e67>-foreground</font> <font color=#1b1baa>$fg</font> <font color=#6c3e67>-background</font> <font color=#1b1baa>$bg</font>  <font color=#6c3e67>-font</font> {<font color=#6c3e67>-weight</font> bold <font color=#6c3e67>-size</font> 20 <font color=#6c3e67>-family</font> Quicksand}  <font color=#6c3e67>-relief</font> solid <font color=#6c3e67>-text</font> <font color=#1b1baa>$msg</font> <font color=#6c3e67>-justify</font> left {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font>
+  <b><font color=#3a6797>set</font></b> wtxt <font color=#1b1baa>$wmsgs</font>.labtrans
+  <b><font color=#3a6797>set</font></b> font {<font color=#6c3e67>-weight</font> bold <font color=#6c3e67>-size</font> 16 <font color=#6c3e67>-family</font> Mono}
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {
+    <b><font color=#3a6797>set</font></b> text [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$text</font>]
+    <b><font color=#134070>text</font></b> <font color=#1b1baa>$wtxt</font> <font color=#6c3e67>-padx</font> 30 <font color=#6c3e67>-pady</font> 30 <font color=#6c3e67>-foreground</font> <font color=#1b1baa>$fg</font> <font color=#6c3e67>-background</font> <font color=#1b1baa>$bg</font>  <font color=#6c3e67>-font</font> <font color=#1b1baa>$font</font>  <font color=#6c3e67>-relief</font> solid {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font> <font color=#6c3e67>-width</font> <font color=#1b1baa>$cols</font> <font color=#6c3e67>-height</font> <font color=#1b1baa>$rows</font> <font color=#6c3e67>-state</font> disabled
+    <b><font color=#134070>pack</font></b> <font color=#1b1baa>$wtxt</font>
+    ::apave::obj initLinkFont <font color=#6c3e67>-underline</font> 1 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$font</font> <font color=#6c3e67>-foreground</font> <font color=#1b1baa>$fg</font> <font color=#6c3e67>-background</font> <font color=#1b1baa>$bg</font>
+    ::apave::obj displayTaggedText <font color=#1b1baa>$wtxt</font> ::transpops::my::text <font color=#1b1baa>$textTags</font>
+  } e]} <b><font color=#3a6797>then</font></b> {
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$wtxt</font>}
+    <b><font color=#134070>label</font></b> <font color=#1b1baa>$wtxt</font> <font color=#6c3e67>-padx</font> 30 <font color=#6c3e67>-pady</font> 30 <font color=#6c3e67>-foreground</font> <font color=#1b1baa>$fg</font> <font color=#6c3e67>-background</font> <font color=#1b1baa>$bg</font>  <font color=#6c3e67>-font</font> <font color=#1b1baa>$font</font>  <font color=#6c3e67>-relief</font> solid <font color=#6c3e67>-text</font> <font color=#1b1baa>$msg</font> <font color=#6c3e67>-justify</font> left {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font>
+    <b><font color=#134070>pack</font></b> <font color=#1b1baa>$wtxt</font> <font color=#6c3e67>-fill</font> both <font color=#6c3e67>-expand</font> true
+  }
   <b><font color=#3a6797>set</font></b> alpha 0.0
   <b><font color=#3a6797>set</font></b> alphaincr [<b><font color=#3a6797>expr</font></b> {abs(<font color=#1b1baa>$alphaincr</font>)}]
-  <b><font color=#134070>pack</font></b> <font color=#1b1baa>$wmsgs</font>.labtrans <font color=#6c3e67>-fill</font> both <font color=#6c3e67>-expand</font> true
   <b><font color=#3a6797>set</font></b> alpha 0.0
   <b><font color=#3a6797>set</font></b> alphaincr 0.007
   <b><font color=#3a6797>set</font></b> cntwait 0
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wmsgs</font> &lt;ButtonPress&gt; {<b><font color=#3a6797>set</font></b> ::transpops::my::cntwait 0}
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> {^http[s]?://\S+$} <font color=#1b1baa>$msg</font>]} {
     <b><font color=#3a6797>catch</font></b> {
-      ::apave::obj makeLabelLinked <font color=#1b1baa>$wmsgs</font>.labtrans  <font color=#8b2a0e>&quot;::apave::openDoc <font color=#1b1baa>$</font>msg@@<font color=#1b1baa>$</font>msg@@&quot;</font> <font color=#1b1baa>$fg</font> <font color=#1b1baa>$bg</font> <font color=#1b1baa>$fg</font> yellow
+      ::apave::obj makeLabelLinked <font color=#1b1baa>$wtxt</font>  <font color=#8b2a0e>&quot;::apave::openDoc <font color=#1b1baa>$</font>msg@@<font color=#1b1baa>$</font>msg@@&quot;</font> <font color=#1b1baa>$fg</font> <font color=#1b1baa>$bg</font> <font color=#1b1baa>$fg</font> yellow
     }
   }
   <b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> {[<b><font color=#134070>winfo</font></b> pointerx <font color=#1b1baa>$win</font>]+10}]
