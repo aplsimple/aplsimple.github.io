@@ -4890,9 +4890,7 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ontop</font>} {<b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$win</font> <font color=#6c3e67>-topmost</font> 1}
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$modal</font>} {
     <i><font color=#4b5d50># modal window:</font></i>
-    <b><font color=#134070>grab</font></b> set <font color=#1b1baa>$win</font>
-    <b><font color=#ca14ca>my</font></b> waitWinVar <font color=#1b1baa>$win</font> <font color=#1b1baa>$var</font>
-    <b><font color=#134070>grab</font></b> release <font color=#1b1baa>$win</font>
+    <b><font color=#ca14ca>my</font></b> waitWinVar <font color=#1b1baa>$win</font> <font color=#1b1baa>$var</font> <font color=#1b1baa>$modal</font>
     ::apave::InfoWindow [<b><font color=#3a6797>expr</font></b> {[::apave::InfoWindow] - 1}] <font color=#1b1baa>$win</font> <font color=#1b1baa>$modal</font> <font color=#1b1baa>$var</font>
   } <b><font color=#3a6797>else</font></b> {
     <i><font color=#4b5d50># non-modal window:</font></i>
@@ -4900,7 +4898,7 @@ padding: 0%;
       <b><font color=#134070>grab</font></b> release <font color=#1b1baa>$wgr</font>
     }
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$waitvar</font> && <font color=#1b1baa>$var</font> ne {}} {
-      <b><font color=#ca14ca>my</font></b> waitWinVar <font color=#1b1baa>$win</font> <font color=#1b1baa>$var</font> ;<i><font color=#4b5d50># show and wait for closing the window</font></i>
+      <b><font color=#ca14ca>my</font></b> waitWinVar <font color=#1b1baa>$win</font> <font color=#1b1baa>$var</font> <font color=#1b1baa>$modal</font> ;<i><font color=#4b5d50># show and wait for closing the window</font></i>
     } <b><font color=#3a6797>else</font></b> {
       <b><font color=#134070>wm</font></b> deiconify <font color=#1b1baa>$win</font>      ;<i><font color=#4b5d50># show only</font></i>
     }
@@ -5048,22 +5046,41 @@ padding: 0%;
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::waitWinVar'>waitWinVar</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Tk waiting for variable's change.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT waitWinVar</span> <span class='ruff_arg'>win var</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT waitWinVar</span> <span class='ruff_arg'>win var modal</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>win</code></code></td><td class='ruff_defitem'>the window's path</td></tr>
 <tr><td class='ruff_defitem'><code><code>var</code></code></td><td class='ruff_defitem'>variable's name to receive a result (tkwait's variable)</td></tr>
+<tr><td class='ruff_defitem'><code><code>modal</code></code></td><td class='ruff_defitem'>yes at showing the window as modal</td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_APaveBase_waitWinVar' href="javascript:toggleSource('apave_APaveBase_waitWinVar')">Show source</a></p>
-<div id='apave_APaveBase_waitWinVar' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> waitWinVar {win var} {
+<div id='apave_APaveBase_waitWinVar' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> waitWinVar {win var modal} {
   <i><font color=#4b5d50># Tk waiting for variable's change.</font></i>
   <i><font color=#4b5d50>#   win - the window's path</font></i>
   <i><font color=#4b5d50>#   var - variable's name to receive a result (tkwait's variable)</font></i>
+  <i><font color=#4b5d50>#   modal - yes at showing the window as modal</font></i>
 
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$var</font> ne {}} {
-    <b><font color=#3a6797>if</font></b> {![<b><font color=#134070>winfo</font></b> viewable <font color=#1b1baa>$win</font>]} {
-      <b><font color=#134070>tkwait</font></b> visibility <font color=#1b1baa>$win</font>  ;<i><font color=#4b5d50># waits till the window be visible</font></i>
+  <i><font color=#4b5d50># first of all, wait till the window be visible</font></i>
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#134070>winfo</font></b> viewable <font color=#1b1baa>$win</font>]} {
+    <b><font color=#134070>tkwait</font></b> visibility <font color=#1b1baa>$win</font>
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$modal</font>} {      ;<i><font color=#4b5d50># for modal, grab the window</font></i>
+    <b><font color=#3a6797>set</font></b> wgr [<b><font color=#134070>grab</font></b> current]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#134070>grab</font></b> set <font color=#1b1baa>$win</font>}]} {
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>tkwait</font></b> visibility <font color=#1b1baa>$win</font>}  ;<i><font color=#4b5d50># 2nd attempt to get the window visible, by force</font></i>
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>grab</font></b> set <font color=#1b1baa>$win</font>}           ;<i><font color=#4b5d50># (not sure, where it can fire, still let it be)</font></i>
+      <b><font color=#3a6797>puts</font></b> stderr <font color=#8b2a0e>&quot;\napave::waitWinVar - please send a note to apave developers on this catch.&quot;</font>
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>puts</font></b> stderr <font color=#8b2a0e>&quot;apave::waitWinVar - <font color=#1b1baa>[</font>info level -1<font color=#1b1baa>]</font>\n&quot;</font>}
     }
-    <b><font color=#134070>tkwait</font></b> variable <font color=#1b1baa>$var</font>  ;<i><font color=#4b5d50># waits till the window associated variable be changed</font></i>
+  }
+  <i><font color=#4b5d50># at need, wait till the window associated variable be changed</font></i>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$var</font> ne {}} {
+    <b><font color=#134070>tkwait</font></b> variable <font color=#1b1baa>$var</font>
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$modal</font>} {      ;<i><font color=#4b5d50># for modal, release the grab</font></i>
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>grab</font></b> release <font color=#1b1baa>$win</font>}
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wgr</font> ne {}} {
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>grab</font></b> set <font color=#1b1baa>$wgr</font>}  ;<i><font color=#4b5d50># restore the old grab</font></i>
+    }
   }
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::widgetType'>widgetType</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
