@@ -772,30 +772,46 @@ this option with baltip instead of BWidget and tklib's tooltip.
     <b><font color=#3a6797>set</font></b> optvals <font color=#1b1baa>$my::ttdata(optvals,$w)</font>
     <b><font color=#3a6797>lappend</font></b> optvals {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
     <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>after</font></b> cancel <font color=#1b1baa>$my::ttdata(after)</font>}
-    <b><font color=#3a6797>set</font></b> my::ttdata(after) [<b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> ::baltip::my::Show <font color=#1b1baa>$w</font>  [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$my::ttdata(optvals,$w)</font> <font color=#6c3e67>-text</font>] yes {} <font color=#1b1baa>$optvals</font>]]
+    <b><font color=#3a6797>set</font></b> win [tippath <font color=#1b1baa>$w</font>] ;<i><font color=#4b5d50># the tip's window</font></i>
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists my::ttdata(winGEO,<font color=#1b1baa>$win</font>)]} {
+      <b><font color=#3a6797>set</font></b> geo <font color=#1b1baa>$my::ttdata(winGEO,$win)</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> geo {}
+    }
+    <b><font color=#3a6797>set</font></b> my::ttdata(after) [<b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> ::baltip::my::Show <font color=#1b1baa>$w</font>  [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$my::ttdata(optvals,$w)</font> <font color=#6c3e67>-text</font>] yes <font color=#1b1baa>$geo</font> <font color=#1b1baa>$optvals</font>]]
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::baltip::showBalloon'>showBalloon</a><span class='ns_scope'> [<a href="baltip.html#::baltip" title="::baltip" class='ruff_cmd'>::baltip</a>]</span><span class='tinylink'><a href='baltip.html#::baltip'>baltip</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
-<p class='ruff'>Shows a balloon under the pointer.</p>
+<p class='ruff'>Shows a balloon under the pointer or according to -geometry option.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>showBalloon</span> <span class='ruff_arg'>tip ?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>tip</code></code></td><td class='ruff_defitem'>text of tip</td></tr>
 <tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>miscellaneous options of baltip</td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>Can be used to show tips on clicking, timeout, processing etc.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>Can be used to show tips on clicking, timeout, processing etc. If there is -geometry in args, shows the balloon with this geometry and a minimal pause.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_baltip_showBalloon' href="javascript:toggleSource('baltip_showBalloon')">Show source</a></p>
 <div id='baltip_showBalloon' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::baltip::showBalloon {tip args} {
-  <i><font color=#4b5d50># Shows a balloon under the pointer.</font></i>
+  <i><font color=#4b5d50># Shows a balloon under the pointer or according to -geometry option.</font></i>
   <i><font color=#4b5d50>#   tip - text of tip</font></i>
   <i><font color=#4b5d50>#   args - miscellaneous options of baltip</font></i>
   <i><font color=#4b5d50># Can be used to show tips on clicking, timeout, processing etc.</font></i>
+  <i><font color=#4b5d50># If there is -geometry in args, shows the balloon</font></i>
+  <i><font color=#4b5d50># with this geometry and a minimal pause.</font></i>
 
   <b><font color=#3a6797>variable</font></b> my::ttdata
   <b><font color=#3a6797>set</font></b> w .
-  <b><font color=#3a6797>lassign</font></b> [<b><font color=#134070>winfo</font></b> pointerxy <font color=#1b1baa>$w</font>] x y
-  <b><font color=#3a6797>set</font></b> geo +[<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$x</font>-int(<font color=#1b1baa>$my::ttdata(under)</font>/2)}]+[<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$y</font>-<font color=#1b1baa>$my::ttdata(under)</font>}]
-  tip <font color=#1b1baa>$w</font> <font color=#1b1baa>$tip</font> <font color=#6c3e67>-geometry</font> <font color=#1b1baa>$geo</font> <font color=#6c3e67>-pause</font> 100 <font color=#6c3e67>-fade</font> 100 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> isgeo [<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$args</font> <font color=#6c3e67>-geometry</font>]]} {
+    <b><font color=#3a6797>lappend</font></b> args <font color=#6c3e67>-pause</font> 10
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#134070>winfo</font></b> pointerxy <font color=#1b1baa>$w</font>] x y
+    <b><font color=#3a6797>lappend</font></b> args <font color=#6c3e67>-geometry</font>  +[<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$x</font>-int(<font color=#1b1baa>$my::ttdata(under)</font>/2)}]+[<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$y</font>-<font color=#1b1baa>$my::ttdata(under)</font>}]
+  }
+  tip <font color=#1b1baa>$w</font> <font color=#1b1baa>$tip</font> <font color=#6c3e67>-pause</font> 100 <font color=#6c3e67>-fade</font> 100 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$isgeo</font>} {
+    <b><font color=#3a6797>after</font></b> 20
+    ::update
+  }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::baltip::showTip'>showTip</a><span class='ns_scope'> [<a href="baltip.html#::baltip" title="::baltip" class='ruff_cmd'>::baltip</a>]</span><span class='tinylink'><a href='baltip.html#::baltip'>baltip</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -2032,7 +2048,7 @@ this option with baltip instead of BWidget and tklib's tooltip.
 </span></h4><h4 class='tooltip'><a href='baltip.html#::baltip::hide'>hide</a><span class='tooltiptext'>Destroys the tip's window.
 </span></h4><h4 class='tooltip'><a href='baltip.html#::baltip::optionlist'>optionlist</a><span class='tooltiptext'>All options of baltip.
 </span></h4><h4 class='tooltip'><a href='baltip.html#::baltip::repaint'>repaint</a><span class='tooltiptext'>Repaints a tip immediately.
-</span></h4><h4 class='tooltip'><a href='baltip.html#::baltip::showBalloon'>showBalloon</a><span class='tooltiptext'>Shows a balloon under the pointer.
+</span></h4><h4 class='tooltip'><a href='baltip.html#::baltip::showBalloon'>showBalloon</a><span class='tooltiptext'>Shows a balloon under the pointer or according to -geometry option.
 </span></h4><h4 class='tooltip'><a href='baltip.html#::baltip::showTip'>showTip</a><span class='tooltiptext'>Shows a tip under the pointer, for a specific widget.
 </span></h4><h4 class='tooltip'><a href='baltip.html#::baltip::sleep'>sleep</a><span class='tooltiptext'>Disables tips for a while.
 </span></h4><h4 class='tooltip'><a href='baltip.html#::baltip::tip'>tip</a><span class='tooltiptext'>Creates a tip for a widget.

@@ -1511,6 +1511,22 @@ padding: 0%;
   }
   <b><font color=#ca14ca>return</font></b> -1
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::apave::mainWindowOfApp'>mainWindowOfApp</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Sets/gets a main window of application.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>mainWindowOfApp</span> <span class='ruff_arg'>?win?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>win</code></code></td><td class='ruff_defitem'>window's path; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+</table>
+<h5 class='ruff'>Description</h5><p class='ruff'>This should be run at application start, before opening any window.</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_mainWindowOfApp' href="javascript:toggleSource('apave_mainWindowOfApp')">Show source</a></p>
+<div id='apave_mainWindowOfApp' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::mainWindowOfApp {{win {}}} {
+  <i><font color=#4b5d50># Sets/gets a main window of application.</font></i>
+  <i><font color=#4b5d50>#   win - window's path</font></i>
+  <i><font color=#4b5d50># This should be run at application start, before opening any window.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> [WindowStatus . MAIN_WINDOW_OF_APP <font color=#1b1baa>$win</font>]
+}<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::mc'>mc</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Gets a localized version of a message.</p>
@@ -4733,7 +4749,7 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> ::apave::MODALWINDOW [<b><font color=#3a6797>set</font></b> Modalwin <font color=#1b1baa>$win</font>]
   ::apave::setAppIcon <font color=#1b1baa>$win</font>
   <b><font color=#3a6797>set</font></b> root [<b><font color=#134070>winfo</font></b> parent <font color=#1b1baa>$win</font>]
-  <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions args <font color=#6c3e67>-centerme</font> {} <font color=#6c3e67>-ontop</font> 0 <font color=#6c3e67>-modal</font> yes  <font color=#6c3e67>-minsize</font> {} <font color=#6c3e67>-themed</font> {} <font color=#6c3e67>-input</font> 0 <font color=#6c3e67>-variable</font> {} <font color=#6c3e67>-waitvar</font> {}]  centerme ontop modal minsize themed input varname waitvar
+  <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions args <font color=#6c3e67>-centerme</font> {} <font color=#6c3e67>-ontop</font> 0 <font color=#6c3e67>-modal</font> yes  <font color=#6c3e67>-minsize</font> {} <font color=#6c3e67>-themed</font> {} <font color=#6c3e67>-input</font> 0 <font color=#6c3e67>-variable</font> {} <font color=#6c3e67>-waitvar</font> {} <font color=#6c3e67>-container</font> -]  centerme ontop modal minsize themed input varname waitvar container
   <font color=#1b1baa>$win</font> configure <font color=#6c3e67>-bg</font> [<b><font color=#3a6797>lindex</font></b> [<b><font color=#ca14ca>my</font></b> csGet] 3]  ;<i><font color=#4b5d50># removes blinking by default bg</font></i>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$themed</font> in {{} {0}} && [<b><font color=#ca14ca>my</font></b> csCurrent] != [apave::cs_Non]} {
     <b><font color=#ca14ca>my</font></b> colorWindow <font color=#1b1baa>$win</font>
@@ -4779,7 +4795,9 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$rooted</font>} {
     <b><font color=#3a6797>lassign</font></b> [::apave::splitGeometry [<b><font color=#134070>wm</font></b> geometry [<b><font color=#134070>winfo</font></b> toplevel <font color=#1b1baa>$root</font>]]] rw rh rx ry
   }
-  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$opt(-decor)</font>} {
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$container</font> ne {-}} {
+    <b><font color=#134070>wm</font></b> transient <font color=#1b1baa>$win</font> <font color=#1b1baa>$container</font>
+  } <b><font color=#3a6797>elseif</font></b> {!<font color=#1b1baa>$opt(-decor)</font>} {
     <b><font color=#134070>wm</font></b> transient <font color=#1b1baa>$win</font> <font color=#1b1baa>$root</font>
   }
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> destroy [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$opt(-onclose)</font> eq {<b><font color=#134070>destroy</font></b>}}]]} {
@@ -4895,6 +4913,7 @@ padding: 0%;
   } <b><font color=#3a6797>else</font></b> {
     <i><font color=#4b5d50># non-modal window:</font></i>
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> wgr [<b><font color=#134070>grab</font></b> current]] ne {}} {
+      <i><font color=#4b5d50># otherwise the non-modal window is irresponsive (in Windows even at WM level):</font></i>
       <b><font color=#134070>grab</font></b> release <font color=#1b1baa>$wgr</font>
     }
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$waitvar</font> && <font color=#1b1baa>$var</font> ne {}} {
@@ -5063,24 +5082,31 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {![<b><font color=#134070>winfo</font></b> viewable <font color=#1b1baa>$win</font>]} {
     <b><font color=#134070>tkwait</font></b> visibility <font color=#1b1baa>$win</font>
   }
+  <b><font color=#3a6797>set</font></b> wmain [::apave::mainWindowOfApp]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$modal</font>} {      ;<i><font color=#4b5d50># for modal, grab the window</font></i>
     <b><font color=#3a6797>set</font></b> wgr [<b><font color=#134070>grab</font></b> current]
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#134070>grab</font></b> set <font color=#1b1baa>$win</font>}]} {
-      <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>tkwait</font></b> visibility <font color=#1b1baa>$win</font>}  ;<i><font color=#4b5d50># 2nd attempt to get the window visible, by force</font></i>
-      <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>grab</font></b> set <font color=#1b1baa>$win</font>}           ;<i><font color=#4b5d50># (not sure, where it can fire, still let it be)</font></i>
-      <b><font color=#3a6797>puts</font></b> stderr <font color=#8b2a0e>&quot;\napave::waitWinVar - please send a note to apave developers on this catch.&quot;</font>
-      <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>puts</font></b> stderr <font color=#8b2a0e>&quot;apave::waitWinVar - <font color=#1b1baa>[</font>info level -1<font color=#1b1baa>]</font>\n&quot;</font>}
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wmain</font> ne {} && <font color=#1b1baa>$wmain</font> ne <font color=#1b1baa>$win</font>} {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#134070>grab</font></b> set <font color=#1b1baa>$win</font>}]} {
+        <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>tkwait</font></b> visibility <font color=#1b1baa>$win</font>}  ;<i><font color=#4b5d50># 2nd attempt to get the window visible, by force</font></i>
+        <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>grab</font></b> set <font color=#1b1baa>$win</font>}           ;<i><font color=#4b5d50># (not sure, where it can fire, still let it be)</font></i>
+        <b><font color=#3a6797>puts</font></b> stderr <font color=#8b2a0e>&quot;\napave::waitWinVar - please send a note to apave developers on this catch.&quot;</font>
+        <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>puts</font></b> stderr <font color=#8b2a0e>&quot;apave::waitWinVar - <font color=#1b1baa>[</font>info level -1<font color=#1b1baa>]</font>\n&quot;</font>}
+      }
     }
   }
   <i><font color=#4b5d50># at need, wait till the window associated variable be changed</font></i>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$var</font> ne {}} {
     <b><font color=#134070>tkwait</font></b> variable <font color=#1b1baa>$var</font>
   }
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$modal</font>} {      ;<i><font color=#4b5d50># for modal, release the grab</font></i>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$modal</font>} {      ;<i><font color=#4b5d50># for modal, release the grab and restore the old one</font></i>
     <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>grab</font></b> release <font color=#1b1baa>$win</font>}
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wgr</font> ne {}} {
-      <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>grab</font></b> set <font color=#1b1baa>$wgr</font>}  ;<i><font color=#4b5d50># restore the old grab</font></i>
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>grab</font></b> set <font color=#1b1baa>$wgr</font>}
     }
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wmain</font> eq {}} {
+    <i><font color=#4b5d50># if not set beforehand, let the main window of application be the current one</font></i>
+    ::apave::mainWindowOfApp <font color=#1b1baa>$win</font>
   }
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::widgetType'>widgetType</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
@@ -7612,6 +7638,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::logMessage'>logMessage</a><span class='tooltiptext'>Logs messages to a log file.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::logName'>logName</a><span class='tooltiptext'>Sets a log file's name.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::lsearchFile'>lsearchFile</a><span class='tooltiptext'>Searches a file name in a list, using normalized file names.
+</span></h4><h4 class='tooltip'><a href='apave.html#::apave::mainWindowOfApp'>mainWindowOfApp</a><span class='tooltiptext'>Sets/gets a main window of application.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::mc'>mc</a><span class='tooltiptext'>Gets a localized version of a message.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::msgcatDialogs'>msgcatDialogs</a><span class='tooltiptext'>Prepares localized messages used in dialogues.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::obj'>obj</a><span class='tooltiptext'>Calls a method of APave class.
