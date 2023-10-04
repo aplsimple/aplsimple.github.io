@@ -4748,12 +4748,16 @@ padding: 0%;
 
   <b><font color=#3a6797>set</font></b> ::apave::MODALWINDOW [<b><font color=#3a6797>set</font></b> Modalwin <font color=#1b1baa>$win</font>]
   ::apave::setAppIcon <font color=#1b1baa>$win</font>
-  <b><font color=#3a6797>set</font></b> root [<b><font color=#134070>winfo</font></b> parent <font color=#1b1baa>$win</font>]
-  <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions args <font color=#6c3e67>-centerme</font> {} <font color=#6c3e67>-ontop</font> 0 <font color=#6c3e67>-modal</font> yes  <font color=#6c3e67>-minsize</font> {} <font color=#6c3e67>-themed</font> {} <font color=#6c3e67>-input</font> 0 <font color=#6c3e67>-variable</font> {} <font color=#6c3e67>-waitvar</font> {} <font color=#6c3e67>-container</font> -]  centerme ontop modal minsize themed input varname waitvar container
+  <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions args <font color=#6c3e67>-centerme</font> {} <font color=#6c3e67>-ontop</font> 0 <font color=#6c3e67>-modal</font> yes <font color=#6c3e67>-minsize</font> {}  <font color=#6c3e67>-themed</font> {} <font color=#6c3e67>-input</font> 0 <font color=#6c3e67>-variable</font> {} <font color=#6c3e67>-waitvar</font> {} <font color=#6c3e67>-transient</font> {-} <font color=#6c3e67>-root</font> {} <font color=#6c3e67>-parent</font> {}]  centerme ontop modal minsize themed input varname waitvar transient root parent
   <font color=#1b1baa>$win</font> configure <font color=#6c3e67>-bg</font> [<b><font color=#3a6797>lindex</font></b> [<b><font color=#ca14ca>my</font></b> csGet] 3]  ;<i><font color=#4b5d50># removes blinking by default bg</font></i>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$themed</font> in {{} {0}} && [<b><font color=#ca14ca>my</font></b> csCurrent] != [apave::cs_Non]} {
     <b><font color=#ca14ca>my</font></b> colorWindow <font color=#1b1baa>$win</font>
   }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$centerme</font> eq {}} {
+    <i><font color=#4b5d50># obsolete options: -root, -parent</font></i>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$root</font> ne {}} {<b><font color=#3a6797>set</font></b> centerme <font color=#1b1baa>$root</font>} {<b><font color=#3a6797>set</font></b> centerme <font color=#1b1baa>$parent</font>}
+  }
+  <b><font color=#3a6797>set</font></b> root [<b><font color=#134070>winfo</font></b> parent <font color=#1b1baa>$win</font>]
   <b><font color=#3a6797>set</font></b> rooted 1
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$centerme</font> ne {}} {
     ;<i><font color=#4b5d50># forced centering relative to a caller's window</font></i>
@@ -4764,7 +4768,7 @@ padding: 0%;
     }
   }
   <b><font color=#3a6797>set</font></b> decor [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$root</font> in {{} .}}]
-  <b><font color=#3a6797>foreach</font></b> {o v} [<b><font color=#3a6797>list</font></b> <font color=#6c3e67>-decor</font> <font color=#1b1baa>$decor</font> <font color=#6c3e67>-focus</font> {} <font color=#6c3e67>-onclose</font> {} <font color=#6c3e67>-geometry</font> {}  <font color=#6c3e67>-root</font> <font color=#1b1baa>$root</font> <font color=#6c3e67>-resizable</font> {} <font color=#6c3e67>-ontop</font> 0 <font color=#6c3e67>-escape</font> 1 <font color=#6c3e67>-checkgeometry</font> 1] {
+  <b><font color=#3a6797>foreach</font></b> {o v} [<b><font color=#3a6797>list</font></b> <font color=#6c3e67>-decor</font> <font color=#1b1baa>$decor</font> <font color=#6c3e67>-focus</font> {} <font color=#6c3e67>-onclose</font> {} <font color=#6c3e67>-geometry</font> {}  <font color=#6c3e67>-resizable</font> {} <font color=#6c3e67>-ontop</font> 0 <font color=#6c3e67>-escape</font> 1 <font color=#6c3e67>-checkgeometry</font> 1] {
     <b><font color=#3a6797>lappend</font></b> defargs <font color=#1b1baa>$o</font> [<b><font color=#ca14ca>my</font></b> getShowOption <font color=#1b1baa>$o</font> <font color=#1b1baa>$v</font>]
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$varname</font> ne {}} {
@@ -4795,8 +4799,8 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$rooted</font>} {
     <b><font color=#3a6797>lassign</font></b> [::apave::splitGeometry [<b><font color=#134070>wm</font></b> geometry [<b><font color=#134070>winfo</font></b> toplevel <font color=#1b1baa>$root</font>]]] rw rh rx ry
   }
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$container</font> ne {-}} {
-    <b><font color=#134070>wm</font></b> transient <font color=#1b1baa>$win</font> <font color=#1b1baa>$container</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$transient</font> ne {-}} {
+    <b><font color=#134070>wm</font></b> transient <font color=#1b1baa>$win</font> <font color=#1b1baa>$transient</font>
   } <b><font color=#3a6797>elseif</font></b> {!<font color=#1b1baa>$opt(-decor)</font>} {
     <b><font color=#134070>wm</font></b> transient <font color=#1b1baa>$win</font> <font color=#1b1baa>$root</font>
   }

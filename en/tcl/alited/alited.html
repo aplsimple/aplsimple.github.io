@@ -528,15 +528,15 @@ padding: 0%;
     <b><font color=#3a6797>set</font></b> timo {}
   }
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$ask</font> || !<font color=#1b1baa>$al(INI,confirmexit)</font> ||  [msg okcancel info [msgcat::mc {Quitting alited.}] OK {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$timo</font>]} {
-    <b><font color=#3a6797>if</font></b> {[alited::file::AllSaved]} {
-      <b><font color=#3a6797>catch</font></b> {::alited::ini::SaveIni}
-      alited::tool::_close                     ;<i><font color=#4b5d50># close all of the</font></i>
-      <b><font color=#3a6797>catch</font></b> {alited::run::Cancel}              ;<i><font color=#4b5d50># possibly open</font></i>
-      <b><font color=#3a6797>catch</font></b> {alited::check::Cancel}            ;<i><font color=#4b5d50># non-modal</font></i>
+    <b><font color=#3a6797>if</font></b> {[file::AllSaved]} {
+      <b><font color=#3a6797>catch</font></b> {ini::SaveIni}
+      tool::_close                     ;<i><font color=#4b5d50># close all of the</font></i>
+      <b><font color=#3a6797>catch</font></b> {run::Cancel}              ;<i><font color=#4b5d50># possibly open</font></i>
+      <b><font color=#3a6797>catch</font></b> {check::Cancel}            ;<i><font color=#4b5d50># non-modal</font></i>
       <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$::alited::find::win</font>}     ;<i><font color=#4b5d50># windows</font></i>
       <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$::alited::find::win2</font>}    ;<i><font color=#4b5d50>#</font></i>
       <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$::alited::al(FN2WINDOW)</font>} ;<i><font color=#4b5d50># (and its possible children)</font></i>
-      <b><font color=#3a6797>catch</font></b> {::alited::paver::Destroy}
+      <b><font color=#3a6797>catch</font></b> {paver::Destroy}
       <font color=#1b1baa>$obPav</font> res <font color=#1b1baa>$al(WIN)</font> <font color=#1b1baa>$res</font>
       ::apave::endWM
     }
@@ -545,15 +545,16 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::ExtTrans'>ExtTrans</a><span class='ns_scope'> [<a href="alited.html#::alited" title="::alited" class='ruff_cmd'>::alited</a>]</span><span class='tinylink'><a href='alited.html#::alited'>alited</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Gets a file's extention and translation attributes (istrans, from, to).</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>ExtTrans</span> <span class='ruff_arg'>fname</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>ExtTrans</span> <span class='ruff_arg'>?fname?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td class='ruff_defitem'><code><code>fname</code></code></td><td class='ruff_defitem'>the file name</td></tr>
+<tr><td class='ruff_defitem'><code><code>fname</code></code></td><td class='ruff_defitem'>the file name; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_ExtTrans' href="javascript:toggleSource('alited_ExtTrans')">Show source</a></p>
-<div id='alited_ExtTrans' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::ExtTrans {fname} {
+<div id='alited_ExtTrans' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::ExtTrans {{fname {}}} {
   <i><font color=#4b5d50># Gets a file's extention and translation attributes (istrans, from, to).</font></i>
   <i><font color=#4b5d50>#   fname - the file name</font></i>
 
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> eq {}} {<b><font color=#3a6797>set</font></b> fname [bar::FileName]}
   <b><font color=#3a6797>set</font></b> ext [<b><font color=#3a6797>string</font></b> trimleft [<b><font color=#3a6797>file</font></b> extension <font color=#1b1baa>$fname</font>] .]
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$ext</font> -] from to
   <b><font color=#3a6797>set</font></b> ismsg [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> tolower <font color=#1b1baa>$ext</font>] eq {msg}}]
@@ -772,13 +773,13 @@ padding: 0%;
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al LIBDIR LIBDIR
   <b><font color=#3a6797>set</font></b> res {}
-  <b><font color=#3a6797>lassign</font></b> [ExtTrans <font color=#1b1baa>$fname</font>] ext istrans from to
+  <b><font color=#3a6797>lassign</font></b> [ExtTrans <font color=#1b1baa>$fname</font>] ext istrans
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ext</font> ne {}} {
     <b><font color=#3a6797>catch</font></b> {
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$istrans</font>} {
         <i><font color=#4b5d50># it's a file to translate from language to language</font></i>
         <b><font color=#3a6797>set</font></b> ext trans
-        alited::HelpMe <font color=#1b1baa>$ext</font> <font color=#6c3e67>-trans</font>
+        HelpMe <font color=#1b1baa>$ext</font> <font color=#6c3e67>-trans</font>
         <b><font color=#3a6797>after</font></b> idle alited::main::FocusText
       }
       <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$ext</font> {
@@ -797,7 +798,7 @@ padding: 0%;
       } <b><font color=#3a6797>else</font></b> {
         <b><font color=#3a6797>set</font></b> fsz <font color=#1b1baa>$al(FONTSIZE,std)</font>
       }
-      <b><font color=#3a6797>set</font></b> res [alited::<font color=#1b1baa>${addon}</font>::init <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$al(FONT,txt)</font> <font color=#1b1baa>$fsz</font>  {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$colors</font> <font color=#1b1baa>$from</font> <font color=#1b1baa>$to</font>]
+      <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>${addon}</font>::init <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$al(FONT,txt)</font> <font color=#1b1baa>$fsz</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$colors</font>]
       <b><font color=#3a6797>foreach</font></b> tag {sel hilited hilited2} {<b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>wtxt tag raise <font color=#1b1baa>$</font>tag&quot;</font>}
     }
   }
@@ -12937,7 +12938,7 @@ padding: 0%;
 
   ::apave::msgcatDialogs
 
-  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al DATADIR DATADIR
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al DATADIR DATADIR DIR DIR
   <b><font color=#3a6797>namespace</font></b> upvar ::alited::pref em_Num em_Num  em_sep em_sep em_ico em_ico em_inf em_inf em_mnu em_mnu
 
   <i><font color=#4b5d50>## ________________________ File _________________________ ##</font></i>
@@ -13162,6 +13163,7 @@ padding: 0%;
     }
   }
   <font color=#1b1baa>$m</font> add separator
+  <font color=#1b1baa>$m</font> add command <font color=#6c3e67>-label</font> Changelog <font color=#6c3e67>-command</font>  [<b><font color=#3a6797>list</font></b> alited::file::OpenFile [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$DIR</font> CHANGELOG.md]]
   <font color=#1b1baa>$m</font> add command <font color=#6c3e67>-label</font> <font color=#1b1baa>$al(MC,updateALE)</font> <font color=#6c3e67>-command</font> {alited::ini::CheckUpdates yes}
   <font color=#1b1baa>$m</font> add separator
   <font color=#1b1baa>$m</font> add command <font color=#6c3e67>-label</font> [msgcat::mc <font color=#8b2a0e>&quot;About...&quot;</font>] <font color=#6c3e67>-command</font> alited::HelpAbout
@@ -18596,7 +18598,7 @@ README.md}
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$what</font> eq {}} {
     <i><font color=#4b5d50>#  it is 'Run me' e_menu item</font></i>
     <b><font color=#3a6797>set</font></b> doit [::apave::extractOptions args <font color=#6c3e67>-doit</font> 0]
-    <b><font color=#3a6797>lassign</font></b> [alited::ExtTrans [alited::bar::FileName]] ext istrans from to
+    <b><font color=#3a6797>lassign</font></b> [alited::ExtTrans] ext istrans from to
     <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$doit</font> && <font color=#1b1baa>$istrans</font>} {
       alited::hl_trans::translateLine
       <b><font color=#ca14ca>return</font></b>
