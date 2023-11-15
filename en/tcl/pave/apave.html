@@ -3121,7 +3121,6 @@ padding: 0%;
   <i><font color=#4b5d50># keep the 'important' data of Pave object in array</font></i>
   <b><font color=#3a6797>array</font></b> set PV [<b><font color=#3a6797>list</font></b>]
   <b><font color=#3a6797>set</font></b> Moveall 1
-  <b><font color=#3a6797>set</font></b> Tonemoves 1
   <b><font color=#3a6797>set</font></b> Initialcolor {}
   <b><font color=#3a6797>set</font></b> Modalwin .
   <b><font color=#3a6797>set</font></b> Fgbut [<b><font color=#134070>ttk::style</font></b> lookup TButton <font color=#6c3e67>-foreground</font>]
@@ -3444,7 +3443,7 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$Initialcolor</font> eq {} && [::isunix]} {
     <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::apave::apaveDir</font> pickers color clrpick.tcl]
   }
-  <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions args <font color=#6c3e67>-entry</font> {}] ent
+  <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions args <font color=#6c3e67>-entry</font> {} <font color=#6c3e67>-inifile</font> {}] ent ini
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ent</font> ne {}} {
     <b><font color=#3a6797>set</font></b> ent [<b><font color=#ca14ca>my</font></b> [<b><font color=#ca14ca>my</font></b> ownWName <font color=#1b1baa>$ent</font>]]
     <b><font color=#3a6797>set</font></b> x [<b><font color=#134070>winfo</font></b> rootx <font color=#1b1baa>$ent</font>]
@@ -3463,7 +3462,7 @@ padding: 0%;
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>set</font></b> Initialcolor black
   }
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>lassign</font></b> [<b><font color=#134070>tk_chooseColor</font></b> <font color=#6c3e67>-moveall</font> <font color=#1b1baa>$Moveall</font>  <font color=#6c3e67>-tonemoves</font> <font color=#1b1baa>$Tonemoves</font> <font color=#6c3e67>-initialcolor</font> <font color=#1b1baa>$Initialcolor</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]  res Moveall Tonemoves}]} {
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>lassign</font></b> [<b><font color=#134070>tk_chooseColor</font></b> <font color=#6c3e67>-moveall</font> <font color=#1b1baa>$Moveall</font>  <font color=#6c3e67>-initialcolor</font> <font color=#1b1baa>$Initialcolor</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font> <font color=#6c3e67>-inifile</font> <font color=#1b1baa>$ini</font>] res Moveall}]} {
     <b><font color=#3a6797>set</font></b> args [::apave::removeOptions <font color=#1b1baa>$args</font> <font color=#6c3e67>-moveall</font> <font color=#6c3e67>-tonemoves</font> <font color=#6c3e67>-geometry</font>]
     <b><font color=#3a6797>set</font></b> res [<b><font color=#134070>tk_chooseColor</font></b> <font color=#6c3e67>-initialcolor</font> <font color=#1b1baa>$Initialcolor</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
   }
@@ -4487,12 +4486,12 @@ padding: 0%;
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>opt</code></code></td><td class='ruff_defitem'>option's name</td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a value for options like &quot;Moveall&quot;, &quot;Tonemoves&quot;.</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a value for options like &quot;Moveall&quot;.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_APaveBase_paveoptionValue' href="javascript:toggleSource('apave_APaveBase_paveoptionValue')">Show source</a></p>
 <div id='apave_APaveBase_paveoptionValue' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> paveoptionValue {opt} {
   <i><font color=#4b5d50># Gets an option's value.</font></i>
   <i><font color=#4b5d50>#   opt - option's name</font></i>
-  <i><font color=#4b5d50># Returns a value for options like &quot;Moveall&quot;, &quot;Tonemoves&quot;.</font></i>
+  <i><font color=#4b5d50># Returns a value for options like &quot;Moveall&quot;.</font></i>
 
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$opt</font> in [<b><font color=#3a6797>info</font></b> object vars [<b><font color=#ca14ca>self</font></b>]]} {
     <b><font color=#3a6797>variable</font></b> <font color=#1b1baa>$opt</font>
@@ -5712,11 +5711,14 @@ padding: 0%;
         <i><font color=#4b5d50># e.g. if &quot;_&quot; stands for cursor then &quot;word_&quot; means selecting &quot;word&quot;</font></i>
         <b><font color=#3a6797>set</font></b> pos  [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;insert -1 char wordstart&quot;</font>]
         <b><font color=#3a6797>set</font></b> pos2 [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;insert -1 char wordend&quot;</font>]
-        <b><font color=#3a6797>set</font></b> sel [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pos2</font>]
+        <b><font color=#3a6797>set</font></b> sel [<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pos2</font>]]
       }
+      <b><font color=#3a6797>set</font></b> slen [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$sel</font>]
+      <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$slen</font>} {<b><font color=#3a6797>incr</font></b> slen; <b><font color=#3a6797>set</font></b> pos2 [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos2 +1c&quot;</font>]}
+      <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos2 -<font color=#1b1baa>$</font>slen char&quot;</font>]
+      <b><font color=#3a6797>set</font></b> sel [<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pos2</font>]]
     }
   }
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$sel</font>] == 0} {<b><font color=#3a6797>set</font></b> pos {}}
   <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$sel</font> <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pos2</font>]
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveDialog::get_HighlightedString'>get_HighlightedString</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveDialog" title="::apave::APaveDialog" class='ruff_cmd'>::apave::APaveDialog</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveDialog'>APaveDialog</a>, <a href='#top'>Top</a></span></h4>
@@ -5746,7 +5748,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   txt - path to the text</font></i>
 
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> get_highlighted <font color=#1b1baa>$txt</font>] sel pos pos2
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$pos</font> eq {}} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$sel</font> eq {}} <b><font color=#ca14ca>return</font></b>
   <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> highlight_matches_real <font color=#1b1baa>$</font>txt <font color=#1b1baa>$</font>pos <font color=#1b1baa>$</font>pos2&quot;</font>
   <b><font color=#ca14ca>my</font></b> set_HighlightedString <font color=#1b1baa>$sel</font>
   <b><font color=#3a6797>set</font></b> lenList {}
@@ -6210,7 +6212,7 @@ padding: 0%;
 
   <b><font color=#ca14ca>my</font></b> unhighlight_matches <font color=#1b1baa>$txt</font>
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> get_highlighted <font color=#1b1baa>$txt</font>] sel pos pos2
-  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$pos</font>} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$sel</font> eq {}} <b><font color=#ca14ca>return</font></b>
   <b><font color=#ca14ca>my</font></b> set_HighlightedString <font color=#1b1baa>$sel</font>
   <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$mode</font> {
     0 { ;<i><font color=#4b5d50># backward</font></i>

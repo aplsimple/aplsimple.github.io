@@ -426,6 +426,15 @@ Motion .win.#win#menu %t=13150312 %K=?? %b=?? %x=397 %y=6 %s=16 %d=??
 <br></code></pre>
 <p class='ruff'>It begins with comments about the start / end of recording.</p>
 <p class='ruff'>At need, any lines can be commented out, e.g. last ones that close the application as shown above.</p>
+<p class='ruff'>Also, as a sort of debugging, any line can be &quot;stop [...]&quot; which stops playing till any keyboard input and Return key. As &quot;[...]&quot;, there may be a number or Tcl command to be avaluated with its result shown. For example:</p>
+<pre class='ruff'><br><code class="tcl">...
+stop [<b><font color=#134070>winfo</font></b> exists .win.#win#menu.#win#menu#file]
+<i><font color=#4b5d50>#ButtonPress .win.#win#menu.#win#menu#file %t=13455419 %K=?? %b=1 %x=46 %y=152 %s=16 %d=??</font></i>
+stop 2
+<i><font color=#4b5d50>#ButtonRelease .win.#win#menu.#win#menu#file %t=13455611 %K=?? %b=1 %x=46 %y=152 %s=272 %d=??</font></i>
+stop 3
+...
+<br></code></pre>
 <br><h2 class='ruff'><a name='::playtkl-Macros'></a>Macros<span class='tinylink'><a href='playtkl.html#::playtkl'>playtkl</a>, <a href='#top'>Top</a></span></h2>
 <div style='clear:both;'></div>
 <p class='ruff'>The recording and playing macros is a side effect of the <em>playtkl</em>'s main usage. However small, this effect is rather effective sometimes.</p>
@@ -639,6 +648,20 @@ playtkl::replay
   <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$dd(fcont)</font> <font color=#1b1baa>$dd(idx)</font>]
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> {^\s*#+} <font color=#1b1baa>$line</font>#]} { ;<i><font color=#4b5d50># skip empty or commented</font></i>
     <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$line</font>
+    <b><font color=#3a6797>after</font></b> idle ::playtkl::Playing
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match {stop *} <font color=#1b1baa>$line</font>]} {
+    <b><font color=#134070>bell</font></b>
+    <b><font color=#3a6797>set</font></b> scom [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> 5 end]
+    <b><font color=#3a6797>set</font></b> slin <font color=#8b2a0e>&quot;Line#<font color=#1b1baa>[</font>expr <font color=#1b1baa>{$</font>dd(idx)+1<font color=#1b1baa>}]</font>: <font color=#1b1baa>$</font>scom =&quot;</font>
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> line <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>slin <font color=#1b1baa>[</font>expr <font color=#1b1baa>$</font>scom<font color=#1b1baa>]</font>&quot;</font>}]} {
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> line <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>slin <font color=#1b1baa>[</font>eval <font color=#1b1baa>$</font>scom<font color=#1b1baa>]</font>&quot;</font>}
+    }
+    <b><font color=#3a6797>puts</font></b> <font color=#6c3e67>-nonewline</font> stdout <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>line : &quot;</font>
+    <b><font color=#3a6797>chan</font></b> flush stdout
+    <b><font color=#3a6797>gets</font></b> stdin _
+    <b><font color=#3a6797>puts</font></b> {}
     <b><font color=#3a6797>after</font></b> idle ::playtkl::Playing
     <b><font color=#ca14ca>return</font></b>
   }
