@@ -732,16 +732,13 @@ this option with baltip instead of BWidget and tklib's tooltip.
   <i><font color=#4b5d50>#   doit - yes, if do hide by force</font></i>
   <i><font color=#4b5d50># Returns 1, if the window was really hidden.</font></i>
 
-  <b><font color=#3a6797>variable</font></b> my::ttdata
-  <b><font color=#3a6797>variable</font></b> my::GEOACTIVE
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$w</font> eq <font color=#1b1baa>$my::GEOACTIVE</font> || <font color=#1b1baa>$w</font> eq {} || <font color=#1b1baa>$doit</font>} {
-    ;<i><font color=#4b5d50># unlock tips after a balloon message</font></i>
-    <b><font color=#3a6797>set</font></b> my::GEOACTIVE {-}
-  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$my::GEOACTIVE</font> ne {-}} {
-    <b><font color=#ca14ca>return</font></b> no
-  }
+  <b><font color=#3a6797>variable</font></b> my::BALLOON
   my::Command <font color=#1b1baa>$w</font> {}
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>expr</font></b> {![<b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> [tippath <font color=#1b1baa>$w</font>]}]}]
+  <b><font color=#3a6797>set</font></b> res 1
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$w</font> ne <font color=#1b1baa>$my::BALLOON</font> || <font color=#1b1baa>$doit</font>} {
+    <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>expr</font></b> {![<b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> [tippath <font color=#1b1baa>$w</font>]}]}]
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::baltip::optionlist'>optionlist</a><span class='ns_scope'> [<a href="baltip.html#::baltip" title="::baltip" class='ruff_cmd'>::baltip</a>]</span><span class='tinylink'><a href='baltip.html#::baltip'>baltip</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -917,8 +914,9 @@ this option with baltip instead of BWidget and tklib's tooltip.
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$forced</font> || <font color=#1b1baa>$geo</font> ne {}} {::baltip::my::Show <font color=#1b1baa>$w</font> <font color=#1b1baa>$text</font> yes <font color=#1b1baa>$geo</font> <font color=#1b1baa>$optvals</font>}
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$geo</font> ne {}} {
         <i><font color=#4b5d50># balloon popup message</font></i>
+        <b><font color=#3a6797>variable</font></b> my::BALLOON
+        <b><font color=#3a6797>set</font></b> my::BALLOON <font color=#1b1baa>$w</font>
         <b><font color=#3a6797>array</font></b> set my::ttdata <font color=#1b1baa>$arrsaved</font>
-        <b><font color=#134070>bind</font></b> Tooltip<font color=#1b1baa>$w</font> &lt;Motion&gt; <font color=#8b2a0e>&quot;::baltip::hide <font color=#1b1baa>$</font>w yes&quot;</font>
       } <b><font color=#3a6797>else</font></b> {
         <b><font color=#3a6797>set</font></b> widgetclass [<b><font color=#134070>winfo</font></b> class <font color=#1b1baa>$w</font>]
         <b><font color=#3a6797>set</font></b> tags [<b><font color=#134070>bindtags</font></b> <font color=#1b1baa>$w</font>]
@@ -1635,9 +1633,7 @@ this option with baltip instead of BWidget and tklib's tooltip.
   <i><font color=#4b5d50># See also: Fade, ShowWindow, ::baltip::update</font></i>
 
   <b><font color=#3a6797>variable</font></b> ttdata
-  <b><font color=#3a6797>variable</font></b> GEOACTIVE
   <b><font color=#3a6797>if</font></b> {![<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$w</font>]} <b><font color=#ca14ca>return</font></b>
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$geo</font> eq {} && <font color=#1b1baa>$GEOACTIVE</font> ne {-}} <b><font color=#ca14ca>return</font></b>  ;<i><font color=#4b5d50># tips locked at a balloon message</font></i>
   <b><font color=#3a6797>set</font></b> win [::baltip::tippath <font color=#1b1baa>$w</font>]
   <i><font color=#4b5d50># keep the label's colors untouched (for apave package)</font></i>
   <b><font color=#3a6797>catch</font></b> {::apave::obj untouchWidgets <font color=#1b1baa>$win</font>.label}
@@ -1647,8 +1643,8 @@ this option with baltip instead of BWidget and tklib's tooltip.
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists ttdata(optvals,<font color=#1b1baa>$w</font>)]} {
     <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>array</font></b> set data [<b><font color=#3a6797>list</font></b> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$ttdata(optvals,$w)</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$optvals</font>]}
   }
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$geo</font> ne {}} {           ;<i><font color=#4b5d50># balloons not related to widgets</font></i>
-    <b><font color=#3a6797>set</font></b> GEOACTIVE <font color=#1b1baa>$w</font>  ;<i><font color=#4b5d50># lock other tips</font></i>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$geo</font> ne {}} {
+    <i><font color=#4b5d50># balloons not related to widgets</font></i>
   } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$ttdata(global,$w)</font>} {      ;<i><font color=#4b5d50># flag 'use global settings'</font></i>
     <b><font color=#3a6797>array</font></b> set data [::baltip::cget]
   } <b><font color=#3a6797>else</font></b> {
@@ -1718,8 +1714,8 @@ this option with baltip instead of BWidget and tklib's tooltip.
     <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;Any-Enter&gt; <font color=#8b2a0e>&quot;::baltip::hide <font color=#1b1baa>$</font>w&quot;</font>
     <b><font color=#134070>bind</font></b> Tooltip<font color=#1b1baa>$win</font> &lt;Any-Enter&gt;  <font color=#8b2a0e>&quot;::baltip::hide <font color=#1b1baa>$</font>w&quot;</font>
   }
-  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;Any-Button&gt; <font color=#8b2a0e>&quot;::baltip::hide <font color=#1b1baa>$</font>w&quot;</font>
-  <b><font color=#134070>bind</font></b> Tooltip<font color=#1b1baa>$win</font> &lt;Any-Button&gt; <font color=#8b2a0e>&quot;::baltip::hide <font color=#1b1baa>$</font>w&quot;</font>
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;Any-Button&gt; <font color=#8b2a0e>&quot;::baltip::hide <font color=#1b1baa>$</font>w 1&quot;</font>
+  <b><font color=#134070>bind</font></b> Tooltip<font color=#1b1baa>$win</font> &lt;Any-Button&gt; <font color=#8b2a0e>&quot;::baltip::hide <font color=#1b1baa>$</font>w 1&quot;</font>
   <b><font color=#3a6797>set</font></b> aint 20
   <b><font color=#3a6797>set</font></b> fint [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$data(-fade)</font>/<font color=#1b1baa>$aint</font>)}]
   <b><font color=#3a6797>set</font></b> icount [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$data(-per10)</font>/<font color=#1b1baa>$aint</font>*<font color=#1b1baa>$icount</font>/10.0)}]
@@ -1743,7 +1739,7 @@ this option with baltip instead of BWidget and tklib's tooltip.
   } <b><font color=#3a6797>else</font></b> {
     <i><font color=#4b5d50># just showing, no fading</font></i>
     <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>after</font></b> cancel <font color=#1b1baa>$ttdata(after)</font>}
-    <b><font color=#3a6797>set</font></b> ttdata(after) [<b><font color=#3a6797>after</font></b> <font color=#1b1baa>$data(-pause)</font> [<b><font color=#3a6797>list</font></b> ::baltip::my::ShowWindow <font color=#1b1baa>$win</font>]]
+    <b><font color=#3a6797>set</font></b> ttdata(after) [<b><font color=#3a6797>after</font></b> <font color=#1b1baa>$data(-pause)</font>  <font color=#8b2a0e>&quot;::baltip::my::ShowWindow <font color=#1b1baa>$</font>win; catch <font color=#1b1baa>{</font>wm attributes <font color=#1b1baa>$</font>win -alpha <font color=#1b1baa>$</font>data(-alpha)<font color=#1b1baa>}</font>&quot;</font>]
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$data(-bell)</font>} [<b><font color=#3a6797>list</font></b> after [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$data(-pause)</font>/4}] bell]
   <b><font color=#3a6797>array</font></b> unset data
