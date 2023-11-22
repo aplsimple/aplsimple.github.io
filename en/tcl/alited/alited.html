@@ -426,14 +426,10 @@ padding: 0%;
 
   <b><font color=#3a6797>variable</font></b> al
   <b><font color=#3a6797>variable</font></b> obPav
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$red</font>} {
-    <b><font color=#3a6797>set</font></b> fg white
-    <b><font color=#3a6797>set</font></b> bg #bf0909
-  } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>set</font></b> cs [<font color=#1b1baa>$obPav</font> csGet]
-    <b><font color=#3a6797>set</font></b> fg [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$cs</font> 14]  ;<i><font color=#4b5d50># colors of baltip's tips</font></i>
-    <b><font color=#3a6797>set</font></b> bg [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$cs</font> 15]
-  }
+  <b><font color=#3a6797>set</font></b> cs [<font color=#1b1baa>$obPav</font> csGet]
+  <b><font color=#3a6797>set</font></b> fg [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$cs</font> 14]  ;<i><font color=#4b5d50># colors of tips</font></i>
+  <b><font color=#3a6797>set</font></b> bg [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$cs</font> 15]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$red</font>} {<b><font color=#3a6797>set</font></b> fg #6e0000}
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#134070>winfo</font></b> geometry <font color=#1b1baa>$al(WIN)</font>] x+] w h x y
   <b><font color=#3a6797>set</font></b> geo <font color=#8b2a0e>&quot;+(<font color=#1b1baa>[</font>expr <font color=#1b1baa>{$</font>w+<font color=#1b1baa>$</font>x<font color=#1b1baa>}]</font>-W)+<font color=#1b1baa>$</font>y-60&quot;</font>
   <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \n <font color=#8b2a0e>&quot;  \n  &quot;</font>] <font color=#1b1baa>$msg</font>]
@@ -2634,7 +2630,10 @@ padding: 0%;
     <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
     <b><font color=#3a6797>set</font></b> TID [alited::bar::CurrentTabID]
   }
-  <b><font color=#3a6797>if</font></b> {![alited::file::IsTcl <font color=#1b1baa>$fname</font>]} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> ne [alited::bar::FileName] && ![alited::file::IsTcl <font color=#1b1baa>$fname</font>]} {
+    <i><font color=#4b5d50># do check only a current file and Tcl scripts</font></i>
+    <b><font color=#ca14ca>return</font></b>
+  }
   <b><font color=#3a6797>set</font></b> curfile [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]
   <b><font color=#3a6797>set</font></b> textcont [<font color=#1b1baa>$wtxt</font> get 1.0 end]
   <b><font color=#3a6797>set</font></b> unittree [alited::unit::GetUnits <font color=#1b1baa>$TID</font> <font color=#1b1baa>$textcont</font>]
@@ -9182,6 +9181,7 @@ padding: 0%;
           <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$s2</font>&lt;0} {<b><font color=#3a6797>set</font></b> s2 [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$subline</font>]}
         }
         <i><font color=#4b5d50># erase the currently processed option</font></i>
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$p1</font> &gt; <font color=#1b1baa>$s2</font>} <b><font color=#ca14ca>break</font></b>
         <b><font color=#3a6797>set</font></b> subline [<b><font color=#3a6797>string</font></b> replace <font color=#1b1baa>$subline</font> <font color=#1b1baa>$p1</font> <font color=#1b1baa>$s2</font> [<b><font color=#3a6797>string</font></b> repeat { } [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$s2</font>-<font color=#1b1baa>$p1</font>+1}]]]
         <i><font color=#4b5d50># highlight name & value</font></i>
         <b><font color=#3a6797>incr</font></b> p1 <font color=#1b1baa>$r2</font>
@@ -12772,7 +12772,7 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> todo <font color=#8b2a0e>&quot;\n<font color=#1b1baa>$</font>al(MC,prjName) <font color=#1b1baa>$</font>prj\n\n<font color=#1b1baa>$</font>al(MC,on) <font color=#1b1baa>$</font>date\n\n<font color=#1b1baa>$</font>todo\n&quot;</font>
   <b><font color=#3a6797>set</font></b> opts {}
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first !!! <font color=#1b1baa>$todo</font>]&gt;-1} {
-    <b><font color=#3a6797>set</font></b> opts {<font color=#6c3e67>-per10</font> 0 <font color=#6c3e67>-alpha</font> 0.75 <font color=#6c3e67>-ontop</font> 1}
+    <b><font color=#3a6797>set</font></b> opts {<font color=#6c3e67>-ontop</font> 1 <font color=#6c3e67>-eternal</font> 1 <font color=#6c3e67>-fg</font> white <font color=#6c3e67>-bg</font> red}
   }
   ::alited::Balloon <font color=#1b1baa>$todo</font> yes 2500 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font>
 }<br><br></code></pre></div>
@@ -18928,7 +18928,7 @@ README.md}
   <b><font color=#3a6797>set</font></b> res [::apave::obj chooser dateChooser alited::al(klnddate)  <font color=#6c3e67>-parent</font> <font color=#1b1baa>$al(WIN)</font> <font color=#6c3e67>-geometry</font> pointer+10+10 <font color=#6c3e67>-dateformat</font> <font color=#1b1baa>$al(TPL,%d)</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> ne {}} {
     <b><font color=#3a6797>set</font></b> al(klnddate) <font color=#1b1baa>$res</font>
-    InsertInText <font color=#1b1baa>$res</font> <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font>
+    InsertInText <font color=#1b1baa>$res</font>
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::tool::e_menu'>e_menu</a><span class='ns_scope'> [<a href="alited.html#::alited::tool" title="::alited::tool" class='ruff_cmd'>::alited::tool</a>]</span><span class='tinylink'><a href='alited.html#::alited::tool'>tool</a>, <a href='#top'>Top</a></span></h4>
