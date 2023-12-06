@@ -379,7 +379,7 @@ padding: 0%;
 
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {my::Run {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>} err]} {
     <b><font color=#3a6797>catch</font></b> {
-      <b><font color=#3a6797>set</font></b> ch [<b><font color=#3a6797>open</font></b> ~/TMP/transpops.log a]
+      <b><font color=#3a6797>set</font></b> ch [<b><font color=#3a6797>open</font></b> /home/apl/TMP/transpops.log a]
       <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$ch</font> <font color=#1b1baa>$err</font>
       <b><font color=#3a6797>close</font></b> <font color=#1b1baa>$ch</font>
     }
@@ -417,6 +417,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   msg - the message</font></i>
 
   <b><font color=#3a6797>variable</font></b> wmsgs
+  <b><font color=#3a6797>variable</font></b> wtxt
   <b><font color=#3a6797>variable</font></b> alpha
   <b><font color=#3a6797>variable</font></b> alphaincr
   <b><font color=#3a6797>variable</font></b> cntwait
@@ -431,6 +432,7 @@ padding: 0%;
       <b><font color=#3a6797>set</font></b> alphaincr [<b><font color=#3a6797>expr</font></b> {-<font color=#1b1baa>$alphaincr</font>}]
       <b><font color=#3a6797>set</font></b> alpha 1.0
     } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$alpha</font>&lt;0.0} {
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$wtxt</font>}
       <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$wmsgs</font>}
       <b><font color=#ca14ca>return</font></b>
     }
@@ -600,6 +602,7 @@ padding: 0%;
   <b><font color=#3a6797>variable</font></b> msgs
   <b><font color=#3a6797>variable</font></b> imsgs
   <b><font color=#3a6797>variable</font></b> wmsgs
+  <b><font color=#3a6797>variable</font></b> wtxt
   <b><font color=#3a6797>variable</font></b> alpha
   <b><font color=#3a6797>variable</font></b> alphaincr
   <b><font color=#3a6797>variable</font></b> cntwait
@@ -607,6 +610,8 @@ padding: 0%;
   <b><font color=#3a6797>variable</font></b> bg
   <b><font color=#3a6797>set</font></b> fS red
   <b><font color=#3a6797>set</font></b> wmsgs [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$win</font> .].transpops
+  <b><font color=#3a6797>set</font></b> wtxt <font color=#1b1baa>$wmsgs</font>.labtrans
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$wtxt</font>}
   <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$wmsgs</font>}
   <b><font color=#3a6797>while</font></b> {1} {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> imsgs]&gt;[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$msgs</font>]} <b><font color=#ca14ca>return</font></b>
@@ -637,7 +642,6 @@ padding: 0%;
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>set</font></b> opts {}
   }
-  <b><font color=#3a6797>set</font></b> wtxt <font color=#1b1baa>$wmsgs</font>.labtrans
   <b><font color=#3a6797>set</font></b> font {<font color=#6c3e67>-weight</font> bold <font color=#6c3e67>-size</font> 16 <font color=#6c3e67>-family</font> Mono}
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {
     <b><font color=#3a6797>set</font></b> text [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$text</font>]
@@ -655,7 +659,7 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> alpha 0.0
   <b><font color=#3a6797>set</font></b> alphaincr 0.007
   <b><font color=#3a6797>set</font></b> cntwait 0
-  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wmsgs</font> &lt;ButtonPress&gt; {<b><font color=#3a6797>set</font></b> ::transpops::my::cntwait 0}
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> &lt;ButtonPress-1&gt; {<b><font color=#3a6797>set</font></b> ::transpops::my::cntwait 0; <b><font color=#ca14ca>break</font></b>}
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> {^http[s]?://\S+$} <font color=#1b1baa>$msg</font>]} {
     <b><font color=#3a6797>catch</font></b> {
       ::apave::obj makeLabelLinked <font color=#1b1baa>$wtxt</font>  <font color=#8b2a0e>&quot;::apave::openDoc <font color=#1b1baa>$</font>msg@@<font color=#1b1baa>$</font>msg@@&quot;</font> <font color=#1b1baa>$fg</font> <font color=#1b1baa>$bg</font> <font color=#1b1baa>$fg</font> yellow
