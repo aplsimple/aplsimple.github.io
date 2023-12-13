@@ -470,7 +470,7 @@ padding: 0%;
   <b><font color=#3a6797>variable</font></b> fg
   <b><font color=#3a6797>variable</font></b> bg
   <b><font color=#3a6797>variable</font></b> textTags
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$events</font> eq {}} {<b><font color=#3a6797>set</font></b> events {Alt-t Alt-y}}
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$events</font> eq {}} {<b><font color=#3a6797>set</font></b> events {{Alt-t Alt-T} {Alt-y Alt-Y}}}
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fg1</font> eq {}} {<b><font color=#3a6797>set</font></b> fg1 #000000}
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$bg1</font> eq {}} {<b><font color=#3a6797>set</font></b> bg1 #FBFB95}
   <b><font color=#3a6797>set</font></b> fg <font color=#1b1baa>$fg1</font>
@@ -547,8 +547,11 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> draw(opts) <font color=#1b1baa>$args</font>
   <b><font color=#3a6797>foreach</font></b> w <font color=#1b1baa>$wins</font> {
     <b><font color=#3a6797>set</font></b> ei 0
-    <b><font color=#3a6797>foreach</font></b> ev <font color=#1b1baa>$events</font> {
-      <b><font color=#3a6797>after</font></b> <font color=#1b1baa>$timo</font> [<b><font color=#3a6797>list</font></b> ::transpops::my::RunMe <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font> [<b><font color=#3a6797>list</font></b> ::transpops::my::Show <font color=#1b1baa>$w</font> [<b><font color=#3a6797>incr</font></b> ei]]]
+    <b><font color=#3a6797>foreach</font></b> event2 <font color=#1b1baa>$events</font> {
+      <b><font color=#3a6797>incr</font></b> ei
+      <b><font color=#3a6797>foreach</font></b> ev <font color=#1b1baa>$event2</font> {  ;<i><font color=#4b5d50># for {Alt-t Alt-T} etc.</font></i>
+        <b><font color=#3a6797>after</font></b> <font color=#1b1baa>$timo</font> [<b><font color=#3a6797>list</font></b> ::transpops::my::RunMe <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font> [<b><font color=#3a6797>list</font></b> ::transpops::my::Show <font color=#1b1baa>$w</font> <font color=#1b1baa>$ei</font>]]
+      }
     }
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$draw(app)</font>} {<b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> &lt;Escape&gt; <b><font color=#3a6797>exit</font></b>}
   }
@@ -556,31 +559,37 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::transpops::my::RunMe'>RunMe</a><span class='ns_scope'> [<a href="transpops.html#::transpops::my" title="::transpops::my" class='ruff_cmd'>::transpops::my</a>]</span><span class='tinylink'><a href='transpops.html#::transpops::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Binds an event on a window to a script.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>RunMe</span> <span class='ruff_arg'>w ev scrp</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>RunMe</span> <span class='ruff_arg'>win ev scrp</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td class='ruff_defitem'><code><code>w</code></code></td><td class='ruff_defitem'>the window's path</td></tr>
+<tr><td class='ruff_defitem'><code><code>win</code></code></td><td class='ruff_defitem'>the window's path</td></tr>
 <tr><td class='ruff_defitem'><code><code>ev</code></code></td><td class='ruff_defitem'>event on the window</td></tr>
 <tr><td class='ruff_defitem'><code><code>scrp</code></code></td><td class='ruff_defitem'>the bound script</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>The binding is made only on an existing window. The windows may be created and destroyed, so Run watches if they are available.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_transpops_my_RunMe' href="javascript:toggleSource('transpops_my_RunMe')">Show source</a></p>
-<div id='transpops_my_RunMe' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::transpops::my::RunMe {w ev scrp} {
+<div id='transpops_my_RunMe' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::transpops::my::RunMe {win ev scrp} {
   <i><font color=#4b5d50># Binds an event on a window to a script.</font></i>
-  <i><font color=#4b5d50>#   w - the window's path</font></i>
+  <i><font color=#4b5d50>#   win - the window's path</font></i>
   <i><font color=#4b5d50>#   ev - event on the window</font></i>
   <i><font color=#4b5d50>#   scrp - the bound script</font></i>
   <i><font color=#4b5d50># The binding is made only on an existing window.</font></i>
   <i><font color=#4b5d50># The windows may be created and destroyed, so Run watches if they are available.</font></i>
 
   <b><font color=#3a6797>variable</font></b> draw
+  <b><font color=#3a6797>set</font></b> w <font color=#1b1baa>$win</font>
+  <b><font color=#3a6797>catch</font></b> {
+    <i><font color=#4b5d50># the window's path may be a glob pattern - compare the current toplevel to it</font></i>
+    <b><font color=#3a6797>set</font></b> wfoc [<b><font color=#134070>winfo</font></b> toplevel [<b><font color=#134070>focus</font></b>]]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match <font color=#1b1baa>$w</font> <font color=#1b1baa>$wfoc</font>]} {<b><font color=#3a6797>set</font></b> w <font color=#1b1baa>$wfoc</font>}
+  }
   <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$w</font>]} {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first <font color=#1b1baa>$scrp</font> [<b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font>]]==-1} {
       <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> match &lt;<b><font color=#3a6797>*</font></b>&gt; <font color=#1b1baa>$ev</font>]} {<b><font color=#3a6797>set</font></b> ev &lt;<font color=#1b1baa>$ev</font>&gt;}
       <b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>scrp ; break&quot;</font>
     }
-<i><font color=#4b5d50>#    ::drawscreen run $w $draw(events) {*}$draw(opts)</font></i>
+    <b><font color=#3a6797>catch</font></b> {::drawscreen run <font color=#1b1baa>$w</font> <font color=#1b1baa>$draw(events)</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$draw(opts)</font>}
   }
-  <b><font color=#3a6797>after</font></b> 200 [<b><font color=#3a6797>list</font></b> ::transpops::my::RunMe <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font> <font color=#1b1baa>$scrp</font>]
+  <b><font color=#3a6797>after</font></b> 500 [<b><font color=#3a6797>list</font></b> ::transpops::my::RunMe <font color=#1b1baa>$win</font> <font color=#1b1baa>$ev</font> <font color=#1b1baa>$scrp</font>]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::transpops::my::Show'>Show</a><span class='ns_scope'> [<a href="transpops.html#::transpops::my" title="::transpops::my" class='ruff_cmd'>::transpops::my</a>]</span><span class='tinylink'><a href='transpops.html#::transpops::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -624,7 +633,10 @@ padding: 0%;
   <b><font color=#3a6797>foreach</font></b> row [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$msg</font> \n] {
     <b><font color=#3a6797>set</font></b> row [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$row</font>]
     <b><font color=#3a6797>append</font></b> text <font color=#1b1baa>$row</font> \n
-    <b><font color=#3a6797>set</font></b> row [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> &lt;r&gt; {} &lt;/r&gt; {} &lt;b&gt; {} &lt;/b&gt; {} &lt;g&gt; {} &lt;/g&gt; {} &lt;link&gt; {} &lt;/link&gt; {}] <font color=#1b1baa>$row</font>]
+    <b><font color=#3a6797>set</font></b> row [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> &lt;link&gt; {} &lt;/link&gt; {}] <font color=#1b1baa>$row</font>]
+    <b><font color=#3a6797>foreach</font></b> c [<b><font color=#3a6797>split</font></b> rbgABCDEFGHIJKLMNOPRSTUVWXYZ {}] {
+      <b><font color=#3a6797>set</font></b> row [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> &lt;<font color=#1b1baa>$c</font>&gt; {} &lt;/<font color=#1b1baa>$c</font>&gt; {}] <font color=#1b1baa>$row</font>]
+    }
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> c [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$row</font>]]&gt;<font color=#1b1baa>$cols</font>} {<b><font color=#3a6797>set</font></b> cols <font color=#1b1baa>$c</font>}
     <b><font color=#3a6797>incr</font></b> rows
   }
