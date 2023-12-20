@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8">
+<meta name="author" content="aplsimple">
+<meta name="description" content="aplsimple - русские страницы">
+<meta name="keywords" content="aplsimple">
+<link rel="stylesheet" href="../../zoo/style.css">
+<link rel="icon" type="image/jpg" href="../../../zoo/favicon.jpg">
+</head>
+<body>
+<div id="wrapper">
+<div name="divd1" ALIGN="CENTER"> <FONT SIZE=5em color=#b01c20><B>
+<noscript>THIS PAGE IS NOT WORKING WITHOUT JAVASCRIPT!
+<BR>
+<BR>PLEASE, SWITCH ON JAVASCRIPT IN SETTINGS OF YOUR BROWSER AND RELOAD THE PAGE.
+</noscript>
+</B></FONT></div>
+
+
+<script>prntdir = '../../';</script>
+<script src="../../../zoo/funcs.js"></script>
+<script src="../../zoo/this.js"></script>
+
+<section id=sec2>
+
+<title>Moving to Tcl 9.0</title>
+</head>
+
+<br>
+
+<h2>Moving to Tcl 9.0</h2>
+<div class="level2">
+<p>
+Here is collected my humble experience of <a href=https://core.tcl-lang.org/tcl/wiki?name=Migrating+scripts+to+Tcl+9>migrating scripts to Tcl 9</a>.
+</p>
+<p>
+The experience was mostly acquired at testing <a href="https://github.com/aplsimple/alited" rel="nofollow">alited</a> application.
+</p>
+<p>
+There was used the stand-alone <a href="https://core.tcl-lang.org/tcl/wiki?name=Index" title="Tcl/Tk executables" rel="nofollow">Tcl/Tk 9.0 executable</a> (<em>developer preview Tk builds with Tcl 9.0</em>).
+</p>
+
+<br>
+
+<h4>1. All scripts should be checked for ~ ("home directory"), at least for ~/</h4>
+<div class="level3">
+<p>
+<a href="https://core.tcl-lang.org/tcl/wiki?name=Index" title="Tcl/Tk executables" rel="nofollow">Tcl 9.0</a> doesn't expand "~" of file names, so if somewhere in application <code>~/</code> or <code>~user/</code> is used as the home directory, it should be replaced with some wildcard (e.g. <code>%HOME/</code> or <code>%USER/</code>) or with a command (e.g. <code>HomeDir</code>).
+</p>
+</div>
+<br>
+
+<h4>2. Even more hard task is the replacements of <code>NS::var</code> with <code>::NS::var</code></h4>
+<div class="level3">
+<p>
+In general, this task needs not only regexp searches but also scanning all scripts for possible usages of <code>NS::var</code>.
+</p>
+<p>
+If such variables are used inside a namespace in the hope that they are <code>::NS::var</code>, in <a href="https://core.tcl-lang.org/tcl/wiki?name=Index" title="Tcl/Tk executables" rel="nofollow">Tcl 9.0</a> this will throw an error <code>variable not found</code>.
+</p>
+<p>
+Quote: <em>In Tcl 8 variable names that are not absolute, are resolved by looking first in the current namespace, and then in the global namespace. In Tcl 9 such variables are always interpreted as relative to the current namespace.</em>
+</p>
+<p>
+At that some regular expressions may be used, such as the following ones:
+<pre class="code">
+\$\w+::               - e.g. for "$abc::def"
+(^|[^:]){1}\m\w+::    - e.g. for "set abc::def"
+</pre>
+</p>
+<p>
+To mitigate the task, <a href="https://github.com/aplsimple/alited" rel="nofollow">alited</a> provides <em>excluding RE2</em> option.
+<br>For example, with RE:
+<pre class="code">
+(^|[^:]){7}\m\w+::
+</pre>
+we search non-absolute names of variables and commands.
+</p>
+<p>
+So that, <em>excluding RE2</em> can be like these:
+<pre class="code">
+\s*proc\s+
+\s*method\s+
+(\[|\{|"|;)\s*\m\w+::
+^\s*\m\w+::
+</pre>
+to exclude declarations and calls of commands, because <a href="https://core.tcl-lang.org/tcl/wiki?name=Index" title="Tcl/Tk executables" rel="nofollow">Tcl 9.0</a> modified only handling
+the non-absolute names of variables, while handling commands changed not.
+</p>
+<p>
+To adapt my apps to <a href="https://core.tcl-lang.org/tcl/wiki?name=Index" title="Tcl/Tk executables" rel="nofollow">Tcl 9.0</a>, I've also used the following <em>excluding RE2</em>:
+<pre class="code">
+-command
+-com
+-tabnext
+ttk::
+\[list
+</pre>
+</p>
+<p>
+For scanning all scripts for possible uses of <code>NS::var</code>, the <a href="https://github.com/aplsimple/alited" rel="nofollow">alited</a>'s infobar is very helpful: just right-click on the infobar and choose <em>Don't focus a text...</em> item of the popup menu, and inside the infobar press Down key to scan and view all possible uses of <code>NS::var</code>, all of them are contextually viewed in the text frame. Also at the scanning, it's good to switch off the <em>Files to Beginning</em> option of <a href="https://github.com/aplsimple/alited" rel="nofollow">alited</a>'s tabbar context menu.
+</p>
+</div>
+<br>
+
+<h4>3. Checking external Tcl/Tk tools for "package require Tk 8.6" and similar</h4>
+<div class="level3">
+<p>
+Those commands should be <code>package require Tk</code> to test if the tools work fine with Tcl/Tk 9.0.
+</p>
+<p>
+If some external package is included into your application with <code>package require Tk 8.6</code>, this command may be removed at all, as it's obviously run at starting your application.
+</p>
+<p>
+The appropriate packages should be tested in both Tcl/Tk 9.0 and Tcl/Tk 8.6.
+</p>
+</div>
+<br>
+
+<h4>4. External packages</h4>
+<div class="level3">
+<p>
+At <a href=https://core.tcl-lang.org/tcl/wiki?name=Migrating+scripts+to+Tcl+9>adapting scripts to Tcl 9</a>, you would appreciate the minimum use of external packages, if not avoiding them at all.
+</p>
+<p>
+At any rate, using the external packages in subdirectories of your applications would save a lot of troubles with <a href="https://core.tcl-lang.org/tcl/wiki?name=Index" title="Tcl/Tk executables" rel="nofollow">Tcl 9.0</a>. In this case, you can manually adapt the packages to <a href="https://core.tcl-lang.org/tcl/wiki?name=Index" title="Tcl/Tk executables" rel="nofollow">Tcl 9.0</a>.
+</p>
+<p>
+The appropriate adaptation is observed in the wiki page: <a href=https://wiki.tcl-lang.org/page/Porting+extensions+to+Tcl+9>Porting extensions to Tcl 9</a>.
+</p>
+</div>
+<br>
+
+<h4>5. Quote: "Deprecated trace subcommands variable, vdelete, vinfo have been removed"</h4>
+<div class="level3">
+<p>
+For example,
+<pre class="code">
+trace variable varname w ...
+</pre>
+</p>
+<p>
+should be replaced with
+<pre class="code">
+trace add variable varname write ...
+</pre>
+</p>
+</div>
+<br>
+
+<h4>See also</h4>
+<div class="level3">
+<p>
+<ul>
+<li><a href=https://core.tcl-lang.org/tcl/wiki?name=Migrating+scripts+to+Tcl+9>Migrating scripts to Tcl 9</a></li>
+<li><a href=https://core.tcl-lang.org/tips/doc/trunk/tip/602.md>TIP 602</a></li>
+</ul>
+
+</div>
+</section>
+
+<script>
+  writeFooter('<a href="#" class="wikilink1" title="Содержание">aplsimple</a> - русские страницы');
+</script>
+
+</div>
+</body>
+</html>
