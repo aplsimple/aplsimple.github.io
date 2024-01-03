@@ -63,25 +63,22 @@ Quote: <em>In Tcl 8 variable names that are not absolute, are resolved by lookin
 </p>
 <p>
 At that some regular expressions may be used, such as the following ones:
-<pre class="code">
-\$\w+::               - e.g. for "$abc::def"
-(^|[^:]){1}\m\w+::    - e.g. for "set abc::def"
+<pre class="code">\$\w+::               - e.g. for <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>abc::def&quot;</font>
+(^|[^:]){1}\m\w+::    - e.g. for <font color=#8b2a0e>&quot;set abc::def&quot;</font>
 </pre>
 </p>
 <p>
 To mitigate the task, <a href="https://github.com/aplsimple/alited" rel="nofollow">alited</a> provides <em>excluding RE2</em> option.
 <br>For example, with RE:
-<pre class="code">
-(^|[^:]){7}\m\w+::
+<pre class="code">(^|[^:]){7}\m\w+::
 </pre>
 we search non-absolute names of variables and commands.
 </p>
 <p>
 So that, <em>excluding RE2</em> can be like these:
-<pre class="code">
-\s*proc\s+
+<pre class="code">\s*proc\s+
 \s*method\s+
-(\[|\{|"|;)\s*\m\w+::
+(\[|\{|&quot;|;)\s*\m\w+::
 ^\s*\m\w+::
 </pre>
 to exclude declarations and calls of commands, because <a href="https://core.tcl-lang.org/tcl/wiki?name=Index" title="Tcl/Tk executables" rel="nofollow">Tcl 9.0</a> modified only handling
@@ -89,12 +86,11 @@ the non-absolute names of variables, while handling commands changed not.
 </p>
 <p>
 To adapt my apps to <a href="https://core.tcl-lang.org/tcl/wiki?name=Index" title="Tcl/Tk executables" rel="nofollow">Tcl 9.0</a>, I've also used the following <em>excluding RE2</em>:
-<pre class="code">
--command
--com
--tabnext
+<pre class="code"><font color=#6c3e67>-command</font>
+<font color=#6c3e67>-com</font>
+<font color=#6c3e67>-tabnext</font>
 ttk::
-\[list
+\[<b><font color=#3a6797>list</font></b>
 </pre>
 </p>
 <p>
@@ -103,13 +99,60 @@ For scanning all scripts for possible uses of <code>NS::var</code>, the <a href=
 </div>
 <br>
 
-<h4>3. Checking external Tcl/Tk tools for "package require Tk 8.6" and similar</h4>
+<h4>3. Quote: "glob no longer raises an error if no files match"</h4>
 <div class="level3">
 <p>
-Those commands should be <code>package require Tk</code> to test if the tools work fine with Tcl/Tk 9.0.
+Thus, <code>catch*glob</code> patterns should be changed, to insure against errors.
 </p>
 <p>
-If some external package is included into your application with <code>package require Tk 8.6</code>, this command may be removed at all, as it's obviously run at starting your application.
+What errors? Example:
+<pre class="code"><b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> baks [<b><font color=#3a6797>glob</font></b> <font color=#1b1baa>${fname}<b><font color=#3a6797></font>*</font></b>]}]} {
+  <b><font color=#3a6797>foreach</font></b> bak <font color=#1b1baa>$baks</font> {
+    <b><font color=#3a6797>lappend</font></b> bakdata [<b><font color=#3a6797>list</font></b> [<b><font color=#3a6797>file</font></b> mtime <font color=#1b1baa>$bak</font>] <font color=#1b1baa>$bak</font>]
+  }
+  <b><font color=#3a6797>set</font></b> bakdata [<b><font color=#3a6797>lsort</font></b> <font color=#6c3e67>-decreasing</font> <font color=#1b1baa>$bakdata</font>]
+}
+</pre>
+</p>
+This code snippet works fine in all Tcl 8.6 versions. But in Tcl 9.0, if there aren't <code><font color=#1b1baa>${fname}<b><font color=#3a6797></font>*</font></b></code> files, the <code>baks</code> list is empty and <code><b><font color=#3a6797>set</font></b> bakdata [<b><font color=#3a6797>lsort</font></b> <font color=#6c3e67>-decreasing</font> <font color=#1b1baa>$bakdata</font>]</code> results in Tcl error (<em>can't read "bakdata": no such variable</em>).
+</p>
+<p>
+So, the code should be changed to:
+<pre class="code"><b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> baks [<b><font color=#3a6797>glob</font></b> <font color=#1b1baa>${fname}<b><font color=#3a6797></font>*</font></b>]}] && [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$baks</font>]} {
+...
+</pre>
+... to work both in Tcl 8.6 and Tcl 9.0.
+</p>
+<p>
+Those potential errors can be rather hard to fix, if there are a lot of <code>catch*glob</code> patterns. They should be corrected manually depending on the specific use cases.
+</p>
+<p>If <code>catch</code> is removed, the appropriate code patterns will work in Tcl 9.0 only.
+</p>
+</div>
+<br>
+
+<h4>4. Quote: "Deprecated trace subcommands variable, vdelete, vinfo have been removed"</h4>
+<div class="level3">
+<p>
+For example,
+<pre class="code"><b><font color=#3a6797>trace</font></b> variable varname w ...
+</pre>
+</p>
+<p>
+should be replaced with
+<pre class="code"><b><font color=#3a6797>trace</font></b> add variable varname write ...
+</pre>
+</p>
+</div>
+<br>
+
+<h4>5. Checking external Tcl/Tk tools for "package require Tk 8.6" and similar</h4>
+<div class="level3">
+<p>
+Those commands should be <code><b><font color=#3a6797>package</font></b> require Tk</code> to test if the tools work fine with Tcl/Tk 9.0.
+</p>
+<p>
+If some external package is included into your application with <code><b><font color=#3a6797>package</font></b> require Tk 8.6</code>, this command may be removed at all, as it's obviously run at starting your application.
 </p>
 <p>
 The appropriate packages should be tested in both Tcl/Tk 9.0 and Tcl/Tk 8.6.
@@ -117,7 +160,7 @@ The appropriate packages should be tested in both Tcl/Tk 9.0 and Tcl/Tk 8.6.
 </div>
 <br>
 
-<h4>4. External packages</h4>
+<h4>6. External packages</h4>
 <div class="level3">
 <p>
 At <a href=https://core.tcl-lang.org/tcl/wiki?name=Migrating+scripts+to+Tcl+9>adapting scripts to Tcl 9</a>, you would appreciate the minimum use of external packages, if not avoiding them at all.
@@ -127,23 +170,6 @@ At any rate, using the external packages in subdirectories of your applications 
 </p>
 <p>
 The appropriate adaptation is observed in the wiki page: <a href=https://wiki.tcl-lang.org/page/Porting+extensions+to+Tcl+9>Porting extensions to Tcl 9</a>.
-</p>
-</div>
-<br>
-
-<h4>5. Quote: "Deprecated trace subcommands variable, vdelete, vinfo have been removed"</h4>
-<div class="level3">
-<p>
-For example,
-<pre class="code">
-trace variable varname w ...
-</pre>
-</p>
-<p>
-should be replaced with
-<pre class="code">
-trace add variable varname write ...
-</pre>
 </p>
 </div>
 <br>
