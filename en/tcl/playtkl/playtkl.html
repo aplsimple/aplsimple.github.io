@@ -479,7 +479,7 @@ playtkl::replay
 <li><a href="https://aplsimple.github.io/en/tcl/playtkl/playtkl.html" >Reference</a></li>
 <li><a href="https://chiselapp.com/user/aplsimple/repository/playtkl/download" >Source #1</a></li>
 <li><a href="https://github.com/aplsimple/playtkl" >Source #2</a></li>
-<li><a href="https://github.com/aplsimple/playtkl/releases/tag/demo-playtkl-1.0" >Demo of recording &amp; playing</a></li>
+<li><a href="https://github.com/aplsimple/playtkl/releases/tag/demo-playtkl-1.3" >Demo of recording &amp; playing</a></li>
 <li><a href="https://aplsimple.github.io/en/tcl/alited/index.html#macros" >Using in alited</a></li>
 </ul>
 <br><h2 class='ruff'><a name='::playtkl-Commands'></a>Commands<span class='tinylink'><a href='playtkl.html#::playtkl'>playtkl</a>, <a href='#top'>Top</a></span></h2>
@@ -505,25 +505,32 @@ playtkl::replay
 </div><br><br><br><h4 class='ruffproc'><a name='::playtkl::end'>end</a><span class='ns_scope'> [<a href="playtkl.html#::playtkl" title="::playtkl" class='ruff_cmd'>::playtkl</a>]</span><span class='tinylink'><a href='playtkl.html#::playtkl'>playtkl</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Closes the recording/playing.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>end</span> <span class='ruff_arg'>?comments?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>end</span> <span class='ruff_arg'>?macrodetails?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td class='ruff_defitem'><code><code>comments</code></code></td><td class='ruff_defitem'>comments to macro to be recorded; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>macrodetails</code></code></td><td class='ruff_defitem'>comments to macro to be recorded; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_playtkl_end' href="javascript:toggleSource('playtkl_end')">Show source</a></p>
-<div id='playtkl_end' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::playtkl::end {{comments {}}} {
+<div id='playtkl_end' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::playtkl::end {{macrodetails {}}} {
   <i><font color=#4b5d50># Closes the recording/playing.</font></i>
-  <i><font color=#4b5d50>#   comments - comments to macro to be recorded</font></i>
+  <i><font color=#4b5d50>#   macrodetails - comments to macro to be recorded</font></i>
 
   <b><font color=#3a6797>variable</font></b> dd
   <b><font color=#3a6797>set</font></b> msgend [inform End]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dd(isrec)</font>} {
     <b><font color=#3a6797>set</font></b> dd(fcont) [<b><font color=#3a6797>lsort</font></b> <font color=#6c3e67>-index</font> 2 <font color=#6c3e67>-dictionary</font> <font color=#1b1baa>$dd(fcont)</font>] ;<i><font color=#4b5d50># sort by time</font></i>
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$msgend</font> ne {}} {
-      <b><font color=#3a6797>set</font></b> dd(fcont) [<b><font color=#3a6797>linsert</font></b> <font color=#1b1baa>$dd(fcont)</font> 0 <font color=#8b2a0e>&quot;# <font color=#1b1baa>$</font>dd(msgbeg)&quot;</font> <font color=#8b2a0e>&quot;# <font color=#1b1baa>$</font>msgend&quot;</font> #]
+      <b><font color=#3a6797>set</font></b> details {}
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>append</font></b> details <font color=#8b2a0e>&quot;# <font color=#1b1baa>$</font>::argv0 <font color=#1b1baa>$</font>::argv&quot;</font>}
+      <b><font color=#3a6797>append</font></b> details <font color=#8b2a0e>&quot;\n# <font color=#1b1baa>$</font>dd(details)&quot;</font>
+      <b><font color=#3a6797>set</font></b> tp <font color=#8b2a0e>&quot;# Tcl v<font color=#1b1baa>[</font>info tclversion<font color=#1b1baa>]</font> : <font color=#1b1baa>[</font>info nameofexecutable<font color=#1b1baa>]</font>&quot;</font>
+      <b><font color=#3a6797>foreach</font></b> a [<b><font color=#3a6797>lsort</font></b> [<b><font color=#3a6797>array</font></b> names ::tcl_platform]] {
+        <b><font color=#3a6797>append</font></b> tp <font color=#8b2a0e>&quot;\n# <font color=#1b1baa>$</font>a = &quot;</font> <font color=#1b1baa>$::tcl_platform($a)</font>
+      }
+      <b><font color=#3a6797>set</font></b> dd(fcont) [<b><font color=#3a6797>linsert</font></b> <font color=#1b1baa>$dd(fcont)</font> 0 <font color=#1b1baa>$details</font> # <font color=#1b1baa>$tp</font> # <font color=#8b2a0e>&quot;# <font color=#1b1baa>$</font>dd(msgbeg)&quot;</font> <font color=#8b2a0e>&quot;# <font color=#1b1baa>$</font>msgend&quot;</font> #]
     }
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$comments</font> ne {}} {
-      <b><font color=#3a6797>set</font></b> comments #[<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$comments</font> #\n]
-      <b><font color=#3a6797>set</font></b> dd(fcont) [<b><font color=#3a6797>linsert</font></b> <font color=#1b1baa>$dd(fcont)</font> 0 [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \n \n#] <font color=#1b1baa>$comments</font>]]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$macrodetails</font> ne {}} {
+      <b><font color=#3a6797>set</font></b> macrodetails #[<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$macrodetails</font> #\n]
+      <b><font color=#3a6797>set</font></b> dd(fcont) [<b><font color=#3a6797>linsert</font></b> <font color=#1b1baa>$dd(fcont)</font> 0 [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \n \n#] <font color=#1b1baa>$macrodetails</font>]]
     }
     <b><font color=#3a6797>set</font></b> ch [<b><font color=#3a6797>open</font></b> <font color=#1b1baa>$dd(fname)</font> w]
     <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$dd(fcont)</font> {<b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$ch</font> <font color=#1b1baa>$line</font>}
@@ -568,6 +575,30 @@ playtkl::replay
     }
   }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$ifound</font>
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::playtkl::GenerateEvent'>GenerateEvent</a><span class='ns_scope'> [<a href="playtkl.html#::playtkl" title="::playtkl" class='ruff_cmd'>::playtkl</a>]</span><span class='tinylink'><a href='playtkl.html#::playtkl'>playtkl</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Generates an event for a widget.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>GenerateEvent</span> <span class='ruff_arg'>win ev ?args?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>win</code></code></td><td class='ruff_defitem'>widget's path</td></tr>
+<tr><td class='ruff_defitem'><code><code>ev</code></code></td><td class='ruff_defitem'>event</td></tr>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>Optional arguments.</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_playtkl_GenerateEvent' href="javascript:toggleSource('playtkl_GenerateEvent')">Show source</a></p>
+<div id='playtkl_GenerateEvent' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::playtkl::GenerateEvent {win ev args} {
+  <i><font color=#4b5d50># Generates an event for a widget.</font></i>
+  <i><font color=#4b5d50>#   win - widget's path</font></i>
+  <i><font color=#4b5d50>#   ev - event</font></i>
+
+  <b><font color=#3a6797>variable</font></b> dd
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$win</font>]} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dd(ismacro)</font>} {
+      <b><font color=#134070>event</font></b> generate <font color=#1b1baa>$win</font> &lt;<font color=#1b1baa>$ev</font>&gt; {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> after 0 event generate <font color=#1b1baa>$win</font> &lt;<font color=#1b1baa>$ev</font>&gt; {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
+    }
+  }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::playtkl::inform'>inform</a><span class='ns_scope'> [<a href="playtkl.html#::playtkl" title="::playtkl" class='ruff_cmd'>::playtkl</a>]</span><span class='tinylink'><a href='playtkl.html#::playtkl'>playtkl</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -678,6 +709,10 @@ playtkl::replay
 
   <b><font color=#3a6797>variable</font></b> fields
   <b><font color=#3a6797>variable</font></b> dd
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dd(pause)</font>} {
+    <b><font color=#3a6797>after</font></b> 200 ::playtkl::Playing
+    <b><font color=#ca14ca>return</font></b>
+  }
   <b><font color=#3a6797>set</font></b> llen [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$dd(fcont)</font>]
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> dd(idx)]&gt;=<font color=#1b1baa>$llen</font>} {
     <b><font color=#3a6797>catch</font></b> {
@@ -687,10 +722,6 @@ playtkl::replay
       }
     }
     end
-    <b><font color=#ca14ca>return</font></b>
-  }
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dd(pause)</font>} {
-    <b><font color=#3a6797>after</font></b> 200 ::playtkl::Playing
     <b><font color=#ca14ca>return</font></b>
   }
   <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$dd(fcont)</font> <font color=#1b1baa>$dd(idx)</font>]
@@ -753,40 +784,61 @@ playtkl::replay
   <b><font color=#3a6797>set</font></b> dd(win) <font color=#1b1baa>$win</font>
   <b><font color=#3a6797>set</font></b> dd(data) <font color=#1b1baa>$data</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ev</font> eq {Motion} && [<b><font color=#3a6797>info</font></b> exists X] && [<b><font color=#3a6797>info</font></b> exists Y]} {
-    <b><font color=#3a6797>set</font></b> state [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$opts</font> <font color=#6c3e67>-state</font>]
-    <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> event generate <font color=#1b1baa>$win</font> &lt;Motion&gt; <font color=#6c3e67>-warp</font> 1 <font color=#6c3e67>-x</font> <font color=#1b1baa>$X</font> <font color=#6c3e67>-y</font> <font color=#1b1baa>$Y</font> <font color=#6c3e67>-state</font> <font color=#1b1baa>$state</font>]
+    GenerateEvent <font color=#1b1baa>$win</font> Motion <font color=#6c3e67>-warp</font> 1 <font color=#6c3e67>-x</font> <font color=#1b1baa>$X</font> <font color=#6c3e67>-y</font> <font color=#1b1baa>$Y</font> <font color=#6c3e67>-state</font> [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$opts</font> <font color=#6c3e67>-state</font>]
   } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> event generate <font color=#1b1baa>$win</font> &lt;<font color=#1b1baa>$ev</font>&gt; {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font>]
+    GenerateEvent <font color=#1b1baa>$win</font> <font color=#1b1baa>$ev</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font>
   }
   <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$dd(fcont)</font> <font color=#1b1baa>$dd(idx)</font>+1]
   <b><font color=#3a6797>set</font></b> time1 [Data %t [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$line</font> 2 end]]
-  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$time</font> || ![<b><font color=#3a6797>string</font></b> is integer <font color=#6c3e67>-strict</font> <font color=#1b1baa>$time1</font>]} {
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$time</font> || ![<b><font color=#3a6797>string</font></b> is integer <font color=#6c3e67>-strict</font> <font color=#1b1baa>$time1</font>] || <font color=#1b1baa>$dd(ismacro)</font>} {
     <b><font color=#3a6797>set</font></b> aft idle
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>set</font></b> aft [<b><font color=#3a6797>expr</font></b> {max(0,<font color=#1b1baa>$time1</font>-<font color=#1b1baa>$time</font>)}]
   }
   <b><font color=#3a6797>after</font></b> <font color=#1b1baa>$aft</font> ::playtkl::Playing
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::playtkl::readcontents'>readcontents</a><span class='ns_scope'> [<a href="playtkl.html#::playtkl" title="::playtkl" class='ruff_cmd'>::playtkl</a>]</span><span class='tinylink'><a href='playtkl.html#::playtkl'>playtkl</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Reads (updates) a log file's contents. Useful at changing the file manually.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>readcontents</span> <span class='ruff_arg'>fname</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>fname</code></code></td><td class='ruff_defitem'>file name</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_playtkl_readcontents' href="javascript:toggleSource('playtkl_readcontents')">Show source</a></p>
+<div id='playtkl_readcontents' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::playtkl::readcontents {fname} {
+  <i><font color=#4b5d50># Reads (updates) a log file's contents. Useful at changing the file manually.</font></i>
+  <i><font color=#4b5d50>#   fname - file name</font></i>
+
+  <b><font color=#3a6797>variable</font></b> dd
+  <b><font color=#3a6797>catch</font></b> {
+    <b><font color=#3a6797>set</font></b> ch [<b><font color=#3a6797>open</font></b> <font color=#1b1baa>$fname</font>]
+    <b><font color=#3a6797>set</font></b> dd(fcont) [<b><font color=#3a6797>split</font></b> [<b><font color=#3a6797>string</font></b> trim [<b><font color=#3a6797>read</font></b> <font color=#1b1baa>$ch</font>]] \n]
+    <b><font color=#3a6797>close</font></b> <font color=#1b1baa>$ch</font>
+  }
+}<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::playtkl::record'>record</a><span class='ns_scope'> [<a href="playtkl.html#::playtkl" title="::playtkl" class='ruff_cmd'>::playtkl</a>]</span><span class='tinylink'><a href='playtkl.html#::playtkl'>playtkl</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Starts the recording.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>record</span> <span class='ruff_arg'>fname ?endkey? ?mouse?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>record</span> <span class='ruff_arg'>fname ?endkey? ?mouse? ?details?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>fname</code></code></td><td class='ruff_defitem'>name of file to store the recording</td></tr>
 <tr><td class='ruff_defitem'><code><code>endkey</code></code></td><td class='ruff_defitem'>key to stop the recording; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>mouse</code></code></td><td class='ruff_defitem'>&quot;no&quot; to disable  mouse events; <i>optional, default</i> <code>yes</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>details</code></code></td><td class='ruff_defitem'>additional info on the recording; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_playtkl_record' href="javascript:toggleSource('playtkl_record')">Show source</a></p>
-<div id='playtkl_record' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::playtkl::record {fname {endkey {}} {mouse yes}} {
+<div id='playtkl_record' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::playtkl::record {fname {endkey {}} {mouse yes} {details {}}} {
   <i><font color=#4b5d50># Starts the recording.</font></i>
   <i><font color=#4b5d50>#   fname - name of file to store the recording</font></i>
   <i><font color=#4b5d50>#   endkey - key to stop the recording</font></i>
   <i><font color=#4b5d50>#   mouse - &quot;no&quot; to disable  mouse events</font></i>
+  <i><font color=#4b5d50>#   details - additional info on the recording</font></i>
 
   <b><font color=#3a6797>variable</font></b> fields
   <b><font color=#3a6797>variable</font></b> dd
   <b><font color=#3a6797>set</font></b> dd(isrec) yes
   <b><font color=#3a6797>set</font></b> dd(mouse) <font color=#1b1baa>$mouse</font>
+  <b><font color=#3a6797>set</font></b> dd(details) [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \n <font color=#8b2a0e>&quot;\n# &quot;</font>] <font color=#1b1baa>$details</font>]
   <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists dd(msgbeg)]} {
     <b><font color=#3a6797>foreach</font></b> {o w} <font color=#1b1baa>$fields</font> {<b><font color=#3a6797>append</font></b> opts <font color=#8b2a0e>&quot; <font color=#1b1baa>{</font>%<font color=#1b1baa>$</font>w=<font color=#1b1baa>$</font>w<font color=#1b1baa>}</font>&quot;</font>}
     <b><font color=#3a6797>foreach</font></b> ev {KeyPress KeyRelease ButtonPress ButtonRelease Motion MouseWheel} {
@@ -830,10 +882,10 @@ playtkl::replay
           <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ev</font> eq {KeyRelease} && <font color=#1b1baa>$dd(prevev)</font> ne {KeyPress}} {
             <b><font color=#3a6797>lappend</font></b> dd(fcont) <font color=#8b2a0e>&quot;KeyPress <font color=#1b1baa>$</font>win <font color=#1b1baa>$</font>args <font color=#1b1baa>$</font>t&quot;</font>
           }
-        } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$ev</font> eq {KeyRelease} && [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$key</font>]==1} {
-          <i><font color=#4b5d50># KeyRelease of &quot;Ctrl/Alt/Shift + letter&quot; sets the problem:</font></i>
-          <i><font color=#4b5d50>#  the previous KeyPress isn't registered by Tk (only Control_L's etc. are)</font></i>
-          <i><font color=#4b5d50>#  =&gt; no response from KeyPress bindings</font></i>
+        } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$ev</font> eq {KeyRelease} && ([<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$key</font>]==1 ||  <font color=#1b1baa>$key</font> in {Left Right Up Down Home End Next Prior  F1 F2 F3 F4 F5 F6 F7 F8 F9 F10 F11 F12})} {
+          <i><font color=#4b5d50># KeyRelease of &quot;Ctrl/Alt/Shift + char/navigating/function key&quot; sets the problem:</font></i>
+          <i><font color=#4b5d50>#   the previous KeyPress can be not registered by Tk (only Control's etc.)</font></i>
+          <i><font color=#4b5d50>#   =&gt; no response from KeyPress bindings</font></i>
           <b><font color=#3a6797>set</font></b> ifound [FindPrevEvent <font color=#1b1baa>$key</font> KeyPress <font color=#1b1baa>$ev</font> <font color=#1b1baa>$win</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
           <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ifound</font>&lt;0} {
             <b><font color=#3a6797>lappend</font></b> dd(fcont) <font color=#8b2a0e>&quot;KeyPress <font color=#1b1baa>$</font>win <font color=#1b1baa>$</font>args <font color=#1b1baa>$</font>t %B=??&quot;</font> ;<i><font color=#4b5d50># %B stands for DEBUG</font></i>
@@ -874,11 +926,7 @@ playtkl::replay
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wfocus</font> eq {}} {<b><font color=#3a6797>set</font></b> wfocus [<b><font color=#134070>focus</font></b>]}
   <b><font color=#3a6797>set</font></b> dd(wfocus) <font color=#1b1baa>$wfocus</font>
   <b><font color=#3a6797>set</font></b> dd(ismacro) <font color=#1b1baa>$ismacro</font>
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> ne {}} {
-    <b><font color=#3a6797>set</font></b> ch [<b><font color=#3a6797>open</font></b> <font color=#1b1baa>$fname</font>]
-    <b><font color=#3a6797>set</font></b> dd(fcont) [<b><font color=#3a6797>split</font></b> [<b><font color=#3a6797>string</font></b> trim [<b><font color=#3a6797>read</font></b> <font color=#1b1baa>$ch</font>]] \n]
-    <b><font color=#3a6797>close</font></b> <font color=#1b1baa>$ch</font>
-  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> ne {}} {readcontents <font color=#1b1baa>$fname</font>}
   <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$dd(fcont)</font> 0]
   <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$line</font> dd(prevev) dd(win)
   <b><font color=#3a6797>set</font></b> dd(data) [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$line</font> 2 end]
@@ -889,11 +937,10 @@ playtkl::replay
   <b><font color=#3a6797>set</font></b> dd(mappings) <font color=#1b1baa>$mappings</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ismacro</font>} {
     <b><font color=#3a6797>set</font></b> fcont [<b><font color=#3a6797>list</font></b>]
-    <b><font color=#3a6797>set</font></b> time 0
     <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$dd(fcont)</font> {
       <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>regexp</font></b> {^\s*#+} <font color=#1b1baa>$line</font>#]} { ;<i><font color=#4b5d50># skip empty or commented</font></i>
         <b><font color=#3a6797>set</font></b> ln [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$line</font> 0 1]
-        <b><font color=#3a6797>append</font></b> ln <font color=#8b2a0e>&quot; %t=<font color=#1b1baa>[</font>incr time 2<font color=#1b1baa>]</font> &quot;</font> [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$line</font> 3 end]
+        <b><font color=#3a6797>append</font></b> ln <font color=#8b2a0e>&quot; %t=0 &quot;</font> [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$line</font> 3 end]
         <b><font color=#3a6797>lappend</font></b> fcont <font color=#1b1baa>$ln</font>
       }
     }
@@ -905,12 +952,14 @@ playtkl::replay
 </div></div></div><div class='yui-b navbox' ><h1><a href='#::playtkl'>playtkl</a></h1><h2><a href='#::playtkl-What's that'>What's that</a></h2><h2><a href='#::playtkl-Testing Tk'>Testing Tk</a></h2><h2><a href='#::playtkl-How's that'>How's that</a></h2><h2><a href='#::playtkl-Records'>Records</a></h2><h2><a href='#::playtkl-Macros'>Macros</a></h2><h2><a href='#::playtkl-Issues'>Issues</a></h2><h2><a href='#::playtkl-Links'>Links</a></h2><h2><a href='#::playtkl-Commands'>Commands</a></h2><h4 class='tooltip'><a href='playtkl.html#::playtkl::Data'>Data</a><span class='tooltiptext'>Extracts event's data of wildcard
 </span></h4><h4 class='tooltip'><a href='playtkl.html#::playtkl::end'>end</a><span class='tooltiptext'>Closes the recording/playing.
 </span></h4><h4 class='tooltip'><a href='playtkl.html#::playtkl::FindPrevEvent'>FindPrevEvent</a><span class='tooltiptext'>Searches events &quot;ev&quot; and &quot;ev2&quot; in dd(fcont) list.
+</span></h4><h4 class='tooltip'><a href='playtkl.html#::playtkl::GenerateEvent'>GenerateEvent</a><span class='tooltiptext'>Generates an event for a widget.
 </span></h4><h4 class='tooltip'><a href='playtkl.html#::playtkl::inform'>inform</a><span class='tooltiptext'>Puts out a message and the current time.
 </span></h4><h4 class='tooltip'><a href='playtkl.html#::playtkl::isend'>isend</a><span class='tooltiptext'>Checks if the recording is done.
 </span></h4><h4 class='tooltip'><a href='playtkl.html#::playtkl::Mapping'>Mapping</a><span class='tooltiptext'>Maps a recorded window to a played one.
 </span></h4><h4 class='tooltip'><a href='playtkl.html#::playtkl::PausePlaying'>PausePlaying</a><span class='tooltiptext'>Pauses / resumes the playing.
 </span></h4><h4 class='tooltip'><a href='playtkl.html#::playtkl::play'>play</a><span class='tooltiptext'>Starts the playback.
 </span></h4><h4 class='tooltip'><a href='playtkl.html#::playtkl::Playing'>Playing</a><span class='tooltiptext'>Plays a current record.
+</span></h4><h4 class='tooltip'><a href='playtkl.html#::playtkl::readcontents'>readcontents</a><span class='tooltiptext'>Reads (updates) a log file's contents. Useful at changing the file manually.
 </span></h4><h4 class='tooltip'><a href='playtkl.html#::playtkl::record'>record</a><span class='tooltiptext'>Starts the recording.
 </span></h4><h4 class='tooltip'><a href='playtkl.html#::playtkl::Recording'>Recording</a><span class='tooltiptext'>Saves data of an event occured on a window.
 </span></h4><h4 class='tooltip'><a href='playtkl.html#::playtkl::replay'>replay</a><span class='tooltiptext'>Replays a read/written recording, fastly at replaying a macro.
