@@ -1,0 +1,1282 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<meta name="author" content="aplsimple">
+<meta name="description" content="aplsimple's home page">
+<meta name="keywords" content="aplsimple,home">
+</head>
+<style>
+table{
+background-color: #f9f9f9;
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+box-shadow: none;
+filter: none;
+}
+pre{
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+}
+</style>
+<script>
+function homeLINK() {
+  homelink = document.baseURI;
+  ilen = 19
+  ibase = homelink.indexOf('aplsimple.github');
+  if (ibase<0) { ibase = homelink.indexOf('aplsimple_github'); ilen += 10 };
+  if (ibase>=0) { homelink = homelink.substring(0,ibase+ilen) };
+  return homelink;
+};
+document.write(' \
+<link rel="icon" type="image/jpg" href="'+homeLINK()+'/zoo/favicon.jpg">');
+document.write('<'+'script src="'+homeLINK()+'/zoo/funcs.js">'+'<'+'/script>');
+document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'+'/script>');
+</script>
+<body>
+<div id="wrapper">
+<div name="divd1" ALIGN="CENTER"> <FONT SIZE=5em color=#b01c20><B>
+<noscript>THIS PAGE IS NOT WORKING WITHOUT JAVASCRIPT!
+<BR>
+<BR>PLEASE, SWITCH ON JAVASCRIPT IN SETTINGS OF YOUR BROWSER AND RELOAD THE PAGE.
+</noscript>
+</B></FONT></div>
+<div id='doc3' class='yui-t2'>
+<section id=sec2>
+<div id='hd' class='banner'>
+<script>document.write(' \
+<link rel="stylesheet" href="'+homeLINK()+'/en/zoo/style.css">');
+</script>
+<link rel="stylesheet" href="../../css/style.css">
+
+<title>printer.tcl</title>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
+
+<div id="bodyContent" class="dokuwiki">
+<div id="dw__toc" class="dw__toc">
+<h3 class="toggle open" style="cursor: pointer;">printer.tcl</h3>
+<div aria-expanded="true" style="">
+
+<ul class="toc">
+<li><b><a href="#printer.tcl">printer.tcl</a></b></li>
+<li><b><a href="#printer">printer</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#printer::fetchVars">fetchVars</a><span class=tooltiptext> printer::fetchVars : Delivers namespace variables to a caller.</span></div></li></ul>
+<li><b><a href="#Ini_file">Ini_file</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#printer::ReadIni">ReadIni</a><span class=tooltiptext> printer::ReadIni : Reads ini data.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::SaveIni">SaveIni</a><span class=tooltiptext> printer::SaveIni : Saves ini data.</span></div></li></ul>
+<li><b><a href="#Expand_/_Contract">Expand_/_Contract</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#printer::ExpandMarked">ExpandMarked</a><span class=tooltiptext> printer::ExpandMarked : Shows all marked tree item.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::ExpandContract">ExpandContract</a><span class=tooltiptext> printer::ExpandContract : Expands or contracts the tree.
+isexp - yes, if to expand; no, if to contract</span></div></li></ul>
+<li><b><a href="#Mark_/_Unmark">Mark_/_Unmark</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#printer::MarkUnmarkFile">MarkUnmarkFile</a><span class=tooltiptext> printer::MarkUnmarkFile : Marks/unmarks and item in file tree.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::MarkTotal">MarkTotal</a><span class=tooltiptext> printer::MarkTotal : Show a number of marked items.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::Mark">Mark</a><span class=tooltiptext> printer::Mark : Mark/unmark tree items.
+wtree - tree's path
+itemID - item's ID
+ismarked - yes if the item is marked</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::Mark1">Mark1</a><span class=tooltiptext> printer::Mark1 : Mark/unmark tree item of file, with a key.
+wtree - tree's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::MarkFile">MarkFile</a><span class=tooltiptext> printer::MarkFile : Mark/unmark tree item of file.
+wtree - tree's path
+itemID - item's ID
+ismarked - yes if the item is marked</span></div></li></ul>
+<li><b><a href="#Focus_tree">Focus_tree</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#printer::TryFocusTree">TryFocusTree</a><span class=tooltiptext> printer::TryFocusTree : Tries focusing the focused item of the tree.
+wtree - tree's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::FocusID">FocusID</a><span class=tooltiptext> printer::FocusID : Focuses an item of the tree.
+wtree - tree's path
+itemID - item's ID</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::FocusID1">FocusID1</a><span class=tooltiptext> printer::FocusID1 : Focuses 1st item of the tree.
+wtree - tree's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::FocusIn">FocusIn</a><span class=tooltiptext> printer::FocusIn : Handles focusing the tree.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::FocusOut">FocusOut</a><span class=tooltiptext> printer::FocusOut : Handles unfocusing the tree.</span></div></li></ul>
+<li><b><a href="#alited's_md_processor">alited's_md_processor</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#printer::MdInit">MdInit</a><span class=tooltiptext> printer::MdInit : Initializes a text widget for md syntax.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::MdProc">MdProc</a><span class=tooltiptext> printer::MdProc : Makes .html version of .md file.
+fin - input .md file name
+fout - output .html file name
+First, puts the .md file to a text widget and highlights it.
+Then scans the text for highlighting tags to make their html counterparts.
+See also: hl_md::init</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::MdOutput">MdOutput</a><span class=tooltiptext> printer::MdOutput : Puts out the .html made from .md (in a text buffer).
+wtxt - text's path
+fout - output file name</span></div></li></ul>
+<li><b><a href="#Processing">Processing</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#printer::Message">Message</a><span class=tooltiptext> printer::Message : Displays a message in statusbar of the dialogue.
+msg - message
+mode - mode of Message</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::CheckData">CheckData</a><span class=tooltiptext> printer::CheckData : Check for correctness of the dialog's data.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::CheckFile">CheckFile</a><span class=tooltiptext> printer::CheckFile : Checks the file of contents.
+fname - the file name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::CheckDir">CheckDir</a><span class=tooltiptext> printer::CheckDir : Checks the output directory.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::CheckTemplates">CheckTemplates</a><span class=tooltiptext> printer::CheckTemplates : Checks alited's templates for .html files.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::GetReadme">GetReadme</a><span class=tooltiptext> printer::GetReadme : Create html version of readme.md.
+dirfrom - directory name where to get the source readme.md</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::GetCss">GetCss</a><span class=tooltiptext> printer::GetCss : Create style.css.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::GetFileName">GetFileName</a><span class=tooltiptext> printer::GetFileName : Gets a file link for index.html.
+dir2 - directory name
+fname - file name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::GetDirLink">GetDirLink</a><span class=tooltiptext> printer::GetDirLink : Gets a dir link for index.html.
+dir - directory name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::GetBranchLink">GetBranchLink</a><span class=tooltiptext> printer::GetBranchLink : Gets a contents branch link for index.html.
+link - link address
+title - link title</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::GetLeafLink">GetLeafLink</a><span class=tooltiptext> printer::GetLeafLink : Gets a contents leaf link for index.html.
+link - link address
+title - link title
+tip - tooltip's text
+basepath - base path for file links</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::UnitTooltip">UnitTooltip</a><span class=tooltiptext> printer::UnitTooltip : Gets unit's tooltip.
+wtxt - text's path
+l1 - 1st line's number
+l2 - last line's number</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::CompareUnits">CompareUnits</a><span class=tooltiptext> printer::CompareUnits : Compares the unit tree items by their titles. Useful for trees without branches.
+item1 - 1st item
+item2 - 2nd item</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::MakeFile">MakeFile</a><span class=tooltiptext> printer::MakeFile : Makes a html file or a copy of file from a source file.
+fname - source file's name
+fname2 - resulting file</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::Hl_html">Hl_html</a><span class=tooltiptext> printer::Hl_html : Highlights Tcl code in html file
+fname - file name
+cset - colors</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::Process">Process</a><span class=tooltiptext> printer::Process : Processes files to make the resulting .html.
+wtree - tree's path</span></div></li></ul>
+<li><b><a href="#Buttons">Buttons</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#printer::StdClr">StdClr</a><span class=tooltiptext> printer::StdClr : Sets standard colors.
+fld1 - 1st color field (and color field to focus)
+var1 - 1st color variable name
+fld2 - 2nd color field
+var2 - 2nd color variable name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::Help">Help</a><span class=tooltiptext> printer::Help : Handles "Help" button.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::Ok">Ok</a><span class=tooltiptext> printer::Ok</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::Cancel">Cancel</a><span class=tooltiptext> printer::Cancel : Cancel handling the dialog.</span></div></li></ul>
+<li><b><a href="#GUI">GUI</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#printer::FillTree">FillTree</a><span class=tooltiptext> printer::FillTree : Populates the tree of project files.
+wtree - tree's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::_create">_create</a><span class=tooltiptext> printer::_create : Creates Project Printer dialogue.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::_run">_run</a><span class=tooltiptext> printer::_run : Runs Project Printer dialogue.</span></div></li></ul>
+<li><b><a href="#EOF">EOF</a></b></li>
+
+</ul>
+
+</div>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1><font color=#ca14ca> alited's source</font></h1>
+</p><p>
+The <a href="about.html">alited/src</a> directory contains alited's own source files.
+</p><p>
+Some additional alited's files are also contained in <a href="../lib/addon/hl_alm.html">alited/lib/addon</a> directory.
+</p><p>
+The library files are contained in alited/lib** directory.
+</p><p>
+<li><a href="about.html">about.tcl</a> - "About alited" dialogue.</li>
+<li><a href="alited.html">alited.tcl</a> - The alited's main script to start.</li>
+<li><a href="bar.html">bar.tcl</a> - Handles the bar of tabs.</li>
+<li><a href="check.html">check.tcl</a> - "Check Tcl" dialogue and procedures.</li>
+<li><a href="complete.html">complete.tcl</a> - Handles auto-completion.</li>
+<li><a href="edit.html">edit.tcl</a> - "Edit" menu's procedures.</li>
+<li><a href="favor.html">favor.tcl</a> - Handles the favorite and last visited units.</li>
+<li><a href="favor_ls.html">favor_ls.tcl</a> - "Saved lists of favorites" dialogue and procedures.</li>
+<li><a href="file.html">file.tcl</a> - "File" menu's procedures.</li>
+<li><a href="find.html">find.tcl</a> - "Find / Replace" dialogue and procedures.</li>
+<li><a href="format.html">format.tcl</a> - "Edit / Formats" menu's procedures.</li>
+<li><a href="img.html">img.tcl</a> - List of images used by alited.</li>
+<li><a href="indent.html">indent.tcl</a> - Handles text indentation.</li>
+<li><a href="info.html">info.tcl</a> - Handles the info bar.</li>
+<li><a href="ini.html">ini.tcl</a> - Handles initializing alited.</li>
+<li><a href="keys.html">keys.tcl</a> - Handles keyboard (mapping etc.).</li>
+<li><a href="main.html">main.tcl</a> - Handles the main form of alited.</li>
+<li><a href="menu.html">menu.tcl</a> - Handles alited's menus.</li>
+<li><a href="msgs.html">msgs.tcl</a> - Localized messages used in several places.</li>
+<li><a href="paver.html">paver.tcl</a> - "Tools / Paver" tool.</li>
+<li><a href="pkgIndex.html">pkgIndex.tcl</a> - Includes README.md text (for Ruff doc generator).</li>
+<li><a href="pref.html">pref.tcl</a> - "Preferences" dialogue and procedures.</li>
+<li><a href="preview.html">preview.tcl</a> - "Preview (theme, CS)" dialogue called by "Preferences".</li>
+<li><a href="printer.html">printer.tcl</a> - "Tools / Project Printer" dialogue and procedures.</li>
+<li><a href="project.html">project.tcl</a> - "Projects" dialogue and procedures.</li>
+<li><a href="run.html">run.tcl</a> - "Tools / Run..." dialogue and procedures.</li>
+<li><a href="tool.html">tool.tcl</a> - "Tools" menu's procedures.</li>
+<li><a href="tree.html">tree.tcl</a> - Handles the tree of units and files.</li>
+<li><a href="unit.html">unit.tcl</a> - Handles the unit tree.</li>
+<li><a href="unit_tpl.html">unit_tpl.tcl</a> - "Templates" dialogue and procedures.</li>
+</p><p>
+
+</p>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>printer.tcl</b></font></div></td></table>
+
+<pre class="code"><i><font color=#ff0000>#! /usr/bin/env tclsh<a id=printer.tcl></a></font></i>
+<i><font color=#4b5d50>###########################################################</font></i>
+<i><font color=#4b5d50># Name:    printer.tcl</font></i>
+<i><font color=#4b5d50># Author:  Alex Plotnikov  (aplsimple@gmail.com)</font></i>
+<i><font color=#4b5d50># Date:    Mar 01, 2024</font></i>
+<i><font color=#4b5d50># Brief:   Handles html copy of a project to be printed.</font></i>
+<i><font color=#4b5d50># License: MIT.</font></i>
+<i><font color=#4b5d50>###########################################################</font></i>
+<a id=printer></a>
+<i><font color=#4b5d50># _________________________ printer ________________________ #</font></i>
+
+<b><font color=#ca14ca>namespace</font></b> eval printer {
+  <b><font color=#3a6797>variable</font></b> win <font color=#1b1baa>$::alited::al(WIN)</font>.printer
+  <b><font color=#3a6797>variable</font></b> itemID1 {}
+  <b><font color=#3a6797>variable</font></b> inifile {} iniprjfile {}
+  <b><font color=#3a6797>variable</font></b> tpldir {} cssdir {} filesdir {}
+  <b><font color=#3a6797>variable</font></b> CSS css
+  <b><font color=#3a6797>variable</font></b> FILES files
+  <b><font color=#3a6797>variable</font></b> indextpl {} indextpl2 {} csstpl {} titletpl {} csscont {}
+  <b><font color=#3a6797>variable</font></b> indexname index.html
+  <b><font color=#3a6797>variable</font></b> indexname2 index_2.html
+  <b><font color=#3a6797>variable</font></b> cssname style.css
+  <b><font color=#3a6797>variable</font></b> readmecont {}
+  <b><font color=#3a6797>variable</font></b> indexcont {}
+  <b><font color=#3a6797>variable</font></b> markedIDs [<b><font color=#3a6797>list</font></b>] markedfiles [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>variable</font></b> copyleft {&lt;!-- Made by alited --&gt;}
+  <b><font color=#3a6797>variable</font></b> copyright {&lt;!-- Made by alited (END) --&gt;}
+  <b><font color=#3a6797>variable</font></b> tmpC {}
+  <b><font color=#3a6797>variable</font></b> colors {}
+  <b><font color=#3a6797>variable</font></b> lastreadme {}
+  <i><font color=#4b5d50># wildcards in templates</font></i>
+  <b><font color=#3a6797>variable</font></b> wcalited ALITED_ ;<i><font color=#4b5d50># to avoid self-wildcarding</font></i>
+  <b><font color=#3a6797>variable</font></b> leafttl <font color=#8b2a0e>&quot;&lt;table border=0 cellPadding=4 cellSpacing=0 width=100%&gt; \</font>
+<font color=#8b2a0e>    &lt;td border=0 bgColor=<font color=#1b1baa>${</font>wcalited<font color=#1b1baa>}</font>BG&gt;&lt;div style=text-align:center&gt; \</font>
+<font color=#8b2a0e>    &lt;a href=\&quot;<font color=#1b1baa>${</font>wcalited<font color=#1b1baa>}</font>BACK_REF\&quot;&gt;&lt;font color=<font color=#1b1baa>${</font>wcalited<font color=#1b1baa>}</font>FG size=6&gt; \</font>
+<font color=#8b2a0e>    &lt;b&gt;<font color=#1b1baa>${</font>wcalited<font color=#1b1baa>}</font>TITLE&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;/td&gt;&lt;/table&gt;&quot;</font>
+  <b><font color=#3a6797>variable</font></b> wcstyle <font color=#1b1baa>${wcalited}</font>STYLE
+  <b><font color=#3a6797>variable</font></b> wctitle <font color=#1b1baa>${wcalited}</font>TITLE
+  <b><font color=#3a6797>variable</font></b> wctoc   <font color=#1b1baa>${wcalited}</font>TABLE_CONTENTS
+  <b><font color=#3a6797>variable</font></b> wclink  <font color=#1b1baa>${wcalited}</font>CURRENT_LINK
+  <b><font color=#3a6797>variable</font></b> wcrmcon <font color=#1b1baa>${wcalited}</font>README_CONTENTS
+  <b><font color=#3a6797>variable</font></b> wcrmttl <font color=#1b1baa>${wcalited}</font>README_TITLE
+  <b><font color=#3a6797>variable</font></b> wcbttl  <font color=#1b1baa>${wcalited}</font>BODY_TITLE
+  <b><font color=#3a6797>variable</font></b> wcbody  <font color=#1b1baa>${wcalited}</font>BODY_CONTENTS
+  <b><font color=#3a6797>variable</font></b> wcwidth <font color=#1b1baa>${wcalited}</font>TABLE_WIDTH
+  <b><font color=#3a6797>variable</font></b> wcback  <font color=#1b1baa>${wcalited}</font>BACK_REF
+  <b><font color=#3a6797>variable</font></b> wcfg    <font color=#1b1baa>${wcalited}</font>FG
+  <b><font color=#3a6797>variable</font></b> wcbg    <font color=#1b1baa>${wcalited}</font>BG
+  <b><font color=#3a6797>variable</font></b> wcleaft <font color=#1b1baa>${wcalited}</font>LEAF_TITLE
+  <b><font color=#3a6797>variable</font></b> wctipw  <font color=#1b1baa>${wcalited}</font>TIP_WIDTH
+  <b><font color=#3a6797>variable</font></b> wclt    <font color=#1b1baa>${wcalited}</font>LT
+  <b><font color=#3a6797>variable</font></b> wcgt    <font color=#1b1baa>${wcalited}</font>GT
+  <i><font color=#4b5d50># saved options</font></i>
+  <b><font color=#3a6797>variable</font></b> geometry root=<font color=#1b1baa>$::alited::al(WIN)</font>
+  <b><font color=#3a6797>variable</font></b> width1 {} width2 {}
+  <b><font color=#3a6797>variable</font></b> dir {}
+  <b><font color=#3a6797>variable</font></b> mdproc {pandoc}
+  <b><font color=#3a6797>variable</font></b> mdprocs [<b><font color=#3a6797>list</font></b> pandoc alited]
+  <b><font color=#3a6797>variable</font></b> STDttlfg #fefefe STDttlbg #0b3467
+  <b><font color=#3a6797>variable</font></b> STDleaffg #1a1a1a STDleafbg #bdd7e7
+  <b><font color=#3a6797>variable</font></b> ttlfg <font color=#1b1baa>$STDttlfg</font> ttlbg <font color=#1b1baa>$STDttlbg</font>
+  <b><font color=#3a6797>variable</font></b> leaffg <font color=#1b1baa>$STDleaffg</font> leafbg <font color=#1b1baa>$STDleafbg</font>
+  <b><font color=#3a6797>variable</font></b> cwidth 10
+  <b><font color=#3a6797>variable</font></b> cs 1
+  <b><font color=#3a6797>variable</font></b> final {<font color=#8b2a0e>&quot;%D&quot;</font>}
+  <b><font color=#3a6797>variable</font></b> dosort 0
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::fetchVars></a>
+<b><font color=#ca14ca>proc</font></b> printer::fetchVars {} {
+  <i><font color=#4b5d50># Delivers namespace variables to a caller.</font></i>
+
+  <b><font color=#3a6797>uplevel</font></b> 1 {
+    <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obDl2 obDl2 INIDIR INIDIR PRJDIR PRJDIR DATADIR DATADIR
+    <b><font color=#3a6797>foreach</font></b> _ {win itemID1 inifile iniprjfile tpldir cssdir CSS indextpl indextpl2 csstpl \
+    titletpl csscont indexname indexname2 cssname readmecont markedIDs markedfiles copyleft \
+    wcbttl wcstyle wctitle wctoc wclink wcrmcon wcbody wcwidth wcback wcfg wcbg tmpC cs \
+    geometry width1 width2 dir mdproc mdprocs ttlfg ttlbg leaffg leafbg cwidth indexcont \
+    final leafttl wcleaft wctipw wcrmttl dosort wclt wcgt copyright colors lastreadme \
+    filesdir FILES} {
+      <b><font color=#3a6797>variable</font></b> <font color=#1b1baa>$_</font>
+    }
+  }
+}
+<a id=Ini_file></a>
+<i><font color=#4b5d50># ________________________ Ini file _________________________ #</font></i>
+<a id=printer::ReadIni></a>
+<b><font color=#ca14ca>proc</font></b> printer::ReadIni {} {
+  <i><font color=#4b5d50># Reads ini data.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> cont [apave::readTextFile <font color=#1b1baa>$inifile</font>]
+  <b><font color=#3a6797>append</font></b> cont \n [apave::readTextFile <font color=#1b1baa>$iniprjfile</font>]
+  <b><font color=#3a6797>set</font></b> markedfiles [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>foreach</font></b> line [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$cont</font> \n] {
+    <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$line</font>]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> val [alited::edit::IniParameter file <font color=#1b1baa>$line</font>]] ne {}} {
+      <b><font color=#3a6797>lappend</font></b> markedfiles <font color=#1b1baa>$val</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>foreach</font></b> opt {geometry width1 width2 dir mdproc mdprocs \
+      ttlfg ttlbg leaffg leafbg cwidth cs final dosort} {
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> val [alited::edit::IniParameter <font color=#1b1baa>$opt</font> <font color=#1b1baa>$line</font>]] ne {}} {
+          <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$opt</font> <font color=#1b1baa>$val</font>
+        }
+      }
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$width1</font> eq {}} {<b><font color=#3a6797>set</font></b> width1 <font color=#1b1baa>$al(TREE,cw0)</font>}
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$width2</font> eq {}} {<b><font color=#3a6797>set</font></b> width2 <font color=#1b1baa>$al(TREE,cw1)</font>}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::SaveIni></a>
+<b><font color=#ca14ca>proc</font></b> printer::SaveIni {} {
+  <i><font color=#4b5d50># Saves ini data.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obDl2</font> Tree]
+  <b><font color=#3a6797>set</font></b>    tmpC {}
+  <b><font color=#3a6797>append</font></b> tmpC <font color=#8b2a0e>&quot;geometry=<font color=#1b1baa>$</font>geometry&quot;</font> \n
+  <b><font color=#3a6797>append</font></b> tmpC <font color=#8b2a0e>&quot;width1=<font color=#1b1baa>$</font>width1&quot;</font> \n
+  <b><font color=#3a6797>append</font></b> tmpC <font color=#8b2a0e>&quot;width2=<font color=#1b1baa>$</font>width2&quot;</font> \n
+  <b><font color=#3a6797>append</font></b> tmpC <font color=#8b2a0e>&quot;mdproc=<font color=#1b1baa>$</font>mdproc&quot;</font> \n
+  <b><font color=#3a6797>append</font></b> tmpC <font color=#8b2a0e>&quot;ttlfg=<font color=#1b1baa>$</font>ttlfg&quot;</font> \n
+  <b><font color=#3a6797>append</font></b> tmpC <font color=#8b2a0e>&quot;ttlbg=<font color=#1b1baa>$</font>ttlbg&quot;</font> \n
+  <b><font color=#3a6797>append</font></b> tmpC <font color=#8b2a0e>&quot;leaffg=<font color=#1b1baa>$</font>leaffg&quot;</font> \n
+  <b><font color=#3a6797>append</font></b> tmpC <font color=#8b2a0e>&quot;leafbg=<font color=#1b1baa>$</font>leafbg&quot;</font> \n
+  <b><font color=#3a6797>append</font></b> tmpC <font color=#8b2a0e>&quot;cwidth=<font color=#1b1baa>$</font>cwidth&quot;</font> \n
+  <b><font color=#3a6797>append</font></b> tmpC <font color=#8b2a0e>&quot;cs=<font color=#1b1baa>$</font>cs&quot;</font> \n
+  apave::writeTextFile <font color=#1b1baa>$inifile</font> ::alited::printer::tmpC
+  <b><font color=#3a6797>set</font></b>    tmpC {}
+  <b><font color=#3a6797>append</font></b> tmpC <font color=#8b2a0e>&quot;dir=<font color=#1b1baa>$</font>dir&quot;</font> \n
+  <b><font color=#3a6797>append</font></b> tmpC <font color=#8b2a0e>&quot;final=<font color=#1b1baa>$</font>final&quot;</font> \n
+  <b><font color=#3a6797>append</font></b> tmpC <font color=#8b2a0e>&quot;dosort=<font color=#1b1baa>$</font>dosort&quot;</font> \n
+  <b><font color=#3a6797>foreach</font></b> item [alited::tree::GetTree {} {} <font color=#1b1baa>$wtree</font>] {
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$item</font> 4] - fname leaf itemID
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$itemID</font> in <font color=#1b1baa>$markedIDs</font>} {
+      <b><font color=#3a6797>append</font></b> tmpC \nfile=<font color=#1b1baa>$fname</font>
+    }
+  }
+  apave::writeTextFile <font color=#1b1baa>$iniprjfile</font> ::alited::printer::tmpC
+}
+<a id=Expand_/_Contract></a>
+<i><font color=#4b5d50># ________________________ Expand / Contract _________________________ #</font></i>
+<a id=printer::ExpandMarked></a>
+<b><font color=#ca14ca>proc</font></b> printer::ExpandMarked {} {
+  <i><font color=#4b5d50># Shows all marked tree item.</font></i>
+
+  fetchVars
+  ExpandContract no
+  <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obDl2</font> Tree]
+  <b><font color=#3a6797>set</font></b> parent {}
+  <b><font color=#3a6797>foreach</font></b> itemID <font color=#1b1baa>$markedIDs</font> {
+    <b><font color=#3a6797>set</font></b> itemParent [<font color=#1b1baa>$wtree</font> parent <font color=#1b1baa>$itemID</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$itemParent</font> ne {} && <font color=#1b1baa>$parent</font> ne <font color=#1b1baa>$itemParent</font>} {
+      <font color=#1b1baa>$wtree</font> see <font color=#1b1baa>$itemID</font>
+      <b><font color=#3a6797>set</font></b> parent <font color=#1b1baa>$itemParent</font>
+    }
+  }
+  TryFocusTree <font color=#1b1baa>$wtree</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::ExpandContract></a>
+<b><font color=#ca14ca>proc</font></b> printer::ExpandContract {{isexp yes}} {
+  <i><font color=#4b5d50># Expands or contracts the tree.</font></i>
+  <i><font color=#4b5d50>#   isexp - yes, if to expand; no, if to contract</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obDl2</font> Tree]
+  <b><font color=#3a6797>set</font></b> itemID [alited::tree::CurrentItem {} <font color=#1b1baa>$wtree</font>]
+  <b><font color=#3a6797>set</font></b> branch [<b><font color=#3a6797>set</font></b> selbranch {}]
+  <b><font color=#3a6797>foreach</font></b> item [alited::tree::GetTree {} {} <font color=#1b1baa>$wtree</font>] {
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$item</font> lev cnt ID
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> [<font color=#1b1baa>$wtree</font> children <font color=#1b1baa>$ID</font>]]} {
+      <b><font color=#3a6797>set</font></b> branch <font color=#1b1baa>$ID</font>
+      <font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$ID</font> <font color=#653760>-open</font> <font color=#1b1baa>$isexp</font>
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ID</font> eq <font color=#1b1baa>$itemID</font>} {<b><font color=#3a6797>set</font></b> selbranch <font color=#1b1baa>$branch</font>}
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$isexp</font>} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$itemID</font> ne {}} {<font color=#1b1baa>$wtree</font> selection set <font color=#1b1baa>$itemID</font>}
+    alited::tree::SeeSelection <font color=#1b1baa>$wtree</font>
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$selbranch</font> ne {}} {
+    <font color=#1b1baa>$wtree</font> selection set <font color=#1b1baa>$selbranch</font>
+    alited::tree::SeeSelection <font color=#1b1baa>$wtree</font>
+  }
+  TryFocusTree <font color=#1b1baa>$wtree</font>
+}
+<a id=Mark_/_Unmark></a>
+<i><font color=#4b5d50># ________________________ Mark / Unmark _________________________ #</font></i>
+<a id=printer::MarkUnmarkFile></a>
+<b><font color=#ca14ca>proc</font></b> printer::MarkUnmarkFile {} {
+  <i><font color=#4b5d50># Marks/unmarks and item in file tree.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obDl2</font> Tree]
+  <b><font color=#3a6797>set</font></b> itemID [<font color=#1b1baa>$wtree</font> focus]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$itemID</font> eq {}} {
+    <b><font color=#134070>focus</font></b> <font color=#1b1baa>$wtree</font>
+    FocusID1 <font color=#1b1baa>$wtree</font>
+    <b><font color=#ca14ca>return</font></b> 0
+  }
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#1b1baa>$markedIDs</font> <font color=#1b1baa>$itemID</font>]]&gt;=0} {
+    <b><font color=#3a6797>set</font></b> markedIDs [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$markedIDs</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
+    <b><font color=#3a6797>set</font></b> wasmarkeddir [Mark <font color=#1b1baa>$wtree</font> <font color=#1b1baa>$itemID</font> no]
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>lappend</font></b> markedIDs <font color=#1b1baa>$itemID</font>
+    <b><font color=#3a6797>set</font></b> wasmarkeddir [Mark <font color=#1b1baa>$wtree</font> <font color=#1b1baa>$itemID</font> yes]
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wasmarkeddir</font>} {
+    ExpandMarked
+    <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;alited::printer::FocusID <font color=#1b1baa>$</font>wtree <font color=#1b1baa>$</font>itemID&quot;</font>
+  }
+  MarkTotal
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$wasmarkeddir</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::MarkTotal></a>
+<b><font color=#ca14ca>proc</font></b> printer::MarkTotal {} {
+  <i><font color=#4b5d50># Show a number of marked items.</font></i>
+
+  fetchVars
+  [<font color=#1b1baa>$obDl2</font> Labstat2] configure <font color=#653760>-text</font> [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$markedIDs</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::Mark></a>
+<b><font color=#ca14ca>proc</font></b> printer::Mark {wtree itemID ismarked} {
+  <i><font color=#4b5d50># Mark/unmark tree items.</font></i>
+  <i><font color=#4b5d50>#   wtree - tree's path</font></i>
+  <i><font color=#4b5d50>#   itemID - item's ID</font></i>
+  <i><font color=#4b5d50>#   ismarked - yes if the item is marked</font></i>
+
+  <b><font color=#3a6797>set</font></b> treecont [alited::tree::GetTree {} {} <font color=#1b1baa>$wtree</font>]
+  <b><font color=#3a6797>set</font></b> iit [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-exact</font> <font color=#653760>-index</font> {4 3} <font color=#1b1baa>$treecont</font> <font color=#1b1baa>$itemID</font>]
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$treecont</font> <font color=#1b1baa>$iit</font>] lev
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$treecont</font> <font color=#1b1baa>$iit</font> 4] - fname leaf
+  MarkFile <font color=#1b1baa>$wtree</font> <font color=#1b1baa>$itemID</font> <font color=#1b1baa>$ismarked</font>
+  <b><font color=#3a6797>set</font></b> wasmarkeddir no
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> is true <font color=#653760>-strict</font> <font color=#1b1baa>$leaf</font>]} {
+    <i><font color=#4b5d50># for directory: mark/unmark its files</font></i>
+    <b><font color=#3a6797>foreach</font></b> item [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$treecont</font> [<b><font color=#3a6797>incr</font></b> iit] end] {
+      <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$item</font>] lev2
+      <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$item</font> 4] - fname leaf itID
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$lev2</font>&lt;=<font color=#1b1baa>$lev</font>} <b><font color=#ca14ca>break</font></b>
+      MarkFile <font color=#1b1baa>$wtree</font> <font color=#1b1baa>$itID</font> <font color=#1b1baa>$ismarked</font>
+      <b><font color=#3a6797>set</font></b> wasmarkeddir yes
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$wasmarkeddir</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::Mark1></a>
+<b><font color=#ca14ca>proc</font></b> printer::Mark1 {wtree} {
+  <i><font color=#4b5d50># Mark/unmark tree item of file, with a key.</font></i>
+  <i><font color=#4b5d50>#   wtree - tree's path</font></i>
+
+  <b><font color=#3a6797>set</font></b> wd [MarkUnmarkFile]
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$wd</font>} {
+    <b><font color=#134070>event</font></b> generate <font color=#1b1baa>$wtree</font> &lt;Down&gt;
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::MarkFile></a>
+<b><font color=#ca14ca>proc</font></b> printer::MarkFile {wtree itemID ismarked} {
+  <i><font color=#4b5d50># Mark/unmark tree item of file.</font></i>
+  <i><font color=#4b5d50>#   wtree - tree's path</font></i>
+  <i><font color=#4b5d50>#   itemID - item's ID</font></i>
+  <i><font color=#4b5d50>#   ismarked - yes if the item is marked</font></i>
+
+  <b><font color=#3a6797>variable</font></b> markedIDs
+  <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#1b1baa>$markedIDs</font> <font color=#1b1baa>$itemID</font>]
+  <b><font color=#3a6797>set</font></b> markedIDs [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$markedIDs</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ismarked</font>} {
+    <font color=#1b1baa>$wtree</font> tag add tagSel <font color=#1b1baa>$itemID</font>
+    <b><font color=#3a6797>lappend</font></b> markedIDs <font color=#1b1baa>$itemID</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <font color=#1b1baa>$wtree</font> tag remove tagSel <font color=#1b1baa>$itemID</font>
+  }
+}
+<a id=Focus_tree></a>
+<i><font color=#4b5d50># ________________________ Focus tree _________________________ #</font></i>
+<a id=printer::TryFocusTree></a>
+<b><font color=#ca14ca>proc</font></b> printer::TryFocusTree {wtree} {
+  <i><font color=#4b5d50># Tries focusing the focused item of the tree.</font></i>
+  <i><font color=#4b5d50>#   wtree - tree's path</font></i>
+
+  <b><font color=#3a6797>set</font></b> itemID [<font color=#1b1baa>$wtree</font> focus]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$itemID</font> ne {}} {
+    <b><font color=#134070>focus</font></b> <font color=#1b1baa>$wtree</font>
+    FocusID <font color=#1b1baa>$wtree</font> <font color=#1b1baa>$itemID</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::FocusID></a>
+<b><font color=#ca14ca>proc</font></b> printer::FocusID {wtree itemID {cnt 1}} {
+  <i><font color=#4b5d50># Focuses an item of the tree.</font></i>
+  <i><font color=#4b5d50>#   wtree - tree's path</font></i>
+  <i><font color=#4b5d50>#   itemID - item's ID</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$cnt</font>} {
+    <i><font color=#4b5d50># will restart after idle</font></i>
+    <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;alited::printer::FocusID <font color=#1b1baa>$</font>wtree <font color=#1b1baa>$</font>itemID <font color=#1b1baa>[</font>incr cnt -1<font color=#1b1baa>]</font>&quot;</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <font color=#1b1baa>$wtree</font> focus <font color=#1b1baa>$itemID</font>
+    <font color=#1b1baa>$wtree</font> see <font color=#1b1baa>$itemID</font>
+    <font color=#1b1baa>$wtree</font> selection set <font color=#1b1baa>$itemID</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::FocusID1></a>
+<b><font color=#ca14ca>proc</font></b> printer::FocusID1 {wtree} {
+  <i><font color=#4b5d50># Focuses 1st item of the tree.</font></i>
+  <i><font color=#4b5d50>#   wtree - tree's path</font></i>
+
+  <b><font color=#3a6797>variable</font></b> itemID1
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$itemID1</font> ne {}} {FocusID <font color=#1b1baa>$wtree</font> <font color=#1b1baa>$itemID1</font>}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::FocusIn></a>
+<b><font color=#ca14ca>proc</font></b> printer::FocusIn {wtree} {
+  <i><font color=#4b5d50># Handles focusing the tree.</font></i>
+
+  <b><font color=#3a6797>set</font></b> itemID [<font color=#1b1baa>$wtree</font> focus]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$itemID</font> eq {}} {
+    FocusID1 <font color=#1b1baa>$wtree</font>
+  } <b><font color=#3a6797>else</font></b> {
+    FocusID <font color=#1b1baa>$wtree</font> <font color=#1b1baa>$itemID</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::FocusOut></a>
+<b><font color=#ca14ca>proc</font></b> printer::FocusOut {wtree} {
+  <i><font color=#4b5d50># Handles unfocusing the tree.</font></i>
+
+  <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$wtree</font> selection remove [<font color=#1b1baa>$wtree</font> focus]}
+}
+<a id=alited's_md_processor></a>
+<i><font color=#4b5d50># ________________________ alited's md processor _________________________ #</font></i>
+<a id=printer::MdInit></a>
+<b><font color=#ca14ca>proc</font></b> printer::MdInit {} {
+  <i><font color=#4b5d50># Initializes a text widget for md syntax.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> wtxt [<font color=#1b1baa>$obDl2</font> TexTmp2]
+  <b><font color=#3a6797>set</font></b> plcom [alited::HighlightAddon <font color=#1b1baa>$wtxt</font> .md <font color=#1b1baa>$colors</font>]
+  ::hl_tcl::hl_init <font color=#1b1baa>$wtxt</font> <font color=#653760>-plaincom</font> <font color=#1b1baa>$plcom</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::MdProc></a>
+<b><font color=#ca14ca>proc</font></b> printer::MdProc {fin fout} {
+  <i><font color=#4b5d50># Makes .html version of .md file.</font></i>
+  <i><font color=#4b5d50>#   fin - input .md file name</font></i>
+  <i><font color=#4b5d50>#   fout - output .html file name</font></i>
+  <i><font color=#4b5d50># First, puts the .md file to a text widget and highlights it.</font></i>
+  <i><font color=#4b5d50># Then scans the text for highlighting tags to make their html counterparts.</font></i>
+  <i><font color=#4b5d50># See also: hl_md::init</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> wtxt [<font color=#1b1baa>$obDl2</font> TexTmp2]
+  <b><font color=#3a6797>set</font></b> cont [apave::readTextFile <font color=#1b1baa>$fin</font> {} 1]
+  <font color=#1b1baa>$wtxt</font> replace 1.0 end <font color=#1b1baa>$cont</font>
+  ::hl_tcl::hl_text <font color=#1b1baa>$wtxt</font>
+  <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$colors</font> clrCOM clrCOMTK clrSTR clrVAR clrCMN clrPROC clrOPT
+  <b><font color=#3a6797>foreach</font></b> tag [<font color=#1b1baa>$wtxt</font> tag names] {
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> match md* <font color=#1b1baa>$tag</font>]} <b><font color=#ca14ca>continue</font></b>
+    <b><font color=#3a6797>set</font></b> parts [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-dictionary</font> <font color=#653760>-decreasing</font> <font color=#653760>-stride</font> 2 [<font color=#1b1baa>$wtxt</font> tag ranges <font color=#1b1baa>$tag</font>]]
+    <b><font color=#3a6797>foreach</font></b> {p1 p2} <font color=#1b1baa>$parts</font> {
+      <b><font color=#3a6797>switch</font></b> <font color=#653760>-exact</font> <font color=#1b1baa>$tag</font> {
+        mdCMNT {  ;<i><font color=#4b5d50># comment tag for &quot;invisible&quot; parts</font></i>
+          <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$p1</font> <font color=#1b1baa>$p2</font> {}
+        }
+        mdAPOS {  ;<i><font color=#4b5d50># apostrophe</font></i>
+          <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$p2</font> &lt;/font&gt;
+          <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$p1</font> <font color=#8b2a0e>&quot;&lt;font color=<font color=#1b1baa>$</font>clrVAR&gt;&quot;</font>
+        }
+        mdBOIT {  ;<i><font color=#4b5d50># bold italic</font></i>
+          <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$p2</font> &lt;/font&gt;&lt;/i&gt;&lt;/b&gt;
+          <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$p1</font> <font color=#8b2a0e>&quot;&lt;b&gt;&lt;i&gt;&lt;font color=<font color=#1b1baa>$</font>clrVAR&gt;&quot;</font>
+        }
+        mdITAL {  ;<i><font color=#4b5d50># italic</font></i>
+          <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$p2</font> &lt;/font&gt;&lt;/i&gt;
+          <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$p1</font> <font color=#8b2a0e>&quot;&lt;i&gt;&lt;font color=<font color=#1b1baa>$</font>clrVAR&gt;&quot;</font>
+        }
+        mdBOLD {  ;<i><font color=#4b5d50># bold</font></i>
+          <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$p2</font> &lt;/font&gt;&lt;/b&gt;
+          <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$p1</font> <font color=#8b2a0e>&quot;&lt;b&gt;&lt;font color=<font color=#1b1baa>$</font>clrVAR&gt;&quot;</font>
+        }
+        mdLIST {  ;<i><font color=#4b5d50># list</font></i>
+          <font color=#1b1baa>$wtxt</font> insert [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$p2</font>)}].end &lt;/li&gt;
+          <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$p1</font> <font color=#1b1baa>$p2</font> &lt;li&gt;
+        }
+        mdLINK {  ;<i><font color=#4b5d50># link</font></i>
+          <b><font color=#3a6797>set</font></b> link [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$p1</font> <font color=#1b1baa>$p2</font>]
+          <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$link</font> \[\]()] a1 a2 a3 a4
+          <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$a1</font> ne {}} {
+            <b><font color=#3a6797>set</font></b> link <font color=#8b2a0e>&quot;&lt;a href=\&quot;<font color=#1b1baa>$</font>link\&quot;&gt;<font color=#1b1baa>$</font>link&quot;</font>
+          } <b><font color=#3a6797>else</font></b> {
+            <b><font color=#3a6797>set</font></b> link <font color=#8b2a0e>&quot;&lt;a href=\&quot;<font color=#1b1baa>$</font>a4\&quot;&gt;<font color=#1b1baa>$</font>a2&quot;</font>
+          }
+          <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$p1</font> <font color=#1b1baa>$p2</font> <font color=#1b1baa>$link</font>&lt;/a&gt;
+        }
+        mdHEAD1 - mdHEAD2 - mdHEAD3 - mdHEAD4 - mdHEAD5 - mdHEAD6 {  ;<i><font color=#4b5d50># headers</font></i>
+          <b><font color=#3a6797>set</font></b> h h[<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$tag</font> end]
+          <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$p2</font> &lt;/font&gt;&lt;/<font color=#1b1baa>$h</font>&gt;
+          <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$p1</font> <font color=#8b2a0e>&quot;&lt;<font color=#1b1baa>$</font>h&gt;&lt;font color=<font color=#1b1baa>$</font>clrPROC&gt;&quot;</font>
+        }
+      }
+    }
+  }
+  MdOutput <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$fout</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::MdOutput></a>
+<b><font color=#ca14ca>proc</font></b> printer::MdOutput {wtxt fout} {
+  <i><font color=#4b5d50># Puts out the .html made from .md (in a text buffer).</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+  <i><font color=#4b5d50>#   fout - output file name</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> tmpC {}
+  <b><font color=#3a6797>set</font></b> par 1
+  <b><font color=#3a6797>foreach</font></b> line [<b><font color=#3a6797>split</font></b> [<font color=#1b1baa>$wtxt</font> get 1.0 end] \n] {
+    <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$line</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$line</font> eq {}} {
+      <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$par</font>} {
+        <b><font color=#3a6797>append</font></b> line &lt;/p&gt;&lt;p&gt;
+      }
+      <b><font color=#3a6797>incr</font></b> par
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$par</font>} {
+      <b><font color=#3a6797>set</font></b> par 0
+    }
+    <b><font color=#3a6797>append</font></b> tmpC <font color=#1b1baa>$line</font> \n
+  }
+  <b><font color=#3a6797>append</font></b> tmpC &lt;/p&gt;
+  apave::writeTextFile <font color=#1b1baa>$fout</font> ::alited::printer::tmpC
+}
+<a id=Processing></a>
+<i><font color=#4b5d50># ________________________ Processing _________________________ #</font></i>
+<a id=printer::Message></a>
+<b><font color=#ca14ca>proc</font></b> printer::Message {msg {mode 1}} {
+  <i><font color=#4b5d50># Displays a message in statusbar of the dialogue.</font></i>
+  <i><font color=#4b5d50>#   msg - message</font></i>
+  <i><font color=#4b5d50>#   mode - mode of Message</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited obDl2 obDl2
+  alited::Message <font color=#1b1baa>$msg</font> <font color=#1b1baa>$mode</font> [<font color=#1b1baa>$obDl2</font> Labstat1]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::CheckData></a>
+<b><font color=#ca14ca>proc</font></b> printer::CheckData {} {
+  <i><font color=#4b5d50># Check for correctness of the dialog's data.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> dir [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$dir</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dir</font> eq {}} {
+    <b><font color=#3a6797>set</font></b> errfoc [<font color=#1b1baa>$obDl2</font> chooserPath Dir]
+  } <b><font color=#3a6797>elseif</font></b> {![::apave::intInRange <font color=#1b1baa>$cwidth</font> 5 99]} {
+    <b><font color=#3a6797>set</font></b> errfoc [<font color=#1b1baa>$obDl2</font> SpxCwidth]
+  }
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists errfoc]} {
+    <b><font color=#134070>bell</font></b>
+    ::apave::FocusByForce <font color=#1b1baa>$errfoc</font>
+    <b><font color=#ca14ca>return</font></b> no
+  }
+  <b><font color=#3a6797>foreach</font></b> {fld var} {Clr1 ttlfg Clr2 ttlbg Clr3 leaffg Clr4 leafbg} {
+    <b><font color=#3a6797>set</font></b> val [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$var</font>]
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>regexp</font></b> <font color=#8b2a0e>&quot;^#\[0-9a-fA-F\]<font color=#1b1baa>{</font>6<font color=#1b1baa>}</font>\$&quot;</font> <font color=#1b1baa>$val</font>]} {
+      <b><font color=#134070>bell</font></b>
+      <b><font color=#134070>focus</font></b> [<font color=#1b1baa>$obDl2</font> chooserPath <font color=#1b1baa>$fld</font>]
+      <b><font color=#ca14ca>return</font></b> no
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> yes
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::CheckFile></a>
+<b><font color=#ca14ca>proc</font></b> printer::CheckFile {fname} {
+  <i><font color=#4b5d50># Checks the file of contents.</font></i>
+  <i><font color=#4b5d50>#   fname - the file name</font></i>
+
+  <b><font color=#3a6797>variable</font></b> copyleft
+  <b><font color=#3a6797>set</font></b> fcont [apave::readTextFile <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> first <font color=#1b1baa>$copyleft</font> <font color=#1b1baa>$fcont</font>]&gt;=0}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::CheckDir></a>
+<b><font color=#ca14ca>proc</font></b> printer::CheckDir {} {
+  <i><font color=#4b5d50># Checks the output directory.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> dircont [<b><font color=#3a6797>glob</font></b> <font color=#653760>-nocomplain</font> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$dir</font> *]]
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$dircont</font>]} {<b><font color=#ca14ca>return</font></b> yes}
+  <i><font color=#4b5d50># possible errors:</font></i>
+  <b><font color=#3a6797>set</font></b> err1 {Output directory cannot be cleared: alien files}
+  <b><font color=#3a6797>set</font></b> err2 [msgcat::mc {Output directory cannot be cleared: alien %n}]
+  <b><font color=#3a6797>set</font></b> err3 {Output directory cannot be cleared: alien directories}
+  <b><font color=#3a6797>set</font></b> cntdir [<b><font color=#3a6797>set</font></b> cntfile [<b><font color=#3a6797>set</font></b> aliendir 0]]
+  <b><font color=#3a6797>foreach</font></b> fn <font color=#1b1baa>$dircont</font> {
+    <b><font color=#3a6797>set</font></b> ftail [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fn</font>]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> isfile <font color=#1b1baa>$fn</font>]} {
+      <b><font color=#3a6797>incr</font></b> cntfile
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ftail</font> ne <font color=#1b1baa>$indexname</font>} {
+        Message <font color=#1b1baa>$err1</font> 4
+        <b><font color=#ca14ca>return</font></b> no  ;<i><font color=#4b5d50># alien file</font></i>
+      }
+      <b><font color=#3a6797>if</font></b> {![CheckFile <font color=#1b1baa>$fn</font>]} {
+        Message [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$indexname</font>] <font color=#1b1baa>$err2</font>] 4
+        <b><font color=#ca14ca>return</font></b> no  ;<i><font color=#4b5d50># alien content file</font></i>
+      }
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$ftail</font> in [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$FILES</font> <font color=#1b1baa>$CSS</font>]} {
+      <b><font color=#3a6797>incr</font></b> cntdir
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>incr</font></b> aliendir
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$aliendir</font>} {
+    Message <font color=#1b1baa>$err3</font> 4  ;<i><font color=#4b5d50># only 1 content file with subdirectories</font></i>
+    <b><font color=#ca14ca>return</font></b> no
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$cntdir</font>} {
+    <b><font color=#3a6797>set</font></b> msg [msgcat::mc <font color=#8b2a0e>&quot;The output directory\n  %n\ncontains %c subdirectories.\n\nAll will be replaced with the new!&quot;</font>]
+    <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$dir</font> %c <font color=#1b1baa>$cntdir</font>] <font color=#1b1baa>$msg</font>]
+    <b><font color=#3a6797>if</font></b> {![alited::msg okcancel warn <font color=#1b1baa>$msg</font> OK <font color=#653760>-title</font> <font color=#1b1baa>$al(MC,warning)</font>]} {
+      <b><font color=#ca14ca>return</font></b> no
+    }
+  }
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>file</font></b> delete <font color=#653760>-force</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$dircont</font>}
+  <b><font color=#ca14ca>return</font></b> yes
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::CheckTemplates></a>
+<b><font color=#ca14ca>proc</font></b> printer::CheckTemplates {} {
+  <i><font color=#4b5d50># Checks alited's templates for .html files.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> csscont [apave::readTextFile <font color=#1b1baa>$csstpl</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$csscont</font> eq {}} {
+    Message <font color=#8b2a0e>&quot;No template file for <font color=#1b1baa>$</font>cssname found: alited broken?&quot;</font> 4
+    <b><font color=#ca14ca>return</font></b> no
+  }
+  <b><font color=#ca14ca>return</font></b> yes
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::GetReadme></a>
+<b><font color=#ca14ca>proc</font></b> printer::GetReadme {dirfrom} {
+  <i><font color=#4b5d50># Create html version of readme.md.</font></i>
+  <i><font color=#4b5d50>#   dirfrom - directory name where to get the source readme.md</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mdproc</font> eq {}} {<b><font color=#ca14ca>return</font></b> {}}
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>glob</font></b> <font color=#653760>-nocomplain</font> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$dirfrom</font> README*]]] eq {}} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>glob</font></b> <font color=#653760>-nocomplain</font> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$dirfrom</font> ReadMe*]]] eq {}} {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>glob</font></b> <font color=#653760>-nocomplain</font> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$dirfrom</font> Readme*]]] eq {}} {
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>glob</font></b> <font color=#653760>-nocomplain</font> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$dirfrom</font> readme*]]] eq {}} {
+          <b><font color=#ca14ca>return</font></b> {}
+        }
+      }
+    }
+  }
+  <b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$fname</font> 0]
+  Message <font color=#1b1baa>$fname</font> 3
+  <b><font color=#3a6797>set</font></b> tmpname [alited::TmpFile PRINTER~.html]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$lastreadme</font> ne <font color=#1b1baa>$fname</font>} {
+    <b><font color=#3a6797>set</font></b> lastreadme <font color=#1b1baa>$fname</font>
+    <b><font color=#3a6797>set</font></b> com {}
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mdproc</font> eq {pandoc}} {
+      <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>list</font></b> [apave::autoexec <font color=#1b1baa>$mdproc</font>] <font color=#653760>-o</font> <font color=#1b1baa>$tmpname</font> <font color=#1b1baa>$fname</font>]
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$mdproc</font> eq {alited}} {
+      MdProc <font color=#1b1baa>$fname</font> <font color=#1b1baa>$tmpname</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %i <font color=#1b1baa>$fname</font> %o <font color=#1b1baa>$tmpname</font>] <font color=#1b1baa>$mdproc</font>]
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$com</font> ne {}} {<b><font color=#3a6797>exec</font></b> -- {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$com</font>}
+  }
+  <b><font color=#3a6797>set</font></b> res [apave::readTextFile <font color=#1b1baa>$tmpname</font>]
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font> <font color=#1b1baa>$fname</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::GetCss></a>
+<b><font color=#ca14ca>proc</font></b> printer::GetCss {} {
+  <i><font color=#4b5d50># Create style.css.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> cssdir_to  [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$dir</font> <font color=#1b1baa>$CSS</font>]
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>file</font></b> mkdir <font color=#1b1baa>$cssdir_to</font>}
+  <b><font color=#3a6797>set</font></b> tipw [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$cwidth</font>*20}]
+  <b><font color=#3a6797>set</font></b> csscont [<b><font color=#3a6797>string</font></b> map \
+    [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wcwidth</font> <font color=#1b1baa>$cwidth</font> <font color=#1b1baa>$wctipw</font> <font color=#1b1baa>$tipw</font> <font color=#1b1baa>$wcfg</font> <font color=#1b1baa>$ttlfg</font> <font color=#1b1baa>$wcbg</font> <font color=#1b1baa>$ttlbg</font>] <font color=#1b1baa>$csscont</font>]
+  <b><font color=#3a6797>set</font></b> css_to [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$cssdir_to</font> <font color=#1b1baa>$cssname</font>]
+  apave::writeTextFile <font color=#1b1baa>$css_to</font> ::alited::printer::csscont 1
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::GetFileName></a>
+<b><font color=#ca14ca>proc</font></b> printer::GetFileName {dir2 fname} {
+  <i><font color=#4b5d50># Gets a file link for index.html.</font></i>
+  <i><font color=#4b5d50>#   dir2 - directory name</font></i>
+  <i><font color=#4b5d50>#   fname - file name</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> ftail [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$dir2</font> <font color=#1b1baa>$ftail</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::GetDirLink></a>
+<b><font color=#ca14ca>proc</font></b> printer::GetDirLink {dir} {
+  <i><font color=#4b5d50># Gets a dir link for index.html.</font></i>
+  <i><font color=#4b5d50>#   dir - directory name</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> dirtail [::apave::FileTail <font color=#1b1baa>$al(prjroot)</font> <font color=#1b1baa>$dir</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dirtail</font> eq {}} {<b><font color=#3a6797>set</font></b> branch &lt;hr&gt;} {<b><font color=#3a6797>set</font></b> branch <font color=#1b1baa>$dirtail</font>}
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$dirtail</font> [GetBranchLink # <font color=#1b1baa>$branch</font>]]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::GetBranchLink></a>
+<b><font color=#ca14ca>proc</font></b> printer::GetBranchLink {link title} {
+  <i><font color=#4b5d50># Gets a contents branch link for index.html.</font></i>
+  <i><font color=#4b5d50>#   link - link address</font></i>
+  <i><font color=#4b5d50>#   title - link title</font></i>
+
+  <b><font color=#ca14ca>return</font></b> <font color=#8b2a0e>&quot;&lt;li&gt;&lt;b&gt;&lt;a href=\&quot;<font color=#1b1baa>$</font>link\&quot;&gt;<font color=#1b1baa>$</font>title&lt;/a&gt;&lt;/b&gt;&lt;/li&gt;&quot;</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::GetLeafLink></a>
+<b><font color=#ca14ca>proc</font></b> printer::GetLeafLink {link title {tip <font color=#8b2a0e>&quot;&quot;</font>} {basepath <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Gets a contents leaf link for index.html.</font></i>
+  <i><font color=#4b5d50>#   link - link address</font></i>
+  <i><font color=#4b5d50>#   title - link title</font></i>
+  <i><font color=#4b5d50>#   tip - tooltip's text</font></i>
+  <i><font color=#4b5d50>#   basepath - base path for file links</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$basepath</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> link [::apave::FileTail <font color=#1b1baa>$basepath</font> <font color=#1b1baa>$link</font>]
+  }
+  <b><font color=#3a6797>set</font></b> title [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$title</font> :] end]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tip</font> eq {}} {
+    <b><font color=#ca14ca>return</font></b> <font color=#8b2a0e>&quot;&lt;ul class=toc&gt;&lt;li&gt;&lt;a href='<font color=#1b1baa>$</font>link'&gt;<font color=#1b1baa>$</font>title&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&quot;</font>
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#8b2a0e>&quot;&lt;ul class=toc&gt;&lt;li&gt;&lt;div class=tooltip&gt;&lt;a href=\&quot;<font color=#1b1baa>$</font>link\&quot;&gt;<font color=#1b1baa>$</font>title&lt;/a&gt;&lt;span class=tooltiptext&gt;<font color=#1b1baa>$</font>tip&lt;/span&gt;&lt;/div&gt;&lt;/li&gt;&lt;/ul&gt;&quot;</font>
+}
+
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::UnitTooltip></a>
+<b><font color=#ca14ca>proc</font></b> printer::UnitTooltip {wtxt l1 l2} {
+  <i><font color=#4b5d50># Gets unit's tooltip.</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+  <i><font color=#4b5d50>#   l1 - 1st line's number</font></i>
+  <i><font color=#4b5d50>#   l2 - last line's number</font></i>
+
+  <b><font color=#3a6797>set</font></b> tip {}
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>incr</font></b> l1} {<font color=#1b1baa>$l1</font>&lt;=<font color=#1b1baa>$l2</font>} {<b><font color=#3a6797>incr</font></b> l1} {
+    <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>string</font></b> trimleft [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$l1</font>.0 <font color=#1b1baa>$l1</font>.end]]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match #* <font color=#1b1baa>$line</font>]} {
+      <b><font color=#3a6797>append</font></b> tip [<b><font color=#3a6797>string</font></b> trimleft <font color=#1b1baa>$line</font> {#! }] \n
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$line</font> ne {}} {
+      <b><font color=#ca14ca>break</font></b>
+    }
+  }
+  <b><font color=#3a6797>set</font></b> tip [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$tip</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tip</font> ne {}} {<b><font color=#3a6797>set</font></b> tip <font color=#8b2a0e>&quot; : <font color=#1b1baa>$</font>tip&quot;</font>}
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$tip</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::CompareUnits></a>
+<b><font color=#ca14ca>proc</font></b> printer::CompareUnits {item1 item2} {
+  <i><font color=#4b5d50># Compares the unit tree items by their titles. Useful for trees without branches.</font></i>
+  <i><font color=#4b5d50>#   item1 - 1st item</font></i>
+  <i><font color=#4b5d50>#   item2 - 2nd item</font></i>
+
+  <b><font color=#3a6797>set</font></b> title1 [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$item1</font> 3]
+  <b><font color=#3a6797>set</font></b> title2 [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$item2</font> 3]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$title1</font> &lt; <font color=#1b1baa>$title2</font>} {
+    <b><font color=#ca14ca>return</font></b> -1
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$title1</font> &gt; <font color=#1b1baa>$title2</font>} {
+    <b><font color=#ca14ca>return</font></b> 1
+  }
+  <b><font color=#ca14ca>return</font></b> 0
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::MakeFile></a>
+<b><font color=#ca14ca>proc</font></b> printer::MakeFile {fname fname2} {
+  <i><font color=#4b5d50># Makes a html file or a copy of file from a source file.</font></i>
+  <i><font color=#4b5d50>#   fname - source file's name</font></i>
+  <i><font color=#4b5d50>#   fname2 - resulting file</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> ftail [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname2</font>]
+  Message <font color=#1b1baa>$ftail</font> 3
+  <b><font color=#3a6797>update</font></b>
+  <b><font color=#3a6797>if</font></b> {![alited::file::IsTcl <font color=#1b1baa>$fname2</font>]} {
+    <b><font color=#3a6797>file</font></b> copy <font color=#1b1baa>$fname</font> <font color=#1b1baa>$fname2</font>
+    <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$fname2</font>
+  }
+  <b><font color=#3a6797>set</font></b> cont [apave::readTextFile <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>set</font></b> TID  [alited::bar::FileTID <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>set</font></b> wtxt [alited::main::GetWTXT <font color=#1b1baa>$TID</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> ne {} && <font color=#1b1baa>$wtxt</font> ne {}} {
+    alited::InitUnitTree <font color=#1b1baa>$TID</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> TID TMP
+    <b><font color=#3a6797>set</font></b> wtxt [<font color=#1b1baa>$obDl2</font> TexTmp]
+    <font color=#1b1baa>$wtxt</font> replace 1.0 end <font color=#1b1baa>$cont</font>             ;<i><font color=#4b5d50># imitate tab of bar</font></i>
+    alited::unit::RecreateUnits <font color=#1b1baa>$TID</font> <font color=#1b1baa>$wtxt</font>  ;<i><font color=#4b5d50># to get unit tree</font></i>
+  }
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$al(_unittree,$TID)</font>]&lt;2} {
+    <b><font color=#3a6797>set</font></b> tpl [apave::readTextFile <font color=#1b1baa>$indextpl2</font>]  ;<i><font color=#4b5d50># no units</font></i>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> tpl [apave::readTextFile <font color=#1b1baa>$indextpl</font>]
+    <b><font color=#3a6797>set</font></b> tpl [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wctoc</font> <font color=#1b1baa>$ftail</font>] <font color=#1b1baa>$tpl</font>]
+    <b><font color=#3a6797>set</font></b> contlist [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$cont</font> \n]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dosort</font>} {
+      <b><font color=#3a6797>set</font></b> items [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-command</font> alited::printer::CompareUnits <font color=#1b1baa>$al(_unittree,$TID)</font>]
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> items <font color=#1b1baa>$al(_unittree,$TID)</font>
+    }
+    <b><font color=#3a6797>foreach</font></b> item <font color=#1b1baa>$items</font> {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$item</font>]&lt;3} <b><font color=#ca14ca>continue</font></b>
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$item</font> lev leaf fl1 title l1 l2
+      <b><font color=#3a6797>set</font></b> ttl [<b><font color=#3a6797>string</font></b> map {<font color=#8b2a0e>&quot; &quot;</font> _} [::apave::NormalizeName <font color=#1b1baa>$title</font>]]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ttl</font> eq {}} {<b><font color=#3a6797>set</font></b> ttl <font color=#1b1baa>$ftail</font>; <b><font color=#3a6797>set</font></b> leaf 0}
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$leaf</font>} {
+        <b><font color=#3a6797>set</font></b> tip <font color=#8b2a0e>&quot; <font color=#1b1baa>$</font>title<font color=#1b1baa>[</font>UnitTooltip <font color=#1b1baa>$</font>wtxt <font color=#1b1baa>$</font>l1 <font color=#1b1baa>$</font>l2<font color=#1b1baa>]</font>&quot;</font>
+        <b><font color=#3a6797>set</font></b> link [GetLeafLink #<font color=#1b1baa>$ttl</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$tip</font>]
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> link [GetBranchLink #<font color=#1b1baa>$ttl</font> <font color=#1b1baa>$ttl</font>]
+      }
+      <b><font color=#3a6797>append</font></b> link \n<font color=#1b1baa>$wclink</font>
+      <b><font color=#3a6797>set</font></b> tpl [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wclink</font> <font color=#1b1baa>$link</font>] <font color=#1b1baa>$tpl</font>]
+      <b><font color=#3a6797>set</font></b> l1 [<b><font color=#3a6797>expr</font></b> {max(0,<font color=#1b1baa>$l1</font>-2)}]
+      <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$contlist</font> <font color=#1b1baa>$l1</font>]
+      <b><font color=#3a6797>set</font></b> contlist [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$contlist</font> <font color=#1b1baa>$l1</font> <font color=#1b1baa>$l1</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>line<font color=#1b1baa>${</font>wclt<font color=#1b1baa>}</font>a id=<font color=#1b1baa>$</font>ttl<font color=#1b1baa>${</font>wcgt<font color=#1b1baa>}${</font>wclt<font color=#1b1baa>}</font>/a<font color=#1b1baa>${</font>wcgt<font color=#1b1baa>}</font>&quot;</font>]
+    }
+    <b><font color=#3a6797>set</font></b> cont {}
+    <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$contlist</font> {<b><font color=#3a6797>append</font></b> cont <font color=#1b1baa>$line</font>\n}
+  }
+  <b><font color=#3a6797>lassign</font></b> [GetReadme [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname</font>]] readme rmname
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$readme</font> eq {}} {
+    <b><font color=#3a6797>set</font></b> bttl {}
+    <b><font color=#3a6797>set</font></b> rmttl <font color=#1b1baa>$leafttl</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> bttl <font color=#1b1baa>$leafttl</font>
+    <b><font color=#3a6797>set</font></b> rmttl [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wctitle</font> [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$rmname</font>]] <font color=#1b1baa>$leafttl</font>]
+  }
+  <b><font color=#3a6797>set</font></b> rootpath [<b><font color=#3a6797>file</font></b> dirname [::apave::FileRelativeTail <font color=#1b1baa>$dir</font> <font color=#1b1baa>$fname2</font>]]
+  <b><font color=#3a6797>set</font></b> csspath [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$rootpath</font> <font color=#1b1baa>$CSS</font> <font color=#1b1baa>$cssname</font>]
+  <b><font color=#3a6797>set</font></b> tpl [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wclink</font> {} <font color=#1b1baa>$wcrmcon</font> <font color=#1b1baa>$readme</font> <font color=#1b1baa>$wcrmttl</font> <font color=#1b1baa>$rmttl</font> <font color=#1b1baa>$wcbttl</font> <font color=#1b1baa>$bttl</font>] <font color=#1b1baa>$tpl</font>]
+  <b><font color=#3a6797>set</font></b> tpl [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wcleaft</font> <font color=#1b1baa>$leafttl</font>] <font color=#1b1baa>$tpl</font>]
+  <b><font color=#3a6797>set</font></b> tpl [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wctitle</font> <font color=#1b1baa>$ftail</font> <font color=#1b1baa>$wcstyle</font> <font color=#1b1baa>$csspath</font>] <font color=#1b1baa>$tpl</font>]
+  <b><font color=#3a6797>set</font></b> tpl [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wcfg</font> <font color=#1b1baa>$leaffg</font> <font color=#1b1baa>$wcbg</font> <font color=#1b1baa>$leafbg</font>] <font color=#1b1baa>$tpl</font>]
+  <b><font color=#3a6797>set</font></b> tpl [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wcback</font> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$rootpath</font> <font color=#1b1baa>$indexname</font>]] <font color=#1b1baa>$tpl</font>]
+  <b><font color=#3a6797>set</font></b> tmpC <font color=#8b2a0e>&quot;&lt;pre class&quot;</font>
+  <b><font color=#3a6797>append</font></b> tmpC <font color=#8b2a0e>&quot;=\&quot;code\&quot;&gt;<font color=#1b1baa>$</font>cont&lt;/&quot;</font>  ;<i><font color=#4b5d50># to avoid fooling self with tcl_html.tcl</font></i>
+  <b><font color=#3a6797>append</font></b> tmpC <font color=#8b2a0e>&quot;pre&gt;&quot;</font>
+  <b><font color=#3a6797>set</font></b> tmpC [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wcbody</font> <font color=#1b1baa>$tmpC</font>] <font color=#1b1baa>$tpl</font>]
+  <b><font color=#3a6797>set</font></b> fname2 [<b><font color=#3a6797>file</font></b> rootname <font color=#1b1baa>$fname2</font>].html
+  apave::writeTextFile <font color=#1b1baa>$fname2</font> ::alited::printer::tmpC
+  <b><font color=#3a6797>set</font></b> cset cs=
+  <b><font color=#3a6797>foreach</font></b> val <font color=#1b1baa>$colors</font> {<b><font color=#3a6797>append</font></b> cset <font color=#1b1baa>$val</font>,}
+  Hl_html <font color=#1b1baa>$fname2</font> <font color=#1b1baa>$cset</font>
+  <b><font color=#3a6797>set</font></b> tmpC [apave::readTextFile <font color=#1b1baa>$fname2</font>]
+  <b><font color=#3a6797>set</font></b> tmpC [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>${wclt}</font> &lt; <font color=#1b1baa>${wcgt}</font> &gt;] <font color=#1b1baa>$tmpC</font>]
+  <b><font color=#3a6797>append</font></b> tmpC \n<font color=#1b1baa>$copyright</font>
+  apave::writeTextFile <font color=#1b1baa>$fname2</font> ::alited::printer::tmpC
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$fname2</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::Hl_html></a>
+<b><font color=#ca14ca>proc</font></b> printer::Hl_html {fname cset} {
+  <i><font color=#4b5d50># Highlights Tcl code in html file</font></i>
+  <i><font color=#4b5d50>#   fname - file name</font></i>
+  <i><font color=#4b5d50>#   cset - colors</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited LIBDIR LIBDIR
+  <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>list</font></b> [alited::Tclexe] [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$LIBDIR</font> hl_tcl tcl_html.tcl] <font color=#1b1baa>$cset</font> <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>exec</font></b> -- {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$com</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::Process></a>
+<b><font color=#ca14ca>proc</font></b> printer::Process {wtree} {
+  <i><font color=#4b5d50># Processes files to make the resulting .html.</font></i>
+  <i><font color=#4b5d50>#   wtree - tree's path</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> colors [::hl_tcl::hl_colors <font color=#1b1baa>$cs</font> 0]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mdproc</font> eq {alited}} MdInit
+  <b><font color=#3a6797>set</font></b> index_to [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$dir</font> <font color=#1b1baa>$indexname</font>]
+  <b><font color=#3a6797>set</font></b> filesdir [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$dir</font> <font color=#1b1baa>$FILES</font>]
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$index_to</font>]} {
+    <i><font color=#4b5d50># make empty index.html, to get rid of possible error messages</font></i>
+    <b><font color=#3a6797>set</font></b> readmecont <font color=#1b1baa>$copyleft</font>
+    apave::writeTextFile <font color=#1b1baa>$index_to</font> ::alited::printer::readmecont
+  }
+  <b><font color=#3a6797>if</font></b> {![CheckData]} {<b><font color=#ca14ca>return</font></b> no}
+  <b><font color=#3a6797>if</font></b> {![CheckDir]} {<b><font color=#ca14ca>return</font></b> no}
+  <b><font color=#3a6797>if</font></b> {![CheckTemplates]} {<b><font color=#ca14ca>return</font></b> no}
+  <b><font color=#3a6797>lassign</font></b> [GetReadme <font color=#1b1baa>$al(prjroot)</font>] readmecont rmname
+  <b><font color=#3a6797>set</font></b> indexcont [apave::readTextFile <font color=#1b1baa>$indextpl</font>]
+  <b><font color=#3a6797>set</font></b> indexcont [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wcrmcon</font> <font color=#1b1baa>$readmecont</font> <font color=#1b1baa>$wcbody</font> {}] <font color=#1b1baa>$indexcont</font>]
+  GetCss
+  <b><font color=#3a6797>set</font></b> curdir {}
+  <b><font color=#3a6797>set</font></b> fcnt [<b><font color=#3a6797>set</font></b> dcnt 0]
+  <b><font color=#3a6797>foreach</font></b> itemID [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-dictionary</font> <font color=#1b1baa>$markedIDs</font>] {
+    <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$itemID</font> <font color=#653760>-values</font>] -&gt; fname isfile
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$isfile</font>} {
+      <b><font color=#3a6797>incr</font></b> dcnt
+      <b><font color=#ca14ca>continue</font></b>
+    }
+    <b><font color=#3a6797>set</font></b> cdir [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname</font>]
+    <b><font color=#3a6797>set</font></b> dodir no
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$curdir</font> ne <font color=#1b1baa>$cdir</font>} {
+      <b><font color=#3a6797>set</font></b> dodir yes
+      <b><font color=#3a6797>set</font></b> curdir <font color=#1b1baa>$cdir</font>
+      <b><font color=#3a6797>lassign</font></b> [GetDirLink <font color=#1b1baa>$cdir</font>] cdir2 link
+      <b><font color=#3a6797>append</font></b> link \n<font color=#1b1baa>$wclink</font>
+      <b><font color=#3a6797>set</font></b> indexcont [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wclink</font> <font color=#1b1baa>$link</font>] <font color=#1b1baa>$indexcont</font>]
+      Message <font color=#1b1baa>$cdir</font> 3
+      <b><font color=#3a6797>update</font></b>
+    }
+    <b><font color=#3a6797>set</font></b> fname2 [GetFileName <font color=#1b1baa>$cdir2</font> <font color=#1b1baa>$fname</font>]
+    <b><font color=#3a6797>set</font></b> fname2 [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$filesdir</font> <font color=#1b1baa>$fname2</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dodir</font>} {
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>file</font></b> mkdir [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname2</font>]}
+    }
+    <b><font color=#3a6797>set</font></b> fname [MakeFile <font color=#1b1baa>$fname</font> <font color=#1b1baa>$fname2</font>]
+    <b><font color=#3a6797>set</font></b> link [GetLeafLink <font color=#1b1baa>$fname</font> [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname2</font>] {} <font color=#1b1baa>$dir</font>]
+    <b><font color=#3a6797>append</font></b> link \n<font color=#1b1baa>$wclink</font>
+    <b><font color=#3a6797>set</font></b> indexcont [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wclink</font> <font color=#1b1baa>$link</font>] <font color=#1b1baa>$indexcont</font>]
+    <b><font color=#3a6797>incr</font></b> fcnt
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$rmname</font> eq {}} {
+    <b><font color=#3a6797>set</font></b> rmttl <font color=#1b1baa>$leafttl</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> rmttl [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wctitle</font> [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$rmname</font>]] <font color=#1b1baa>$leafttl</font>]
+  }
+  <b><font color=#3a6797>set</font></b> csspath [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$CSS</font> <font color=#1b1baa>$cssname</font>]
+  <b><font color=#3a6797>set</font></b> indexcont [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wcleaft</font> <font color=#1b1baa>$leafttl</font> <font color=#1b1baa>$wcrmttl</font> <font color=#1b1baa>$leafttl</font>] <font color=#1b1baa>$indexcont</font>]
+  <b><font color=#3a6797>set</font></b> ttl <font color=#8b2a0e>&quot;:: <font color=#1b1baa>$</font>al(prjname) ::&quot;</font>
+  <b><font color=#3a6797>set</font></b> indexcont [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wctitle</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$wctoc</font> <font color=#1b1baa>$ttl</font>] <font color=#1b1baa>$indexcont</font>]
+  <b><font color=#3a6797>set</font></b> indexcont [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wclink</font> {} <font color=#1b1baa>$wcback</font> {} <font color=#1b1baa>$wcstyle</font> <font color=#1b1baa>$csspath</font>] <font color=#1b1baa>$indexcont</font>]
+  <b><font color=#3a6797>set</font></b> indexcont [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wcfg</font> <font color=#1b1baa>$ttlfg</font> <font color=#1b1baa>$wcbg</font> <font color=#1b1baa>$ttlbg</font> <font color=#1b1baa>$wcbttl</font> {}] <font color=#1b1baa>$indexcont</font>]
+  <b><font color=#3a6797>append</font></b> indexcont \n<font color=#1b1baa>$copyright</font>
+  apave::writeTextFile <font color=#1b1baa>$index_to</font> ::alited::printer::indexcont 1
+  <b><font color=#3a6797>set</font></b> msg [msgcat::mc {Processed: %d directories, %f files}]
+  <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %d <font color=#1b1baa>$dcnt</font> %f <font color=#1b1baa>$fcnt</font>] <font color=#1b1baa>$msg</font>]
+  Message <font color=#1b1baa>$msg</font>
+  <b><font color=#134070>bell</font></b>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$final</font> ne {}} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$final</font> eq {%D} || <font color=#1b1baa>$final</font> eq {<font color=#8b2a0e>&quot;%D&quot;</font>}} {
+      ::apave::openDoc [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$dir</font> <font color=#1b1baa>$indexname</font>]
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %D <font color=#1b1baa>$dir</font>] <font color=#1b1baa>$final</font>]
+      <b><font color=#3a6797>set</font></b> com [alited::MapWildCards <font color=#1b1baa>$com</font>]
+      <b><font color=#3a6797>exec</font></b> -- {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$com</font> &
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> yes
+}
+<a id=Buttons></a>
+<i><font color=#4b5d50># ________________________ Buttons _________________________ #</font></i>
+<a id=printer::StdClr></a>
+<b><font color=#ca14ca>proc</font></b> printer::StdClr {fld1 var1 fld2 var2} {
+  <i><font color=#4b5d50># Sets standard colors.</font></i>
+  <i><font color=#4b5d50>#   fld1 - 1st color field (and color field to focus)</font></i>
+  <i><font color=#4b5d50>#   var1 - 1st color variable name</font></i>
+  <i><font color=#4b5d50>#   fld2 - 2nd color field</font></i>
+  <i><font color=#4b5d50>#   var2 - 2nd color variable name</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$var1</font> [<b><font color=#3a6797>set</font></b> ::alited::printer::STD<font color=#1b1baa>$var1</font>]
+  <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$var2</font> [<b><font color=#3a6797>set</font></b> ::alited::printer::STD<font color=#1b1baa>$var2</font>]
+  <b><font color=#3a6797>set</font></b> lab1 [<font color=#1b1baa>$obDl2</font> chooserPath <font color=#1b1baa>$fld1</font> lab]; <font color=#1b1baa>$lab1</font> configure <font color=#653760>-background</font> [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$var1</font>]
+  <b><font color=#3a6797>set</font></b> lab2 [<font color=#1b1baa>$obDl2</font> chooserPath <font color=#1b1baa>$fld2</font> lab]; <font color=#1b1baa>$lab2</font> configure <font color=#653760>-background</font> [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$var2</font>]
+  <b><font color=#134070>focus</font></b> [<font color=#1b1baa>$obDl2</font> chooserPath <font color=#1b1baa>$fld1</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::Help></a>
+<b><font color=#ca14ca>proc</font></b> printer::Help {} {
+  <i><font color=#4b5d50># Handles &quot;Help&quot; button.</font></i>
+
+  alited::Help <font color=#1b1baa>$::alited::printer::win</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::Ok></a>
+<b><font color=#ca14ca>proc</font></b> printer::Ok {} {
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obDl2</font> Tree]
+  <b><font color=#3a6797>set</font></b> geometry [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font>]
+  <b><font color=#3a6797>set</font></b> width1 [<font color=#1b1baa>$wtree</font> column #0 <font color=#653760>-width</font>]
+  <b><font color=#3a6797>set</font></b> width2 [<font color=#1b1baa>$wtree</font> column #1 <font color=#653760>-width</font>]
+  SaveIni
+  Process <font color=#1b1baa>$wtree</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::Cancel></a>
+<b><font color=#ca14ca>proc</font></b> printer::Cancel {} {
+  <i><font color=#4b5d50># Cancel handling the dialog.</font></i>
+
+  fetchVars
+  <font color=#1b1baa>$obDl2</font> res <font color=#1b1baa>$win</font> 0
+}
+<a id=GUI></a>
+<i><font color=#4b5d50># ________________________ GUI _________________________ #</font></i>
+<a id=printer::FillTree></a>
+<b><font color=#ca14ca>proc</font></b> printer::FillTree {wtree} {
+  <i><font color=#4b5d50># Populates the tree of project files.</font></i>
+  <i><font color=#4b5d50>#   wtree - tree's path</font></i>
+
+  fetchVars
+  <font color=#1b1baa>$wtree</font> heading #0 <font color=#653760>-text</font> <font color=#8b2a0e>&quot;:: <font color=#1b1baa>[</font>file tail <font color=#1b1baa>$</font>al(prjroot)<font color=#1b1baa>]</font> ::&quot;</font>
+  <font color=#1b1baa>$wtree</font> heading #1 <font color=#653760>-text</font> <font color=#1b1baa>$al(MC,files)</font>
+  alited::tree::PrepareDirectoryContents
+  <b><font color=#3a6797>set</font></b> markedIDs [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>set</font></b> itemID1 {}
+  <b><font color=#3a6797>foreach</font></b> item [alited::tree::GetDirectoryContents <font color=#1b1baa>$al(prjroot)</font>] {
+    <b><font color=#3a6797>set</font></b> itemID [alited::tree::NewItemID [<b><font color=#3a6797>incr</font></b> iit]]
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$item</font> lev isfile fname fcount iroot
+    <b><font color=#3a6797>set</font></b> title [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$iroot</font>&lt;0} {
+      <b><font color=#3a6797>set</font></b> parent {}
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> parent [alited::tree::NewItemID [<b><font color=#3a6797>incr</font></b> iroot]]
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$isfile</font>} {
+      <b><font color=#3a6797>if</font></b> {[alited::file::IsTcl <font color=#1b1baa>$fname</font>]} {
+        <b><font color=#3a6797>set</font></b> imgopt {<font color=#653760>-image</font> alimg_tclfile}
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> imgopt {<font color=#653760>-image</font> alimg_file}
+      }
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> imgopt {<font color=#653760>-image</font> alimg_folder}
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fcount</font>} {<b><font color=#3a6797>set</font></b> fc <font color=#1b1baa>$fcount</font>} {<b><font color=#3a6797>set</font></b> fc {}}
+    <font color=#1b1baa>$wtree</font> insert <font color=#1b1baa>$parent</font> end <font color=#653760>-id</font> <font color=#1b1baa>$itemID</font> <font color=#653760>-text</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>title&quot;</font> \
+      <font color=#653760>-values</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fc</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$isfile</font> <font color=#1b1baa>$itemID</font>] <font color=#653760>-open</font> no {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$imgopt</font>
+    <font color=#1b1baa>$wtree</font> tag add tagNorm <font color=#1b1baa>$itemID</font>
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$isfile</font>} {
+      <font color=#1b1baa>$wtree</font> tag add tagBranch <font color=#1b1baa>$itemID</font>
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> in <font color=#1b1baa>$markedfiles</font>} {
+      <b><font color=#3a6797>lappend</font></b> markedIDs <font color=#1b1baa>$itemID</font>
+      <font color=#1b1baa>$wtree</font> tag add tagSel <font color=#1b1baa>$itemID</font>
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$itemID1</font> eq {}} {<b><font color=#3a6797>set</font></b> itemID1 <font color=#1b1baa>$itemID</font>}
+  }
+  ExpandMarked
+  MarkTotal
+  <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$wtree</font> see <font color=#1b1baa>$itemID1</font>}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::_create></a>
+<b><font color=#ca14ca>proc</font></b> printer::_create  {} {
+  <i><font color=#4b5d50># Creates Project Printer dialogue.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> tipmark <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>msgcat::mc (Un)Select<font color=#1b1baa>]</font>\nSpace&quot;</font>
+  <b><font color=#3a6797>lassign</font></b> [alited::FgFgBold] -&gt; fgbold
+  <b><font color=#3a6797>set</font></b> wden 44
+  <font color=#1b1baa>$obDl2</font> makeWindow <font color=#1b1baa>$win</font>.fra [msgcat::mc {Project Printer}]
+  <font color=#1b1baa>$obDl2</font> paveWindow <font color=#1b1baa>$win</font>.fra {
+    {labh - - 1 3 {} {<font color=#653760>-t</font> {Project Printer} <font color=#653760>-foreground</font> <font color=#1b1baa>$fgbold</font> <font color=#653760>-font</font> {<font color=#1b1baa>$::apave::FONTMAINBOLD</font>}}}
+    {fraTop labh L 1 3 {<font color=#653760>-st</font> ew}}
+    {.btTmark - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-padx</font> 4 <font color=#653760>-side</font> left} \
+      {<font color=#653760>-image</font> alimg_ok <font color=#653760>-com</font> alited::printer::MarkUnmarkFile  <font color=#653760>-tip</font> {<font color=#1b1baa>$tipmark</font>}}}
+    {.sev2 - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> y <font color=#653760>-padx</font> 5}}
+    {.btTCtr - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 4} \
+      {<font color=#653760>-image</font> alimg_minus <font color=#653760>-com</font> {alited::printer::ExpandContract no} <font color=#653760>-tip</font> <font color=#8b2a0e>&quot;Contract All&quot;</font>}}
+    {.btTExp - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} \
+      {<font color=#653760>-image</font> alimg_plus <font color=#653760>-com</font> {alited::printer::ExpandContract} <font color=#653760>-tip</font> <font color=#8b2a0e>&quot;Expand All&quot;</font>}}
+    {.btTExp2 - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 4} \
+      {<font color=#653760>-image</font> alimg_add <font color=#653760>-com</font> {alited::printer::ExpandMarked} <font color=#653760>-tip</font> <font color=#8b2a0e>&quot;Expand Selected&quot;</font>}}
+    {fraBody labh T 1 3 {<font color=#653760>-st</font> news}}
+    {.lab1 - - 1 1 {<font color=#653760>-st</font> nw} {<font color=#653760>-t</font> {Output directory:}}}
+    {.Dir + T 1 3 {<font color=#653760>-st</font> new} {<font color=#653760>-tvar</font> ::alited::printer::dir <font color=#653760>-w</font> <font color=#1b1baa>$wden</font>}}
+    {.v_1 + T 1 1 {<font color=#653760>-pady</font> 8}}
+    {.lab2 + T 1 1 {<font color=#653760>-st</font> nw} {<font color=#653760>-t</font> {Markdown processor:}}}
+    {.cbx + T 1 3 {<font color=#653760>-st</font> nw} {<font color=#653760>-tvar</font> ::alited::printer::mdproc \
+      <font color=#653760>-value</font> {<font color=#1b1baa>$::alited::printer::mdprocs</font>} <font color=#653760>-w</font> <font color=#1b1baa>$wden</font>}}
+    {.v_2 + T 1 3 {<font color=#653760>-pady</font> 8}}
+    {.lfr + T 1 3 {<font color=#653760>-st</font> nwe} {<font color=#653760>-t</font> {Directory title colors}}}
+    {.lfr.lab1 - - 1 1 {<font color=#653760>-st</font> ne} {<font color=#653760>-t</font> {Foreground:}}}
+    {.lfr.Clr1 + L 1 1 {<font color=#653760>-st</font> new} {<font color=#653760>-tvar</font> ::alited::printer::ttlfg}}
+    {.lfr.butClr1 + L 1 1 {<font color=#653760>-st</font> new} {<font color=#653760>-t</font> Standard <font color=#653760>-takefocus</font> 0 \
+      <font color=#653760>-com</font> {alited::printer::StdClr Clr1 ttlfg Clr2 ttlbg}}}
+    {.lfr.lab2 .lfr.lab1 T 1 1 {<font color=#653760>-st</font> ne} {<font color=#653760>-t</font> {Background:}}}
+    {.lfr.Clr2 + L 1 1 {<font color=#653760>-st</font> new} {<font color=#653760>-tvar</font> ::alited::printer::ttlbg}}
+    {.v_3 .lfr T 1 1 {<font color=#653760>-pady</font> 8}}
+    {.lfr2 + T 1 3 {<font color=#653760>-st</font> nwe} {<font color=#653760>-t</font> {File title colors}}}
+    {.lfr2.lab1 - - 1 1 {<font color=#653760>-st</font> ne} {<font color=#653760>-t</font> {Foreground:}}}
+    {.lfr2.Clr3 + L 1 3 {<font color=#653760>-st</font> nw} {<font color=#653760>-tvar</font> ::alited::printer::leaffg}}
+    {.lfr2.butClr3 + L 1 1 {<font color=#653760>-st</font> new} {<font color=#653760>-t</font> Standard <font color=#653760>-takefocus</font> 0 \
+      <font color=#653760>-com</font> {alited::printer::StdClr Clr3 leaffg Clr4 leafbg}}}
+    {.lfr2.lab2 .lfr2.lab1 T 1 1 {<font color=#653760>-st</font> ne} {<font color=#653760>-t</font> {Background:}}}
+    {.lfr2.Clr4 + L 1 3 {<font color=#653760>-st</font> nw} {<font color=#653760>-tvar</font> ::alited::printer::leafbg}}
+    {.fraw .lfr2 T 1 3 {<font color=#653760>-st</font> nw <font color=#653760>-pady</font> 6}}
+    {.fraw.labcs - - 1 1 {<font color=#653760>-st</font> ne <font color=#653760>-pady</font> 4} {<font color=#653760>-t</font> {Syntax colors:}}}
+    {.fraw.rad1 + L 1 1 {<font color=#653760>-st</font> nsw <font color=#653760>-padx</font> 4} {<font color=#653760>-var</font> ::alited::printer::cs <font color=#653760>-value</font> 1 <font color=#653760>-t</font> 1}}
+    {.fraw.rad2 + L 1 1 {<font color=#653760>-st</font> nsw <font color=#653760>-padx</font> 9} {<font color=#653760>-var</font> ::alited::printer::cs <font color=#653760>-value</font> 2 <font color=#653760>-t</font> 2}}
+    {.fraw.rad3 + L 1 1 {<font color=#653760>-st</font> nsw <font color=#653760>-padx</font> 4} {<font color=#653760>-var</font> ::alited::printer::cs <font color=#653760>-value</font> 3 <font color=#653760>-t</font> 3}}
+    {.fraw.rad4 + L 1 1 {<font color=#653760>-st</font> nsw <font color=#653760>-padx</font> 9} {<font color=#653760>-var</font> ::alited::printer::cs <font color=#653760>-value</font> 4 <font color=#653760>-t</font> 4}}
+    {.fraw.labst .fraw.labcs T 1 1 {<font color=#653760>-st</font> nse} {<font color=#653760>-t</font> {Sort units:}}}
+    {.fraw.swist + L 1 1 {<font color=#653760>-st</font> nsw <font color=#653760>-padx</font> 4} {<font color=#653760>-var</font> alited::printer::dosort}}
+    {.fraw.labwc .fraw.labst T 1 1 {<font color=#653760>-st</font> nse} {<font color=#653760>-t</font> {Width of contents:}}}
+    {.fraw.SpxCwidth + L 1 4 {<font color=#653760>-st</font> nsw <font color=#653760>-padx</font> 4} \
+      {<font color=#653760>-tvar</font> ::alited::printer::cwidth <font color=#653760>-from</font> 5 <font color=#653760>-to</font> 99 <font color=#653760>-w</font> 4 <font color=#653760>-justify</font> center}}
+    {.seh .fraw T 1 3 {<font color=#653760>-pady</font> 8}}
+    {.lab4 + T 1 1 {<font color=#653760>-st</font> nw} {<font color=#653760>-t</font> {Final processor:}}}
+    {.fil + T 1 3 {<font color=#653760>-st</font> new} {<font color=#653760>-tvar</font> ::alited::printer::final <font color=#653760>-w</font> <font color=#1b1baa>$wden</font>}}
+    {fraTree fraTop T 2 1 {<font color=#653760>-st</font> news <font color=#653760>-cw</font> 1}}
+    {.Tree - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} \
+      {<font color=#653760>-height</font> 20 <font color=#653760>-columns</font> {L1 L2 PRL ID LEV LEAF FL1} <font color=#653760>-displaycolumns</font> {L1} \
+      <font color=#653760>-columnoptions</font> <font color=#8b2a0e>&quot;#0 <font color=#1b1baa>{</font>-width <font color=#1b1baa>$</font>width1<font color=#1b1baa>}</font> L1 <font color=#1b1baa>{</font>-width <font color=#1b1baa>$</font>width2 -anchor e<font color=#1b1baa>}</font>&quot;</font> \
+      <font color=#653760>-style</font> TreeNoHL <font color=#653760>-selectmode</font> browse <font color=#653760>-tip</font> {<font color=#653760>-BALTIP</font> {alited::tree::GetTooltip %i %c} \
+      <font color=#653760>-SHIFTX</font> 10}}}
+    {.SbvTree fraTree.Tree L - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> right <font color=#653760>-fill</font> both}}
+    {fraMid fraBody T 1 3 {<font color=#653760>-st</font> wes <font color=#653760>-rw</font> 1 <font color=#653760>-padx</font> 2}}
+    {.seh1 - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> top <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both <font color=#653760>-pady</font> 4}}
+    {.butHelp - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-t</font> Help <font color=#653760>-com</font> alited::printer::Help <font color=#653760>-takefocus</font> 0}}
+    {.h_ - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both <font color=#653760>-padx</font> 4}}
+    {.butOK - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-t</font> OK <font color=#653760>-com</font> alited::printer::Ok}}
+    {.butCancel - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 2} {<font color=#653760>-t</font> Cancel <font color=#653760>-com</font> alited::printer::Cancel}}
+    {.TexTmp - - - - {<b><font color=#134070>pack</font></b> forget <font color=#653760>-side</font> left}}
+    {.TexTmp2 - - - - {<b><font color=#134070>pack</font></b> forget <font color=#653760>-side</font> left}}
+    {fraBot fraMid T 1 4 {<font color=#653760>-st</font> we}}
+    {.stat - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> bottom} {<font color=#653760>-array</font> {
+      {{} <font color=#653760>-anchor</font> w <font color=#653760>-expand</font> 1} 30
+      {Selected <font color=#653760>-anchor</font> center} 4
+    }}}
+  }
+  <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obDl2</font> Tree]
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtree</font> &lt;space&gt; <font color=#8b2a0e>&quot;alited::printer::Mark1 <font color=#1b1baa>$</font>wtree; break&quot;</font>
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtree</font> &lt;FocusIn&gt; <font color=#8b2a0e>&quot;alited::printer::FocusIn <font color=#1b1baa>$</font>wtree&quot;</font>
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtree</font> &lt;FocusOut&gt; <font color=#8b2a0e>&quot;alited::printer::FocusOut <font color=#1b1baa>$</font>wtree&quot;</font>
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;F1&gt; <font color=#8b2a0e>&quot;alited::printer::Help&quot;</font>
+  alited::tree::AddTags <font color=#1b1baa>$wtree</font>
+  FillTree <font color=#1b1baa>$wtree</font>
+  <font color=#1b1baa>$obDl2</font> showModal <font color=#1b1baa>$win</font> <font color=#653760>-resizable</font> 1 <font color=#653760>-minsize</font> {500 400} <font color=#653760>-geometry</font> <font color=#1b1baa>$geometry</font> <font color=#653760>-focus</font> Tab
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$win</font>}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::_run></a>
+<b><font color=#ca14ca>proc</font></b> printer::_run  {} {
+  <i><font color=#4b5d50># Runs Project Printer dialogue.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> dir [<b><font color=#3a6797>file</font></b> join [apave::HomeDir] TMP alited <font color=#1b1baa>$al(prjname)</font>]
+  <b><font color=#3a6797>set</font></b> tpldir [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$DATADIR</font> printer]
+  <b><font color=#3a6797>set</font></b> indextpl [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$tpldir</font> <font color=#1b1baa>$indexname</font>]
+  <b><font color=#3a6797>set</font></b> indextpl2 [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$tpldir</font> <font color=#1b1baa>$indexname2</font>]
+  <b><font color=#3a6797>set</font></b> titletpl [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$tpldir</font> title.html]
+  <b><font color=#3a6797>set</font></b> cssdir [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$tpldir</font> <font color=#1b1baa>$CSS</font>]
+  <b><font color=#3a6797>set</font></b> csstpl [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$cssdir</font> <font color=#1b1baa>$cssname</font>]
+  <b><font color=#3a6797>set</font></b> inifile [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$INIDIR</font> printer.ini]
+  <b><font color=#3a6797>set</font></b> iniprjfile [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$PRJDIR</font> <font color=#1b1baa>$al(prjname)</font>.prn]
+  ReadIni
+  _create
+}
+
+<a id=EOF></a>
+  <i><font color=#4b5d50># ________________________ EOF _________________________ #</font></i>
+
+</pre>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>printer.tcl</b></font></div></td></table>
+
+</section>
+<script>
+  writeFooter('Document generated by <a href="'+homeLINK()+'/en/tcl/alited/index.html">alited</a> &amp; <a href="'+homeLINK()+'/en/tcl/mulster/index.html">mulster</a></a>');
+</script>
+</div>
+</body>
+</html>

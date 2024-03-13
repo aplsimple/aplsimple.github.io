@@ -1,0 +1,1527 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<meta name="author" content="aplsimple">
+<meta name="description" content="aplsimple's home page">
+<meta name="keywords" content="aplsimple,home">
+</head>
+<style>
+table{
+background-color: #f9f9f9;
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+box-shadow: none;
+filter: none;
+}
+pre{
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+}
+</style>
+<script>
+function homeLINK() {
+  homelink = document.baseURI;
+  ilen = 19
+  ibase = homelink.indexOf('aplsimple.github');
+  if (ibase<0) { ibase = homelink.indexOf('aplsimple_github'); ilen += 10 };
+  if (ibase>=0) { homelink = homelink.substring(0,ibase+ilen) };
+  return homelink;
+};
+document.write(' \
+<link rel="icon" type="image/jpg" href="'+homeLINK()+'/zoo/favicon.jpg">');
+document.write('<'+'script src="'+homeLINK()+'/zoo/funcs.js">'+'<'+'/script>');
+document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'+'/script>');
+</script>
+<body>
+<div id="wrapper">
+<div name="divd1" ALIGN="CENTER"> <FONT SIZE=5em color=#b01c20><B>
+<noscript>THIS PAGE IS NOT WORKING WITHOUT JAVASCRIPT!
+<BR>
+<BR>PLEASE, SWITCH ON JAVASCRIPT IN SETTINGS OF YOUR BROWSER AND RELOAD THE PAGE.
+</noscript>
+</B></FONT></div>
+<div id='doc3' class='yui-t2'>
+<section id=sec2>
+<div id='hd' class='banner'>
+<script>document.write(' \
+<link rel="stylesheet" href="'+homeLINK()+'/en/zoo/style.css">');
+</script>
+<link rel="stylesheet" href="../../css/style.css">
+
+<title>edit.tcl</title>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
+
+<div id="bodyContent" class="dokuwiki">
+<div id="dw__toc" class="dw__toc">
+<h3 class="toggle open" style="cursor: pointer;">edit.tcl</h3>
+<div aria-expanded="true" style="">
+
+<ul class="toc">
+<li><b><a href="#edit.tcl">edit.tcl</a></b></li>
+<li><b><a href="#Indent">Indent</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#edit::SelectedLines">SelectedLines</a><span class=tooltiptext> edit::SelectedLines : Gets a range of lines of text that are selected at least partly.
+wtxt - text's path
+strict - if yes, only a real selection is counted
+Returns a list of the text widget's path and ranges of selected lines.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::Indent">Indent</a><span class=tooltiptext> edit::Indent : Indent selected lines of text.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::UnIndent">UnIndent</a><span class=tooltiptext> edit::UnIndent : Unindent selected lines of text.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::NormIndent">NormIndent</a><span class=tooltiptext> edit::NormIndent : Normalizes a current text's indenting.</span></div></li></ul>
+<li><b><a href="#Comment_in_/_out">Comment_in_/_out</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#edit::SelectLines">SelectLines</a><span class=tooltiptext> edit::SelectLines : Selects lines (all their contents) of text.
+wtxt - text's path
+l1 - starting line
+l2 - ending line</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::CommentChar">CommentChar</a><span class=tooltiptext> edit::CommentChar : Returns the commenting chars for a current file.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::Comment">Comment</a><span class=tooltiptext> edit::Comment : Comments selected lines of text.
+See also: UnComment</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::UnComment">UnComment</a><span class=tooltiptext> edit::UnComment : Uncomments selected lines of text.
+See also: Comment</span></div></li></ul>
+<li><b><a href="#Color_values">Color_values</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#edit::FindColorValues">FindColorValues</a><span class=tooltiptext> edit::FindColorValues : Finds color values.
+mode - 1 for "find in all text", 2 for "find in current page", 3 "return RF"</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::ShowColorValues">ShowColorValues</a><span class=tooltiptext> edit::ShowColorValues : Highlights color values.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::HideColorValues">HideColorValues</a><span class=tooltiptext> edit::HideColorValues : Unhighlights color values.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::InvertBg">InvertBg</a><span class=tooltiptext> edit::InvertBg : Gets a "inverted" color (white/black) for an color.
+clr - color (#hhh or #hhhhhh)
+Returns a list of "inverted" color and "normalized" input color</span></div></li></ul>
+<li><b><a href="#At_modifications">At_modifications</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#edit::BackupFile">BackupFile</a><span class=tooltiptext> edit::BackupFile : Makes a backup copy of a file after the first modification of it.
+TID - tab's ID of the file
+mode - if {orig}, makes an original copy of a file, otherwise makes .bak copy</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::BackupDirFileNames">BackupDirFileNames</a><span class=tooltiptext> edit::BackupDirFileNames : Gets directory and file names for backuping.
+TID - current tab's ID
+Returns a list of names:
+directory, source file, target original file</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::BackupFileName">BackupFileName</a><span class=tooltiptext> edit::BackupFileName : Gets a backup name for a file (checking for backup's maximum).
+fname - name of target file
+iincr - incrementation for backup index
+The iincr parameter is used to get the last backup's name:
+if no backups, the empty string is returned.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::CheckUndoRedoIcons">CheckUndoRedoIcons</a><span class=tooltiptext> edit::CheckUndoRedoIcons : Checks for states of undo/redo button for a file being modified.
+wtxt - text's path
+TID - tab's ID of the file</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::CheckSaveIcons">CheckSaveIcons</a><span class=tooltiptext> edit::CheckSaveIcons : Checks for states of save buttons at modifications of files.
+modif - yes, if a file has been modified</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::Modified">Modified</a><span class=tooltiptext> edit::Modified : Handles a modification of file, recreating the unit tree at need.
+TID - tab's ID
+wtxt - text's path
+l1 - 1st line of unit
+l2 - last line of unit</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::RemoveTrailWhites">RemoveTrailWhites</a><span class=tooltiptext> edit::RemoveTrailWhites : Removes trailing spaces of lines - all of lines or a selection of lines.
+TID - tab ID
+doit - if yes, trimright all of text without questions
+skipGUI - if yes, no updating GUI</span></div></li></ul>
+<li><b><a href="#Macros">Macros</a></b></li>
+<li><b><a href="#Preparing_macros">Preparing_macros</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#edit::MacroSource">MacroSource</a><span class=tooltiptext> edit::MacroSource : Loads playtkl package.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::MacroInit">MacroInit</a><span class=tooltiptext> edit::MacroInit : Initializes macro stuff.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::MacroDir">MacroDir</a><span class=tooltiptext> edit::MacroDir : Gets a directory name of macros.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::MacroFileName">MacroFileName</a><span class=tooltiptext> edit::MacroFileName : Gets a file name for a macro.
+name - macro's name
+dir - macro's directory</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::MacroMenu">MacroMenu</a><span class=tooltiptext> edit::MacroMenu : Recreate macros' menu.
+name - current macro
+doit - yes if update anyway</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::MacroExists">MacroExists</a><span class=tooltiptext> edit::MacroExists : Checks for existing macro.
+If the macro doesn't exist, shows a message and updates the macros list menu.
+fname - macro file name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::MacroUpdate">MacroUpdate</a><span class=tooltiptext> edit::MacroUpdate : If a file is a macro, updates macros' list.
+fname - file name</span></div></li></ul>
+<li><b><a href="#Handling_macros">Handling_macros</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#edit::DoMacro">DoMacro</a><span class=tooltiptext> edit::DoMacro : Plays or records a macro.
+mode - play / record
+fname - name of recorded file</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::InputMacro">InputMacro</a><span class=tooltiptext> edit::InputMacro : Enters/changes a macro.
+idx - index in macro menu</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::ValidMacro">ValidMacro</a><span class=tooltiptext> edit::ValidMacro : Validates the macro name.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::ValidMacroReal">ValidMacroReal</a><span class=tooltiptext> edit::ValidMacroReal : Gets "root tail" of the file name and saves its directory name.
+Changes the record icon depending on the macro file exists or not.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::DispatchMacro">DispatchMacro</a><span class=tooltiptext> edit::DispatchMacro : Dispatches macro actions.
+mode - what to do</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::WatchMacro">WatchMacro</a><span class=tooltiptext> edit::WatchMacro : Watch the end of recording.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::ReadMacroComment">ReadMacroComment</a><span class=tooltiptext> edit::ReadMacroComment : Reads macro's comment.
+fname - the macro's file name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::OpenMacroFile">OpenMacroFile</a><span class=tooltiptext> edit::OpenMacroFile : Opens a file of macro.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::HelpOnMacro">HelpOnMacro</a><span class=tooltiptext> edit::HelpOnMacro : Shows Play Macro help.
+modal - yes if run from the dialogue</span></div></li></ul>
+<li><b><a href="#Rectangular_selection">Rectangular_selection</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#edit::RectSelection">RectSelection</a><span class=tooltiptext> edit::RectSelection : Starts, ends, does, cuts, copies and pastes a rectangular selection.
+mode: 0 for start/end, 1 do, 2 cut, 3 copy, 4 paste</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::makeRect">makeRect</a><span class=tooltiptext> edit::makeRect : Selects a rectangle.
+wtxt - the current text's path
+alnl - starting row
+alnc - starting column
+nl - current row
+nc - current column</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::saveRect">saveRect</a><span class=tooltiptext> edit::saveRect : Cuts & copies a rectangle.
+mode - 2 cut, 3 copy
+wtxt - the current text's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::pasteRect">pasteRect</a><span class=tooltiptext> edit::pasteRect : Pastes a rectangle.
+wtxt - the current text's path
+nl - current row
+nc - current column</span></div></li></ul>
+<li><b><a href="#To_words_right_/_left">To_words_right_/_left</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#edit::ControlRight">ControlRight</a><span class=tooltiptext> edit::ControlRight : Goes to a next word's start as seen from programmer's viewpoint.
+txt - text's path
+s - key state
+The code is rather efficient with long sequences of non-word chars.
+[Going_on_words_with_Ctrl+arrow](https://core.tcl-lang.org/tk/tktview/168f3ef130)
+[text_index_{insert_wordstart}](https://core.tcl-lang.org/tk/tktview/57b821d2db)</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::ControlLeft">ControlLeft</a><span class=tooltiptext> edit::ControlLeft : Goes to a previous word's start/end as seen from programmer's viewpoint.
+txt - text's path
+s - key state
+The code is rather efficient with long sequences of non-word chars.
+See also:
+[Going_on_words_with_Ctrl+arrow](https://core.tcl-lang.org/tk/tktview/168f3ef130)
+[text_index_{insert_wordstart}](https://core.tcl-lang.org/tk/tktview/57b821d2db)</span></div></li></ul>
+<li><b><a href="#Formats">Formats</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#edit::IniParameter">IniParameter</a><span class=tooltiptext> edit::IniParameter : Gets parameter value from a line of ini-file.
+parname - parameter name (can contain several names separated with comma)
+line - line content
+case - option "-nocase" for regexp (default) or any other option</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::SourceFormatTcl">SourceFormatTcl</a><span class=tooltiptext> edit::SourceFormatTcl : Sources format.tcl.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::FormatUnitDesc">FormatUnitDesc</a><span class=tooltiptext> edit::FormatUnitDesc</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::RunFormat">RunFormat</a><span class=tooltiptext> edit::RunFormat : Does format according to a format file.
+fname - format file's name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::OpenFormatFile">OpenFormatFile</a><span class=tooltiptext> edit::OpenFormatFile : Opens file(s) from data/format directory or its subdirectories.
+dir - (sub)directory name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::InvertStringCase">InvertStringCase</a><span class=tooltiptext> edit::InvertStringCase : Inverts cases in a string (e.g. InversE -> iNVERSe).
+str - the string</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::SqueezeString">SqueezeString</a><span class=tooltiptext> edit::SqueezeString : Squeezes multiple spaces to one space (except for leading spaces)
+and removes tailing spaces, e.g. "   a  b   c " => "   a b c".
+str - the string</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::ReverseString">ReverseString</a><span class=tooltiptext> edit::ReverseString : The same as [string reverse], but counts escaping braces made in format::Mode2.
+str - the string to reverse
+See also: format::Mode2</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::SqueezeLines">SqueezeLines</a><span class=tooltiptext> edit::SqueezeLines : Squeezes a list of lines.
+strlist - the list</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::CompareByLength">CompareByLength</a><span class=tooltiptext> edit::CompareByLength : Compares two string by length.
+s1 - 1st string
+s2 - 2nd string</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::EscapeValue">EscapeValue</a><span class=tooltiptext> edit::EscapeValue : Escapes a value's backslashes and braces.
+value - the value</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::UnEscapeValue">UnEscapeValue</a><span class=tooltiptext> edit::UnEscapeValue : Unescapes a value's backslashes and braces.
+value - the value</span></div></li></ul>
+<li><b><a href="#EOF">EOF</a></b></li>
+
+</ul>
+
+</div>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1><font color=#ca14ca> alited's source</font></h1>
+</p><p>
+The <a href="about.html">alited/src</a> directory contains alited's own source files.
+</p><p>
+Some additional alited's files are also contained in <a href="../lib/addon/hl_alm.html">alited/lib/addon</a> directory.
+</p><p>
+The library files are contained in alited/lib** directory.
+</p><p>
+<li><a href="about.html">about.tcl</a> - "About alited" dialogue.</li>
+<li><a href="alited.html">alited.tcl</a> - The alited's main script to start.</li>
+<li><a href="bar.html">bar.tcl</a> - Handles the bar of tabs.</li>
+<li><a href="check.html">check.tcl</a> - "Check Tcl" dialogue and procedures.</li>
+<li><a href="complete.html">complete.tcl</a> - Handles auto-completion.</li>
+<li><a href="edit.html">edit.tcl</a> - "Edit" menu's procedures.</li>
+<li><a href="favor.html">favor.tcl</a> - Handles the favorite and last visited units.</li>
+<li><a href="favor_ls.html">favor_ls.tcl</a> - "Saved lists of favorites" dialogue and procedures.</li>
+<li><a href="file.html">file.tcl</a> - "File" menu's procedures.</li>
+<li><a href="find.html">find.tcl</a> - "Find / Replace" dialogue and procedures.</li>
+<li><a href="format.html">format.tcl</a> - "Edit / Formats" menu's procedures.</li>
+<li><a href="img.html">img.tcl</a> - List of images used by alited.</li>
+<li><a href="indent.html">indent.tcl</a> - Handles text indentation.</li>
+<li><a href="info.html">info.tcl</a> - Handles the info bar.</li>
+<li><a href="ini.html">ini.tcl</a> - Handles initializing alited.</li>
+<li><a href="keys.html">keys.tcl</a> - Handles keyboard (mapping etc.).</li>
+<li><a href="main.html">main.tcl</a> - Handles the main form of alited.</li>
+<li><a href="menu.html">menu.tcl</a> - Handles alited's menus.</li>
+<li><a href="msgs.html">msgs.tcl</a> - Localized messages used in several places.</li>
+<li><a href="paver.html">paver.tcl</a> - "Tools / Paver" tool.</li>
+<li><a href="pkgIndex.html">pkgIndex.tcl</a> - Includes README.md text (for Ruff doc generator).</li>
+<li><a href="pref.html">pref.tcl</a> - "Preferences" dialogue and procedures.</li>
+<li><a href="preview.html">preview.tcl</a> - "Preview (theme, CS)" dialogue called by "Preferences".</li>
+<li><a href="printer.html">printer.tcl</a> - "Tools / Project Printer" dialogue and procedures.</li>
+<li><a href="project.html">project.tcl</a> - "Projects" dialogue and procedures.</li>
+<li><a href="run.html">run.tcl</a> - "Tools / Run..." dialogue and procedures.</li>
+<li><a href="tool.html">tool.tcl</a> - "Tools" menu's procedures.</li>
+<li><a href="tree.html">tree.tcl</a> - Handles the tree of units and files.</li>
+<li><a href="unit.html">unit.tcl</a> - Handles the unit tree.</li>
+<li><a href="unit_tpl.html">unit_tpl.tcl</a> - "Templates" dialogue and procedures.</li>
+</p><p>
+
+</p>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>edit.tcl</b></font></div></td></table>
+
+<pre class="code"><i><font color=#4b5d50>###########################################################<a id=edit.tcl></a></font></i>
+<i><font color=#4b5d50># Name:    edit.tcl</font></i>
+<i><font color=#4b5d50># Author:  Alex Plotnikov  (aplsimple@gmail.com)</font></i>
+<i><font color=#4b5d50># Date:    08/29/2021</font></i>
+<i><font color=#4b5d50># Brief:   Handles editing procedures.</font></i>
+<i><font color=#4b5d50># License: MIT.</font></i>
+<i><font color=#4b5d50>###########################################################</font></i>
+
+<b><font color=#ca14ca>namespace</font></b> eval edit {
+  <b><font color=#3a6797>variable</font></b> hlcolors [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>variable</font></b> ans_hlcolors 0
+  <b><font color=#3a6797>variable</font></b> macrosmode init
+}<a id=Indent></a>
+<i><font color=#4b5d50># ________________________ Indent _________________________ #</font></i>
+<a id=edit::SelectedLines></a>
+<b><font color=#ca14ca>proc</font></b> edit::SelectedLines {{wtxt <font color=#8b2a0e>&quot;&quot;</font>} {strict no}} {
+  <i><font color=#4b5d50># Gets a range of lines of text that are selected at least partly.</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+  <i><font color=#4b5d50>#   strict - if yes, only a real selection is counted</font></i>
+  <i><font color=#4b5d50># Returns a list of the text widget's path and ranges of selected lines.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtxt</font> eq {}} {<b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]}
+  <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wtxt</font>]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$wtxt</font> tag ranges sel} sels] || ![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$sels</font>]} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$strict</font>} {
+      <b><font color=#3a6797>set</font></b> sels [<b><font color=#3a6797>list</font></b>]
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> pos1 [<b><font color=#3a6797>set</font></b> pos2 [<font color=#1b1baa>$wtxt</font> index insert]]
+      <b><font color=#3a6797>set</font></b> sels [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font>]
+    }
+  }
+  <b><font color=#3a6797>foreach</font></b> {pos1 pos2} <font color=#1b1baa>$sels</font> {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$pos1</font> ne {}} {
+      <b><font color=#3a6797>set</font></b> pos21 [<font color=#1b1baa>$wtxt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos2 linestart&quot;</font>]
+      <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$pos21</font> <font color=#1b1baa>$pos2</font>] eq {}} {
+        <b><font color=#3a6797>set</font></b> pos2 [<font color=#1b1baa>$wtxt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos2 - 1 line&quot;</font>]
+      }
+    }
+    <b><font color=#3a6797>set</font></b> l1 [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$pos1</font>)}]
+    <b><font color=#3a6797>set</font></b> l2 [<b><font color=#3a6797>expr</font></b> {max(<font color=#1b1baa>$l1</font>,int(<font color=#1b1baa>$pos2</font>))}]
+    <b><font color=#3a6797>lappend</font></b> res <font color=#1b1baa>$l1</font> <font color=#1b1baa>$l2</font>
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::Indent></a>
+<b><font color=#ca14ca>proc</font></b> edit::Indent {} {
+  <i><font color=#4b5d50># Indent selected lines of text.</font></i>
+
+  <b><font color=#3a6797>set</font></b> indent <font color=#1b1baa>$::apave::_AP_VARS(INDENT)</font>
+  <b><font color=#3a6797>set</font></b> len [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$::apave::_AP_VARS(INDENT)</font>]
+  <b><font color=#3a6797>set</font></b> sels [SelectedLines]
+  <b><font color=#3a6797>set</font></b> wtxt [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$sels</font> 0]
+  ::apave::undoIn <font color=#1b1baa>$wtxt</font>
+  <b><font color=#3a6797>foreach</font></b> {l1 l2} [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$sels</font> 1 end] {
+    <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> l <font color=#1b1baa>$l1</font>} {<font color=#1b1baa>$l</font>&lt;=<font color=#1b1baa>$l2</font>} {<b><font color=#3a6797>incr</font></b> l} {
+      <b><font color=#3a6797>set</font></b> line [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$l</font>.0 <font color=#1b1baa>$l</font>.end]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$line</font>] eq {}} {
+        <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$l</font>.0 <font color=#1b1baa>$l</font>.end {}
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> leadsp [::apave::obj leadingSpaces <font color=#1b1baa>$line</font>]
+        <b><font color=#3a6797>set</font></b> sp [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$leadsp</font> % <font color=#1b1baa>$len</font>}]
+        <i><font color=#4b5d50># align by the indent edge</font></i>
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$sp</font>==0} {
+          <b><font color=#3a6797>set</font></b> ind <font color=#1b1baa>$indent</font>
+        } <b><font color=#3a6797>else</font></b> {
+          <b><font color=#3a6797>set</font></b> ind [<b><font color=#3a6797>string</font></b> repeat <font color=#8b2a0e>&quot; &quot;</font> [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$len</font> - <font color=#1b1baa>$sp</font>}]]
+        }
+        <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$l</font>.0 <font color=#1b1baa>$ind</font>
+      }
+    }
+  }
+  ::apave::undoOut <font color=#1b1baa>$wtxt</font>
+  alited::main::HighlightLine
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::UnIndent></a>
+<b><font color=#ca14ca>proc</font></b> edit::UnIndent {} {
+  <i><font color=#4b5d50># Unindent selected lines of text.</font></i>
+
+  <b><font color=#3a6797>set</font></b> len [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$::apave::_AP_VARS(INDENT)</font>]
+  <b><font color=#3a6797>set</font></b> spaces [<b><font color=#3a6797>list</font></b> { } \t]
+  <b><font color=#3a6797>set</font></b> sels [SelectedLines]
+  <b><font color=#3a6797>set</font></b> wtxt [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$sels</font> 0]
+  ::apave::undoIn <font color=#1b1baa>$wtxt</font>
+  <b><font color=#3a6797>foreach</font></b> {l1 l2} [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$sels</font> 1 end] {
+    <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> l <font color=#1b1baa>$l1</font>} {<font color=#1b1baa>$l</font>&lt;=<font color=#1b1baa>$l2</font>} {<b><font color=#3a6797>incr</font></b> l} {
+      <b><font color=#3a6797>set</font></b> line [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$l</font>.0 <font color=#1b1baa>$l</font>.end]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$line</font>] eq {}} {
+        <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$l</font>.0 <font color=#1b1baa>$l</font>.end {}
+      } <b><font color=#3a6797>elseif</font></b> {[<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$line</font> 0] in <font color=#1b1baa>$spaces</font>} {
+        <b><font color=#3a6797>set</font></b> leadsp [::apave::obj leadingSpaces <font color=#1b1baa>$line</font>]
+        <i><font color=#4b5d50># align by the indent edge</font></i>
+        <b><font color=#3a6797>set</font></b> sp [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$leadsp</font> % <font color=#1b1baa>$len</font>}]
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$sp</font>==0} {<b><font color=#3a6797>set</font></b> sp <font color=#1b1baa>$len</font>}
+        <font color=#1b1baa>$wtxt</font> delete <font color=#1b1baa>$l</font>.0 <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>l.0 + <font color=#1b1baa>${</font>sp<font color=#1b1baa>}</font>c&quot;</font>
+      }
+    }
+  }
+  ::apave::undoOut <font color=#1b1baa>$wtxt</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::NormIndent></a>
+<b><font color=#ca14ca>proc</font></b> edit::NormIndent {} {
+  <i><font color=#4b5d50># Normalizes a current text's indenting.</font></i>
+
+  alited::main::CalcIndentation {} yes
+  alited::main::UpdateProjectInfo
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>namespace</font></b> exists ::alited::indent]} {
+    <b><font color=#ca14ca>namespace</font></b> eval ::alited {
+      <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::SRCDIR</font> indent.tcl]
+    }
+  }
+  alited::indent::normalize
+}
+<a id=Comment_in_/_out></a>
+<i><font color=#4b5d50># ________________________ Comment in / out _________________________ #</font></i>
+<a id=edit::SelectLines></a>
+<b><font color=#ca14ca>proc</font></b> edit::SelectLines {wtxt l1 l2} {
+  <i><font color=#4b5d50># Selects lines (all their contents) of text.</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+  <i><font color=#4b5d50>#   l1 - starting line</font></i>
+  <i><font color=#4b5d50>#   l2 - ending line</font></i>
+
+  <font color=#1b1baa>$wtxt</font> tag remove sel 1.0 end
+  <font color=#1b1baa>$wtxt</font> tag add sel <font color=#1b1baa>$l1</font>.0 [<b><font color=#3a6797>incr</font></b> l2].0 ;<i><font color=#4b5d50># $l1.0 $l2.end</font></i>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::CommentChar></a>
+<b><font color=#ca14ca>proc</font></b> edit::CommentChar {} {
+  <i><font color=#4b5d50># Returns the commenting chars for a current file.</font></i>
+
+  <b><font color=#3a6797>set</font></b> fname [alited::bar::FileName]
+  <b><font color=#3a6797>if</font></b> {[alited::file::IsClang <font color=#1b1baa>$fname</font>]} {
+    <b><font color=#ca14ca>return</font></b> //
+  }
+  <b><font color=#ca14ca>return</font></b> #
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::Comment></a>
+<b><font color=#ca14ca>proc</font></b> edit::Comment {} {
+  <i><font color=#4b5d50># Comments selected lines of text.</font></i>
+  <i><font color=#4b5d50># See also: UnComment</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited obPav obPav al al
+  <b><font color=#3a6797>set</font></b> ch [CommentChar]
+  <b><font color=#3a6797>set</font></b> sels [SelectedLines]
+  <b><font color=#3a6797>set</font></b> wtxt [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$sels</font> 0]
+  ::apave::undoIn <font color=#1b1baa>$wtxt</font>
+  <b><font color=#3a6797>foreach</font></b> {l1 l2} [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$sels</font> 1 end] {
+    <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> l <font color=#1b1baa>$l1</font>} {<font color=#1b1baa>$l</font>&lt;=<font color=#1b1baa>$l2</font>} {<b><font color=#3a6797>incr</font></b> l} {
+      <b><font color=#3a6797>set</font></b> line [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$l</font>.0 <font color=#1b1baa>$l</font>.end]
+      <b><font color=#3a6797>set</font></b> col [<font color=#1b1baa>$obPav</font> leadingSpaces <font color=#1b1baa>$line</font>]
+      <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$al(commentmode)</font> {
+        1 {<font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$l</font>.0 <font color=#1b1baa>$ch</font>}
+        2 {<font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$l</font>.<font color=#1b1baa>$col</font> <font color=#1b1baa>$ch</font>}
+        <b><font color=#3a6797>default</font></b> {
+          <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ch</font> eq <font color=#8b2a0e>&quot;#&quot;</font>} {
+            <i><font color=#4b5d50># comment-out with TODO comment: to see / to find / to do them afterwards</font></i>
+            <i><font color=#4b5d50># for Tcl code: it needs to disable also all braces with #\{ #\} patterns</font></i>
+            <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$l</font>.0 <font color=#1b1baa>$l</font>.end [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \} #\\\} \{ #\\\{] <font color=#1b1baa>$line</font>]
+          }
+          <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$l</font>.0 <font color=#1b1baa>$ch</font>!
+        }
+      }
+    }
+  }
+  ::apave::undoOut <font color=#1b1baa>$wtxt</font>
+  SelectLines <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$l1</font> <font color=#1b1baa>$l2</font>
+  <b><font color=#3a6797>after</font></b> idle alited::tree::RecreateTree
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::UnComment></a>
+<b><font color=#ca14ca>proc</font></b> edit::UnComment {} {
+  <i><font color=#4b5d50># Uncomments selected lines of text.</font></i>
+  <i><font color=#4b5d50># See also: Comment</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited obPav obPav al al
+  <b><font color=#3a6797>set</font></b> ch [CommentChar]
+  <b><font color=#3a6797>set</font></b> lch [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$ch</font>]
+  <b><font color=#3a6797>set</font></b> lch0 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$lch</font>-1}]
+  <b><font color=#3a6797>set</font></b> sels [SelectedLines]
+  <b><font color=#3a6797>set</font></b> wtxt [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$sels</font> 0]
+  ::apave::undoIn <font color=#1b1baa>$wtxt</font>
+  <b><font color=#3a6797>foreach</font></b> {l1 l2} [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$sels</font> 1 end] {
+    <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> l <font color=#1b1baa>$l1</font>} {<font color=#1b1baa>$l</font>&lt;=<font color=#1b1baa>$l2</font>} {<b><font color=#3a6797>incr</font></b> l} {
+      <b><font color=#3a6797>set</font></b> line [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$l</font>.0 <font color=#1b1baa>$l</font>.end]
+      <b><font color=#3a6797>set</font></b> isp [<font color=#1b1baa>$obPav</font> leadingSpaces <font color=#1b1baa>$line</font>]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> <font color=#1b1baa>$isp</font> <font color=#1b1baa>$isp</font>+<font color=#1b1baa>$lch0</font>] eq <font color=#1b1baa>$ch</font>} {
+        <b><font color=#3a6797>set</font></b> lch2 <font color=#1b1baa>$lch</font>
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> <font color=#8b2a0e>&quot;^\\s*<font color=#1b1baa>$</font>ch!&quot;</font> <font color=#1b1baa>$line</font>]} {<b><font color=#3a6797>incr</font></b> lch2}  ;<i><font color=#4b5d50># remove TODO comment</font></i>
+        <font color=#1b1baa>$wtxt</font> delete <font color=#1b1baa>$l</font>.<font color=#1b1baa>$isp</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>l.<font color=#1b1baa>$</font>isp + <font color=#1b1baa>${</font>lch2<font color=#1b1baa>}</font>c&quot;</font>
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ch</font> eq <font color=#8b2a0e>&quot;#&quot;</font> && !<font color=#1b1baa>$al(commentmode)</font>} {
+          <i><font color=#4b5d50># for Tcl code: it needs to enable also all braces with #\{ #\} patterns</font></i>
+          <b><font color=#3a6797>set</font></b> line [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$l</font>.0 <font color=#1b1baa>$l</font>.end]
+          <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$l</font>.0 <font color=#1b1baa>$l</font>.end [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> #\\\} \} #\\\{ \{] <font color=#1b1baa>$line</font>]
+        }
+      }
+    }
+  }
+  ::apave::undoOut <font color=#1b1baa>$wtxt</font>
+  SelectLines <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$l1</font> <font color=#1b1baa>$l2</font>
+  <b><font color=#3a6797>after</font></b> idle alited::tree::RecreateTree
+}
+<a id=Color_values></a>
+<i><font color=#4b5d50># ________________________ Color values _________________________ #</font></i>
+<a id=edit::FindColorValues></a>
+<b><font color=#ca14ca>proc</font></b> edit::FindColorValues {mode} {
+  <i><font color=#4b5d50># Finds color values.</font></i>
+  <i><font color=#4b5d50>#   mode - 1 for &quot;find in all text&quot;, 2 for &quot;find in current page&quot;, 3 &quot;return RF&quot;</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited obPav obPav
+  <b><font color=#3a6797>set</font></b> RF {#([0-9a-fA-F]{3,6})}
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mode</font>==3} {<b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$RF</font>}
+  <b><font color=#3a6797>set</font></b> RE {#([0-9a-f]{3}([^0-9a-z]|$)|[0-9a-f]{6}([^0-9a-z]|$))}
+  <b><font color=#3a6797>set</font></b> txt [alited::main::CurrentWTXT]
+  <b><font color=#3a6797>set</font></b> l1 1.0
+  <b><font color=#3a6797>set</font></b> l2 end
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mode</font> in {2 12} && \
+  ![<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> gcon [<font color=#1b1baa>$obPav</font> gutterContents <font color=#1b1baa>$txt</font>]}] && [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$gcon</font>]} {
+    <b><font color=#3a6797>set</font></b> l1 [<b><font color=#3a6797>string</font></b> trim [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$gcon</font> 0 1]].0
+    <b><font color=#3a6797>set</font></b> l2 [<b><font color=#3a6797>string</font></b> trim [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$gcon</font> end 1]].end
+  }
+  <b><font color=#3a6797>set</font></b> lenList [<b><font color=#3a6797>set</font></b> hlcolors [<b><font color=#3a6797>list</font></b>]]
+  <b><font color=#3a6797>set</font></b> posList [<font color=#1b1baa>$txt</font> search <font color=#653760>-count</font> lenList <font color=#653760>-regexp</font> <font color=#653760>-nocase</font> <font color=#653760>-all</font> <font color=#653760>-strictlimits</font> <font color=#1b1baa>$RE</font> <font color=#1b1baa>$l1</font> <font color=#1b1baa>$l2</font>]
+  <b><font color=#3a6797>foreach</font></b> pos <font color=#1b1baa>$posList</font> len <font color=#1b1baa>$lenList</font> {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$len</font> eq {}} {
+      <b><font color=#3a6797>set</font></b> st [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$pos</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos lineend + 1 char&quot;</font>]
+      <b><font color=#3a6797>set</font></b> len [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-nocase</font> <font color=#653760>-indices</font> <font color=#653760>-inline</font> <font color=#1b1baa>$RE</font> <font color=#1b1baa>$st</font>] 1 1]
+    }
+    <b><font color=#3a6797>set</font></b> pos2 [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos + <font color=#1b1baa>$</font>len char&quot;</font>]
+    <b><font color=#3a6797>set</font></b> hlc [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pos2</font>]
+    <b><font color=#3a6797>catch</font></b> {
+      <b><font color=#3a6797>lassign</font></b> [InvertBg <font color=#1b1baa>$hlc</font>] fg bg
+      <font color=#1b1baa>$txt</font> tag configure <font color=#1b1baa>$hlc</font> <font color=#653760>-foreground</font> <font color=#1b1baa>$fg</font> <font color=#653760>-background</font> <font color=#1b1baa>$bg</font>
+      <font color=#1b1baa>$txt</font> tag add <font color=#1b1baa>$hlc</font> <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pos2</font>
+      <b><font color=#3a6797>lappend</font></b> hlcolors <font color=#1b1baa>$hlc</font>
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$hlcolors</font>] <font color=#1b1baa>$RF</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::ShowColorValues></a>
+<b><font color=#ca14ca>proc</font></b> edit::ShowColorValues {} {
+  <i><font color=#4b5d50># Highlights color values.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obFND obFND
+  <b><font color=#3a6797>variable</font></b> hlcolors
+  <b><font color=#3a6797>variable</font></b> ans_hlcolors
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ans_hlcolors</font>&lt;10} {
+    <b><font color=#3a6797>set</font></b> ans_hlcolors [alited::msg yesnocancel ques \
+      [msgcat::mc {Display colors in the whole text?}] YES \
+      <font color=#653760>-title</font> <font color=#1b1baa>$al(MC,hlcolors)</font> <font color=#653760>-ch</font> <font color=#1b1baa>$al(MC,noask)</font>]
+  }
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$ans_hlcolors</font>} <b><font color=#ca14ca>return</font></b>
+  HideColorValues
+  <b><font color=#3a6797>lassign</font></b> [FindColorValues <font color=#1b1baa>$ans_hlcolors</font>] llen RF
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$::alited::find::win</font>] && [<b><font color=#134070>winfo</font></b> ismapped <font color=#1b1baa>$::alited::find::win</font>]} {
+    <b><font color=#3a6797>set</font></b> ::alited::find::data(en1) <font color=#1b1baa>$RF</font>  ;<i><font color=#4b5d50># if &quot;Find/Replace&quot; is shown, set Find = RE</font></i>
+    [<font color=#1b1baa>$obFND</font> Cbx1] selection clear
+    <b><font color=#3a6797>set</font></b> msg <font color=#8b2a0e>&quot;   (<font color=#1b1baa>[</font>msgcat::mc <font color=#1b1baa>{</font>check RE in Find/Replace box<font color=#1b1baa>}]</font>)&quot;</font>
+    <b><font color=#3a6797>set</font></b> mode 3
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> msg {}
+    <b><font color=#3a6797>set</font></b> mode 1
+  }
+  alited::Message <font color=#1b1baa>$al(MC,hlcolors)</font>:\ <font color=#1b1baa>$llen</font>\ <font color=#1b1baa>$msg</font> <font color=#1b1baa>$mode</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::HideColorValues></a>
+<b><font color=#ca14ca>proc</font></b> edit::HideColorValues {} {
+  <i><font color=#4b5d50># Unhighlights color values.</font></i>
+
+  <b><font color=#3a6797>set</font></b> RF [FindColorValues 3]
+  <b><font color=#3a6797>set</font></b> txt [alited::main::CurrentWTXT]
+  <b><font color=#3a6797>foreach</font></b> hlc [<font color=#1b1baa>$txt</font> tag names] {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> <font color=#1b1baa>$RF</font> <font color=#1b1baa>$hlc</font>]} {
+      <font color=#1b1baa>$txt</font> tag remove <font color=#1b1baa>$hlc</font> 1.0 end
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::InvertBg></a>
+<b><font color=#ca14ca>proc</font></b> edit::InvertBg {clr} {
+  <i><font color=#4b5d50># Gets a &quot;inverted&quot; color (white/black) for an color.</font></i>
+  <i><font color=#4b5d50>#   clr - color (#hhh or #hhhhhh)</font></i>
+  <i><font color=#4b5d50># Returns a list of &quot;inverted&quot; color and &quot;normalized&quot; input color</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$clr</font>]==4} {
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$clr</font> {}] -&gt; r g b
+    <b><font color=#3a6797>set</font></b> clr #<font color=#1b1baa>$r$r$g$g$b$b</font>
+  }
+  <b><font color=#3a6797>scan</font></b> <font color=#1b1baa>$clr</font> <font color=#8b2a0e>&quot;#%02x%02x%02x&quot;</font> r g b
+  <b><font color=#3a6797>set</font></b> c [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$r</font>&lt;100 && <font color=#1b1baa>$g</font>&lt;100 || <font color=#1b1baa>$r</font>&lt;100 && <font color=#1b1baa>$b</font>&lt;100 || <font color=#1b1baa>$b</font>&lt;100 && <font color=#1b1baa>$g</font>&lt;100 ||
+    (<font color=#1b1baa>$r</font>+<font color=#1b1baa>$g</font>+<font color=#1b1baa>$b</font>)&lt;300 ? 255 : 0}]
+  <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>string</font></b> toupper [<b><font color=#3a6797>format</font></b> <font color=#8b2a0e>&quot;#%02x%02x%02x&quot;</font> <font color=#1b1baa>$c</font> <font color=#1b1baa>$c</font> <font color=#1b1baa>$c</font>]]
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font> <font color=#1b1baa>$clr</font>]
+}
+<a id=At_modifications></a>
+<i><font color=#4b5d50># ________________________ At modifications _________________________ #</font></i>
+<a id=edit::BackupFile></a>
+<b><font color=#ca14ca>proc</font></b> edit::BackupFile {TID {mode {}}} {
+  <i><font color=#4b5d50># Makes a backup copy of a file after the first modification of it.</font></i>
+  <i><font color=#4b5d50>#   TID - tab's ID of the file</font></i>
+  <i><font color=#4b5d50>#   mode - if {orig}, makes an original copy of a file, otherwise makes .bak copy</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>lassign</font></b> [BackupDirFileNames <font color=#1b1baa>$TID</font>] dir fname fname2
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dir</font> ne {}} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mode</font> eq {}} {
+      <b><font color=#3a6797>set</font></b> fname2 [BackupFileName <font color=#1b1baa>$fname2</font>]
+    }
+    <b><font color=#3a6797>catch</font></b> {
+      <b><font color=#3a6797>file</font></b> copy <font color=#653760>-force</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$fname2</font>
+      ::apave::logMessage <font color=#8b2a0e>&quot;backup <font color=#1b1baa>$</font>fname -&gt; <font color=#1b1baa>$</font>fname2&quot;</font>
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::BackupDirFileNames></a>
+<b><font color=#ca14ca>proc</font></b> edit::BackupDirFileNames {TID} {
+  <i><font color=#4b5d50># Gets directory and file names for backuping.</font></i>
+  <i><font color=#4b5d50>#   TID - current tab's ID</font></i>
+  <i><font color=#4b5d50># Returns a list of names:</font></i>
+  <i><font color=#4b5d50>#   directory, source file, target original file</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(BACKUP)</font> eq {}} {<b><font color=#ca14ca>return</font></b> {}}
+  <b><font color=#3a6797>set</font></b> dir [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$al(prjroot)</font> <font color=#1b1baa>$al(BACKUP)</font>]
+  <b><font color=#3a6797>set</font></b> fname [alited::bar::FileName <font color=#1b1baa>$TID</font>]
+  <b><font color=#3a6797>set</font></b> fname2 [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$dir</font> [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]]
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$dir</font>] && [<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>file</font></b> mkdir <font color=#1b1baa>$dir</font>} err]} {
+    alited::msg ok err <font color=#1b1baa>$err</font>
+    <b><font color=#ca14ca>return</font></b> {}
+  }
+  <b><font color=#3a6797>set</font></b> fname3 [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$dir</font> [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]]
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$dir</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$fname2</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::BackupFileName></a>
+<b><font color=#ca14ca>proc</font></b> edit::BackupFileName {fname {iincr 1}} {
+  <i><font color=#4b5d50># Gets a backup name for a file (checking for backup's maximum).</font></i>
+  <i><font color=#4b5d50>#   fname - name of target file</font></i>
+  <i><font color=#4b5d50>#   iincr - incrementation for backup index</font></i>
+  <i><font color=#4b5d50># The iincr parameter is used to get the last backup's name:</font></i>
+  <i><font color=#4b5d50># if no backups, the empty string is returned.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(MAXBACKUP)</font>&gt;1} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> baks [<b><font color=#3a6797>glob</font></b> <font color=#1b1baa>${fname}<b><font color=#3a6797></font>*</font></b>]}] || <font color=#1b1baa>$baks</font> eq {}} {
+      <b><font color=#3a6797>set</font></b> nbak 1
+      <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$iincr</font>} {<b><font color=#ca14ca>return</font></b> {}} ;<i><font color=#4b5d50># no backups yet</font></i>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>foreach</font></b> bak <font color=#1b1baa>$baks</font> {
+        <b><font color=#3a6797>lappend</font></b> bakdata [<b><font color=#3a6797>list</font></b> [<b><font color=#3a6797>file</font></b> mtime <font color=#1b1baa>$bak</font>] <font color=#1b1baa>$bak</font>]
+      }
+      <b><font color=#3a6797>set</font></b> bakdata [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-decreasing</font> <font color=#1b1baa>$bakdata</font>]
+      <b><font color=#3a6797>set</font></b> bak1 [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$bakdata</font> 0 1]
+      <b><font color=#3a6797>set</font></b> nbak [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$bak1</font> -.] end-1]
+      <b><font color=#3a6797>foreach</font></b> delbak [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$bakdata</font> <font color=#1b1baa>$al(MAXBACKUP)</font> end] {
+        <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>file</font></b> delete [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$delbak</font> 1]}
+      }
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>incr</font></b> nbak <font color=#1b1baa>$iincr</font>}] || <font color=#1b1baa>$nbak</font>&gt;<font color=#1b1baa>$al(MAXBACKUP)</font>} {<b><font color=#3a6797>set</font></b> nbak 1}
+    }
+    <b><font color=#3a6797>append</font></b> fname -<font color=#1b1baa>$nbak</font>.bak
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$fname</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::CheckUndoRedoIcons></a>
+<b><font color=#ca14ca>proc</font></b> edit::CheckUndoRedoIcons {wtxt TID} {
+  <i><font color=#4b5d50># Checks for states of undo/redo button for a file being modified.</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+  <i><font color=#4b5d50>#   TID - tab's ID of the file</font></i>
+
+  <b><font color=#3a6797>set</font></b> TIDundo [alited::bar::BAR cget <font color=#653760>--TIDundo</font>]
+  <b><font color=#3a6797>set</font></b> oldundo [alited::bar::BAR <font color=#1b1baa>$TID</font> cget <font color=#653760>--undo</font>]
+  <b><font color=#3a6797>set</font></b> oldredo [alited::bar::BAR <font color=#1b1baa>$TID</font> cget <font color=#653760>--redo</font>]
+  <b><font color=#3a6797>set</font></b> newundo [<font color=#1b1baa>$wtxt</font> edit canundo]
+  <b><font color=#3a6797>set</font></b> newredo [<font color=#1b1baa>$wtxt</font> edit canredo]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TIDundo</font> ne <font color=#1b1baa>$TID</font> || <font color=#1b1baa>$oldundo</font> ne <font color=#1b1baa>$newundo</font>} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$newundo</font>} {<b><font color=#3a6797>set</font></b> stat normal} {<b><font color=#3a6797>set</font></b> stat disabled}
+    [alited::tool::ToolButName undo] configure <font color=#653760>-state</font> <font color=#1b1baa>$stat</font>
+    alited::bar::BAR <font color=#1b1baa>$TID</font> configure <font color=#653760>--undo</font> <font color=#1b1baa>$newundo</font>
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TIDundo</font> ne <font color=#1b1baa>$TID</font> || <font color=#1b1baa>$oldredo</font> ne <font color=#1b1baa>$newredo</font>} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$newredo</font>} {<b><font color=#3a6797>set</font></b> stat normal} {<b><font color=#3a6797>set</font></b> stat disabled}
+    [alited::tool::ToolButName redo] configure <font color=#653760>-state</font> <font color=#1b1baa>$stat</font>
+    alited::bar::BAR <font color=#1b1baa>$TID</font> configure <font color=#653760>--redo</font> <font color=#1b1baa>$newredo</font>
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$oldundo</font> ne {} && !<font color=#1b1baa>$oldundo</font> && !<font color=#1b1baa>$oldredo</font> && <font color=#1b1baa>$newundo</font>} {
+    BackupFile <font color=#1b1baa>$TID</font> orig
+  }
+  alited::bar::BAR configure <font color=#653760>--TIDundo</font> <font color=#1b1baa>$TID</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::CheckSaveIcons></a>
+<b><font color=#ca14ca>proc</font></b> edit::CheckSaveIcons {modif} {
+  <i><font color=#4b5d50># Checks for states of save buttons at modifications of files.</font></i>
+  <i><font color=#4b5d50>#   modif - yes, if a file has been modified</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> marked [alited::bar::BAR listFlag <font color=#8b2a0e>&quot;m&quot;</font>]
+  <b><font color=#3a6797>set</font></b> b_save [alited::tool::ToolButName SaveFile]
+  <b><font color=#3a6797>set</font></b> b_saveall [alited::tool::ToolButName saveall]
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$marked</font>]} {
+    <b><font color=#3a6797>foreach</font></b> but {SaveFile saveall} {
+      [alited::tool::ToolButName <font color=#1b1baa>$but</font>] configure <font color=#653760>-state</font> disabled
+    }
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$modif</font>} {<b><font color=#3a6797>set</font></b> stat normal} {<b><font color=#3a6797>set</font></b> stat disabled}
+    <font color=#1b1baa>$b_save</font> configure <font color=#653760>-state</font> <font color=#1b1baa>$stat</font>
+    <font color=#1b1baa>$b_saveall</font> configure <font color=#653760>-state</font> normal
+  }
+  <font color=#1b1baa>$al(MENUFILE)</font> entryconfigure 5 <font color=#653760>-state</font> [<font color=#1b1baa>$b_save</font> cget <font color=#653760>-state</font>]
+  <font color=#1b1baa>$al(MENUFILE)</font> entryconfigure 7 <font color=#653760>-state</font> [<font color=#1b1baa>$b_saveall</font> cget <font color=#653760>-state</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::Modified></a>
+<b><font color=#ca14ca>proc</font></b> edit::Modified {TID wtxt {l1 0} {l2 0} args} {
+  <i><font color=#4b5d50># Handles a modification of file, recreating the unit tree at need.</font></i>
+  <i><font color=#4b5d50>#   TID - tab's ID</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+  <i><font color=#4b5d50>#   l1 - 1st line of unit</font></i>
+  <i><font color=#4b5d50>#   l2 - last line of unit</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>if</font></b> {[alited::bar::BAR isTab <font color=#1b1baa>$TID</font>]} {
+    <b><font color=#3a6797>set</font></b> old [alited::file::IsModified <font color=#1b1baa>$TID</font>]
+    <b><font color=#3a6797>set</font></b> new [<font color=#1b1baa>$wtxt</font> edit modified]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$old</font> != <font color=#1b1baa>$new</font>} {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$new</font>} {
+        alited::bar::BAR markTab <font color=#1b1baa>$TID</font>
+      } <b><font color=#3a6797>else</font></b> {
+        alited::bar::BAR unmarkTab <font color=#1b1baa>$TID</font>
+      }
+      CheckSaveIcons <font color=#1b1baa>$new</font>
+    }
+    CheckUndoRedoIcons <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$TID</font>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(TREE,isunits)</font>} {
+      <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$wtxt</font> index insert]
+      <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> Tree]
+      <b><font color=#3a6797>set</font></b> todoTree no
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> todoTree [<font color=#1b1baa>$wtree</font> tag has tagTODO [alited::tree::CurrentItem]]}
+      <i><font color=#4b5d50># when text's TODO tag isn't equal to tree's, recreate the tree</font></i>
+      <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$wtxt</font> tag nextrange tagCMN2 \
+        [<font color=#1b1baa>$wtxt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos linestart&quot;</font>] [<font color=#1b1baa>$wtxt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos lineend&quot;</font>]] p1 p2
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$p2</font> ne {} && [<font color=#1b1baa>$wtxt</font> compare <font color=#1b1baa>$pos</font> &gt;= <font color=#1b1baa>$p1</font>] && [<font color=#1b1baa>$wtxt</font> compare <font color=#1b1baa>$pos</font> &lt;= <font color=#1b1baa>$p2</font>]} {
+        <b><font color=#3a6797>set</font></b> todo [<b><font color=#3a6797>expr</font></b> {!<font color=#1b1baa>$todoTree</font>}]
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> todo <font color=#1b1baa>$todoTree</font>
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$todo</font>} {
+        alited::tree::RecreateTree
+      } <b><font color=#3a6797>elseif</font></b> {![<b><font color=#3a6797>info</font></b> exists al(RECREATE)] || <font color=#1b1baa>$al(RECREATE)</font>} {
+        <b><font color=#3a6797>set</font></b> doit no
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> llen [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$al(_unittree,$TID)</font>]]} {
+          <b><font color=#3a6797>set</font></b> lastrow [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$al(_unittree,$TID)</font> <font color=#1b1baa>$llen</font>-1 5]
+          <b><font color=#3a6797>set</font></b> doit [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$lastrow</font> != int([<font color=#1b1baa>$wtxt</font> index {end -1c}])}]
+        }
+        <b><font color=#3a6797>set</font></b> l1 [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$pos</font>)}]
+        <b><font color=#3a6797>set</font></b> line [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$l1</font>.0 <font color=#1b1baa>$l1</font>.end]
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$doit</font> || (![<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> ifound [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-index</font> 4 <font color=#1b1baa>$al(_unittree,$TID)</font> <font color=#1b1baa>$l1</font>]}] \
+        && <font color=#1b1baa>$ifound</font>&gt;-1) || [<b><font color=#3a6797>regexp</font></b> [alited::unit::UnitRegexp] <font color=#1b1baa>$line</font>]} {
+          alited::tree::RecreateTree
+        } <b><font color=#3a6797>else</font></b> {
+          <b><font color=#3a6797>set</font></b> REtd {(#\s*(!|TODO))|(//\s*(!|TODO))} ;<i><font color=#4b5d50># RE for todo in Tcl and C</font></i>
+          <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(INI,LEAF)</font> && [<b><font color=#3a6797>regexp</font></b> <font color=#1b1baa>$al(RE,leaf)</font> <font color=#1b1baa>$line</font>] || [<b><font color=#3a6797>regexp</font></b> <font color=#1b1baa>$REtd</font> <font color=#1b1baa>$line</font>] \
+          || !<font color=#1b1baa>$al(INI,LEAF)</font> && [<b><font color=#3a6797>regexp</font></b> <font color=#1b1baa>$al(RE,proc)</font> <font color=#1b1baa>$line</font>] || [<b><font color=#3a6797>regexp</font></b> <font color=#1b1baa>$al(RE,branch)</font> <font color=#1b1baa>$line</font>]} {
+            alited::tree::RecreateTree
+          }
+        }
+      }
+    }
+  }
+  alited::main::ShowHeader
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::RemoveTrailWhites></a>
+<b><font color=#ca14ca>proc</font></b> edit::RemoveTrailWhites {{TID <font color=#8b2a0e>&quot;&quot;</font>} {doit no} {skipGUI no}} {
+  <i><font color=#4b5d50># Removes trailing spaces of lines - all of lines or a selection of lines.</font></i>
+  <i><font color=#4b5d50>#   TID - tab ID</font></i>
+  <i><font color=#4b5d50>#   doit - if yes, trimright all of text without questions</font></i>
+  <i><font color=#4b5d50>#   skipGUI - if yes, no updating GUI</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> ans 1
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$doit</font>} {
+    <b><font color=#3a6797>set</font></b> TID [alited::bar::CurrentTabID]
+    <i><font color=#4b5d50># ask about trailing all lines of a current file (with option: all of other files)</font></i>
+    <b><font color=#3a6797>set</font></b> msg [msgcat::mc <font color=#8b2a0e>&quot;Remove trailing whitespaces of all lines\nof \&quot;%f\&quot;?&quot;</font>]
+    <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %f [<b><font color=#3a6797>file</font></b> tail [alited::bar::FileName]]] <font color=#1b1baa>$msg</font>]
+    <b><font color=#3a6797>set</font></b> ans [alited::msg yesno ques <font color=#1b1baa>$msg</font> \
+      YES <font color=#653760>-title</font> {Remove trailing whitespaces} <font color=#653760>-ch</font> <font color=#1b1baa>$al(MC,otherfiles)</font>]
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>set</font></b> doit <font color=#1b1baa>$ans</font>]} <b><font color=#ca14ca>return</font></b>
+  }
+  <b><font color=#3a6797>set</font></b> waseditcurr no
+  <b><font color=#3a6797>foreach</font></b> tab [alited::bar::BAR listTab] {
+    <b><font color=#3a6797>set</font></b> tid [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tab</font> 0]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ans</font>==11 || <font color=#1b1baa>$tid</font> eq <font color=#1b1baa>$TID</font>} {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> curt [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$tid</font> eq [alited::bar::CurrentTabID]}]]} {
+        <b><font color=#3a6797>set</font></b> curl [<b><font color=#3a6797>expr</font></b> {int([[alited::main::GetWTXT <font color=#1b1baa>$tid</font> ] index insert])}]
+      }
+      <b><font color=#3a6797>lassign</font></b> [alited::main::GetText <font color=#1b1baa>$tid</font> no no] -&gt; wtxt
+      <b><font color=#3a6797>set</font></b> l1 1
+      <b><font color=#3a6797>set</font></b> l2 [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$wtxt</font> index {end -1c}])}]
+      <b><font color=#3a6797>set</font></b> wasedit no
+      <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> l <font color=#1b1baa>$l1</font>} {<font color=#1b1baa>$l</font>&lt;=<font color=#1b1baa>$l2</font>} {<b><font color=#3a6797>incr</font></b> l} {
+        <b><font color=#3a6797>set</font></b> line [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$l</font>.0 <font color=#1b1baa>$l</font>.end]
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> trimmed [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$line</font>]] ne <font color=#1b1baa>$line</font> && <font color=#1b1baa>$curt</font> && <font color=#1b1baa>$l</font>!=<font color=#1b1baa>$curl</font>} {
+          <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$wasedit</font>} {::apave::undoIn <font color=#1b1baa>$wtxt</font>}
+          <b><font color=#3a6797>set</font></b> wasedit yes
+          <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$l</font>.0 <font color=#1b1baa>$l</font>.end <font color=#1b1baa>$trimmed</font>
+        }
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wasedit</font>} {
+        ::apave::undoOut <font color=#1b1baa>$wtxt</font>
+        alited::bar::BAR markTab <font color=#1b1baa>$tid</font>
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtxt</font> eq [alited::main::CurrentWTXT]} {
+          <b><font color=#3a6797>set</font></b> waseditcurr yes  ;<i><font color=#4b5d50># update the current text's view only</font></i>
+        }
+      }
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$skipGUI</font>} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$waseditcurr</font>} {
+      alited::main::UpdateTextGutterTreeIcons
+    } <b><font color=#3a6797>else</font></b> {
+      alited::main::UpdateIcons
+    }
+  }
+}
+<a id=Macros></a>
+<i><font color=#4b5d50># ________________________ Macros _________________________ #</font></i>
+<a id=Preparing_macros></a>
+<i><font color=#4b5d50>## ________________________ Preparing macros _________________________ ##</font></i>
+<a id=edit::MacroSource></a>
+<b><font color=#ca14ca>proc</font></b> edit::MacroSource {} {
+  <i><font color=#4b5d50># Loads playtkl package.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> command ::playtkl::play] eq {}} {
+    <b><font color=#ca14ca>namespace</font></b> eval :: {
+      <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::LIBDIR</font> playtkl playtkl.tcl]
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::MacroInit></a>
+<b><font color=#ca14ca>proc</font></b> edit::MacroInit {} {
+  <i><font color=#4b5d50># Initializes macro stuff.</font></i>
+
+  MacroSource
+  ::playtkl::inform no
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::MacroDir></a>
+<b><font color=#ca14ca>proc</font></b> edit::MacroDir {} {
+  <i><font color=#4b5d50># Gets a directory name of macros.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>file</font></b> dirname [MacroFileName .]]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::MacroFileName></a>
+<b><font color=#ca14ca>proc</font></b> edit::MacroFileName {name {dir <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Gets a file name for a macro.</font></i>
+  <i><font color=#4b5d50>#   name - macro's name</font></i>
+  <i><font color=#4b5d50>#   dir - macro's directory</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al USERDIR USERDIR
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> extension <font color=#1b1baa>$name</font>] ne <font color=#1b1baa>$al(macroext)</font>} {
+    <b><font color=#3a6797>append</font></b> name <font color=#1b1baa>$al(macroext)</font>
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dir</font> eq {}} {
+    <b><font color=#3a6797>set</font></b> dir [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$USERDIR</font> macro]
+  }
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>file</font></b> normalize [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$dir</font> [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$name</font>]]]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::MacroMenu></a>
+<b><font color=#ca14ca>proc</font></b> edit::MacroMenu {name doit} {
+  <i><font color=#4b5d50># Recreate macros' menu.</font></i>
+  <i><font color=#4b5d50>#   name - current macro</font></i>
+  <i><font color=#4b5d50>#   doit - yes if update anyway</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  MacroSource
+  <b><font color=#3a6797>set</font></b> fname [MacroFileName <font color=#1b1baa>$name</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$doit</font> || <font color=#1b1baa>$al(activemacro)</font> ne <font color=#1b1baa>$name</font>} {
+    <b><font color=#3a6797>set</font></b> al(activemacro) <font color=#1b1baa>$name</font>
+    playtkl::readcontents <font color=#1b1baa>$fname</font>
+    alited::menu::FillMacroItems
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$al(activemacro)</font> eq <font color=#1b1baa>$name</font>} {
+    playtkl::readcontents <font color=#1b1baa>$fname</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::MacroExists></a>
+<b><font color=#ca14ca>proc</font></b> edit::MacroExists {fname} {
+  <i><font color=#4b5d50># Checks for existing macro.</font></i>
+  <i><font color=#4b5d50># If the macro doesn't exist, shows a message and updates the macros list menu.</font></i>
+  <i><font color=#4b5d50>#   fname - macro file name</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fname</font>]} {<b><font color=#ca14ca>return</font></b> yes}
+  alited::Balloon1 <font color=#1b1baa>$fname</font>
+  <b><font color=#3a6797>after</font></b> idle alited::menu::FillMacroItems
+  <b><font color=#ca14ca>return</font></b> no
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::MacroUpdate></a>
+<b><font color=#ca14ca>proc</font></b> edit::MacroUpdate {fname} {
+  <i><font color=#4b5d50># If a file is a macro, updates macros' list.</font></i>
+  <i><font color=#4b5d50>#   fname - file name</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> extension <font color=#1b1baa>$fname</font>] eq <font color=#1b1baa>$al(macroext)</font>} {
+    <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> alited::edit::MacroMenu <font color=#1b1baa>$fname</font> yes]
+  }
+}
+<a id=Handling_macros></a>
+<i><font color=#4b5d50>## ________________________ Handling macros _________________________ ##</font></i>
+<a id=edit::DoMacro></a>
+<b><font color=#ca14ca>proc</font></b> edit::DoMacro {mode {fname <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Plays or records a macro.</font></i>
+  <i><font color=#4b5d50>#   mode - play / record</font></i>
+  <i><font color=#4b5d50>#   fname - name of recorded file</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> macrosmode
+  MacroInit
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$macrosmode</font> eq <font color=#8b2a0e>&quot;record&quot;</font>} {  ;<i><font color=#4b5d50># repeated recording?</font></i>
+    ::playtkl::end
+    WatchMacro
+    <b><font color=#ca14ca>return</font></b> no
+  }
+  <b><font color=#3a6797>set</font></b> name [<b><font color=#3a6797>file</font></b> rootname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> fname [MacroFileName <font color=#1b1baa>$fname</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mode</font> eq <font color=#8b2a0e>&quot;play&quot;</font>} {
+      <b><font color=#3a6797>if</font></b> {[MacroExists <font color=#1b1baa>$fname</font>]} {
+        <i><font color=#4b5d50># play the macro after a pause to dismiss intervening events</font></i>
+        <b><font color=#3a6797>after</font></b> 50 [<b><font color=#3a6797>list</font></b> after idle [<b><font color=#3a6797>list</font></b> after 50 [<b><font color=#3a6797>list</font></b> after idle alited::edit::DoMacro <font color=#1b1baa>$mode</font>]]]
+      }
+      <b><font color=#ca14ca>return</font></b> no
+    }
+  }
+  <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+  <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;focus <font color=#1b1baa>$</font>wtxt&quot;</font>
+  <b><font color=#3a6797>set</font></b> macrosmode <font color=#1b1baa>$mode</font>
+  <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$mode</font> {
+    <font color=#8b2a0e>&quot;record&quot;</font> {
+      <b><font color=#3a6797>set</font></b> al(activemacro) <font color=#1b1baa>$name</font>
+      <b><font color=#3a6797>after</font></b> 100 [<b><font color=#3a6797>list</font></b> ::playtkl::record <font color=#1b1baa>$fname</font> <font color=#1b1baa>$al(acc_16)</font> <font color=#1b1baa>$al(macromouse)</font>]
+      <b><font color=#3a6797>after</font></b> 200 alited::edit::WatchMacro
+      alited::Message <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>msgcat::mc Recording:<font color=#1b1baa>]</font> <font color=#1b1baa>$</font>name&quot;</font> 5; <b><font color=#134070>bell</font></b>
+      <b><font color=#134070>bell</font></b>
+    }
+    <font color=#8b2a0e>&quot;play&quot;</font> {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> ne {}} {
+        alited::Message <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>msgcat::mc Playing:<font color=#1b1baa>]</font> <font color=#1b1baa>$</font>name&quot;</font> 3
+      } <b><font color=#3a6797>else</font></b> {
+        alited::Message {}
+      }
+      <b><font color=#134070>focus</font></b> <font color=#1b1baa>$wtxt</font>
+      ::apave::undoIn <font color=#1b1baa>$wtxt</font>
+      ::playtkl::replay <font color=#1b1baa>$fname</font> <font color=#8b2a0e>&quot;::apave::undoOut <font color=#1b1baa>$</font>wtxt&quot;</font> [<b><font color=#3a6797>list</font></b> *frAText.text* <font color=#1b1baa>$wtxt</font>] yes <font color=#1b1baa>$wtxt</font>
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> yes
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::InputMacro></a>
+<b><font color=#ca14ca>proc</font></b> edit::InputMacro {idx} {
+  <i><font color=#4b5d50># Enters/changes a macro.</font></i>
+  <i><font color=#4b5d50>#   idx - index in macro menu</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obDl2 obDl2
+  <b><font color=#3a6797>variable</font></b> macrosmode
+  <b><font color=#3a6797>set</font></b> m <font color=#1b1baa>$al(MENUEDIT)</font>.playtkl
+  <b><font color=#3a6797>incr</font></b> idx ;<i><font color=#4b5d50># for -tearoff menu</font></i>
+  <b><font color=#3a6797>set</font></b> al(macromouse) no
+  <b><font color=#3a6797>set</font></b> al(_macro) [<font color=#1b1baa>$m</font> entrycget <font color=#1b1baa>$idx</font> <font color=#653760>-label</font>]
+  <b><font color=#3a6797>set</font></b> al(_macroDir) {}
+  <b><font color=#3a6797>set</font></b> dir [MacroDir]
+  ReadMacroComment <font color=#1b1baa>$al(_macro)</font>
+  <b><font color=#3a6797>set</font></b> win <font color=#1b1baa>$al(WIN)</font>.macro
+  <b><font color=#3a6797>set</font></b> head [msgcat::mc <font color=#8b2a0e>&quot;The macro is updated at its recording.\nPress %s to play it.&quot;</font>]
+  <b><font color=#3a6797>set</font></b> head [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %s <font color=#1b1baa>$al(acc_16)</font>] <font color=#1b1baa>$head</font>]
+  <font color=#1b1baa>$obDl2</font> makeWindow <font color=#1b1baa>$win</font>.fra <font color=#1b1baa>$al(MC,playtkl)</font>
+  <font color=#1b1baa>$obDl2</font> paveWindow <font color=#1b1baa>$win</font>.fra { \
+    {lab - - 1 4 {<font color=#653760>-padx</font> 4} {<font color=#653760>-t</font> {<font color=#1b1baa>$head</font>}}} \
+    {fil + T 1 4 {<font color=#653760>-pady</font> 4 <font color=#653760>-padx</font> 4 <font color=#653760>-st</font> ew} \
+      <font color=#8b2a0e>&quot;-tvar ::alited::al(_macro) -validate all \</font>
+<font color=#8b2a0e>      -validatecommand alited::edit::ValidMacro -w 30 -initialdir <font color=#1b1baa>{$</font>dir<font color=#1b1baa>}</font> \</font>
+<font color=#8b2a0e>      -filetypes <font color=#1b1baa>{{{</font>Macros<font color=#1b1baa>}</font> <font color=#1b1baa>$</font>al(macroext)<font color=#1b1baa>}</font> <font color=#1b1baa>{{</font>All files<font color=#1b1baa>}</font> .*<font color=#1b1baa>}}</font>&quot;</font>} \
+    {chb + T 1 4 {<font color=#653760>-st</font> w <font color=#653760>-pady</font> 4} {<font color=#653760>-t</font> {Record mouse} <font color=#653760>-var</font> ::alited::al(macromouse)}} \
+    {seh + T 1 4 {<font color=#653760>-pady</font> 4}} \
+    {lab2 + T 1 4 {} {<font color=#653760>-t</font> Comment:}} \
+    {fra0 + T 1 4 {<font color=#653760>-rw</font> 1 <font color=#653760>-st</font> nsew}} \
+    {.TexCmn L + - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both <font color=#653760>-padx</font> 3} \
+      {<font color=#653760>-h</font> 4 <font color=#653760>-w</font> 40 <font color=#653760>-wrap</font> word <font color=#653760>-tabnext</font> *.but1 <font color=#653760>-rotext</font> ::alited::al(macrocomment) <font color=#653760>-ro</font> 0}} \
+    {.sbvText + L - - {<b><font color=#134070>pack</font></b>}} \
+    {seh2 fra0 T 1 4 {<font color=#653760>-pady</font> 4}} \
+    {fra + T 1 1 {<font color=#653760>-st</font> w}} \
+    {.ButPlay - - 1 1 {<font color=#653760>-padx</font> 4} {<font color=#653760>-com</font> 1 <font color=#653760>-tip</font> <font color=#8b2a0e>&quot;Play Macro&quot;</font> <font color=#653760>-image</font> alimg_run}} \
+    {.ButRec + L 1 1 {} {<font color=#653760>-com</font> 2 <font color=#653760>-tip</font> <font color=#8b2a0e>&quot;Record Macro&quot;</font> <font color=#653760>-image</font> alimg_change}} \
+    {.ButDel + L 1 1 {<font color=#653760>-padx</font> 4} {<font color=#653760>-com</font> 3 <font color=#653760>-tip</font> <font color=#8b2a0e>&quot;Delete Macro&quot;</font> <font color=#653760>-image</font> alimg_delete}} \
+    {h_ fra L 1 1 {<font color=#653760>-st</font> we <font color=#653760>-cw</font> 1}} \
+    {buth + L 1 1 {<font color=#653760>-st</font> e} {<font color=#653760>-t</font> Help <font color=#653760>-com</font> alited::edit::HelpOnMacro}} \
+    {but + L 1 1 {<font color=#653760>-st</font> e} {<font color=#653760>-com</font> 0 <font color=#653760>-t</font> Cancel}} \
+  }
+  <b><font color=#3a6797>set</font></b> tex [<font color=#1b1baa>$obDl2</font> TexCmn]
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;F1&gt; alited::edit::HelpOnMacro
+  <b><font color=#3a6797>set</font></b> butplay [<font color=#1b1baa>$obDl2</font> ButPlay]
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;<font color=#1b1baa>$al(acc_16)</font>&gt; <font color=#8b2a0e>&quot;if <font color=#1b1baa>{</font>\[<font color=#1b1baa>$</font>butplay cget -state\] eq <font color=#1b1baa>{</font>normal<font color=#1b1baa>}}</font> <font color=#1b1baa>{$</font>butplay invoke<font color=#1b1baa>}</font>&quot;</font>
+  <b><font color=#3a6797>after</font></b> 200 ::apave::MouseOnWidget <font color=#1b1baa>$butplay</font>
+  <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$obDl2</font> showModal <font color=#1b1baa>$win</font> <font color=#653760>-resizable</font> 1 <font color=#653760>-focus</font> <font color=#1b1baa>$win</font>.fra.entfil <font color=#653760>-geometry</font> pointer+10+10]
+  <b><font color=#3a6797>set</font></b> al(macrocomment) [<font color=#1b1baa>$tex</font> get 1.0 end]
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$win</font>}
+  <b><font color=#3a6797>set</font></b> name [::apave::NormalizeFileName [<b><font color=#3a6797>file</font></b> root [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$al(_macro)</font>]]]
+  <b><font color=#3a6797>set</font></b> fname [MacroFileName <font color=#1b1baa>$name</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(_macroDir)</font> ni {. <font color=#8b2a0e>&quot;&quot;</font>}} {
+    <i><font color=#4b5d50># if chosen macro doesn't exist in user's dir, copy it there</font></i>
+    <b><font color=#3a6797>set</font></b> fchosen [MacroFileName <font color=#1b1baa>$name</font> <font color=#1b1baa>$al(_macroDir)</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fchosen</font> ne <font color=#1b1baa>$fname</font> && ![<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fname</font>]} {
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>file</font></b> copy <font color=#1b1baa>$fchosen</font> <font color=#1b1baa>$fname</font>}
+      <b><font color=#3a6797>after</font></b> idle alited::menu::FillMacroItems
+    }
+    <b><font color=#3a6797>set</font></b> fname <font color=#1b1baa>$fchosen</font>
+  }
+  <b><font color=#3a6797>unset</font></b> al(_macro)
+  <b><font color=#3a6797>unset</font></b> al(_macroDir)
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$res</font>} {
+    <b><font color=#3a6797>set</font></b> macrosmode <font color=#8b2a0e>&quot;init&quot;</font>
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$name</font>]&gt;99 || <font color=#1b1baa>$name</font> eq {}} {
+    alited::Msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$name</font>] <font color=#1b1baa>$al(MC,incorrname)</font>] err
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$res</font> {
+    1 {
+      MacroMenu <font color=#1b1baa>$name</font> no
+      <b><font color=#3a6797>if</font></b> {[DoMacro play <font color=#1b1baa>$name</font>]} {
+        <b><font color=#3a6797>set</font></b> macrosmode <font color=#8b2a0e>&quot;play&quot;</font>
+      }
+    }
+    2 {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fname</font>]} {
+        <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists al(macrotorew)] || ![<b><font color=#3a6797>string</font></b> match *10 <font color=#1b1baa>$al(macrotorew)</font>]} {
+          <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %f [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>] %d [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname</font>]] \
+            <font color=#1b1baa>$al(MC,fileexist)</font>]
+          <b><font color=#3a6797>set</font></b> dlg [::apave::APave new]
+          <b><font color=#3a6797>set</font></b> al(macrotorew) [<font color=#1b1baa>$dlg</font> misc warn \
+            <font color=#1b1baa>$al(MC,playtkl)</font> <font color=#1b1baa>$msg</font> {<font color=#8b2a0e>&quot;Rewrite&quot;</font> File <font color=#8b2a0e>&quot;Edit&quot;</font> Change <font color=#8b2a0e>&quot;Cancel&quot;</font> 0} \
+            0 <font color=#653760>-ch</font> <font color=#1b1baa>$al(MC,noask)</font> <font color=#653760>-centerme</font> <font color=#1b1baa>$al(WIN)</font>]
+          <font color=#1b1baa>$dlg</font> destroy
+        }
+        <b><font color=#3a6797>switch</font></b> <font color=#653760>-glob</font> <font color=#1b1baa>$al(macrotorew)</font> {
+          File* {}
+          Change* {alited::file::OpenFile <font color=#1b1baa>$fname</font> yes; <b><font color=#ca14ca>return</font></b>}
+          <b><font color=#3a6797>default</font></b> {<b><font color=#3a6797>set</font></b> al(macrotorew) {}; <b><font color=#ca14ca>return</font></b>}
+        }
+      }
+      <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> alited::edit::DoMacro record <font color=#1b1baa>$name</font>]
+      }
+    3 {
+      <b><font color=#3a6797>if</font></b> {![MacroExists <font color=#1b1baa>$fname</font>]} <b><font color=#ca14ca>return</font></b>
+      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists al(macrotodel)] || <font color=#1b1baa>$al(macrotodel)</font>&lt;10} {
+        <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %f [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]] <font color=#1b1baa>$al(MC,delfile)</font>]
+        <b><font color=#3a6797>set</font></b> al(macrotodel) [alited::msg yesno warn <font color=#1b1baa>$msg</font> NO <font color=#653760>-ch</font> <font color=#1b1baa>$al(MC,noask)</font>]
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(macrotodel)</font>} {
+        <b><font color=#3a6797>file</font></b> delete <font color=#1b1baa>$fname</font>
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$name</font> eq <font color=#1b1baa>$al(activemacro)</font>} {
+          <b><font color=#3a6797>set</font></b> al(activemacro) {}
+        }
+        <b><font color=#3a6797>set</font></b> macrosmode <font color=#8b2a0e>&quot;init&quot;</font>
+        <b><font color=#3a6797>after</font></b> idle alited::menu::FillMacroItems
+      }
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::ValidMacro></a>
+<b><font color=#ca14ca>proc</font></b> edit::ValidMacro {} {
+  <i><font color=#4b5d50># Validates the macro name.</font></i>
+
+  <b><font color=#3a6797>after</font></b> idle alited::edit::ValidMacroReal
+  <b><font color=#ca14ca>return</font></b> yes
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::ValidMacroReal></a>
+<b><font color=#ca14ca>proc</font></b> edit::ValidMacroReal {} {
+  <i><font color=#4b5d50># Gets &quot;root tail&quot; of the file name and saves its directory name.</font></i>
+  <i><font color=#4b5d50># Changes the record icon depending on the macro file exists or not.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obDl2 obDl2
+  <b><font color=#3a6797>set</font></b> tmpdir [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$al(_macro)</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tmpdir</font> ni {. <font color=#8b2a0e>&quot;&quot;</font>}} {<b><font color=#3a6797>set</font></b> al(_macroDir) <font color=#1b1baa>$tmpdir</font>}
+  <b><font color=#3a6797>set</font></b> al(_macro) [<b><font color=#3a6797>file</font></b> rootname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$al(_macro)</font>]]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> exists [MacroFileName [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$al(_macro)</font>]]]} {
+    <b><font color=#3a6797>set</font></b> icon change
+    <b><font color=#3a6797>set</font></b> mstate normal
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> icon add
+    <b><font color=#3a6797>set</font></b> mstate disabled
+  }
+  <b><font color=#3a6797>set</font></b> icon alimg_<font color=#1b1baa>$icon</font>
+  <b><font color=#3a6797>set</font></b> but [<font color=#1b1baa>$obDl2</font> ButRec]
+  <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$but</font> cget <font color=#653760>-image</font>] ne <font color=#1b1baa>$icon</font>} {::apave::blinkWidgetImage <font color=#1b1baa>$but</font> <font color=#1b1baa>$icon</font>}
+  [<font color=#1b1baa>$obDl2</font> ButPlay] configure <font color=#653760>-state</font> <font color=#1b1baa>$mstate</font>
+  [<font color=#1b1baa>$obDl2</font> ButDel] configure <font color=#653760>-state</font> <font color=#1b1baa>$mstate</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::DispatchMacro></a>
+<b><font color=#ca14ca>proc</font></b> edit::DispatchMacro {{mode <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Dispatches macro actions.</font></i>
+  <i><font color=#4b5d50>#   mode - what to do</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> macrosmode
+  MacroInit
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mode</font> ne {}} {<b><font color=#3a6797>set</font></b> macrosmode <font color=#1b1baa>$mode</font>}
+  <b><font color=#3a6797>switch</font></b> <font color=#653760>-glob</font> <font color=#1b1baa>$macrosmode</font> {
+    <font color=#8b2a0e>&quot;item*&quot;</font>    {InputMacro [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$macrosmode</font> 4 end]}
+    <font color=#8b2a0e>&quot;record&quot;</font>   {
+      <b><font color=#3a6797>set</font></b> fname [MacroFileName <font color=#1b1baa>$al(activemacro)</font>]
+      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists al(macrocomment)]} {ReadMacroComment <font color=#1b1baa>$fname</font>}  ;<i><font color=#4b5d50># get the comment</font></i>
+      ::playtkl::end <font color=#1b1baa>$al(macrocomment)</font>
+      <b><font color=#3a6797>set</font></b> macrosmode {}
+    }
+    <font color=#8b2a0e>&quot;quickrec&quot;</font> {
+      <b><font color=#3a6797>set</font></b> al(activemacro) <font color=#1b1baa>$al(MC,quickmacro)</font>
+      <b><font color=#3a6797>set</font></b> al(macromouse) no
+      DoMacro record <font color=#1b1baa>$al(MC,quickmacro)</font>
+    }
+    <font color=#8b2a0e>&quot;init&quot;</font>     {
+      <i><font color=#4b5d50># the very first call of DispatchMacro: activate an old active macro</font></i>
+      MacroMenu <font color=#1b1baa>$al(activemacro)</font> yes
+      DoMacro play <font color=#1b1baa>$al(activemacro)</font>
+      <b><font color=#3a6797>set</font></b> macrosmode {}
+      <b><font color=#3a6797>after</font></b> idle {<b><font color=#3a6797>set</font></b> alited::edit::macrosmode play}
+    }
+    <font color=#8b2a0e>&quot;play&quot;</font>     {
+      DoMacro play
+      <b><font color=#3a6797>set</font></b> macrosmode {}
+      <b><font color=#3a6797>after</font></b> idle {<b><font color=#3a6797>set</font></b> alited::edit::macrosmode play}
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::WatchMacro></a>
+<b><font color=#ca14ca>proc</font></b> edit::WatchMacro {} {
+  <i><font color=#4b5d50># Watch the end of recording.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> macrosmode
+  <b><font color=#3a6797>if</font></b> {[::playtkl::isend]} {
+    alited::Message {Recording: done} 5; <b><font color=#134070>bell</font></b>
+    MacroMenu <font color=#1b1baa>$al(activemacro)</font> yes
+    <b><font color=#3a6797>set</font></b> macrosmode <font color=#8b2a0e>&quot;play&quot;</font>
+    <b><font color=#134070>bell</font></b>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>after</font></b> 200 alited::edit::WatchMacro
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::ReadMacroComment></a>
+<b><font color=#ca14ca>proc</font></b> edit::ReadMacroComment {fname} {
+  <i><font color=#4b5d50># Reads macro's comment.</font></i>
+  <i><font color=#4b5d50>#  fname - the macro's file name</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> fcont [::apave::readTextFile [MacroFileName <font color=#1b1baa>$fname</font>]]
+  <b><font color=#3a6797>set</font></b> al(macrocomment) {}
+  <b><font color=#3a6797>foreach</font></b> ln [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$fcont</font> \n] {
+    <b><font color=#3a6797>set</font></b> ln [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$ln</font>]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match #* <font color=#1b1baa>$ln</font>]} {
+      <b><font color=#3a6797>append</font></b> al(macrocomment) [<b><font color=#3a6797>string</font></b> trimleft <font color=#1b1baa>$ln</font> #] \n
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::OpenMacroFile></a>
+<b><font color=#ca14ca>proc</font></b> edit::OpenMacroFile {} {
+  <i><font color=#4b5d50># Opens a file of macro.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obDl2 obDl2
+  <b><font color=#3a6797>set</font></b> al(TMPfname) [MacroFileName <font color=#1b1baa>$al(MC,quickmacro)</font>]
+  <b><font color=#3a6797>set</font></b> types [<b><font color=#3a6797>list</font></b> [<b><font color=#3a6797>list</font></b> {Macro Files} <font color=#1b1baa>$al(macroext)</font>]]
+  <b><font color=#3a6797>set</font></b> fname [<font color=#1b1baa>$obDl2</font> chooser tk_getOpenFile ::alited::al(TMPfname) \
+      <font color=#653760>-initialdir</font> [MacroDir] <font color=#653760>-filetypes</font> <font color=#1b1baa>$types</font> <font color=#653760>-parent</font> <font color=#1b1baa>$al(WIN)</font>]
+  <b><font color=#3a6797>unset</font></b> al(TMPfname)
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> ne {}} {alited::file::OpenFile <font color=#1b1baa>$fname</font>}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::HelpOnMacro></a>
+<b><font color=#ca14ca>proc</font></b> edit::HelpOnMacro {{modal yes}} {
+  <i><font color=#4b5d50># Shows Play Macro help.</font></i>
+  <i><font color=#4b5d50>#   modal - yes if run from the dialogue</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al DATADIR DATADIR
+  <b><font color=#3a6797>set</font></b> foc [<b><font color=#134070>focus</font></b>]
+  alited::HelpFile <font color=#1b1baa>$al(WIN)</font> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$DATADIR</font> help macro.txt] <font color=#653760>-head</font> <font color=#1b1baa>$al(MC,playtkl)</font> <font color=#653760>-weight</font> bold <font color=#653760>-modal</font> <font color=#1b1baa>$modal</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$modal</font>} {
+    <b><font color=#134070>focus</font></b> <font color=#1b1baa>$al(WIN)</font>.macro
+    <b><font color=#134070>focus</font></b> <font color=#653760>-force</font> <font color=#1b1baa>$foc</font>
+  }
+}
+<a id=Rectangular_selection></a>
+<i><font color=#4b5d50># ________________________ Rectangular selection _________________________ #</font></i>
+<a id=edit::RectSelection></a>
+<b><font color=#ca14ca>proc</font></b> edit::RectSelection {mode} {
+  <i><font color=#4b5d50># Starts, ends, does, cuts, copies and pastes a rectangular selection.</font></i>
+  <i><font color=#4b5d50>#   mode: 0 for start/end, 1 do, 2 cut, 3 copy, 4 paste</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mode</font>==1 && !<font color=#1b1baa>$al(rectSel)</font>} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>set</font></b> TID [alited::bar::CurrentTabID]
+  <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<font color=#1b1baa>$wtxt</font> index insert] .] nl nc
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mode</font>==0} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(rectSel)</font>} {
+      <b><font color=#3a6797>set</font></b> al(rectSel,TID) <font color=#1b1baa>$TID</font>  ;<i><font color=#4b5d50># starts selecting</font></i>
+      <b><font color=#3a6797>set</font></b> al(rectSel,nl) <font color=#1b1baa>$nl</font>
+      <b><font color=#3a6797>set</font></b> al(rectSel,nc) <font color=#1b1baa>$nc</font>
+      <b><font color=#3a6797>set</font></b> al(rectSel,text) [<b><font color=#3a6797>list</font></b>]
+      <b><font color=#3a6797>set</font></b> mode 1
+      alited::Message [msgcat::mc {Move the cursor to select a rectangle.}] 3
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> al(rectSel,TID) {}    ;<i><font color=#4b5d50># ends selecting</font></i>
+    }
+  }
+  <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$mode</font> {
+    1 {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(rectSel)</font> && <font color=#1b1baa>$al(rectSel,TID)</font> eq <font color=#1b1baa>$TID</font>} {
+        makeRect <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$al(rectSel,nl)</font> <font color=#1b1baa>$al(rectSel,nc)</font> <font color=#1b1baa>$nl</font> <font color=#1b1baa>$nc</font>
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> al(rectSel,TID) {}  ;<i><font color=#4b5d50># at switching tabs</font></i>
+        <b><font color=#3a6797>set</font></b> al(rectSel) 0
+      }
+    }
+    2 - 3 {saveRect <font color=#1b1baa>$mode</font> <font color=#1b1baa>$wtxt</font>}
+    4     {pasteRect <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$nl</font> <font color=#1b1baa>$nc</font>}
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(rectSel)</font>} {<b><font color=#3a6797>set</font></b> ico none} {<b><font color=#3a6797>set</font></b> ico run}
+  <font color=#1b1baa>$al(MENUEDIT)</font>.rectsel entryconfigure 1 <font color=#653760>-image</font> alimg_<font color=#1b1baa>$ico</font>
+  <b><font color=#134070>focus</font></b> <font color=#1b1baa>$wtxt</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::makeRect></a>
+<b><font color=#ca14ca>proc</font></b> edit::makeRect {wtxt alnl alnc nl nc} {
+  <i><font color=#4b5d50># Selects a rectangle.</font></i>
+  <i><font color=#4b5d50>#   wtxt - the current text's path</font></i>
+  <i><font color=#4b5d50>#   alnl - starting row</font></i>
+  <i><font color=#4b5d50>#   alnc - starting column</font></i>
+  <i><font color=#4b5d50>#   nl - current row</font></i>
+  <i><font color=#4b5d50>#   nc - current column</font></i>
+
+  <b><font color=#3a6797>set</font></b> l1 [<b><font color=#3a6797>expr</font></b> {min(<font color=#1b1baa>$alnl</font>,<font color=#1b1baa>$nl</font>)}]
+  <b><font color=#3a6797>set</font></b> l2 [<b><font color=#3a6797>expr</font></b> {max(<font color=#1b1baa>$alnl</font>,<font color=#1b1baa>$nl</font>)}]
+  <b><font color=#3a6797>set</font></b> c1 [<b><font color=#3a6797>expr</font></b> {min(<font color=#1b1baa>$alnc</font>,<font color=#1b1baa>$nc</font>)}]
+  <b><font color=#3a6797>set</font></b> c2 [<b><font color=#3a6797>expr</font></b> {max(<font color=#1b1baa>$alnc</font>,<font color=#1b1baa>$nc</font>)}]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$c1</font>==<font color=#1b1baa>$c2</font>} {<b><font color=#3a6797>set</font></b> c2 end}  ;<i><font color=#4b5d50># to select &quot;all to line ends&quot;</font></i>
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> l <font color=#1b1baa>$l1</font>} {<font color=#1b1baa>$l</font>&lt;=<font color=#1b1baa>$l2</font>} {<b><font color=#3a6797>incr</font></b> l} {
+    <font color=#1b1baa>$wtxt</font> tag add sel <font color=#1b1baa>$l</font>.<font color=#1b1baa>$c1</font> <font color=#1b1baa>$l</font>.<font color=#1b1baa>$c2</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::saveRect></a>
+<b><font color=#ca14ca>proc</font></b> edit::saveRect {mode wtxt} {
+  <i><font color=#4b5d50># Cuts & copies a rectangle.</font></i>
+  <i><font color=#4b5d50>#   mode - 2 cut, 3 copy</font></i>
+  <i><font color=#4b5d50>#   wtxt - the current text's path</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> selection [<font color=#1b1baa>$wtxt</font> tag ranges sel]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$selection</font>]} {
+    <b><font color=#3a6797>set</font></b> ln1 999999999
+    <b><font color=#3a6797>set</font></b> al(rectSel,text) [<b><font color=#3a6797>list</font></b>]
+    <b><font color=#3a6797>foreach</font></b> {from to} <font color=#1b1baa>$selection</font> {
+      <b><font color=#3a6797>set</font></b> ln2 [::apave::pint <font color=#1b1baa>$from</font>]
+      <b><font color=#3a6797>while</font></b> {[<b><font color=#3a6797>incr</font></b> ln1]&lt;<font color=#1b1baa>$ln2</font>} {       ;<i><font color=#4b5d50># empty intermediate lines</font></i>
+        <b><font color=#3a6797>lappend</font></b> al(rectSel,text) {}   ;<i><font color=#4b5d50># to be included too</font></i>
+      }
+      <b><font color=#3a6797>lappend</font></b> al(rectSel,text) [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$from</font> <font color=#1b1baa>$to</font>]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mode</font>==2} {<font color=#1b1baa>$wtxt</font> delete <font color=#1b1baa>$from</font> <font color=#1b1baa>$to</font>}
+      <b><font color=#3a6797>set</font></b> ln1 [::apave::pint <font color=#1b1baa>$to</font>]
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mode</font>==2} {
+      <b><font color=#3a6797>catch</font></b> {::tk::TextSetCursor <font color=#1b1baa>$wtxt</font> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$selection</font> 0 0]}
+    }
+  }
+  <b><font color=#3a6797>set</font></b> al(rectSel) 0
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::pasteRect></a>
+<b><font color=#ca14ca>proc</font></b> edit::pasteRect {wtxt nl nc} {
+  <i><font color=#4b5d50># Pastes a rectangle.</font></i>
+  <i><font color=#4b5d50>#   wtxt - the current text's path</font></i>
+  <i><font color=#4b5d50>#   nl - current row</font></i>
+  <i><font color=#4b5d50>#   nc - current column</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$al(rectSel,text)</font>]} {
+    <font color=#1b1baa>$wtxt</font> tag remove sel 1.0 end
+    <b><font color=#3a6797>set</font></b> sels [<b><font color=#3a6797>list</font></b>]
+    <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$al(rectSel,text)</font> {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$line</font> ne {}} {
+        <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$nl</font>.<font color=#1b1baa>$nc</font> <font color=#1b1baa>$line</font>
+        <b><font color=#3a6797>set</font></b> pos2 <font color=#1b1baa>$nl</font>.[<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$nc</font>+[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$line</font>]}]
+        <b><font color=#3a6797>lappend</font></b> sels <font color=#1b1baa>$nl</font>.<font color=#1b1baa>$nc</font> <font color=#1b1baa>$pos2</font>
+        <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists pos1]} {<b><font color=#3a6797>set</font></b> pos1 <font color=#1b1baa>$pos2</font>}
+      }
+      <b><font color=#3a6797>incr</font></b> nl
+    }
+    <b><font color=#3a6797>catch</font></b> {::tk::TextSetCursor <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$pos1</font>}
+    <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$wtxt</font> tag add sel {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$sels</font>}
+  }
+}
+<a id=To_words_right_/_left></a>
+<i><font color=#4b5d50># ________________________ To words right / left _________________________ #</font></i>
+<a id=edit::ControlRight></a>
+<b><font color=#ca14ca>proc</font></b> edit::ControlRight {txt s} {
+  <i><font color=#4b5d50># Goes to a next word's start as seen from programmer's viewpoint.</font></i>
+  <i><font color=#4b5d50>#   txt - text's path</font></i>
+  <i><font color=#4b5d50>#   s - key state</font></i>
+  <i><font color=#4b5d50># The code is rather efficient with long sequences of non-word chars.</font></i>
+  <i><font color=#4b5d50>#   [Going_on_words_with_Ctrl+arrow](https://core.tcl-lang.org/tk/tktview/168f3ef130)</font></i>
+  <i><font color=#4b5d50>#   [text_index_{insert_wordstart}](https://core.tcl-lang.org/tk/tktview/57b821d2db)</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$s</font> % 2} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;insert wordend&quot;</font>]
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$pos</font> .] -&gt; col
+  <b><font color=#3a6797>set</font></b> linestart [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$txt</font> index insert])}]
+  <b><font color=#3a6797>set</font></b> lineend [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$txt</font> index end])}]
+  <b><font color=#3a6797>while</font></b> {<font color=#1b1baa>$linestart</font> &lt;= <font color=#1b1baa>$lineend</font>} {
+    <b><font color=#3a6797>set</font></b> line [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$linestart</font>.0 <font color=#1b1baa>$linestart</font>.end]
+    <b><font color=#3a6797>if</font></b> {int(<font color=#1b1baa>$pos</font>)&gt;<font color=#1b1baa>$linestart</font>} {
+      <b><font color=#3a6797>set</font></b> col [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$line</font>]
+    }
+    <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-indices</font> <font color=#653760>-start</font> <font color=#1b1baa>$col</font> <font color=#653760>-inline</font> <font color=#8b2a0e>&quot;\\w<font color=#1b1baa>{</font>1<font color=#1b1baa>}</font>&quot;</font> <font color=#1b1baa>$line</font>]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$res</font>]} {
+      ::tk::TextSetCursor <font color=#1b1baa>$txt</font> <font color=#1b1baa>$linestart</font>.[<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$res</font> 0 0]
+      <b><font color=#ca14ca>break</font></b>
+    }
+    <b><font color=#3a6797>set</font></b> pos [<b><font color=#3a6797>incr</font></b> linestart].[<b><font color=#3a6797>set</font></b> col 0]
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#653760>-code</font> break
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::ControlLeft></a>
+<b><font color=#ca14ca>proc</font></b> edit::ControlLeft {txt s} {
+  <i><font color=#4b5d50># Goes to a previous word's start/end as seen from programmer's viewpoint.</font></i>
+  <i><font color=#4b5d50>#   txt - text's path</font></i>
+  <i><font color=#4b5d50>#   s - key state</font></i>
+  <i><font color=#4b5d50># The code is rather efficient with long sequences of non-word chars.</font></i>
+  <i><font color=#4b5d50># See also:</font></i>
+  <i><font color=#4b5d50>#   [Going_on_words_with_Ctrl+arrow](https://core.tcl-lang.org/tk/tktview/168f3ef130)</font></i>
+  <i><font color=#4b5d50>#   [text_index_{insert_wordstart}](https://core.tcl-lang.org/tk/tktview/57b821d2db)</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$s</font> % 2} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$txt</font> index insert]
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$pos</font> .] -&gt; col
+  <b><font color=#3a6797>set</font></b> linestart [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$pos</font>)}]
+  <b><font color=#3a6797>while</font></b> {<font color=#1b1baa>$linestart</font>&gt;=0} {
+    <b><font color=#3a6797>set</font></b> line [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$linestart</font>.0 <font color=#1b1baa>$linestart</font>.<font color=#1b1baa>$col</font>]
+    <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$line</font>]} {[<b><font color=#3a6797>incr</font></b> i -1]&gt;=0} {} {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is wordchar <font color=#653760>-strict</font> [<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$line</font> <font color=#1b1baa>$i</font>]]} {
+        <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> is wordchar <font color=#653760>-strict</font> [<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$line</font> [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$i</font>-1}]]]} {
+          <b><font color=#3a6797>set</font></b> pos1 <font color=#1b1baa>$linestart</font>.<font color=#1b1baa>$i</font>
+          <b><font color=#3a6797>set</font></b> pos2 [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos1 wordend&quot;</font>]
+          <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$txt</font> compare <font color=#1b1baa>$pos2</font> &lt; <font color=#1b1baa>$pos</font>]} {<b><font color=#3a6797>set</font></b> pos1 <font color=#1b1baa>$pos2</font>}
+          ::tk::TextSetCursor <font color=#1b1baa>$txt</font> <font color=#1b1baa>$pos1</font>
+          <b><font color=#ca14ca>return</font></b> <font color=#653760>-code</font> break
+        }
+      }
+    }
+    <b><font color=#3a6797>incr</font></b> linestart -1
+    <b><font color=#3a6797>set</font></b> col {end +1c}
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#653760>-code</font> break
+}
+<a id=Formats></a>
+<i><font color=#4b5d50># ________________________ Formats _________________________ #</font></i>
+<a id=edit::IniParameter></a>
+<b><font color=#ca14ca>proc</font></b> edit::IniParameter {parname line {case <font color=#653760>-nocase</font>}} {
+  <i><font color=#4b5d50># Gets parameter value from a line of ini-file.</font></i>
+  <i><font color=#4b5d50>#   parname - parameter name (can contain several names separated with comma)</font></i>
+  <i><font color=#4b5d50>#   line - line content</font></i>
+  <i><font color=#4b5d50>#   case - option &quot;-nocase&quot; for regexp (default) or any other option</font></i>
+
+  <b><font color=#3a6797>foreach</font></b> pname [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$parname</font> ,] {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$case</font> <font color=#8b2a0e>&quot;^\\s*<font color=#1b1baa>$</font>pname\\s*=\\s*&quot;</font> <font color=#1b1baa>$line</font>]} {
+      <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>string</font></b> first = <font color=#1b1baa>$line</font>]
+      <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> [<b><font color=#3a6797>incr</font></b> i] end]
+      <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$res</font>]
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> {}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::SourceFormatTcl></a>
+<b><font color=#ca14ca>proc</font></b> edit::SourceFormatTcl {} {
+  <i><font color=#4b5d50># Sources format.tcl.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>namespace</font></b> exists ::alited::format]} {
+    <b><font color=#ca14ca>namespace</font></b> eval ::alited {
+      <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::SRCDIR</font> format.tcl]
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::FormatUnitDesc></a>
+<b><font color=#ca14ca>proc</font></b> edit::FormatUnitDesc {} {
+
+  SourceFormatTcl
+  alited::format::UnitDesc
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::RunFormat></a>
+<b><font color=#ca14ca>proc</font></b> edit::RunFormat {fname} {
+  <i><font color=#4b5d50># Does format according to a format file.</font></i>
+  <i><font color=#4b5d50>#   fname - format file's name</font></i>
+
+  SourceFormatTcl
+  <b><font color=#3a6797>set</font></b> fcont [<b><font color=#3a6797>split</font></b> [::apave::readTextFile <font color=#1b1baa>$fname</font>] \n]
+  <b><font color=#3a6797>set</font></b> mode 0
+  <b><font color=#3a6797>set</font></b> cont [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>set</font></b> backslashed {}
+  <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$fcont</font> {
+    <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$line</font>]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$line</font> end] eq <font color=#8b2a0e>&quot;\\&quot;</font>} {
+      <b><font color=#3a6797>append</font></b> backslashed { } [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$line</font> \\]
+      <b><font color=#ca14ca>continue</font></b>
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$backslashed</font> ne {}} {
+      <b><font color=#3a6797>set</font></b> line <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>backslashed <font color=#1b1baa>$</font>line&quot;</font>
+      <b><font color=#3a6797>set</font></b> backslashed {}
+    }
+    <b><font color=#3a6797>lappend</font></b> cont <font color=#1b1baa>$line</font>
+  }
+  <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$cont</font> {
+    <b><font color=#3a6797>incr</font></b> iline
+    <b><font color=#3a6797>set</font></b> mode [IniParameter mode <font color=#1b1baa>$line</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mode</font> in {1 2 3 4 5}} {
+      alited::format::Mode<font color=#1b1baa>$mode</font> [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$cont</font> <font color=#1b1baa>$iline</font> end]
+      <b><font color=#ca14ca>break</font></b>
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::OpenFormatFile></a>
+<b><font color=#ca14ca>proc</font></b> edit::OpenFormatFile {dir} {
+  <i><font color=#4b5d50># Opens file(s) from data/format directory or its subdirectories.</font></i>
+  <i><font color=#4b5d50>#   dir - (sub)directory name</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav DATADIR DATADIR
+  <b><font color=#3a6797>set</font></b> ::alited::al(TMPfname) {}
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>glob</font></b> <font color=#653760>-nocomplain</font> <font color=#653760>-directory</font> <font color=#1b1baa>$dir</font> *] eq {}} {
+    <b><font color=#3a6797>set</font></b> dir [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$dir</font>]
+  }
+  <b><font color=#3a6797>set</font></b> fnames [<font color=#1b1baa>$obPav</font> chooser tk_getOpenFile ::alited::al(TMPfname) \
+    <font color=#653760>-initialdir</font> <font color=#1b1baa>$dir</font> <font color=#653760>-parent</font> <font color=#1b1baa>$al(WIN)</font> <font color=#653760>-multiple</font> 1]
+  <b><font color=#3a6797>unset</font></b> ::alited::al(TMPfname)
+  <b><font color=#3a6797>foreach</font></b> fn [<b><font color=#3a6797>lreverse</font></b> [<b><font color=#3a6797>lsort</font></b> <font color=#1b1baa>$fnames</font>]] {
+    alited::file::OpenFile <font color=#1b1baa>$fn</font> yes
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::InvertStringCase></a>
+<b><font color=#ca14ca>proc</font></b> edit::InvertStringCase {str} {
+  <i><font color=#4b5d50># Inverts cases in a string (e.g. InversE -&gt; iNVERSe).</font></i>
+  <i><font color=#4b5d50>#   str - the string</font></i>
+
+  <b><font color=#3a6797>set</font></b> res {}
+  <b><font color=#3a6797>lmap</font></b> ch [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$str</font> {}] {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is lower <font color=#1b1baa>$ch</font>]} {
+      <b><font color=#3a6797>set</font></b> ch [<b><font color=#3a6797>string</font></b> toupper <font color=#1b1baa>$ch</font>]
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> ch [<b><font color=#3a6797>string</font></b> tolower <font color=#1b1baa>$ch</font>]
+    }
+    <b><font color=#3a6797>append</font></b> res <font color=#1b1baa>$ch</font>
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::SqueezeString></a>
+<b><font color=#ca14ca>proc</font></b> edit::SqueezeString {str} {
+  <i><font color=#4b5d50># Squeezes multiple spaces to one space (except for leading spaces)</font></i>
+  <i><font color=#4b5d50># and removes tailing spaces, e.g. &quot;   a  b   c &quot; =&gt; &quot;   a b c&quot;.</font></i>
+  <i><font color=#4b5d50>#   str - the string</font></i>
+
+  <b><font color=#3a6797>set</font></b> isp [apave::obj leadingSpaces <font color=#1b1baa>$str</font>]
+  <b><font color=#3a6797>set</font></b> substring [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$str</font> <font color=#1b1baa>$isp</font> end]
+  <b><font color=#3a6797>set</font></b> splist [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> <font color=#653760>-all</font> {[ ]+} <font color=#1b1baa>$substring</font>]
+  <b><font color=#3a6797>set</font></b> splist [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-decreasing</font> <font color=#653760>-command</font> alited::edit::CompareByLength <font color=#1b1baa>$splist</font>]
+  <b><font color=#3a6797>foreach</font></b> sp <font color=#1b1baa>$splist</font> {
+    <b><font color=#3a6797>set</font></b> substring [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$sp</font> { }] <font color=#1b1baa>$substring</font>]
+  }
+  <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>string</font></b> repeat { } <font color=#1b1baa>$isp</font>]
+  <b><font color=#3a6797>append</font></b> res [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$substring</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::ReverseString></a>
+<b><font color=#ca14ca>proc</font></b> edit::ReverseString {str} {
+  <i><font color=#4b5d50># The same as [string reverse], but counts escaping braces made in format::Mode2.</font></i>
+  <i><font color=#4b5d50>#   str - the string to reverse</font></i>
+  <i><font color=#4b5d50># See also: format::Mode2</font></i>
+
+  <b><font color=#3a6797>set</font></b> str [UnEscapeValue <font color=#1b1baa>$str</font>]
+  <b><font color=#3a6797>set</font></b> str [<b><font color=#3a6797>string</font></b> reverse <font color=#1b1baa>$str</font>]
+  EscapeValue <font color=#1b1baa>$str</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::SqueezeLines></a>
+<b><font color=#ca14ca>proc</font></b> edit::SqueezeLines {strlist} {
+  <i><font color=#4b5d50># Squeezes a list of lines.</font></i>
+  <i><font color=#4b5d50>#   strlist - the list</font></i>
+
+  <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>foreach</font></b> str <font color=#1b1baa>$strlist</font> {<b><font color=#3a6797>lappend</font></b> res [SqueezeString <font color=#1b1baa>$str</font>]}
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::CompareByLength></a>
+<b><font color=#ca14ca>proc</font></b> edit::CompareByLength {s1 s2} {
+  <i><font color=#4b5d50># Compares two string by length.</font></i>
+  <i><font color=#4b5d50>#   s1 - 1st string</font></i>
+  <i><font color=#4b5d50>#   s2 - 2nd string</font></i>
+
+  <b><font color=#3a6797>set</font></b> l1 [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$s1</font>]
+  <b><font color=#3a6797>set</font></b> l2 [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$s2</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$l1</font>&gt;<font color=#1b1baa>$l2</font>} {
+    <b><font color=#ca14ca>return</font></b> 1
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$l1</font>&lt;<font color=#1b1baa>$l2</font>} {
+    <b><font color=#ca14ca>return</font></b> -1
+  }
+  <b><font color=#ca14ca>return</font></b> 0
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::EscapeValue></a>
+<b><font color=#ca14ca>proc</font></b> edit::EscapeValue {value} {
+  <i><font color=#4b5d50># Escapes a value's backslashes and braces.</font></i>
+  <i><font color=#4b5d50>#   value - the value</font></i>
+
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \\ \\\\ \} \\\} \{ \\\{] <font color=#1b1baa>$value</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::UnEscapeValue></a>
+<b><font color=#ca14ca>proc</font></b> edit::UnEscapeValue {value} {
+  <i><font color=#4b5d50># Unescapes a value's backslashes and braces.</font></i>
+  <i><font color=#4b5d50>#   value - the value</font></i>
+
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \\\\ \\ \\\}  \} \\\{ \{] <font color=#1b1baa>$value</font>]
+}
+<a id=EOF></a>
+<i><font color=#4b5d50># _________________________________ EOF _________________________________ #</font></i>
+
+</pre>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>edit.tcl</b></font></div></td></table>
+
+</section>
+<script>
+  writeFooter('Document generated by <a href="'+homeLINK()+'/en/tcl/alited/index.html">alited</a> &amp; <a href="'+homeLINK()+'/en/tcl/mulster/index.html">mulster</a></a>');
+</script>
+</div>
+</body>
+</html>

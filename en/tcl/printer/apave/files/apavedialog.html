@@ -1,0 +1,1743 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<meta name="author" content="aplsimple">
+<meta name="description" content="aplsimple's home page">
+<meta name="keywords" content="aplsimple,home">
+</head>
+<style>
+table{
+background-color: #f9f9f9;
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+box-shadow: none;
+filter: none;
+}
+pre{
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+}
+</style>
+<script>
+function homeLINK() {
+  homelink = document.baseURI;
+  ilen = 19
+  ibase = homelink.indexOf('aplsimple.github');
+  if (ibase<0) { ibase = homelink.indexOf('aplsimple_github'); ilen += 10 };
+  if (ibase>=0) { homelink = homelink.substring(0,ibase+ilen) };
+  return homelink;
+};
+document.write(' \
+<link rel="icon" type="image/jpg" href="'+homeLINK()+'/zoo/favicon.jpg">');
+document.write('<'+'script src="'+homeLINK()+'/zoo/funcs.js">'+'<'+'/script>');
+document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'+'/script>');
+</script>
+<body>
+<div id="wrapper">
+<div name="divd1" ALIGN="CENTER"> <FONT SIZE=5em color=#b01c20><B>
+<noscript>THIS PAGE IS NOT WORKING WITHOUT JAVASCRIPT!
+<BR>
+<BR>PLEASE, SWITCH ON JAVASCRIPT IN SETTINGS OF YOUR BROWSER AND RELOAD THE PAGE.
+</noscript>
+</B></FONT></div>
+<div id='doc3' class='yui-t2'>
+<section id=sec2>
+<div id='hd' class='banner'>
+<script>document.write(' \
+<link rel="stylesheet" href="'+homeLINK()+'/en/zoo/style.css">');
+</script>
+<link rel="stylesheet" href="../css/style.css">
+
+<title>apavedialog.tcl</title>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
+
+<div id="bodyContent" class="dokuwiki">
+<div id="dw__toc" class="dw__toc">
+<h3 class="toggle open" style="cursor: pointer;">apavedialog.tcl</h3>
+<div aria-expanded="true" style="">
+
+<ul class="toc">
+<li><b><a href="#apavedialog.tcl">apavedialog.tcl</a></b></li>
+<li><b><a href="#apave_NS">apave_NS</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#dlgPath">dlgPath</a><span class=tooltiptext> dlgPath : Gets a current dialogue's path.
+In fact, it does the same as [my dlgPath], but it can be
+called outside of apave dialogue object (useful sometimes).</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#msgcatDialogs">msgcatDialogs</a><span class=tooltiptext> msgcatDialogs : Prepares localized messages used in dialogues.</span></div></li></ul>
+<li><b><a href="#EONS_apave">EONS_apave</a></b></li>
+<li><b><a href="#APaveDialog_class">APaveDialog_class</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#constructor">constructor</a><span class=tooltiptext> constructor : Creates APaveDialog object.
+win - window's name (path)
+args - additional arguments</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#destructor">destructor</a><span class=tooltiptext> destructor : Clears variables used in the object.</span></div></li></ul>
+<li><b><a href="#Standard_dialogs">Standard_dialogs</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#PrepArgs">PrepArgs</a><span class=tooltiptext> PrepArgs : Prepares a list of arguments.
+Returns the list (wrapped in list) and a command for OK button.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#ok">ok</a><span class=tooltiptext> ok : Shows the *OK* dialog.
+icon - icon
+ttl - title
+msg - message
+args - options</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#okcancel">okcancel</a><span class=tooltiptext> okcancel : Shows the *OKCANCEL* dialog.
+icon - icon
+ttl - title
+msg - message
+defb - button to be selected
+args - options</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#yesno">yesno</a><span class=tooltiptext> yesno : Shows the *YESNO* dialog.
+icon - icon
+ttl - title
+msg - message
+defb - button to be selected
+args - options</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#yesnocancel">yesnocancel</a><span class=tooltiptext> yesnocancel : Shows the *YESNOCANCEL* dialog.
+icon - icon
+ttl - title
+msg - message
+defb - button to be selected
+args - options</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#retrycancel">retrycancel</a><span class=tooltiptext> retrycancel : Shows the *RETRYCANCEL* dialog.
+icon - icon
+ttl - title
+msg - message
+defb - button to be selected
+args - options</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#abortretrycancel">abortretrycancel</a><span class=tooltiptext> abortretrycancel : Shows the *ABORTRETRYCANCEL* dialog.
+icon - icon
+ttl - title
+msg - message
+defb - button to be selected
+args - options</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#misc">misc</a><span class=tooltiptext> misc : Shows the *MISCELLANEOUS* dialog.
+icon - icon
+ttl - title
+msg - message
+butts - list of buttons
+defb - button to be selected
+args - options
+The *butts* is a list of pairs "title of button" "number/ID of button"</span></div></li></ul>
+<li><b><a href="#Progress_for_splash">Progress_for_splash</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#progress_Begin">progress_Begin</a><span class=tooltiptext> progress_Begin : Creates and shows a progress window. Fit for splash screens.
+type - any word(s)
+wprn - parent window
+ttl - title message
+msg1 - top message
+msg2 - bottom message
+maxvalue - maximum value
+args - additional attributes of the progress bar
+If type={}, widgetType method participates too in progress_Go, and also
+progress_End puts out a little statistics.
+See also: APaveBase::widgetType, progress_Go, progress_End</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#progress_Go">progress_Go</a><span class=tooltiptext> progress_Go : Updates a progress window.
+value -  current value of the progress bar
+msg1 - top message
+msg2 - bottom message
+Returns current percents (value) of progress.
+If it reaches 100, the progress_Go may continue from 0.
+See also: progress_Begin</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#progress_End">progress_End</a><span class=tooltiptext> progress_End : Destroys a progress window.
+See also: progress_Begin</span></div></li></ul>
+<li><b><a href="#Text_utilities">Text_utilities</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#pasteText">pasteText</a><span class=tooltiptext> pasteText : Removes a selection at pasting.
+txt - text's path
+The absence of this feature is very perpendicular of Tk's paste.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#doubleText">doubleText</a><span class=tooltiptext> doubleText : Doubles a current line or a selection of text widget.
+txt - text's path
+dobreak - if true, means "return -code break"
+The *dobreak=true* allows to break the Tk processing of keypresses
+such as Ctrl+D.
+If not set, the text widget is identified as `my TexM`.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#deleteLine">deleteLine</a><span class=tooltiptext> deleteLine : Deletes a current line of text widget.
+txt - text's path
+dobreak - if true, means "return -code break"
+The *dobreak=true* allows to break the Tk processing of keypresses
+such as Ctrl+Y.
+If not set, the text widget is identified as `my TexM`.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#linesMove">linesMove</a><span class=tooltiptext> linesMove : Moves a current line or lines of selection up/down.
+txt - text's path
+to - direction (-1 means "up", +1 means "down")
+dobreak - if true, means "return -code break"
+The *dobreak=true* allows to break the Tk processing of keypresses
+such as Ctrl+Y.
+If not set, the text widget is identified as `my TexM`.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#selectedWordText">selectedWordText</a><span class=tooltiptext> selectedWordText : Returns a word under the cursor or a selected text.
+txt - the text's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#InitFindInText">InitFindInText</a><span class=tooltiptext> InitFindInText : Initializes the search in the text.
+ctrlf - "1" means that the method is called by Ctrl+F
+txt - path to the text widget</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#findInText">findInText</a><span class=tooltiptext> findInText : Finds a string in text widget.
+donext - "1" means 'from a current position'
+txt - path to the text widget
+varFind - variable
+dobell - if yes, bells
+Returns yes, if found (or nothing to find), otherwise returns "no";
+also, if there was a real search, the search string is added.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#GetLinkLab">GetLinkLab</a><span class=tooltiptext> GetLinkLab : Gets a link for label.
+m - label with possible link (between <link> and </link>)
+Returns: list of "pure" message and link for label.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#popupFindCommands">popupFindCommands</a><span class=tooltiptext> popupFindCommands : Returns find commands for a popup menu on a text.
+pop - path to the menu
+txt - path to the text
+com1 - user's command "find first"
+com2 - user's command "find next"</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#popupBlockCommands">popupBlockCommands</a><span class=tooltiptext> popupBlockCommands : Returns block commands for a popup menu on a text.
+pop - path to the menu
+txt - path to the text</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#askForSave">askForSave</a><span class=tooltiptext> askForSave : For a text, sets/gets "ask for save changes" flag.
+wtxt - text's path
+doask - flag
+If the flag argument omitted, returns the flag else sets it.
+See also: constructor</span></div></li></ul>
+<li><b><a href="#Highlighting">Highlighting</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#popupHighlightCommands">popupHighlightCommands</a><span class=tooltiptext> popupHighlightCommands : Returns highlighting commands for a popup menu on a text.
+pop - path to the menu
+txt - path to the text</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#set_HighlightedString">set_HighlightedString</a><span class=tooltiptext> set_HighlightedString : Saves a string got from highlighting by Alt+left/right/q/w.
+sel - the string to be saved</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#get_HighlightedString">get_HighlightedString</a><span class=tooltiptext> get_HighlightedString : Returns a string got from highlighting by Alt+left/right/q/w.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#set_highlight_matches">set_highlight_matches</a><span class=tooltiptext> set_highlight_matches : Creates bindings to highlight matches in a text.
+w - path to the text</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#get_highlighted">get_highlighted</a><span class=tooltiptext> get_highlighted : Gets a selected word after double-clicking on a text.
+w - path to the text</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#highlight_matches">highlight_matches</a><span class=tooltiptext> highlight_matches : Highlights matches of selected word in a text.
+txt - path to the text</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#unhighlight_matches">unhighlight_matches</a><span class=tooltiptext> unhighlight_matches : Unhighlights matches of selected word in a text.
+w - path to the text</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#seek_highlight">seek_highlight</a><span class=tooltiptext> seek_highlight : Seeks the selected word forward/backward/to first/to last in a text.
+w - path to the text
+mode - 0 (search backward), 1 (forward), 2 (first), 3 (last)</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#highlight_matches_real">highlight_matches_real</a><span class=tooltiptext> highlight_matches_real : Highlights a selected word in a text, esp. fow Windows.
+Windows thinks a word is edged by spaces only: not in real case.
+txt - path to the text
+pos1 - starting position of real selection
+pos2 - ending position of real selection</span></div></li></ul>
+<li><b><a href="#Query's_auxiliaries">Query's_auxiliaries</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#varName">varName</a><span class=tooltiptext> varName : Gets a variable name associated with a widget's name of "input" dialogue.
+wname - widget's name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#FieldName">FieldName</a><span class=tooltiptext> FieldName : Gets a field name.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#GetVarsValues">GetVarsValues</a><span class=tooltiptext> GetVarsValues : Gets values of entries passed (or set) in -tvar.
+lwidgets - list of widget items</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#SetGetTexts">SetGetTexts</a><span class=tooltiptext> SetGetTexts : Sets/gets contents of text fields.
+oper - "set" to set, "get" to get contents of text field
+w - window's name
+iopts - equals to "" if no operation
+lwidgets - list of widget items</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#GetLinePosition">GetLinePosition</a><span class=tooltiptext> GetLinePosition : Gets a line's position.
+txt - text widget
+ind - index of the line
+Returns a list containing a line start and a line end.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#AppendButtons">AppendButtons</a><span class=tooltiptext> AppendButtons : Adds buttons to the widget list from a position of neighbor widget.
+widlistName - variable name for widget list
+buttons - buttons to add
+neighbor - neighbor widget
+pos - position of neighbor widget
+defb - default button
+timeout  - timeout (to count down seconds and invoke a button)
+win - dialogue's path
+modal - yes if the window is modal
+ONCLOSE - command to run at closing the dialog
+Returns list of "Help" button's name and command.</span></div></li></ul>
+<li><b><a href="#Query_the_terrible">Query_the_terrible</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#Query">Query</a><span class=tooltiptext> Query : Makes a query (or a message) and gets the user's response.
+icon    - icon name (info, warn, ques, err)
+ttl     - title
+msg     - message
+buttons - list of triples "button name, text, ID"
+defb    - default button (OK, YES, NO, CANCEL, RETRY, ABORT)
+inopts  - options for input dialog
+argdia - list of dialog's options
+precom - command(s) performed before showing the dialog
+args - additional options (message's font etc.)
+The *argdia* may contain additional options of the query, like these:
+-checkbox text (-ch text) - makes the checkbox's text visible
+-geometry +x+y (-g +x+y) - sets the geometry of dialog
+-color cval    (-c cval) - sets the color of message
+If "-geometry" option is set (even equaling "") the Query procedure
+returns a list with chosen button's ID and a new geometry.
+Otherwise it returns only the chosen button's ID.
+See also:
+[aplsimple.github.io](https://aplsimple.github.io/en/tcl/pave/index.html)</span></div></li></ul>
+<li><b><a href="#EOC_APaveDialog">EOC_APaveDialog</a></b></li>
+<li><b><a href="#EOF">EOF</a></b></li>
+
+</ul>
+
+</div>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1><font color=#ca14ca> apave</font></h1>
+</p><p>
+A library for GUI development with Tcl/Tk.
+</p><p>
+Docs:
+</p><p>
+<a href="https://aplsimple.github.io/en/tcl/pave">Full description</a>
+</p><p>
+
+</p>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../index.html"><font color=#1a1a1a size=6>  <b>apavedialog.tcl</b></font></div></td></table>
+
+<pre class="code"><i><font color=#4b5d50>###########################################################<a id=apavedialog.tcl></a></font></i>
+<i><font color=#4b5d50># Name:    apavedialog.tcl</font></i>
+<i><font color=#4b5d50># Author:  Alex Plotnikov  (aplsimple@gmail.com)</font></i>
+<i><font color=#4b5d50># Date:    12/09/2021</font></i>
+<i><font color=#4b5d50># Brief:   Handles standard dialogs with advanced features.</font></i>
+<i><font color=#4b5d50># License: MIT.</font></i>
+<i><font color=#4b5d50>###########################################################</font></i>
+
+<b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join [<b><font color=#3a6797>file</font></b> dirname [<b><font color=#3a6797>info</font></b> script]] apavebase.tcl]
+<a id=apave_NS></a>
+<i><font color=#4b5d50># ________________________ apave NS _________________________ #</font></i>
+
+<b><font color=#ca14ca>namespace</font></b> eval ::apave {
+
+  <b><font color=#3a6797>variable</font></b> querydlg {}
+  <b><font color=#3a6797>variable</font></b> msgarray; <b><font color=#3a6797>array</font></b> set msgarray [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>set</font></b> msgarray(savenot)  {Don't save}
+  <b><font color=#3a6797>set</font></b> msgarray(savetext) {Save text}
+  <b><font color=#3a6797>set</font></b> msgarray(saveask)  {Save changes made to the text?}
+  <b><font color=#3a6797>set</font></b> msgarray(find)     {Find: }
+<a id=dlgPath></a>
+  <b><font color=#ca14ca>proc</font></b> dlgPath {}  {
+    <i><font color=#4b5d50># Gets a current dialogue's path.</font></i>
+    <i><font color=#4b5d50># In fact, it does the same as [my dlgPath], but it can be</font></i>
+    <i><font color=#4b5d50># called outside of apave dialogue object (useful sometimes).</font></i>
+
+    <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$::apave::querydlg</font>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=msgcatDialogs></a>
+  <b><font color=#ca14ca>proc</font></b> msgcatDialogs {} {
+    <i><font color=#4b5d50># Prepares localized messages used in dialogues.</font></i>
+
+    <b><font color=#3a6797>variable</font></b> msgarray
+    <b><font color=#3a6797>foreach</font></b> n [<b><font color=#3a6797>array</font></b> names msgarray] {
+      <b><font color=#3a6797>set</font></b> msgarray(<font color=#1b1baa>$n</font>) [msgcat::mc <font color=#1b1baa>$msgarray($n)</font>]
+    }
+  }
+<a id=EONS_apave></a>
+  <i><font color=#4b5d50>## ________________________ EONS apave _________________________ ##</font></i>
+
+}
+<a id=APaveDialog_class></a>
+<i><font color=#4b5d50># ________________________ APaveDialog class _________________________ #</font></i>
+
+<b><font color=#ca14ca>oo::class</font></b> create ::apave::APaveDialog {
+
+  superclass ::apave::APaveBase
+
+  <b><font color=#3a6797>variable</font></b> HLstring Winpath CheckNomore Foundstr Dlgpath Defb1 Defb2 Indexdlg
+
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=constructor></a>
+  <b><font color=#ca14ca>constructor</font></b> {{win <font color=#8b2a0e>&quot;&quot;</font>} args} {
+    <i><font color=#4b5d50># Creates APaveDialog object.</font></i>
+    <i><font color=#4b5d50>#   win - window's name (path)</font></i>
+    <i><font color=#4b5d50>#   args - additional arguments</font></i>
+
+    <b><font color=#3a6797>set</font></b> Winpath <font color=#1b1baa>$win</font>  ;<i><font color=#4b5d50># dialogs are bound to $win, default &quot;&quot; means .</font></i>
+    <b><font color=#3a6797>set</font></b> Dlgpath {}    ;<i><font color=#4b5d50># current dialog's path</font></i>
+    <b><font color=#3a6797>set</font></b> Foundstr {}   ;<i><font color=#4b5d50># current found string</font></i>
+    <b><font color=#3a6797>set</font></b> HLstring {}   ;<i><font color=#4b5d50># current selected string</font></i>
+
+    <i><font color=#4b5d50># Actions on closing the editor</font></i>
+  ; <b><font color=#ca14ca>proc</font></b> exitEditor {w resExit} {
+      <b><font color=#3a6797>upvar</font></b> <font color=#1b1baa>$resExit</font> res
+      <b><font color=#3a6797>set</font></b> wtxt [<b><font color=#ca14ca>my</font></b> TexM]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#ca14ca>my</font></b> askForSave <font color=#1b1baa>$wtxt</font>] && [<font color=#1b1baa>$wtxt</font> edit modified]} {
+        <b><font color=#3a6797>set</font></b> pdlg [::apave::APaveDialog new <font color=#1b1baa>$w</font>]
+        <b><font color=#3a6797>set</font></b> r [<font color=#1b1baa>$pdlg</font> misc warn <font color=#1b1baa>$::apave::msgarray(savetext)</font> \
+          <font color=#8b2a0e>&quot;\n <font color=#1b1baa>$</font>::apave::msgarray(saveask) \n&quot;</font> \
+          [<b><font color=#3a6797>list</font></b> Save 1 <font color=#1b1baa>$::apave::msgarray(savenot)</font> Close Cancel 0] \
+          1 <font color=#653760>-focusback</font> [<b><font color=#ca14ca>my</font></b> TexM] <font color=#653760>-centerme</font> <font color=#1b1baa>$w</font>]
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$r</font>==1} {
+          <b><font color=#3a6797>set</font></b> res 1
+        } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$r</font> eq <font color=#8b2a0e>&quot;Close&quot;</font>} {
+          <b><font color=#3a6797>set</font></b> res 0
+        }
+        <font color=#1b1baa>$pdlg</font> destroy
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> res 0
+      }
+      <b><font color=#ca14ca>return</font></b>
+    }
+    <i><font color=#4b5d50># end of APaveDialog constructor</font></i>
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> [<b><font color=#ca14ca>self</font></b> next]]} { <b><font color=#3a6797>next</font></b> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font> }
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=destructor></a>
+  <b><font color=#ca14ca>destructor</font></b> {
+    <i><font color=#4b5d50># Clears variables used in the object.</font></i>
+
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> [<b><font color=#ca14ca>self</font></b> next]]} <b><font color=#3a6797>next</font></b>
+  }
+<a id=Standard_dialogs></a>
+  <i><font color=#4b5d50>## ________________________ Standard dialogs _________________________ ##</font></i>
+
+  <i><font color=#4b5d50>#  ok               - dialog with button OK</font></i>
+  <i><font color=#4b5d50>#  okcancel         - dialog with buttons OK, Cancel</font></i>
+  <i><font color=#4b5d50>#  yesno            - dialog with buttons YES, NO</font></i>
+  <i><font color=#4b5d50>#  yesnocancel      - dialog with buttons YES, NO, CANCEL</font></i>
+  <i><font color=#4b5d50>#  retrycancel      - dialog with buttons RETRY, CANCEL</font></i>
+  <i><font color=#4b5d50>#  abortretrycancel - dialog with buttons ABORT, RETRY, CANCEL</font></i>
+  <i><font color=#4b5d50>#  misc             - dialog with miscellaneous buttons</font></i>
+  <i><font color=#4b5d50>#</font></i>
+  <i><font color=#4b5d50># Called as:</font></i>
+  <i><font color=#4b5d50>#   dialog icon ttl msg ?defb? ?args?</font></i>
+  <i><font color=#4b5d50>#</font></i>
+  <i><font color=#4b5d50># Mandatory arguments of dialogs:</font></i>
+  <i><font color=#4b5d50>#   icon   - icon name (info, warn, err, ques)</font></i>
+  <i><font color=#4b5d50>#   ttl    - title</font></i>
+  <i><font color=#4b5d50>#   msg    - message</font></i>
+  <i><font color=#4b5d50># Optional arguments:</font></i>
+  <i><font color=#4b5d50>#   defb - default button (OK, YES, NO, CANCEL, RETRY, ABORT)</font></i>
+  <i><font color=#4b5d50>#   args - options for Query</font></i>
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=PrepArgs></a>
+  <b><font color=#ca14ca>method</font></b> PrepArgs {args} {
+    <i><font color=#4b5d50># Prepares a list of arguments.</font></i>
+    <i><font color=#4b5d50># Returns the list (wrapped in list) and a command for OK button.</font></i>
+
+    <b><font color=#3a6797>lassign</font></b> [::apave::parseOptions <font color=#1b1baa>$args</font> <font color=#653760>-modal</font> {} <font color=#653760>-ch</font> {} <font color=#653760>-comOK</font> {} <font color=#653760>-onclose</font> {}] \
+      modal ch comOK onclose
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is true <font color=#653760>-strict</font> <font color=#1b1baa>$modal</font>]} {
+      <b><font color=#3a6797>set</font></b> com 1
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$ch</font> ne {}} {
+      <i><font color=#4b5d50># some options are incompatible with -ch</font></i>
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match *destroy* <font color=#1b1baa>$onclose</font>]} {<b><font color=#3a6797>set</font></b> onclose {}}
+      <b><font color=#3a6797>lappend</font></b> args <font color=#653760>-modal</font> 1 <font color=#653760>-onclose</font> <font color=#1b1baa>$onclose</font>
+      <b><font color=#3a6797>set</font></b> com 1
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$comOK</font> eq {}} {
+      <b><font color=#3a6797>set</font></b> com destroy  ;<i><font color=#4b5d50># non-modal without -ch option</font></i>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> com <font color=#1b1baa>$comOK</font>
+    }
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$args</font>] <font color=#1b1baa>$com</font>]
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=ok></a>
+  <b><font color=#ca14ca>method</font></b> ok {icon ttl msg args} {
+    <i><font color=#4b5d50># Shows the *OK* dialog.</font></i>
+    <i><font color=#4b5d50>#   icon - icon</font></i>
+    <i><font color=#4b5d50>#   ttl - title</font></i>
+    <i><font color=#4b5d50>#   msg - message</font></i>
+    <i><font color=#4b5d50>#   args - options</font></i>
+
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> PrepArgs {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] args comOK
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font> <font color=#8b2a0e>&quot;ButOK OK <font color=#1b1baa>$</font>comOK&quot;</font> ButOK {} <font color=#1b1baa>$args</font>]
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=okcancel></a>
+  <b><font color=#ca14ca>method</font></b> okcancel {icon ttl msg {defb OK} args} {
+    <i><font color=#4b5d50># Shows the *OKCANCEL* dialog.</font></i>
+    <i><font color=#4b5d50>#   icon - icon</font></i>
+    <i><font color=#4b5d50>#   ttl - title</font></i>
+    <i><font color=#4b5d50>#   msg - message</font></i>
+    <i><font color=#4b5d50>#   defb - button to be selected</font></i>
+    <i><font color=#4b5d50>#   args - options</font></i>
+
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> PrepArgs {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] args
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font> \
+      {ButOK OK 1 ButCANCEL Cancel 0} But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>]
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=yesno></a>
+  <b><font color=#ca14ca>method</font></b> yesno {icon ttl msg {defb YES} args} {
+    <i><font color=#4b5d50># Shows the *YESNO* dialog.</font></i>
+    <i><font color=#4b5d50>#   icon - icon</font></i>
+    <i><font color=#4b5d50>#   ttl - title</font></i>
+    <i><font color=#4b5d50>#   msg - message</font></i>
+    <i><font color=#4b5d50>#   defb - button to be selected</font></i>
+    <i><font color=#4b5d50>#   args - options</font></i>
+
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> PrepArgs {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] args
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font> \
+      {ButYES Yes 1 ButNO No 0} But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>]
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=yesnocancel></a>
+  <b><font color=#ca14ca>method</font></b> yesnocancel {icon ttl msg {defb YES} args} {
+    <i><font color=#4b5d50># Shows the *YESNOCANCEL* dialog.</font></i>
+    <i><font color=#4b5d50>#   icon - icon</font></i>
+    <i><font color=#4b5d50>#   ttl - title</font></i>
+    <i><font color=#4b5d50>#   msg - message</font></i>
+    <i><font color=#4b5d50>#   defb - button to be selected</font></i>
+    <i><font color=#4b5d50>#   args - options</font></i>
+
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> PrepArgs {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] args
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font> \
+      {ButYES Yes 1 ButNO No 2 ButCANCEL Cancel 0} But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>]
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=retrycancel></a>
+  <b><font color=#ca14ca>method</font></b> retrycancel {icon ttl msg {defb RETRY} args} {
+    <i><font color=#4b5d50># Shows the *RETRYCANCEL* dialog.</font></i>
+    <i><font color=#4b5d50>#   icon - icon</font></i>
+    <i><font color=#4b5d50>#   ttl - title</font></i>
+    <i><font color=#4b5d50>#   msg - message</font></i>
+    <i><font color=#4b5d50>#   defb - button to be selected</font></i>
+    <i><font color=#4b5d50>#   args - options</font></i>
+
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> PrepArgs {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] args
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font> \
+      {ButRETRY Retry 1 ButCANCEL Cancel 0} But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>]
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=abortretrycancel></a>
+  <b><font color=#ca14ca>method</font></b> abortretrycancel {icon ttl msg {defb RETRY} args} {
+    <i><font color=#4b5d50># Shows the *ABORTRETRYCANCEL* dialog.</font></i>
+    <i><font color=#4b5d50>#   icon - icon</font></i>
+    <i><font color=#4b5d50>#   ttl - title</font></i>
+    <i><font color=#4b5d50>#   msg - message</font></i>
+    <i><font color=#4b5d50>#   defb - button to be selected</font></i>
+    <i><font color=#4b5d50>#   args - options</font></i>
+
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> PrepArgs {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] args
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font> \
+      {ButABORT Abort 1 ButRETRY Retry 2 ButCANCEL \
+      Cancel 0} But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>]
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=misc></a>
+  <b><font color=#ca14ca>method</font></b> misc {icon ttl msg butts {defb <font color=#8b2a0e>&quot;&quot;</font>} args} {
+    <i><font color=#4b5d50># Shows the *MISCELLANEOUS* dialog.</font></i>
+    <i><font color=#4b5d50>#   icon - icon</font></i>
+    <i><font color=#4b5d50>#   ttl - title</font></i>
+    <i><font color=#4b5d50>#   msg - message</font></i>
+    <i><font color=#4b5d50>#   butts - list of buttons</font></i>
+    <i><font color=#4b5d50>#   defb - button to be selected</font></i>
+    <i><font color=#4b5d50>#   args - options</font></i>
+    <i><font color=#4b5d50># The *butts* is a list of pairs &quot;title of button&quot; &quot;number/ID of button&quot;</font></i>
+
+    <b><font color=#3a6797>foreach</font></b> {nam num} <font color=#1b1baa>$butts</font> {
+      <b><font color=#3a6797>set</font></b> but But[<b><font color=#3a6797>namespace</font></b> tail <font color=#1b1baa>$num</font>] ;<i><font color=#4b5d50># for &quot;num&quot; set as a command</font></i>
+      <b><font color=#3a6797>lappend</font></b> apave_msc_bttns <font color=#1b1baa>$but</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>nam&quot;</font> <font color=#1b1baa>$num</font>
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$defb</font> eq {}} {
+        <b><font color=#3a6797>set</font></b> defb <font color=#1b1baa>$num</font>
+      }
+    }
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> PrepArgs {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] args
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font> <font color=#1b1baa>$apave_msc_bttns</font> But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>]
+  }
+<a id=Progress_for_splash></a>
+  <i><font color=#4b5d50>## ________________________ Progress for splash _________________________ ##</font></i>
+<a id=progress_Begin></a>
+  <b><font color=#ca14ca>method</font></b> progress_Begin {type wprn ttl msg1 msg2 maxvalue args} {
+    <i><font color=#4b5d50># Creates and shows a progress window. Fit for splash screens.</font></i>
+    <i><font color=#4b5d50>#   type - any word(s)</font></i>
+    <i><font color=#4b5d50>#   wprn - parent window</font></i>
+    <i><font color=#4b5d50>#   ttl - title message</font></i>
+    <i><font color=#4b5d50>#   msg1 - top message</font></i>
+    <i><font color=#4b5d50>#   msg2 - bottom message</font></i>
+    <i><font color=#4b5d50>#   maxvalue - maximum value</font></i>
+    <i><font color=#4b5d50>#   args - additional attributes of the progress bar</font></i>
+    <i><font color=#4b5d50># If type={}, widgetType method participates too in progress_Go, and also</font></i>
+    <i><font color=#4b5d50># progress_End puts out a little statistics.</font></i>
+    <i><font color=#4b5d50># See also: APaveBase::widgetType, progress_Go, progress_End</font></i>
+
+    <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(win) .proSplashScreen
+    <b><font color=#3a6797>set</font></b> qdlg <font color=#1b1baa>$::apave::_AP_VARS(win)</font>
+    <b><font color=#3a6797>set</font></b> atr1 <font color=#8b2a0e>&quot;-maximum 100 -value 0 -mode determinate -length 300 -orient horizontal&quot;</font>
+    <b><font color=#3a6797>set</font></b> widlist [<b><font color=#3a6797>list</font></b> \
+      <font color=#8b2a0e>&quot;fra - - - - <font color=#1b1baa>{</font>pack<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>-h 10<font color=#1b1baa>}</font>&quot;</font> \
+      <font color=#8b2a0e>&quot;.Lab1SplashScreen - - - - <font color=#1b1baa>{</font>pack<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>-t <font color=#1b1baa>{$</font>msg1<font color=#1b1baa>}}</font>&quot;</font> \
+      <font color=#8b2a0e>&quot;.ProgSplashScreen - - - - <font color=#1b1baa>{</font>pack<font color=#1b1baa>}</font> <font color=#1b1baa>{$</font>atr1 <font color=#1b1baa>$</font>args<font color=#1b1baa>}</font>&quot;</font> \
+      <font color=#8b2a0e>&quot;.Lab2SplashScreen - - - - <font color=#1b1baa>{</font>pack -anchor w<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>-t <font color=#1b1baa>{$</font>msg2<font color=#1b1baa>}}</font>&quot;</font> \
+      ]
+    <b><font color=#3a6797>set</font></b> win [<b><font color=#ca14ca>my</font></b> makeWindow <font color=#1b1baa>$qdlg</font>.fra <font color=#1b1baa>$ttl</font>]
+    <b><font color=#3a6797>set</font></b> widlist [<b><font color=#ca14ca>my</font></b> paveWindow <font color=#1b1baa>$qdlg</font>.fra <font color=#1b1baa>$widlist</font>]
+    ::tk::PlaceWindow <font color=#1b1baa>$win</font> widget <font color=#1b1baa>$wprn</font>
+    <b><font color=#ca14ca>my</font></b> showWindow <font color=#1b1baa>$win</font> 0 1
+    <b><font color=#3a6797>update</font></b>
+    <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(ProSplash,type) <font color=#1b1baa>$type</font>
+    <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(ProSplash,win) <font color=#1b1baa>$win</font>
+    <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(ProSplash,wid1) [<b><font color=#ca14ca>my</font></b> Lab1SplashScreen]
+    <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(ProSplash,wid2) [<b><font color=#ca14ca>my</font></b> ProgSplashScreen]
+    <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(ProSplash,wid3) [<b><font color=#ca14ca>my</font></b> Lab2SplashScreen]
+    <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(ProSplash,val1) 0
+    <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(ProSplash,val2) 0
+    <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(ProSplash,value) 0
+    <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(ProSplash,curvalue) 0
+    <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(ProSplash,maxvalue) <font color=#1b1baa>$maxvalue</font>
+    <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(ProSplash,after) [<b><font color=#3a6797>list</font></b>]
+    <i><font color=#4b5d50># 'after' should be postponed, as 'update' messes it up</font></i>
+    <b><font color=#3a6797>rename</font></b> ::after ::ProSplash_after
+  ; <b><font color=#ca14ca>proc</font></b> ::after {args} {
+      <b><font color=#3a6797>lappend</font></b> ::apave::_AP_VARS(ProSplash,after) <font color=#1b1baa>$args</font>
+    }
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=progress_Go></a>
+  <b><font color=#ca14ca>method</font></b> progress_Go {value {msg1 <font color=#8b2a0e>&quot;&quot;</font>} {msg2 <font color=#8b2a0e>&quot;&quot;</font>}} {
+    <i><font color=#4b5d50># Updates a progress window.</font></i>
+    <i><font color=#4b5d50>#   value -  current value of the progress bar</font></i>
+    <i><font color=#4b5d50>#   msg1 - top message</font></i>
+    <i><font color=#4b5d50>#   msg2 - bottom message</font></i>
+    <i><font color=#4b5d50># Returns current percents (value) of progress.</font></i>
+    <i><font color=#4b5d50># If it reaches 100, the progress_Go may continue from 0.</font></i>
+    <i><font color=#4b5d50># See also: progress_Begin</font></i>
+
+    <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(ProSplash,val1) <font color=#1b1baa>$value</font>
+    <b><font color=#3a6797>incr</font></b> ::apave::_AP_VARS(ProSplash,val2)
+    <b><font color=#3a6797>set</font></b> val [<b><font color=#3a6797>expr</font></b> {min(100,int(100*<font color=#1b1baa>$value</font>/<font color=#1b1baa>$::apave::_AP_VARS(ProSplash,maxvalue)</font>))}]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$val</font>!=<font color=#1b1baa>$::apave::_AP_VARS(ProSplash,value)</font>} {
+      <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(ProSplash,value) <font color=#1b1baa>$val</font>
+      <b><font color=#3a6797>catch</font></b> {  ;<i><font color=#4b5d50># there might be no splash widgets, then let it run dry</font></i>
+        <font color=#1b1baa>$::apave::_AP_VARS(ProSplash,wid2)</font> configure <font color=#653760>-value</font> <font color=#1b1baa>$val</font>
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$msg1</font> ne {}} {
+          <font color=#1b1baa>$::apave::_AP_VARS(ProSplash,wid1)</font> configure <font color=#653760>-text</font> <font color=#1b1baa>$msg1</font>
+        }
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$msg2</font> ne {}} {
+          <font color=#1b1baa>$::apave::_AP_VARS(ProSplash,wid3)</font> configure <font color=#653760>-text</font> <font color=#1b1baa>$msg2</font>
+        }
+        <b><font color=#3a6797>update</font></b>
+      }
+    }
+    <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$val</font>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=progress_End></a>
+  <b><font color=#ca14ca>method</font></b> progress_End {} {
+    <i><font color=#4b5d50># Destroys a progress window.</font></i>
+    <i><font color=#4b5d50># See also: progress_Begin</font></i>
+
+    <b><font color=#3a6797>variable</font></b> ::apave::_AP_VARS
+    <b><font color=#3a6797>catch</font></b> {
+      <b><font color=#134070>destroy</font></b> <font color=#1b1baa>$::apave::_AP_VARS(ProSplash,win)</font>
+      <b><font color=#3a6797>rename</font></b> ::after {}
+      <b><font color=#3a6797>rename</font></b> ::ProSplash_after ::after
+      <b><font color=#3a6797>foreach</font></b> aftargs <font color=#1b1baa>$::apave::_AP_VARS(ProSplash,after)</font> {
+        <b><font color=#3a6797>after</font></b> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$aftargs</font>
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::apave::_AP_VARS(ProSplash,type)</font> eq {}} {
+        <b><font color=#3a6797>puts</font></b> <font color=#8b2a0e>&quot;Splash statistics: \</font>
+<font color=#8b2a0e>          \n  \&quot;maxvalue\&quot;: <font color=#1b1baa>$</font>::apave::_AP_VARS(ProSplash,maxvalue) \</font>
+<font color=#8b2a0e>          \n  curr.value: <font color=#1b1baa>$</font>::apave::_AP_VARS(ProSplash,val1) \</font>
+<font color=#8b2a0e>          \n  steps made: <font color=#1b1baa>$</font>::apave::_AP_VARS(ProSplash,val2)&quot;</font>
+      }
+      <b><font color=#3a6797>unset</font></b> ::apave::_AP_VARS(ProSplash,type)
+      <b><font color=#3a6797>unset</font></b> ::apave::_AP_VARS(ProSplash,win)
+      <b><font color=#3a6797>unset</font></b> ::apave::_AP_VARS(ProSplash,wid1)
+      <b><font color=#3a6797>unset</font></b> ::apave::_AP_VARS(ProSplash,wid2)
+      <b><font color=#3a6797>unset</font></b> ::apave::_AP_VARS(ProSplash,wid3)
+      <b><font color=#3a6797>unset</font></b> ::apave::_AP_VARS(ProSplash,val1)
+      <b><font color=#3a6797>unset</font></b> ::apave::_AP_VARS(ProSplash,val2)
+      <b><font color=#3a6797>unset</font></b> ::apave::_AP_VARS(ProSplash,value)
+      <b><font color=#3a6797>unset</font></b> ::apave::_AP_VARS(ProSplash,curvalue)
+      <b><font color=#3a6797>unset</font></b> ::apave::_AP_VARS(ProSplash,maxvalue)
+      <b><font color=#3a6797>unset</font></b> ::apave::_AP_VARS(ProSplash,after)
+    }
+  }
+<a id=Text_utilities></a>
+  <i><font color=#4b5d50>## ________________________ Text utilities _________________________ ##</font></i>
+<a id=pasteText></a>
+  <b><font color=#ca14ca>method</font></b> pasteText {txt} {
+    <i><font color=#4b5d50># Removes a selection at pasting.</font></i>
+    <i><font color=#4b5d50>#   txt - text's path</font></i>
+    <i><font color=#4b5d50># The absence of this feature is very perpendicular of Tk's paste.</font></i>
+
+    <b><font color=#3a6797>set</font></b> err [<b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$txt</font> tag ranges sel} sel]
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$err</font> && [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$sel</font>]==2} {
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$sel</font> pos1 pos2
+      <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$txt</font> index insert]
+      <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$txt</font> compare <font color=#1b1baa>$pos</font> &gt;= <font color=#1b1baa>$pos1</font>] && [<font color=#1b1baa>$txt</font> compare <font color=#1b1baa>$pos</font> &lt;= <font color=#1b1baa>$pos2</font>]} {
+        <font color=#1b1baa>$txt</font> delete <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font>
+      }
+    }
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=doubleText></a>
+  <b><font color=#ca14ca>method</font></b> doubleText {txt {dobreak 1}} {
+    <i><font color=#4b5d50># Doubles a current line or a selection of text widget.</font></i>
+    <i><font color=#4b5d50>#   txt - text's path</font></i>
+    <i><font color=#4b5d50>#   dobreak - if true, means &quot;return -code break&quot;</font></i>
+    <i><font color=#4b5d50># The *dobreak=true* allows to break the Tk processing of keypresses</font></i>
+    <i><font color=#4b5d50># such as Ctrl+D.</font></i>
+    <i><font color=#4b5d50># If not set, the text widget is identified as `my TexM`.</font></i>
+
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$txt</font> eq {}} {<b><font color=#3a6797>set</font></b> txt [<b><font color=#ca14ca>my</font></b> TexM]}
+    <b><font color=#3a6797>set</font></b> err [<b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$txt</font> tag ranges sel} sel]
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$err</font> && [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$sel</font>]==2} {
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$sel</font> pos pos2
+      <b><font color=#3a6797>set</font></b> pos3 insert  ;<i><font color=#4b5d50># single selection</font></i>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> GetLinePosition <font color=#1b1baa>$txt</font> insert] pos pos2  ;<i><font color=#4b5d50># current line</font></i>
+      <b><font color=#3a6797>set</font></b> pos3 <font color=#1b1baa>$pos2</font>
+    }
+    <b><font color=#3a6797>set</font></b> duptext [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pos2</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$pos3</font> ne {insert} && <font color=#1b1baa>$pos2</font>==[<font color=#1b1baa>$txt</font> index end]} {
+      <i><font color=#4b5d50># current line is the last one: duplicate it properly</font></i>
+      <b><font color=#3a6797>set</font></b> duptext \n[<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$duptext</font> 0 end-1]
+    }
+    <font color=#1b1baa>$txt</font> insert <font color=#1b1baa>$pos3</font> <font color=#1b1baa>$duptext</font>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dobreak</font>} {<b><font color=#ca14ca>return</font></b> <font color=#653760>-code</font> break}
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=deleteLine></a>
+  <b><font color=#ca14ca>method</font></b> deleteLine {txt {dobreak 1}} {
+    <i><font color=#4b5d50># Deletes a current line of text widget.</font></i>
+    <i><font color=#4b5d50>#   txt - text's path</font></i>
+    <i><font color=#4b5d50>#   dobreak - if true, means &quot;return -code break&quot;</font></i>
+    <i><font color=#4b5d50># The *dobreak=true* allows to break the Tk processing of keypresses</font></i>
+    <i><font color=#4b5d50># such as Ctrl+Y.</font></i>
+    <i><font color=#4b5d50># If not set, the text widget is identified as `my TexM`.</font></i>
+
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$txt</font> eq {}} {<b><font color=#3a6797>set</font></b> txt [<b><font color=#ca14ca>my</font></b> TexM]}
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> GetLinePosition <font color=#1b1baa>$txt</font> insert] linestart lineend
+    <font color=#1b1baa>$txt</font> delete <font color=#1b1baa>$linestart</font> <font color=#1b1baa>$lineend</font>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dobreak</font>} {<b><font color=#ca14ca>return</font></b> <font color=#653760>-code</font> break}
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=linesMove></a>
+  <b><font color=#ca14ca>method</font></b> linesMove {txt to {dobreak 1}} {
+    <i><font color=#4b5d50># Moves a current line or lines of selection up/down.</font></i>
+    <i><font color=#4b5d50>#   txt - text's path</font></i>
+    <i><font color=#4b5d50>#   to - direction (-1 means &quot;up&quot;, +1 means &quot;down&quot;)</font></i>
+    <i><font color=#4b5d50>#   dobreak - if true, means &quot;return -code break&quot;</font></i>
+    <i><font color=#4b5d50># The *dobreak=true* allows to break the Tk processing of keypresses</font></i>
+    <i><font color=#4b5d50># such as Ctrl+Y.</font></i>
+    <i><font color=#4b5d50># If not set, the text widget is identified as `my TexM`.</font></i>
+
+  ; <b><font color=#ca14ca>proc</font></b> NewRow {ind rn} {
+      <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>string</font></b> first . <font color=#1b1baa>$ind</font>]
+      <b><font color=#3a6797>set</font></b> row [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$ind</font> 0 <font color=#1b1baa>$i</font>-1]
+      <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>incr</font></b> row <font color=#1b1baa>$rn</font>][<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$ind</font> <font color=#1b1baa>$i</font> end]
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$txt</font> eq {}} {<b><font color=#3a6797>set</font></b> txt [<b><font color=#ca14ca>my</font></b> TexM]}
+    <b><font color=#3a6797>set</font></b> err [<b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$txt</font> tag ranges sel} sel]
+    <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$txt</font> index insert] pos  ;<i><font color=#4b5d50># position of caret</font></i>
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> issel [<b><font color=#3a6797>expr</font></b> {!<font color=#1b1baa>$err</font> && [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$sel</font>]==2}]]} {
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$sel</font> pos1 pos2         ;<i><font color=#4b5d50># selection's start & end</font></i>
+      <b><font color=#3a6797>set</font></b> l1 [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$pos1</font>)}]
+      <b><font color=#3a6797>set</font></b> l2 [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$pos2</font>)}]
+      <b><font color=#3a6797>set</font></b> pos21 [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos2 linestart&quot;</font>]
+      <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$pos21</font> <font color=#1b1baa>$pos2</font>] eq {}} {<b><font color=#3a6797>incr</font></b> l2 -1}
+      <b><font color=#3a6797>set</font></b> lfrom [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$to</font>&gt;0 ? <font color=#1b1baa>$l2</font>+1 : <font color=#1b1baa>$l1</font>-1}]
+      <b><font color=#3a6797>set</font></b> lto   [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$to</font>&gt;0 ? <font color=#1b1baa>$l1</font>-1 : <font color=#1b1baa>$l2</font>-1}]
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> lcurr [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$pos</font>)}]
+      <b><font color=#3a6797>set</font></b> lfrom [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$to</font>&gt;0 ? <font color=#1b1baa>$lcurr</font>+1 : <font color=#1b1baa>$lcurr</font>-1}]
+      <b><font color=#3a6797>set</font></b> lto   [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$to</font>&gt;0 ? <font color=#1b1baa>$lcurr</font>-1 : <font color=#1b1baa>$lcurr</font>-1}]
+    }
+    <b><font color=#3a6797>set</font></b> lend [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$txt</font> index end])}]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$lfrom</font>&gt;0 && <font color=#1b1baa>$lfrom</font>&lt;<font color=#1b1baa>$lend</font>} {
+      <b><font color=#3a6797>incr</font></b> lto
+      <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> GetLinePosition <font color=#1b1baa>$txt</font> <font color=#1b1baa>$lfrom</font>.0] linestart lineend
+      <b><font color=#3a6797>set</font></b> duptext [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$linestart</font> <font color=#1b1baa>$lineend</font>]
+      ::apave::undoIn <font color=#1b1baa>$txt</font>
+      <font color=#1b1baa>$txt</font> delete <font color=#1b1baa>$linestart</font> <font color=#1b1baa>$lineend</font>
+      <font color=#1b1baa>$txt</font> insert <font color=#1b1baa>$lto</font>.0 <font color=#1b1baa>$duptext</font>
+      ::tk::TextSetCursor <font color=#1b1baa>$txt</font> [NewRow <font color=#1b1baa>$pos</font> <font color=#1b1baa>$to</font>]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$issel</font>} {
+        <font color=#1b1baa>$txt</font> tag add sel [NewRow <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$to</font>] [NewRow <font color=#1b1baa>$pos2</font> <font color=#1b1baa>$to</font>]
+      }
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-glob</font> [<font color=#1b1baa>$txt</font> tag names] tagCOM*]&gt;-1} {
+        <b><font color=#3a6797>catch</font></b> {::hl_tcl::my::Modified <font color=#1b1baa>$txt</font> insert <font color=#1b1baa>$lto</font>.0 <font color=#1b1baa>$lto</font>.end}
+      }
+      ::apave::undoOut <font color=#1b1baa>$txt</font>
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dobreak</font>} {<b><font color=#ca14ca>return</font></b> <font color=#653760>-code</font> break}
+    }
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=selectedWordText></a>
+  <b><font color=#ca14ca>method</font></b> selectedWordText {txt} {
+    <i><font color=#4b5d50># Returns a word under the cursor or a selected text.</font></i>
+    <i><font color=#4b5d50>#   txt - the text's path</font></i>
+
+    <b><font color=#3a6797>set</font></b> seltxt {}
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$txt</font> tag ranges sel} seltxt]} {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> forword [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$seltxt</font> eq {}}]]} {
+        <b><font color=#3a6797>set</font></b> pos  [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;insert wordstart&quot;</font>]
+        <b><font color=#3a6797>set</font></b> pos2 [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;insert wordend&quot;</font>]
+        <b><font color=#3a6797>set</font></b> seltxt [<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pos2</font>]]
+        <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> is wordchar <font color=#653760>-strict</font> <font color=#1b1baa>$seltxt</font>]} {
+          <i><font color=#4b5d50># when cursor just at the right of word: take the word at the left</font></i>
+          <b><font color=#3a6797>set</font></b> pos  [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;insert -1 char wordstart&quot;</font>]
+          <b><font color=#3a6797>set</font></b> pos2 [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;insert -1 char wordend&quot;</font>]
+        }
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$seltxt</font> pos pos2
+      }
+      <b><font color=#3a6797>catch</font></b> {
+        <b><font color=#3a6797>set</font></b> seltxt [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pos2</font>]
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> sttrim [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$seltxt</font>]] ne {}} {
+          <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$forword</font>} {<b><font color=#3a6797>set</font></b> seltxt <font color=#1b1baa>$sttrim</font>}
+        }
+      }
+    }
+    <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$seltxt</font>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=InitFindInText></a>
+  <b><font color=#ca14ca>method</font></b> InitFindInText { {ctrlf 0} {txt {}} } {
+    <i><font color=#4b5d50># Initializes the search in the text.</font></i>
+    <i><font color=#4b5d50>#   ctrlf - &quot;1&quot; means that the method is called by Ctrl+F</font></i>
+    <i><font color=#4b5d50>#   txt - path to the text widget</font></i>
+
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$txt</font> eq {}} {<b><font color=#3a6797>set</font></b> txt [<b><font color=#ca14ca>my</font></b> TexM]}
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ctrlf</font>} {  ;<i><font color=#4b5d50># Ctrl+F moves cursor 1 char ahead</font></i>
+      ::tk::TextSetCursor <font color=#1b1baa>$txt</font> [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;insert -1 char&quot;</font>]
+    }
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> seltxt [<b><font color=#ca14ca>my</font></b> selectedWordText <font color=#1b1baa>$txt</font>]] ne {}} {
+      <b><font color=#3a6797>set</font></b> Foundstr <font color=#1b1baa>$seltxt</font>
+    }
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=findInText></a>
+  <b><font color=#ca14ca>method</font></b> findInText {{donext 0} {txt <font color=#8b2a0e>&quot;&quot;</font>} {varFind <font color=#8b2a0e>&quot;&quot;</font>} {dobell yes}} {
+    <i><font color=#4b5d50># Finds a string in text widget.</font></i>
+    <i><font color=#4b5d50>#   donext - &quot;1&quot; means 'from a current position'</font></i>
+    <i><font color=#4b5d50>#   txt - path to the text widget</font></i>
+    <i><font color=#4b5d50>#   varFind - variable</font></i>
+    <i><font color=#4b5d50>#   dobell - if yes, bells</font></i>
+    <i><font color=#4b5d50># Returns yes, if found (or nothing to find), otherwise returns &quot;no&quot;;</font></i>
+    <i><font color=#4b5d50># also, if there was a real search, the search string is added.</font></i>
+
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$txt</font> eq {}} {
+      <b><font color=#3a6797>set</font></b> txt [<b><font color=#ca14ca>my</font></b> TexM]
+      <b><font color=#3a6797>set</font></b> sel <font color=#1b1baa>$Foundstr</font>
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$donext</font> && [<b><font color=#3a6797>set</font></b> sel [<b><font color=#ca14ca>my</font></b> get_HighlightedString]] ne {}} {
+      <i><font color=#4b5d50># find a string got with alt+left/right</font></i>
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$varFind</font> eq {}} {
+      <b><font color=#3a6797>set</font></b> sel <font color=#1b1baa>$Foundstr</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> sel [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$varFind</font>]
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$donext</font>} {
+      <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$txt</font> index insert]
+      <b><font color=#3a6797>if</font></b> {{sel} in [<font color=#1b1baa>$txt</font> tag names <font color=#1b1baa>$pos</font>]} {
+        <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos + 1 chars&quot;</font>]
+      }
+      <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$txt</font> search -- <font color=#1b1baa>$sel</font> <font color=#1b1baa>$pos</font> end]
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> pos {}
+      <b><font color=#ca14ca>my</font></b> set_HighlightedString {}
+    }
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> length <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos&quot;</font>]} {
+      <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$txt</font> search -- <font color=#1b1baa>$sel</font> 1.0 end]
+    }
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> length <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos&quot;</font>]} {
+      ::tk::TextSetCursor <font color=#1b1baa>$txt</font> <font color=#1b1baa>$pos</font>
+      <font color=#1b1baa>$txt</font> tag add sel <font color=#1b1baa>$pos</font> [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos + <font color=#1b1baa>[</font>string length <font color=#1b1baa>$</font>sel<font color=#1b1baa>]</font> chars&quot;</font>]
+      <b><font color=#134070>focus</font></b> <font color=#1b1baa>$txt</font>
+      <b><font color=#3a6797>set</font></b> res yes
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dobell</font>} <b><font color=#134070>bell</font></b>
+      <b><font color=#3a6797>set</font></b> res no
+    }
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font> <font color=#1b1baa>$sel</font>]
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=GetLinkLab></a>
+  <b><font color=#ca14ca>method</font></b> GetLinkLab {m} {
+    <i><font color=#4b5d50># Gets a link for label.</font></i>
+    <i><font color=#4b5d50>#   m - label with possible link (between &lt;link&gt; and &lt;/link&gt;)</font></i>
+    <i><font color=#4b5d50># Returns: list of &quot;pure&quot; message and link for label.</font></i>
+
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i1 [<b><font color=#3a6797>string</font></b> first <font color=#8b2a0e>&quot;&lt;link&gt;&quot;</font> <font color=#1b1baa>$m</font>]]&lt;0} {
+      <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$m</font>]
+    }
+    <b><font color=#3a6797>set</font></b> i2 [<b><font color=#3a6797>string</font></b> first <font color=#8b2a0e>&quot;&lt;/link&gt;&quot;</font> <font color=#1b1baa>$m</font>]
+    <b><font color=#3a6797>set</font></b> link [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$m</font> <font color=#1b1baa>$i1</font>+6 <font color=#1b1baa>$i2</font>-1]
+    <b><font color=#3a6797>set</font></b> m [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$m</font> 0 <font color=#1b1baa>$i1</font>-1][<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$m</font> <font color=#1b1baa>$i2</font>+7 end]
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$m</font> [<b><font color=#3a6797>list</font></b> <font color=#653760>-link</font> <font color=#1b1baa>$link</font>]]
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=popupFindCommands></a>
+  <b><font color=#ca14ca>method</font></b> popupFindCommands {pop {txt {}} {com1 <font color=#8b2a0e>&quot;&quot;</font>} {com2 <font color=#8b2a0e>&quot;&quot;</font>}} {
+    <i><font color=#4b5d50># Returns find commands for a popup menu on a text.</font></i>
+    <i><font color=#4b5d50>#   pop - path to the menu</font></i>
+    <i><font color=#4b5d50>#   txt - path to the text</font></i>
+    <i><font color=#4b5d50>#   com1 - user's command &quot;find first&quot;</font></i>
+    <i><font color=#4b5d50>#   com2 - user's command &quot;find next&quot;</font></i>
+
+    <b><font color=#3a6797>set</font></b> accF3 [::apave::KeyAccelerator [::apave::getTextHotkeys F3]]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$com1</font> eq {}} {<b><font color=#3a6797>set</font></b> com1 <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> InitFindInText 0 <font color=#1b1baa>$</font>txt; focus \[<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> Entfind\]&quot;</font>}
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$com2</font> eq {}} {<b><font color=#3a6797>set</font></b> com2 <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> findInText 1 <font color=#1b1baa>$</font>txt&quot;</font>}
+    <b><font color=#ca14ca>return</font></b> <font color=#8b2a0e>&quot;\$pop add separator</font>
+<font color=#8b2a0e>      \$pop add command <font color=#1b1baa>[</font>my iconA find<font color=#1b1baa>]</font> -accelerator Ctrl+F -label \&quot;Find First\&quot; \\</font>
+<font color=#8b2a0e>        -command <font color=#1b1baa>{$</font>com1<font color=#1b1baa>}</font></font>
+<font color=#8b2a0e>      \$pop add command <font color=#1b1baa>[</font>my iconA none<font color=#1b1baa>]</font> -accelerator <font color=#1b1baa>$</font>accF3 -label \&quot;Find Next\&quot; \\</font>
+<font color=#8b2a0e>        -command <font color=#1b1baa>{$</font>com2<font color=#1b1baa>}</font>&quot;</font>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=popupBlockCommands></a>
+  <b><font color=#ca14ca>method</font></b> popupBlockCommands {pop {txt {}}} {
+    <i><font color=#4b5d50># Returns block commands for a popup menu on a text.</font></i>
+    <i><font color=#4b5d50>#   pop - path to the menu</font></i>
+    <i><font color=#4b5d50>#   txt - path to the text</font></i>
+
+    <b><font color=#3a6797>set</font></b> accD [::apave::KeyAccelerator [::apave::getTextHotkeys CtrlD]]
+    <b><font color=#3a6797>set</font></b> accY [::apave::KeyAccelerator [::apave::getTextHotkeys CtrlY]]
+    <b><font color=#ca14ca>return</font></b> <font color=#8b2a0e>&quot;\$pop add separator</font>
+<font color=#8b2a0e>      \$pop add command <font color=#1b1baa>[</font>my iconA add<font color=#1b1baa>]</font> -accelerator <font color=#1b1baa>$</font>accD -label \&quot;Double Selection\&quot; \\</font>
+<font color=#8b2a0e>        -command \&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> doubleText <font color=#1b1baa>{$</font>txt<font color=#1b1baa>}</font> 0\&quot;</font>
+<font color=#8b2a0e>      \$pop add command <font color=#1b1baa>[</font>my iconA delete<font color=#1b1baa>]</font> -accelerator <font color=#1b1baa>$</font>accY -label \&quot;Delete Line\&quot; \\</font>
+<font color=#8b2a0e>        -command \&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> deleteLine <font color=#1b1baa>{$</font>txt<font color=#1b1baa>}</font> 0\&quot;</font>
+<font color=#8b2a0e>      \$pop add command <font color=#1b1baa>[</font>my iconA up<font color=#1b1baa>]</font> -accelerator Alt+Up -label \&quot;Line(s) Up\&quot; \\</font>
+<font color=#8b2a0e>        -command \&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> linesMove <font color=#1b1baa>{$</font>txt<font color=#1b1baa>}</font> -1 0\&quot;</font>
+<font color=#8b2a0e>      \$pop add command <font color=#1b1baa>[</font>my iconA down<font color=#1b1baa>]</font> -accelerator Alt+Down -label \&quot;Line(s) Down\&quot; \\</font>
+<font color=#8b2a0e>       -command \&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> linesMove <font color=#1b1baa>{$</font>txt<font color=#1b1baa>}</font> +1 0\&quot;&quot;</font>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=askForSave></a>
+  <b><font color=#ca14ca>method</font></b> askForSave {wtxt {doask <font color=#8b2a0e>&quot;&quot;</font>}} {
+    <i><font color=#4b5d50># For a text, sets/gets &quot;ask for save changes&quot; flag.</font></i>
+    <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+    <i><font color=#4b5d50>#   doask - flag</font></i>
+    <i><font color=#4b5d50># If the flag argument omitted, returns the flag else sets it.</font></i>
+    <i><font color=#4b5d50># See also: constructor</font></i>
+
+    <b><font color=#3a6797>set</font></b> prop _AskForSave_<font color=#1b1baa>$wtxt</font>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$doask</font> eq {}} {
+      <b><font color=#3a6797>set</font></b> res [::apave::getProperty <font color=#1b1baa>$prop</font>]
+      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> is false <font color=#653760>-strict</font> <font color=#1b1baa>$res</font>]} {<b><font color=#3a6797>set</font></b> res 1}
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> res [::apave::setProperty <font color=#1b1baa>$prop</font> <font color=#1b1baa>$doask</font>]
+    }
+    <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+  }
+<a id=Highlighting></a>
+  <i><font color=#4b5d50>## ________________________ Highlighting _________________________ ##</font></i>
+<a id=popupHighlightCommands></a>
+  <b><font color=#ca14ca>method</font></b> popupHighlightCommands {{pop <font color=#8b2a0e>&quot;&quot;</font>} {txt <font color=#8b2a0e>&quot;&quot;</font>}} {
+    <i><font color=#4b5d50># Returns highlighting commands for a popup menu on a text.</font></i>
+    <i><font color=#4b5d50>#   pop - path to the menu</font></i>
+    <i><font color=#4b5d50>#   txt - path to the text</font></i>
+
+    <b><font color=#3a6797>set</font></b> accQ [::apave::KeyAccelerator [::apave::getTextHotkeys AltQ]]
+    <b><font color=#3a6797>set</font></b> accW [::apave::KeyAccelerator [::apave::getTextHotkeys AltW]]
+    <b><font color=#3a6797>set</font></b> res <font color=#8b2a0e>&quot;\$pop add separator</font>
+<font color=#8b2a0e>      \$pop add command <font color=#1b1baa>[</font>my iconA upload<font color=#1b1baa>]</font> -accelerator <font color=#1b1baa>$</font>accQ \\</font>
+<font color=#8b2a0e>      -label \&quot;Highlight First\&quot; -command \&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> seek_highlight %w 2\&quot;</font>
+<font color=#8b2a0e>      \$pop add command <font color=#1b1baa>[</font>my iconA download<font color=#1b1baa>]</font> -accelerator <font color=#1b1baa>$</font>accW \\</font>
+<font color=#8b2a0e>      -label \&quot;Highlight Last\&quot; -command \&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> seek_highlight %w 3\&quot;</font>
+<font color=#8b2a0e>      \$pop add command <font color=#1b1baa>[</font>my iconA previous<font color=#1b1baa>]</font> -accelerator Alt+Left \\</font>
+<font color=#8b2a0e>      -label \&quot;Highlight Previous\&quot; -command \&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> seek_highlight %w 0\&quot;</font>
+<font color=#8b2a0e>      \$pop add command <font color=#1b1baa>[</font>my iconA next<font color=#1b1baa>]</font> -accelerator Alt+Right \\</font>
+<font color=#8b2a0e>      -label \&quot;Highlight Next\&quot; -command \&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> seek_highlight %w 1\&quot;</font>
+<font color=#8b2a0e>      \$pop add command <font color=#1b1baa>[</font>my iconA none<font color=#1b1baa>]</font> -accelerator Dbl.Click \\</font>
+<font color=#8b2a0e>      -label \&quot;Highlight All\&quot; -command \&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> highlight_matches %w\&quot;&quot;</font>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$txt</font> ne {}} {<b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %w <font color=#1b1baa>$txt</font>] <font color=#1b1baa>$res</font>]}
+    <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=set_HighlightedString></a>
+  <b><font color=#ca14ca>method</font></b> set_HighlightedString {sel} {
+    <i><font color=#4b5d50># Saves a string got from highlighting by Alt+left/right/q/w.</font></i>
+    <i><font color=#4b5d50>#   sel - the string to be saved</font></i>
+
+    <b><font color=#3a6797>set</font></b> HLstring <font color=#1b1baa>$sel</font>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$sel</font> ne {}} {<b><font color=#3a6797>set</font></b> Foundstr <font color=#1b1baa>$sel</font>}
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=get_HighlightedString></a>
+  <b><font color=#ca14ca>method</font></b> get_HighlightedString {} {
+    <i><font color=#4b5d50># Returns a string got from highlighting by Alt+left/right/q/w.</font></i>
+
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists HLstring]} {
+      <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$HLstring</font>
+    }
+    <b><font color=#ca14ca>return</font></b> {}
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=set_highlight_matches></a>
+  <b><font color=#ca14ca>method</font></b> set_highlight_matches {w} {
+    <i><font color=#4b5d50># Creates bindings to highlight matches in a text.</font></i>
+    <i><font color=#4b5d50>#   w - path to the text</font></i>
+
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$w</font>]} <b><font color=#ca14ca>return</font></b>
+    <font color=#1b1baa>$w</font> tag configure hilited <font color=#653760>-foreground</font> #1f0000 <font color=#653760>-background</font> #ffa073
+    <font color=#1b1baa>$w</font> tag configure hilited2 <font color=#653760>-foreground</font> #1f0000 <font color=#653760>-background</font> #ff6b85
+    <font color=#1b1baa>$w</font> tag lower hilited sel
+    <b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> &lt;Double-ButtonPress-1&gt; [<b><font color=#3a6797>list</font></b> [<b><font color=#ca14ca>self</font></b>] highlight_matches <font color=#1b1baa>$w</font>]
+    ::apave::bindToEvent <font color=#1b1baa>$w</font> &lt;KeyRelease&gt; [<b><font color=#ca14ca>self</font></b>] unhighlight_matches <font color=#1b1baa>$w</font>
+    <b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> &lt;Alt-Left&gt; <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> seek_highlight <font color=#1b1baa>$</font>w 0 ; break&quot;</font>
+    <b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> &lt;Alt-Right&gt; <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> seek_highlight <font color=#1b1baa>$</font>w 1 ; break&quot;</font>
+    <b><font color=#3a6797>foreach</font></b> k [::apave::getTextHotkeys AltQ] {
+      <b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> &lt;<font color=#1b1baa>$k</font>&gt; [<b><font color=#3a6797>list</font></b> [<b><font color=#ca14ca>self</font></b>] seek_highlight <font color=#1b1baa>$w</font> 2]
+    }
+    <b><font color=#3a6797>foreach</font></b> k [::apave::getTextHotkeys AltW] {
+      <b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> &lt;<font color=#1b1baa>$k</font>&gt; [<b><font color=#3a6797>list</font></b> [<b><font color=#ca14ca>self</font></b>] seek_highlight <font color=#1b1baa>$w</font> 3]
+    }
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=get_highlighted></a>
+  <b><font color=#ca14ca>method</font></b> get_highlighted {txt} {
+    <i><font color=#4b5d50># Gets a selected word after double-clicking on a text.</font></i>
+    <i><font color=#4b5d50>#   w - path to the text</font></i>
+
+    <b><font color=#3a6797>set</font></b> err [<b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$txt</font> tag ranges sel} sel]
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$sel</font> pos pos2
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$err</font> && [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$sel</font>]==2} {
+      <b><font color=#3a6797>set</font></b> sel [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pos2</font>]  ;<i><font color=#4b5d50># single selection</font></i>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$err</font> || [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$sel</font>] eq {}} {
+        <b><font color=#3a6797>set</font></b> pos  [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;insert wordstart&quot;</font>]
+        <b><font color=#3a6797>set</font></b> pos2 [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;insert wordend&quot;</font>]
+        <b><font color=#3a6797>set</font></b> sel [<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pos2</font>]]
+        <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> is wordchar <font color=#653760>-strict</font> <font color=#1b1baa>$sel</font>]} {
+          <i><font color=#4b5d50># when cursor just at the right of word: take the word at the left</font></i>
+          <i><font color=#4b5d50># e.g. if &quot;_&quot; stands for cursor then &quot;word_&quot; means selecting &quot;word&quot;</font></i>
+          <b><font color=#3a6797>set</font></b> pos  [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;insert -1 char wordstart&quot;</font>]
+          <b><font color=#3a6797>set</font></b> pos2 [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;insert -1 char wordend&quot;</font>]
+          <b><font color=#3a6797>set</font></b> sel [<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pos2</font>]]
+        }
+        <b><font color=#3a6797>set</font></b> slen [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$sel</font>]
+        <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$slen</font>} {<b><font color=#3a6797>incr</font></b> slen; <b><font color=#3a6797>set</font></b> pos2 [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos2 +1c&quot;</font>]}
+        <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos2 -<font color=#1b1baa>$</font>slen char&quot;</font>]
+        <b><font color=#3a6797>set</font></b> sel [<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pos2</font>]]
+      }
+    }
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$sel</font> <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pos2</font>]
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=highlight_matches></a>
+  <b><font color=#ca14ca>method</font></b> highlight_matches {txt} {
+    <i><font color=#4b5d50># Highlights matches of selected word in a text.</font></i>
+    <i><font color=#4b5d50>#   txt - path to the text</font></i>
+
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> get_highlighted <font color=#1b1baa>$txt</font>] sel pos pos2
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$sel</font> eq {}} <b><font color=#ca14ca>return</font></b>
+    <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> highlight_matches_real <font color=#1b1baa>$</font>txt <font color=#1b1baa>$</font>pos <font color=#1b1baa>$</font>pos2&quot;</font>
+    <b><font color=#ca14ca>my</font></b> set_HighlightedString <font color=#1b1baa>$sel</font>
+    <b><font color=#3a6797>set</font></b> lenList {}
+    <b><font color=#3a6797>set</font></b> posList [<font color=#1b1baa>$txt</font> search <font color=#653760>-all</font> <font color=#653760>-count</font> lenList -- <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>sel&quot;</font> 1.0 end]
+    <b><font color=#3a6797>foreach</font></b> pos2 <font color=#1b1baa>$posList</font> len <font color=#1b1baa>$lenList</font> {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$len</font> eq {}} {<b><font color=#3a6797>set</font></b> len [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$sel</font>]}
+      <b><font color=#3a6797>set</font></b> pos3 [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos2 + <font color=#1b1baa>$</font>len chars&quot;</font>]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$pos2</font> == <font color=#1b1baa>$pos</font>} {
+        <b><font color=#3a6797>lappend</font></b> matches2 <font color=#1b1baa>$pos2</font> <font color=#1b1baa>$pos3</font>
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>lappend</font></b> matches1 <font color=#1b1baa>$pos2</font> <font color=#1b1baa>$pos3</font>
+      }
+    }
+    <b><font color=#3a6797>catch</font></b> {
+      <font color=#1b1baa>$txt</font> tag remove hilited 1.0 end
+      <font color=#1b1baa>$txt</font> tag remove hilited2 1.0 end
+      <font color=#1b1baa>$txt</font> tag add hilited {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$matches1</font>
+      <font color=#1b1baa>$txt</font> tag add hilited2 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$matches2</font>
+    }
+    <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(HILI,<font color=#1b1baa>$txt</font>) yes
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=unhighlight_matches></a>
+  <b><font color=#ca14ca>method</font></b> unhighlight_matches {txt} {
+    <i><font color=#4b5d50># Unhighlights matches of selected word in a text.</font></i>
+    <i><font color=#4b5d50>#   w - path to the text</font></i>
+
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists ::apave::_AP_VARS(HILI,<font color=#1b1baa>$txt</font>)] && <font color=#1b1baa>$::apave::_AP_VARS(HILI,$txt)</font>} {
+      <font color=#1b1baa>$txt</font> tag remove hilited 1.0 end
+      <font color=#1b1baa>$txt</font> tag remove hilited2 1.0 end
+      <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(HILI,<font color=#1b1baa>$txt</font>) no
+    }
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=seek_highlight></a>
+  <b><font color=#ca14ca>method</font></b> seek_highlight {txt mode} {
+    <i><font color=#4b5d50># Seeks the selected word forward/backward/to first/to last in a text.</font></i>
+    <i><font color=#4b5d50>#   w - path to the text</font></i>
+    <i><font color=#4b5d50>#   mode - 0 (search backward), 1 (forward), 2 (first), 3 (last)</font></i>
+
+    <b><font color=#ca14ca>my</font></b> unhighlight_matches <font color=#1b1baa>$txt</font>
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> get_highlighted <font color=#1b1baa>$txt</font>] sel pos pos2
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$sel</font> eq {}} <b><font color=#ca14ca>return</font></b>
+    <b><font color=#ca14ca>my</font></b> set_HighlightedString <font color=#1b1baa>$sel</font>
+    <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$mode</font> {
+      0 { ;<i><font color=#4b5d50># backward</font></i>
+        <b><font color=#3a6797>set</font></b> nc [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$sel</font>] - 1}]
+        <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos - <font color=#1b1baa>$</font>nc chars&quot;</font>]
+        <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$txt</font> search <font color=#653760>-backwards</font> -- <font color=#1b1baa>$sel</font> <font color=#1b1baa>$pos</font> 1.0]
+      }
+      1 { ;<i><font color=#4b5d50># forward</font></i>
+        <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$txt</font> search -- <font color=#1b1baa>$sel</font> <font color=#1b1baa>$pos2</font> end]
+      }
+      2 { ;<i><font color=#4b5d50># to first</font></i>
+        <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$txt</font> search -- <font color=#1b1baa>$sel</font> 1.0 end]
+      }
+      3 { ;<i><font color=#4b5d50># to last</font></i>
+        <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$txt</font> search <font color=#653760>-backwards</font> -- <font color=#1b1baa>$sel</font> end 1.0]
+      }
+    }
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> length <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos&quot;</font>]} {
+      ::tk::TextSetCursor <font color=#1b1baa>$txt</font> <font color=#1b1baa>$pos</font>
+      <font color=#1b1baa>$txt</font> tag add sel <font color=#1b1baa>$pos</font> [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos + <font color=#1b1baa>[</font>string length <font color=#1b1baa>$</font>sel<font color=#1b1baa>]</font> chars&quot;</font>]
+    }
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=highlight_matches_real></a>
+  <b><font color=#ca14ca>method</font></b> highlight_matches_real {txt pos1 pos2} {
+    <i><font color=#4b5d50># Highlights a selected word in a text, esp. fow Windows.</font></i>
+    <i><font color=#4b5d50># Windows thinks a word is edged by spaces only: not in real case.</font></i>
+    <i><font color=#4b5d50>#   txt - path to the text</font></i>
+    <i><font color=#4b5d50>#   pos1 - starting position of real selection</font></i>
+    <i><font color=#4b5d50>#   pos2 - ending position of real selection</font></i>
+
+    <font color=#1b1baa>$txt</font> tag remove sel 1.0 end
+    <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$pos1</font>] eq <font color=#8b2a0e>&quot;\n&quot;</font>} {
+      <i><font color=#4b5d50># if a word at line start, Windows select an empty line above</font></i>
+      <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$pos1</font> .] l c
+      <b><font color=#3a6797>set</font></b> pos1 [<b><font color=#3a6797>incr</font></b> l].<font color=#1b1baa>$c</font>
+    }
+    <b><font color=#3a6797>catch</font></b> {::tk::TextSetCursor <font color=#1b1baa>$txt</font> <font color=#1b1baa>$pos1</font>}
+    <font color=#1b1baa>$txt</font> tag add sel <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font>
+  }
+<a id=Query's_auxiliaries></a>
+  <i><font color=#4b5d50>## ________________________ Query's auxiliaries _________________________ ##</font></i>
+<a id=varName></a>
+  <b><font color=#ca14ca>method</font></b> varName {wname} {
+    <i><font color=#4b5d50># Gets a variable name associated with a widget's name of &quot;input&quot; dialogue.</font></i>
+    <i><font color=#4b5d50>#   wname - widget's name</font></i>
+
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>namespace</font></b> current]::var<font color=#1b1baa>$wname</font>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=FieldName></a>
+  <b><font color=#ca14ca>method</font></b> FieldName {name} {
+    <i><font color=#4b5d50># Gets a field name.</font></i>
+
+    <b><font color=#ca14ca>return</font></b> fraM.fra<font color=#1b1baa>$name</font>.<font color=#1b1baa>$name</font>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=GetVarsValues></a>
+  <b><font color=#ca14ca>method</font></b> GetVarsValues {lwidgets} {
+    <i><font color=#4b5d50># Gets values of entries passed (or set) in -tvar.</font></i>
+    <i><font color=#4b5d50>#   lwidgets - list of widget items</font></i>
+
+    <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>set</font></b> vars [<b><font color=#3a6797>list</font></b>]]
+    <b><font color=#3a6797>foreach</font></b> wl <font color=#1b1baa>$lwidgets</font> {
+      <b><font color=#3a6797>set</font></b> ownname [<b><font color=#ca14ca>my</font></b> ownWName [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$wl</font> 0]]
+      <b><font color=#3a6797>set</font></b> vv [<b><font color=#ca14ca>my</font></b> varName <font color=#1b1baa>$ownname</font>]
+      <b><font color=#3a6797>set</font></b> attrs [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$wl</font> 6]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match <font color=#8b2a0e>&quot;ra*&quot;</font> <font color=#1b1baa>$ownname</font>]} {
+        <i><font color=#4b5d50># only for widgets with a common variable (e.g. radiobuttons):</font></i>
+        <b><font color=#3a6797>foreach</font></b> t {<font color=#653760>-var</font> <font color=#653760>-tvar</font>} {
+          <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> v [::apave::getOption <font color=#1b1baa>$t</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$attrs</font>]] ne {}} {
+            <b><font color=#3a6797>array</font></b> set a <font color=#1b1baa>$attrs</font>
+            <b><font color=#3a6797>set</font></b> vv <font color=#1b1baa>$v</font>
+          }
+        }
+      }
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exist <font color=#1b1baa>$vv</font>] && [<b><font color=#3a6797>lsearch</font></b> <font color=#1b1baa>$vars</font> <font color=#1b1baa>$vv</font>]==-1} {
+        <b><font color=#3a6797>lappend</font></b> res [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$vv</font>]
+        <b><font color=#3a6797>lappend</font></b> vars <font color=#1b1baa>$vv</font>
+      }
+    }
+    <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=SetGetTexts></a>
+  <b><font color=#ca14ca>method</font></b> SetGetTexts {oper w iopts lwidgets} {
+    <i><font color=#4b5d50># Sets/gets contents of text fields.</font></i>
+    <i><font color=#4b5d50>#   oper - &quot;set&quot; to set, &quot;get&quot; to get contents of text field</font></i>
+    <i><font color=#4b5d50>#   w - window's name</font></i>
+    <i><font color=#4b5d50>#   iopts - equals to &quot;&quot; if no operation</font></i>
+    <i><font color=#4b5d50>#   lwidgets - list of widget items</font></i>
+
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$iopts</font> eq {}} <b><font color=#ca14ca>return</font></b>
+    <b><font color=#3a6797>foreach</font></b> widg <font color=#1b1baa>$lwidgets</font> {
+      <b><font color=#3a6797>set</font></b> wname [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$widg</font> 0]
+      <b><font color=#3a6797>set</font></b> name [<b><font color=#ca14ca>my</font></b> ownWName <font color=#1b1baa>$wname</font>]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$name</font> 0 1] eq <font color=#8b2a0e>&quot;te&quot;</font>} {
+        <b><font color=#3a6797>set</font></b> vv [<b><font color=#ca14ca>my</font></b> varName <font color=#1b1baa>$name</font>]
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$oper</font> eq <font color=#8b2a0e>&quot;set&quot;</font>} {
+          <b><font color=#ca14ca>my</font></b> displayText <font color=#1b1baa>$w</font>.<font color=#1b1baa>$wname</font> [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$vv</font>]
+        } <b><font color=#3a6797>else</font></b> {
+          <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$vv</font> [<b><font color=#3a6797>string</font></b> trimright [<font color=#1b1baa>$w</font>.<font color=#1b1baa>$wname</font> get 1.0 end]]
+        }
+      }
+    }
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=GetLinePosition></a>
+  <b><font color=#ca14ca>method</font></b> GetLinePosition {txt ind} {
+    <i><font color=#4b5d50># Gets a line's position.</font></i>
+    <i><font color=#4b5d50>#   txt - text widget</font></i>
+    <i><font color=#4b5d50>#   ind - index of the line</font></i>
+    <i><font color=#4b5d50># Returns a list containing a line start and a line end.</font></i>
+
+    <b><font color=#3a6797>set</font></b> linestart [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>ind linestart&quot;</font>]
+    <b><font color=#3a6797>set</font></b> lineend   [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$linestart</font> + 1.0}]
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$linestart</font> <font color=#1b1baa>$lineend</font>]
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=AppendButtons></a>
+  <b><font color=#ca14ca>method</font></b> AppendButtons {widlistName buttons neighbor pos defb timeout win modal ONCLOSE} {
+    <i><font color=#4b5d50># Adds buttons to the widget list from a position of neighbor widget.</font></i>
+    <i><font color=#4b5d50>#   widlistName - variable name for widget list</font></i>
+    <i><font color=#4b5d50>#   buttons - buttons to add</font></i>
+    <i><font color=#4b5d50>#   neighbor - neighbor widget</font></i>
+    <i><font color=#4b5d50>#   pos - position of neighbor widget</font></i>
+    <i><font color=#4b5d50>#   defb - default button</font></i>
+    <i><font color=#4b5d50>#   timeout  - timeout (to count down seconds and invoke a button)</font></i>
+    <i><font color=#4b5d50>#   win - dialogue's path</font></i>
+    <i><font color=#4b5d50>#   modal - yes if the window is modal</font></i>
+    <i><font color=#4b5d50>#   ONCLOSE - command to run at closing the dialog</font></i>
+    <i><font color=#4b5d50># Returns list of &quot;Help&quot; button's name and command.</font></i>
+
+    <b><font color=#3a6797>upvar</font></b> <font color=#1b1baa>$widlistName</font> widlist
+    <b><font color=#3a6797>set</font></b> Defb1 [<b><font color=#3a6797>set</font></b> Defb2 [<b><font color=#3a6797>set</font></b> bhlist {}]]
+    <b><font color=#3a6797>foreach</font></b> {but txt res} <font color=#1b1baa>$buttons</font> {
+      <b><font color=#3a6797>set</font></b> com <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> res <font color=#1b1baa>$</font>Dlgpath&quot;</font>
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> commands <font color=#1b1baa>$res</font>] eq {}} {
+        <b><font color=#3a6797>set</font></b> com <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>com <font color=#1b1baa>$</font>res&quot;</font>
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> eq {<b><font color=#134070>destroy</font></b>}} {
+          <i><font color=#4b5d50># for compatibility with old modal windows</font></i>
+          <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$modal</font>} {<b><font color=#3a6797>set</font></b> res <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>com 0&quot;</font>} {<b><font color=#3a6797>set</font></b> res <font color=#8b2a0e>&quot;destroy <font color=#1b1baa>$</font>win&quot;</font>}
+        }
+        <b><font color=#3a6797>set</font></b> com <font color=#1b1baa>$res</font>  ;<i><font color=#4b5d50># &quot;res&quot; is set as a command</font></i>
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$but</font> eq {butHELP}} {
+        <i><font color=#4b5d50># Help button contains the command in &quot;res&quot;</font></i>
+        <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map <font color=#8b2a0e>&quot;%w <font color=#1b1baa>$</font>win&quot;</font> <font color=#1b1baa>$res</font>]
+        <b><font color=#3a6797>set</font></b> bhlist [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$but</font> <font color=#1b1baa>$com</font>]
+      } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$Defb1</font> eq {}} {
+        <b><font color=#3a6797>set</font></b> Defb1 <font color=#1b1baa>$but</font>
+      } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$Defb2</font> eq {}} {
+        <b><font color=#3a6797>set</font></b> Defb2 <font color=#1b1baa>$but</font>
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ONCLOSE</font> ne {}} {<b><font color=#3a6797>append</font></b> com <font color=#8b2a0e>&quot; ; <font color=#1b1baa>$</font>ONCLOSE&quot;</font>}
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> _ [<b><font color=#3a6797>string</font></b> first <font color=#8b2a0e>&quot;::&quot;</font> <font color=#1b1baa>$txt</font>]]&gt;-1} {
+        <b><font color=#3a6797>set</font></b> tt <font color=#8b2a0e>&quot; -tip <font color=#1b1baa>{[</font>string range <font color=#1b1baa>$</font>txt <font color=#1b1baa>$</font>_+2 end<font color=#1b1baa>]}</font>&quot;</font>
+        <b><font color=#3a6797>set</font></b> txt [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$txt</font> 0 <font color=#1b1baa>$_</font>-1]
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> tt {}
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$timeout</font> ne {} && (<font color=#1b1baa>$defb</font> eq <font color=#1b1baa>$but</font> || <font color=#1b1baa>$defb</font> eq {})} {
+        <b><font color=#3a6797>set</font></b> tmo <font color=#8b2a0e>&quot;-timeout <font color=#1b1baa>{$</font>timeout<font color=#1b1baa>}</font>&quot;</font>
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> tmo {}
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$but</font> eq {butHELP}} {
+        <b><font color=#3a6797>set</font></b> neighbor [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$widlist</font> end 1]
+        <b><font color=#3a6797>set</font></b> widlist [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$widlist</font> end end]
+        <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$but</font> <font color=#1b1baa>$neighbor</font> T 1 1 {<font color=#653760>-st</font> w} \
+          <font color=#8b2a0e>&quot;-t \&quot;<font color=#1b1baa>$</font>txt\&quot; -com \&quot;<font color=#1b1baa>$</font>com\&quot;<font color=#1b1baa>$</font>tt <font color=#1b1baa>$</font>tmo -tip F1&quot;</font>]
+        <b><font color=#3a6797>set</font></b> h h_Help
+        <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$h</font> <font color=#1b1baa>$but</font> L 1 94 {<font color=#653760>-st</font> we}]
+        <b><font color=#3a6797>set</font></b> neighbor <font color=#1b1baa>$h</font>
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$but</font> <font color=#1b1baa>$neighbor</font> <font color=#1b1baa>$pos</font> 1 1 {<font color=#653760>-st</font> we} \
+          <font color=#8b2a0e>&quot;-t \&quot;<font color=#1b1baa>$</font>txt\&quot; -com \&quot;<font color=#1b1baa>$</font>com\&quot;<font color=#1b1baa>$</font>tt <font color=#1b1baa>$</font>tmo&quot;</font>]
+        <b><font color=#3a6797>set</font></b> neighbor <font color=#1b1baa>$but</font>
+      }
+      <b><font color=#3a6797>set</font></b> pos L
+    }
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> LowercaseWidgetName <font color=#1b1baa>$Dlgpath</font>.fra.<font color=#1b1baa>$Defb1</font>] Defb1
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> LowercaseWidgetName <font color=#1b1baa>$Dlgpath</font>.fra.<font color=#1b1baa>$Defb2</font>] Defb2
+    <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$bhlist</font>
+  }
+<a id=Query_the_terrible></a>
+  <i><font color=#4b5d50>## ________________________ Query the terrible _________________________ ##</font></i>
+<a id=Query></a>
+  <b><font color=#ca14ca>method</font></b> Query {icon ttl msg buttons defb inopts argdia {precom <font color=#8b2a0e>&quot;&quot;</font>} args} {
+    <i><font color=#4b5d50># Makes a query (or a message) and gets the user's response.</font></i>
+    <i><font color=#4b5d50>#   icon    - icon name (info, warn, ques, err)</font></i>
+    <i><font color=#4b5d50>#   ttl     - title</font></i>
+    <i><font color=#4b5d50>#   msg     - message</font></i>
+    <i><font color=#4b5d50>#   buttons - list of triples &quot;button name, text, ID&quot;</font></i>
+    <i><font color=#4b5d50>#   defb    - default button (OK, YES, NO, CANCEL, RETRY, ABORT)</font></i>
+    <i><font color=#4b5d50>#   inopts  - options for input dialog</font></i>
+    <i><font color=#4b5d50>#   argdia - list of dialog's options</font></i>
+    <i><font color=#4b5d50>#   precom - command(s) performed before showing the dialog</font></i>
+    <i><font color=#4b5d50>#   args - additional options (message's font etc.)</font></i>
+    <i><font color=#4b5d50># The *argdia* may contain additional options of the query, like these:</font></i>
+    <i><font color=#4b5d50>#   -checkbox text (-ch text) - makes the checkbox's text visible</font></i>
+    <i><font color=#4b5d50>#   -geometry +x+y (-g +x+y) - sets the geometry of dialog</font></i>
+    <i><font color=#4b5d50>#   -color cval    (-c cval) - sets the color of message</font></i>
+    <i><font color=#4b5d50># If &quot;-geometry&quot; option is set (even equaling &quot;&quot;) the Query procedure</font></i>
+    <i><font color=#4b5d50># returns a list with chosen button's ID and a new geometry.</font></i>
+    <i><font color=#4b5d50># Otherwise it returns only the chosen button's ID.</font></i>
+    <i><font color=#4b5d50># See also:</font></i>
+    <i><font color=#4b5d50># [aplsimple.github.io](https://aplsimple.github.io/en/tcl/pave/index.html)</font></i>
+
+    <b><font color=#3a6797>set</font></b> wdia <font color=#1b1baa>$Winpath</font>.dia
+    <b><font color=#3a6797>append</font></b> wdia [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#ca14ca>self</font></b>] :] end] ;<i><font color=#4b5d50># be unique per apave object</font></i>
+    <b><font color=#3a6797>set</font></b> qdlg [<b><font color=#3a6797>set</font></b> Dlgpath <font color=#1b1baa>$wdia</font>[<b><font color=#3a6797>incr</font></b> Indexdlg]]
+    <i><font color=#4b5d50># remember the focus (to restore it after closing the dialog)</font></i>
+    <b><font color=#3a6797>set</font></b> focusback [<b><font color=#134070>focus</font></b>]
+    <b><font color=#3a6797>set</font></b> focusmatch {}
+    <i><font color=#4b5d50># options of dialog</font></i>
+    <b><font color=#3a6797>lassign</font></b> {} chmsg geometry optsLabel optsMisc optsFont optsFontM optsHead \
+      root rotext head hsz binds postcom onclose ONCLOSE timeout tab2 \
+      tags cc themecolors optsGrid addpopup minsize savetext
+    <b><font color=#3a6797>set</font></b> wasgeo [<b><font color=#3a6797>set</font></b> textmode [<b><font color=#3a6797>set</font></b> stay [<b><font color=#3a6797>set</font></b> waitvar 0]]]
+    <b><font color=#3a6797>set</font></b> readonly [<b><font color=#3a6797>set</font></b> hidefind [<b><font color=#3a6797>set</font></b> scroll [<b><font color=#3a6797>set</font></b> modal 1]]]
+    <b><font color=#3a6797>set</font></b> curpos {1.0}
+    <b><font color=#3a6797>set</font></b> CheckNomore 0
+    <b><font color=#3a6797>foreach</font></b> {opt val} {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$argdia</font> {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$opt</font> in {<font color=#653760>-c</font> <font color=#653760>-color</font> <font color=#653760>-fg</font> <font color=#653760>-bg</font> <font color=#653760>-fgS</font> <font color=#653760>-bgS</font> <font color=#653760>-cc</font> <font color=#653760>-hfg</font> <font color=#653760>-hbg</font>}} {
+        <i><font color=#4b5d50># take colors by their variables</font></i>
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exist <font color=#1b1baa>$val</font>]} {<b><font color=#3a6797>set</font></b> val [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$val</font>]}
+      }
+      <b><font color=#3a6797>switch</font></b> -- <font color=#1b1baa>$opt</font> {
+        <font color=#653760>-H</font> - <font color=#653760>-head</font> {
+          <b><font color=#3a6797>set</font></b> head [<b><font color=#3a6797>string</font></b> map {$ \$ \&quot; \'\' \{ ( \} )} <font color=#1b1baa>$val</font>]
+        }
+        <font color=#653760>-help</font> {
+          <b><font color=#3a6797>set</font></b> buttons <font color=#8b2a0e>&quot;butHELP Help <font color=#1b1baa>{$</font>val<font color=#1b1baa>}</font> <font color=#1b1baa>$</font>buttons&quot;</font>
+        }
+        <font color=#653760>-ch</font> - <font color=#653760>-checkbox</font> {<b><font color=#3a6797>set</font></b> chmsg <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>val&quot;</font>}
+        <font color=#653760>-g</font> - <font color=#653760>-geometry</font> {
+          <b><font color=#3a6797>set</font></b> geometry <font color=#1b1baa>$val</font>
+          <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> wasgeo [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> first <font color=#8b2a0e>&quot;pointer&quot;</font> <font color=#1b1baa>$val</font>]&lt;0}]]} {
+            <b><font color=#3a6797>lassign</font></b> [::apave::splitGeometry <font color=#1b1baa>$geometry</font>] - - gx gy
+          }
+        }
+        <font color=#653760>-c</font> - <font color=#653760>-color</font> {<b><font color=#3a6797>append</font></b> optsLabel <font color=#8b2a0e>&quot; -foreground <font color=#1b1baa>{$</font>val<font color=#1b1baa>}</font>&quot;</font>}
+        <font color=#653760>-a</font> { ;<i><font color=#4b5d50># additional grid options of message labels</font></i>
+          <b><font color=#3a6797>append</font></b> optsGrid <font color=#8b2a0e>&quot; <font color=#1b1baa>$</font>val&quot;</font> }
+        <font color=#653760>-onclose</font> {
+          <b><font color=#3a6797>set</font></b> ONCLOSE [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %w <font color=#1b1baa>$qdlg</font>] <font color=#1b1baa>$val</font>]
+          <b><font color=#3a6797>lappend</font></b> args <font color=#1b1baa>$opt</font> <font color=#1b1baa>$ONCLOSE</font>
+        }
+        <font color=#653760>-centerme</font> - <font color=#653760>-ontop</font> - <font color=#653760>-themed</font> - <font color=#653760>-resizable</font> - <font color=#653760>-checkgeometry</font> - <font color=#653760>-comOK</font> - <font color=#653760>-transient</font> {
+          <b><font color=#3a6797>lappend</font></b> args <font color=#1b1baa>$opt</font> <font color=#1b1baa>$val</font> ;<i><font color=#4b5d50># options delegated to showModal method</font></i>
+        }
+        <font color=#653760>-parent</font> - <font color=#653760>-root</font> { ;<i><font color=#4b5d50># obsolete, used for compatibility</font></i>
+          <b><font color=#3a6797>lappend</font></b> args <font color=#653760>-centerme</font> <font color=#1b1baa>$val</font>
+        }
+        <font color=#653760>-t</font> - <font color=#653760>-text</font> {<b><font color=#3a6797>set</font></b> textmode <font color=#1b1baa>$val</font>}
+        <font color=#653760>-tags</font> {
+          <b><font color=#3a6797>upvar</font></b> 2 <font color=#1b1baa>$val</font> _tags
+          <b><font color=#3a6797>set</font></b> tags <font color=#1b1baa>$_tags</font>
+        }
+        <font color=#653760>-ro</font> - <font color=#653760>-readonly</font> {<b><font color=#3a6797>set</font></b> readonly [<b><font color=#3a6797>set</font></b> hidefind <font color=#1b1baa>$val</font>]}
+        <font color=#653760>-rotext</font> {<b><font color=#3a6797>set</font></b> hidefind 0; <b><font color=#3a6797>set</font></b> rotext <font color=#1b1baa>$val</font>}
+        <font color=#653760>-w</font> - <font color=#653760>-width</font> {<b><font color=#3a6797>set</font></b> charwidth <font color=#1b1baa>$val</font>}
+        <font color=#653760>-h</font> - <font color=#653760>-height</font> {<b><font color=#3a6797>set</font></b> charheight <font color=#1b1baa>$val</font>}
+        <font color=#653760>-fg</font> {<b><font color=#3a6797>append</font></b> optsMisc <font color=#8b2a0e>&quot; -foreground <font color=#1b1baa>{$</font>val<font color=#1b1baa>}</font>&quot;</font>}
+        <font color=#653760>-bg</font> {<b><font color=#3a6797>append</font></b> optsMisc <font color=#8b2a0e>&quot; -background <font color=#1b1baa>{$</font>val<font color=#1b1baa>}</font>&quot;</font>}
+        <font color=#653760>-fgS</font> {<b><font color=#3a6797>append</font></b> optsMisc <font color=#8b2a0e>&quot; -selectforeground <font color=#1b1baa>{$</font>val<font color=#1b1baa>}</font>&quot;</font>}
+        <font color=#653760>-bgS</font> {<b><font color=#3a6797>append</font></b> optsMisc <font color=#8b2a0e>&quot; -selectbackground <font color=#1b1baa>{$</font>val<font color=#1b1baa>}</font>&quot;</font>}
+        <font color=#653760>-cc</font> {<b><font color=#3a6797>append</font></b> optsMisc <font color=#8b2a0e>&quot; -insertbackground <font color=#1b1baa>{$</font>val<font color=#1b1baa>}</font>&quot;</font>}
+        <font color=#653760>-my</font> - <font color=#653760>-myown</font> {<b><font color=#3a6797>append</font></b> optsMisc <font color=#8b2a0e>&quot; -myown <font color=#1b1baa>{$</font>val<font color=#1b1baa>}</font>&quot;</font>}
+        <font color=#653760>-pos</font> {<b><font color=#3a6797>set</font></b> curpos <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>val&quot;</font>}
+        <font color=#653760>-hfg</font> {<b><font color=#3a6797>append</font></b> optsHead <font color=#8b2a0e>&quot; -foreground <font color=#1b1baa>{$</font>val<font color=#1b1baa>}</font>&quot;</font>}
+        <font color=#653760>-hbg</font> {<b><font color=#3a6797>append</font></b> optsHead <font color=#8b2a0e>&quot; -background <font color=#1b1baa>{$</font>val<font color=#1b1baa>}</font>&quot;</font>}
+        <font color=#653760>-hsz</font> {<b><font color=#3a6797>append</font></b> hsz <font color=#8b2a0e>&quot; -size <font color=#1b1baa>$</font>val&quot;</font>}
+        <font color=#653760>-minsize</font> {<b><font color=#3a6797>set</font></b> minsize <font color=#8b2a0e>&quot;-minsize <font color=#1b1baa>{$</font>val<font color=#1b1baa>}</font>&quot;</font>}
+        <font color=#653760>-focus</font> {<b><font color=#3a6797>set</font></b> focusmatch <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>val&quot;</font>}
+        <font color=#653760>-theme</font> {<b><font color=#3a6797>append</font></b> themecolors <font color=#8b2a0e>&quot; <font color=#1b1baa>{$</font>val<font color=#1b1baa>}</font>&quot;</font>}
+        <font color=#653760>-post</font> {<b><font color=#3a6797>set</font></b> postcom <font color=#1b1baa>$val</font>}
+        <font color=#653760>-popup</font> {<b><font color=#3a6797>set</font></b> addpopup [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %w <font color=#1b1baa>$qdlg</font>.fra.texM] <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>val&quot;</font>]}
+        <font color=#653760>-timeout</font> - <font color=#653760>-focusback</font> - <font color=#653760>-scroll</font> - <font color=#653760>-tab2</font> - <font color=#653760>-stay</font> - <font color=#653760>-modal</font> - <font color=#653760>-waitvar</font> {
+          <b><font color=#3a6797>set</font></b> [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$opt</font> 1 end] <font color=#1b1baa>$val</font>
+        }
+        <font color=#653760>-savetext</font> {<b><font color=#3a6797>set</font></b> savetext <font color=#1b1baa>$val</font>}
+        <b><font color=#3a6797>default</font></b> {
+          <b><font color=#3a6797>append</font></b> optsFont <font color=#8b2a0e>&quot; <font color=#1b1baa>$</font>opt <font color=#1b1baa>$</font>val&quot;</font>
+          <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$opt</font> ne <font color=#8b2a0e>&quot;-family&quot;</font>} {
+            <b><font color=#3a6797>append</font></b> optsFontM <font color=#8b2a0e>&quot; <font color=#1b1baa>$</font>opt <font color=#1b1baa>$</font>val&quot;</font>
+          }
+        }
+      }
+    }
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> wprev [::apave::InfoFind <font color=#1b1baa>$wdia</font> <font color=#1b1baa>$modal</font>]] ne {}} {
+      <b><font color=#3a6797>catch</font></b> {
+        <b><font color=#134070>wm</font></b> withdraw <font color=#1b1baa>$wprev</font>
+        <b><font color=#134070>wm</font></b> deiconify <font color=#1b1baa>$wprev</font>
+        <b><font color=#3a6797>puts</font></b> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>wprev already exists: selected now&quot;</font>
+      }
+      <b><font color=#ca14ca>return</font></b> 0
+    }
+    <b><font color=#3a6797>set</font></b> optsFont [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$optsFont</font>]
+    <b><font color=#3a6797>set</font></b> optsHeadFont <font color=#1b1baa>$optsFont</font>
+    <b><font color=#3a6797>set</font></b> fs [<b><font color=#ca14ca>my</font></b> basicFontSize]
+    <b><font color=#3a6797>set</font></b> textfont <font color=#8b2a0e>&quot;-family <font color=#1b1baa>{[</font>my basicTextFont<font color=#1b1baa>]}</font>&quot;</font>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$optsFont</font> ne {}} {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first <font color=#8b2a0e>&quot;-size &quot;</font> <font color=#1b1baa>$optsFont</font>]&lt;0} {
+        <b><font color=#3a6797>append</font></b> optsFont <font color=#8b2a0e>&quot; -size <font color=#1b1baa>$</font>fs&quot;</font>
+      }
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first <font color=#8b2a0e>&quot;-size &quot;</font> <font color=#1b1baa>$optsFontM</font>]&lt;0} {
+        <b><font color=#3a6797>append</font></b> optsFontM <font color=#8b2a0e>&quot; -size <font color=#1b1baa>$</font>fs&quot;</font>
+      }
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first <font color=#8b2a0e>&quot;-family &quot;</font> <font color=#1b1baa>$optsFont</font>]&gt;=0} {
+        <b><font color=#3a6797>set</font></b> optsFont <font color=#8b2a0e>&quot;-font \{<font color=#1b1baa>$</font>optsFont&quot;</font>
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> optsFont <font color=#8b2a0e>&quot;-font \{<font color=#1b1baa>$</font>optsFont -family <font color=#1b1baa>{[</font>my basicDefFont<font color=#1b1baa>]}</font>&quot;</font>
+      }
+      <b><font color=#3a6797>append</font></b> optsFont <font color=#8b2a0e>&quot;\}&quot;</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> optsFont <font color=#8b2a0e>&quot;-font <font color=#1b1baa>{[</font>font actual apaveFontDef<font color=#1b1baa>]</font> -size <font color=#1b1baa>$</font>fs<font color=#1b1baa>}</font>&quot;</font>
+      <b><font color=#3a6797>set</font></b> optsFontM <font color=#8b2a0e>&quot;-size <font color=#1b1baa>$</font>fs&quot;</font>
+    }
+    <b><font color=#3a6797>set</font></b> msgonly [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$readonly</font> || <font color=#1b1baa>$hidefind</font> || <font color=#1b1baa>$chmsg</font> ne {}}]
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$textmode</font> || <font color=#1b1baa>$msgonly</font>} {
+      <b><font color=#3a6797>set</font></b> textfont <font color=#8b2a0e>&quot;-family <font color=#1b1baa>{[</font>my basicDefFont<font color=#1b1baa>]}</font>&quot;</font>
+      <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$textmode</font>} {
+        <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \\ \\\\ \{ \\\\\{ \} \\\\\}] <font color=#1b1baa>$msg</font>]
+      }
+    }
+    <b><font color=#3a6797>set</font></b> optsFontM [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$optsFontM</font>]
+    <b><font color=#3a6797>set</font></b> optsFontM <font color=#8b2a0e>&quot;-font \{<font color=#1b1baa>$</font>optsFontM <font color=#1b1baa>$</font>textfont\}&quot;</font>
+    <i><font color=#4b5d50># layout: add the icon</font></i>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$icon</font> ni {{} -}} {
+      <b><font color=#3a6797>set</font></b> widlist [<b><font color=#3a6797>list</font></b> [<b><font color=#3a6797>list</font></b> labBimg - - 99 1 \
+        {<font color=#653760>-st</font> n <font color=#653760>-pady</font> 7} <font color=#8b2a0e>&quot;-image <font color=#1b1baa>[</font>::apave::iconImage <font color=#1b1baa>$</font>icon<font color=#1b1baa>]</font>&quot;</font>]]
+      <b><font color=#3a6797>set</font></b> prevl labBimg
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> widlist [<b><font color=#3a6797>list</font></b> [<b><font color=#3a6797>list</font></b> labimg - - 99 1]]
+      <b><font color=#3a6797>set</font></b> prevl labimg ;<i><font color=#4b5d50># this trick would hide the prevw at all</font></i>
+    }
+    <b><font color=#3a6797>set</font></b> prevw labBimg
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$head</font> ne {}} {
+      <i><font color=#4b5d50># set the dialog's heading (-head option)</font></i>
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$optsHeadFont</font> ne {} || <font color=#1b1baa>$hsz</font> ne {}} {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$hsz</font> eq {}} {<b><font color=#3a6797>set</font></b> hsz <font color=#8b2a0e>&quot;-size <font color=#1b1baa>[</font>::apave::obj basicFontSize<font color=#1b1baa>]</font>&quot;</font>}
+        <b><font color=#3a6797>set</font></b> optsHeadFont [<b><font color=#3a6797>string</font></b> trim <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>optsHeadFont <font color=#1b1baa>$</font>hsz&quot;</font>]
+        <b><font color=#3a6797>set</font></b> optsHeadFont <font color=#8b2a0e>&quot;-font \&quot;<font color=#1b1baa>$</font>optsHeadFont\&quot;&quot;</font>
+      }
+      <b><font color=#3a6797>set</font></b> optsFont {}
+      <b><font color=#3a6797>set</font></b> prevp L
+      <b><font color=#3a6797>set</font></b> head [<b><font color=#3a6797>string</font></b> map {\\n \n} <font color=#1b1baa>$head</font>]
+      <b><font color=#3a6797>foreach</font></b> lh [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$head</font> <font color=#8b2a0e>&quot;\n&quot;</font>] {
+        <b><font color=#3a6797>set</font></b> labh <font color=#8b2a0e>&quot;labheading<font color=#1b1baa>[</font>incr il<font color=#1b1baa>]</font>&quot;</font>
+        <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$labh</font> <font color=#1b1baa>$prevw</font> <font color=#1b1baa>$prevp</font> 1 99 {<font color=#653760>-st</font> we} \
+          <font color=#8b2a0e>&quot;-t \&quot;<font color=#1b1baa>$</font>lh\&quot; <font color=#1b1baa>$</font>optsHeadFont <font color=#1b1baa>$</font>optsHead&quot;</font>]
+        <b><font color=#3a6797>set</font></b> prevw [<b><font color=#3a6797>set</font></b> prevh <font color=#1b1baa>$labh</font>]
+        <b><font color=#3a6797>set</font></b> prevp T
+      }
+    } <b><font color=#3a6797>else</font></b> {
+      <i><font color=#4b5d50># add the upper (before the message) blank frame</font></i>
+      <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> h_1 <font color=#1b1baa>$prevw</font> L 1 1 {<font color=#653760>-pady</font> 3}]
+      <b><font color=#3a6797>set</font></b> prevw [<b><font color=#3a6797>set</font></b> prevh h_1]
+      <b><font color=#3a6797>set</font></b> prevp T
+    }
+    <i><font color=#4b5d50># add the message lines</font></i>
+    <b><font color=#3a6797>set</font></b> il [<b><font color=#3a6797>set</font></b> maxw 0]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$readonly</font> && <font color=#1b1baa>$rotext</font> eq {}} {
+      <i><font color=#4b5d50># only for messaging (not for editing/viewing texts):</font></i>
+      <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map {\\\\n \\n \\n \n} <font color=#1b1baa>$msg</font>]
+    }
+    <b><font color=#3a6797>foreach</font></b> m [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$msg</font> \n] {
+      <b><font color=#3a6797>set</font></b> m [<b><font color=#3a6797>string</font></b> map {$ \$ \&quot; \'\'} <font color=#1b1baa>$m</font>]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> mw [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$m</font>]] &gt; <font color=#1b1baa>$maxw</font>} {
+        <b><font color=#3a6797>set</font></b> maxw <font color=#1b1baa>$mw</font>
+      }
+      <b><font color=#3a6797>incr</font></b> il
+      <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$textmode</font>} {
+        <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> GetLinkLab <font color=#1b1baa>$m</font>] m link
+        <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> Lab<font color=#1b1baa>$il</font> <font color=#1b1baa>$prevw</font> <font color=#1b1baa>$prevp</font> 1 7 \
+          <font color=#8b2a0e>&quot;-st w -rw 1 <font color=#1b1baa>$</font>optsGrid&quot;</font> <font color=#8b2a0e>&quot;-t \&quot;<font color=#1b1baa>$</font>m \&quot; <font color=#1b1baa>$</font>optsLabel <font color=#1b1baa>$</font>optsFont <font color=#1b1baa>$</font>link&quot;</font>]
+      }
+      <b><font color=#3a6797>set</font></b> prevw Lab<font color=#1b1baa>$il</font>
+      <b><font color=#3a6797>set</font></b> prevp T
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$inopts</font> ne {}} {
+      <i><font color=#4b5d50># here are widgets for input (in fraM frame)</font></i>
+      <b><font color=#3a6797>set</font></b> io0 [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$inopts</font> 0]
+      <b><font color=#3a6797>lset</font></b> io0 1 <font color=#1b1baa>$prevh</font>
+      <b><font color=#3a6797>lset</font></b> inopts 0 <font color=#1b1baa>$io0</font>
+      <b><font color=#3a6797>foreach</font></b> io <font color=#1b1baa>$inopts</font> {
+        <b><font color=#3a6797>lappend</font></b> widlist <font color=#1b1baa>$io</font>
+      }
+      <b><font color=#3a6797>set</font></b> prevw fraM
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$textmode</font>} {
+      <i><font color=#4b5d50># here is text widget (in fraM frame)</font></i>
+    ; <b><font color=#ca14ca>proc</font></b> vallimits {val lowlimit isset limits} {
+        <b><font color=#3a6797>set</font></b> val [<b><font color=#3a6797>expr</font></b> {max(<font color=#1b1baa>$val</font>,<font color=#1b1baa>$lowlimit</font>)}]
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$isset</font>} {
+          <b><font color=#3a6797>upvar</font></b> <font color=#1b1baa>$limits</font> lim
+          <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$lim</font> l1 l2
+          <b><font color=#3a6797>set</font></b> val [<b><font color=#3a6797>expr</font></b> {min(<font color=#1b1baa>$val</font>,<font color=#1b1baa>$l1</font>)}] ;<i><font color=#4b5d50># forced low</font></i>
+          <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$l2</font> ne {}} {<b><font color=#3a6797>set</font></b> val [<b><font color=#3a6797>expr</font></b> {max(<font color=#1b1baa>$val</font>,<font color=#1b1baa>$l2</font>)}]} ;<i><font color=#4b5d50># forced high</font></i>
+        }
+        <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$val</font>
+      }
+      <b><font color=#3a6797>set</font></b> il [vallimits <font color=#1b1baa>$il</font> 1 [<b><font color=#3a6797>info</font></b> exists charheight] charheight]
+      <b><font color=#3a6797>incr</font></b> maxw
+      <b><font color=#3a6797>set</font></b> maxw [vallimits <font color=#1b1baa>$maxw</font> 20 [<b><font color=#3a6797>info</font></b> exists charwidth] charwidth]
+      <b><font color=#3a6797>rename</font></b> vallimits {}
+      <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> fraM <font color=#1b1baa>$prevh</font> T 10 12 {<font color=#653760>-st</font> nswe <font color=#653760>-pady</font> 3 <font color=#653760>-rw</font> 1}]
+      <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> TexM - - 1 12 {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both <font color=#653760>-in</font> \
+        <font color=#1b1baa>$qdlg</font>.fra.fraM} [<b><font color=#3a6797>list</font></b> <font color=#653760>-h</font> <font color=#1b1baa>$il</font> <font color=#653760>-w</font> <font color=#1b1baa>$maxw</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$optsFontM</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$optsMisc</font> \
+        <font color=#653760>-wrap</font> word <font color=#653760>-textpop</font> 0 <font color=#653760>-tabnext</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>qdlg.fra.<font color=#1b1baa>[</font>lindex <font color=#1b1baa>$</font>buttons 0<font color=#1b1baa>]</font> *but0&quot;</font>]]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$scroll</font>} {
+        <b><font color=#3a6797>lappend</font></b> widlist {sbv texM L 1 1 {<b><font color=#134070>pack</font></b> <font color=#653760>-in</font> <font color=#1b1baa>$qdlg</font>.fra.fraM}}
+      }
+      <b><font color=#3a6797>set</font></b> prevw fraM
+    }
+    <i><font color=#4b5d50># add the lower (after the message) blank frame</font></i>
+    <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> h_2 <font color=#1b1baa>$prevw</font> T 1 1 {<font color=#653760>-pady</font> 0 <font color=#653760>-ipady</font> 0 <font color=#653760>-csz</font> 0}]
+    <i><font color=#4b5d50># underline the message</font></i>
+    <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> seh <font color=#1b1baa>$prevl</font> T 1 99 {<font color=#653760>-st</font> ew}]
+    <i><font color=#4b5d50># add left frames and checkbox (before buttons)</font></i>
+    <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> h_3 seh T 1 1 {<font color=#653760>-pady</font> 0 <font color=#653760>-ipady</font> 0 <font color=#653760>-csz</font> 0}]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$textmode</font>} {
+      <i><font color=#4b5d50># binds to the special popup menu of the text widget</font></i>
+      <b><font color=#3a6797>set</font></b> wt <font color=#8b2a0e>&quot;\[<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> TexM\]&quot;</font>
+      <b><font color=#3a6797>set</font></b> binds <font color=#8b2a0e>&quot;set pop <font color=#1b1baa>$</font>wt.popupMenu</font>
+<font color=#8b2a0e>        bind <font color=#1b1baa>$</font>wt &lt;Button-3&gt; \{<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> themePopup <font color=#1b1baa>$</font>wt.popupMenu; tk_popup <font color=#1b1baa>$</font>wt.popupMenu %X %Y \}&quot;</font>
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$msgonly</font>} {
+        <b><font color=#3a6797>append</font></b> binds <font color=#8b2a0e>&quot;</font>
+<font color=#8b2a0e>          menu \$pop</font>
+<font color=#8b2a0e>           \$pop add command <font color=#1b1baa>[</font>my iconA copy<font color=#1b1baa>]</font> -accelerator Ctrl+C -label \&quot;Copy\&quot; \\</font>
+<font color=#8b2a0e>            -command \&quot;event generate <font color=#1b1baa>$</font>wt &lt;&lt;Copy&gt;&gt;\&quot;&quot;</font>
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$hidefind</font> || <font color=#1b1baa>$chmsg</font> ne {}} {
+          <b><font color=#3a6797>append</font></b> binds <font color=#8b2a0e>&quot;</font>
+<font color=#8b2a0e>            \$pop configure -tearoff 0</font>
+<font color=#8b2a0e>            \$pop add separator</font>
+<font color=#8b2a0e>            \$pop add command <font color=#1b1baa>[</font>my iconA none<font color=#1b1baa>]</font> -accelerator Ctrl+A \\</font>
+<font color=#8b2a0e>            -label \&quot;Select All\&quot; -command \&quot;<font color=#1b1baa>$</font>wt tag add sel 1.0 end\&quot;</font>
+<font color=#8b2a0e>             bind <font color=#1b1baa>$</font>wt &lt;Control-a&gt; \&quot;<font color=#1b1baa>$</font>wt tag add sel 1.0 end; break\&quot;&quot;</font>
+        }
+      }
+    }
+    <b><font color=#3a6797>set</font></b> appendHL no
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$chmsg</font> eq {}} {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$textmode</font>} {
+        <b><font color=#3a6797>set</font></b> noIMG <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>my iconA none<font color=#1b1baa>]</font>&quot;</font>
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$hidefind</font>} {
+          <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> h__ h_3 L 1 4 {<font color=#653760>-cw</font> 1}]
+        } <b><font color=#3a6797>else</font></b> {
+          <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> labfnd h_3 L 1 1 <font color=#8b2a0e>&quot;-st e&quot;</font> <font color=#8b2a0e>&quot;-t <font color=#1b1baa>{$</font>::apave::msgarray(find)<font color=#1b1baa>}</font>&quot;</font>]
+          <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> Entfind labfnd L 1 1 \
+            {<font color=#653760>-st</font> ew <font color=#653760>-cw</font> 1} <font color=#8b2a0e>&quot;-tvar <font color=#1b1baa>[</font>namespace current<font color=#1b1baa>]</font>::Foundstr -w 10&quot;</font>]
+          <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> labfnd2 Entfind L 1 1 <font color=#8b2a0e>&quot;-cw 2&quot;</font> <font color=#8b2a0e>&quot;-t <font color=#1b1baa>{}</font>&quot;</font>]
+          <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> h__ labfnd2 L 1 1]
+          <b><font color=#3a6797>append</font></b> binds <font color=#8b2a0e>&quot;</font>
+<font color=#8b2a0e>            bind \[<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> Entfind\] &lt;Return&gt; <font color=#1b1baa>{[</font>self<font color=#1b1baa>]</font> findInText<font color=#1b1baa>}</font></font>
+<font color=#8b2a0e>            bind \[<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> Entfind\] &lt;KP_Enter&gt; <font color=#1b1baa>{[</font>self<font color=#1b1baa>]</font> findInText<font color=#1b1baa>}</font></font>
+<font color=#8b2a0e>            bind \[<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> Entfind\] &lt;FocusIn&gt; <font color=#1b1baa>{</font>\[<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> Entfind\] selection range 0 end<font color=#1b1baa>}</font></font>
+<font color=#8b2a0e>            bind <font color=#1b1baa>$</font>qdlg &lt;F3&gt; <font color=#1b1baa>{[</font>self<font color=#1b1baa>]</font> findInText 1<font color=#1b1baa>}</font></font>
+<font color=#8b2a0e>            bind <font color=#1b1baa>$</font>qdlg &lt;Control-f&gt; \&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> InitFindInText 1; focus \[<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> Entfind\]; break\&quot;</font>
+<font color=#8b2a0e>            bind <font color=#1b1baa>$</font>qdlg &lt;Control-F&gt; \&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> InitFindInText 1; focus \[<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> Entfind\]; break\&quot;&quot;</font>
+        }
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$readonly</font>} {
+          <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$hidefind</font>} {
+            <b><font color=#3a6797>append</font></b> binds <font color=#8b2a0e>&quot;</font>
+<font color=#8b2a0e>             \$pop add separator</font>
+<font color=#8b2a0e>             \$pop add command <font color=#1b1baa>[</font>my iconA find<font color=#1b1baa>]</font> -accelerator Ctrl+F -label \\</font>
+<font color=#8b2a0e>             \&quot;Find First\&quot; -command \&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> InitFindInText; focus \[<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> Entfind\]\&quot;</font>
+<font color=#8b2a0e>             \$pop add command <font color=#1b1baa>$</font>noIMG -accelerator F3 -label \&quot;Find Next\&quot; \\</font>
+<font color=#8b2a0e>              -command \&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> findInText 1\&quot;</font>
+<font color=#8b2a0e>             <font color=#1b1baa>$</font>addpopup</font>
+<font color=#8b2a0e>             \$pop add separator</font>
+<font color=#8b2a0e>             \$pop add command <font color=#1b1baa>[</font>my iconA exit<font color=#1b1baa>]</font> -accelerator Esc -label \&quot;Close\&quot; \\</font>
+<font color=#8b2a0e>              -command \&quot;\[<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> paveoptionValue Defb1\] invoke\&quot;</font>
+<font color=#8b2a0e>            &quot;</font>
+          } <b><font color=#3a6797>else</font></b> {
+            <b><font color=#3a6797>set</font></b> appendHL yes
+          }
+        } <b><font color=#3a6797>else</font></b> {
+          <i><font color=#4b5d50># make bindings and popup menu for text widget</font></i>
+          <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> set_highlight_matches \[<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> TexM\]&quot;</font>
+          <b><font color=#3a6797>append</font></b> binds <font color=#8b2a0e>&quot;</font>
+<font color=#8b2a0e>            <font color=#1b1baa>[</font>my setTextBinds <font color=#1b1baa>$</font>wt<font color=#1b1baa>]</font></font>
+<font color=#8b2a0e>            menu \$pop</font>
+<font color=#8b2a0e>             \$pop add command <font color=#1b1baa>[</font>my iconA cut<font color=#1b1baa>]</font> -accelerator Ctrl+X -label \&quot;Cut\&quot; \\</font>
+<font color=#8b2a0e>              -command \&quot;event generate <font color=#1b1baa>$</font>wt &lt;&lt;Cut&gt;&gt;\&quot;</font>
+<font color=#8b2a0e>             \$pop add command <font color=#1b1baa>[</font>my iconA copy<font color=#1b1baa>]</font> -accelerator Ctrl+C -label \&quot;Copy\&quot; \\</font>
+<font color=#8b2a0e>              -command \&quot;event generate <font color=#1b1baa>$</font>wt &lt;&lt;Copy&gt;&gt;\&quot;</font>
+<font color=#8b2a0e>             \$pop add command <font color=#1b1baa>[</font>my iconA paste<font color=#1b1baa>]</font> -accelerator Ctrl+V -label \&quot;Paste\&quot; \\</font>
+<font color=#8b2a0e>              -command \&quot;event generate <font color=#1b1baa>$</font>wt &lt;&lt;Paste&gt;&gt;\&quot;</font>
+<font color=#8b2a0e>             <font color=#1b1baa>[[</font>self<font color=#1b1baa>]</font> popupBlockCommands \$pop <font color=#1b1baa>$</font>wt<font color=#1b1baa>]</font></font>
+<font color=#8b2a0e>             <font color=#1b1baa>[[</font>self<font color=#1b1baa>]</font> popupHighlightCommands \$pop <font color=#1b1baa>$</font>wt<font color=#1b1baa>]</font></font>
+<font color=#8b2a0e>             <font color=#1b1baa>[[</font>self<font color=#1b1baa>]</font> popupFindCommands \$pop <font color=#1b1baa>$</font>wt<font color=#1b1baa>]</font></font>
+<font color=#8b2a0e>             <font color=#1b1baa>$</font>addpopup</font>
+<font color=#8b2a0e>             \$pop add separator</font>
+<font color=#8b2a0e>             \$pop add command <font color=#1b1baa>[</font>my iconA SaveFile<font color=#1b1baa>]</font> -accelerator Ctrl+W \\</font>
+<font color=#8b2a0e>             -label \&quot;Save and Close\&quot; -command \&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> res <font color=#1b1baa>$</font>qdlg 1\&quot;</font>
+<font color=#8b2a0e>            &quot;</font>
+        }
+        <b><font color=#3a6797>set</font></b> onclose <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>namespace current<font color=#1b1baa>]</font>::exitEditor <font color=#1b1baa>$</font>qdlg&quot;</font>
+        <b><font color=#ca14ca>oo::objdefine</font></b> [<b><font color=#ca14ca>self</font></b>] export InitFindInText
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> h__ h_3 L 1 4 {<font color=#653760>-cw</font> 1}]
+      }
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> chb h_3 L 1 1 \
+        {<font color=#653760>-st</font> w} <font color=#8b2a0e>&quot;-t <font color=#1b1baa>{$</font>chmsg<font color=#1b1baa>}</font> -var <font color=#1b1baa>[</font>namespace current<font color=#1b1baa>]</font>::CheckNomore&quot;</font>]
+      <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> h_ chb L 1 1]
+      <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> sev h_ L 1 1 {<font color=#653760>-st</font> nse <font color=#653760>-cw</font> 1}]
+      <b><font color=#3a6797>lappend</font></b> widlist [<b><font color=#3a6797>list</font></b> h__ sev L 1 1]
+      <b><font color=#3a6797>set</font></b> appendHL <font color=#1b1baa>$textmode</font>
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$appendHL</font>} {
+      <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> set_highlight_matches <font color=#1b1baa>$</font>wt&quot;</font>
+      <b><font color=#3a6797>append</font></b> binds <font color=#8b2a0e>&quot;</font>
+<font color=#8b2a0e>      <font color=#1b1baa>[[</font>self<font color=#1b1baa>]</font> popupHighlightCommands \$pop <font color=#1b1baa>$</font>wt<font color=#1b1baa>]</font>&quot;</font>
+    }
+    <i><font color=#4b5d50># add the buttons</font></i>
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> AppendButtons widlist <font color=#1b1baa>$buttons</font> h__ L <font color=#1b1baa>$defb</font> <font color=#1b1baa>$timeout</font> <font color=#1b1baa>$qdlg</font> <font color=#1b1baa>$modal</font> <font color=#1b1baa>$ONCLOSE</font>] \
+      bhelp bcomm
+    <i><font color=#4b5d50># make the dialog's window</font></i>
+    <b><font color=#3a6797>set</font></b> wtop [<b><font color=#ca14ca>my</font></b> makeWindow <font color=#1b1baa>$qdlg</font>.fra <font color=#1b1baa>$ttl</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$bhelp</font> ne {}} {
+      <b><font color=#134070>bind</font></b> <font color=#1b1baa>$qdlg</font> &lt;F1&gt; <font color=#1b1baa>$bcomm</font>
+    }
+    <i><font color=#4b5d50># pave the dialog's window</font></i>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tab2</font> eq {}} {
+      <b><font color=#3a6797>set</font></b> widlist [<b><font color=#ca14ca>my</font></b> paveWindow <font color=#1b1baa>$qdlg</font>.fra <font color=#1b1baa>$widlist</font>]
+    } <b><font color=#3a6797>else</font></b> {
+      <i><font color=#4b5d50># pave with the notebook tabs (titl1 title2 [title3...] widlist2 [widlist3...])</font></i>
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$tab2</font> ttl1 ttl2 widlist2 ttl3 widlist3 ttl4 widlist4 ttl5 widlist5
+      <b><font color=#3a6797>foreach</font></b> nt {3 4 5} {
+        <b><font color=#3a6797>set</font></b> ttl ttl<font color=#1b1baa>$nt</font>
+        <b><font color=#3a6797>set</font></b> wdl widlist<font color=#1b1baa>$nt</font>
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> _ [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$ttl</font>]] ne {}} {
+          <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$ttl</font> [<b><font color=#3a6797>list</font></b> f<font color=#1b1baa>$nt</font> <font color=#8b2a0e>&quot;-t <font color=#1b1baa>{$</font>_<font color=#1b1baa>}</font>&quot;</font>]
+          <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$wdl</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$qdlg</font>.fra.nbk.f<font color=#1b1baa>$nt</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>set <font color=#1b1baa>$</font>wdl<font color=#1b1baa>]</font>&quot;</font>]
+        }
+      }
+      <b><font color=#3a6797>set</font></b> widlist0 [<b><font color=#3a6797>list</font></b> [<b><font color=#3a6797>list</font></b> nbk - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> top <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both} [<b><font color=#3a6797>list</font></b> \
+        f1 <font color=#8b2a0e>&quot;-t <font color=#1b1baa>{$</font>ttl1<font color=#1b1baa>}</font>&quot;</font> \
+        f2 <font color=#8b2a0e>&quot;-t <font color=#1b1baa>{$</font>ttl2<font color=#1b1baa>}</font>&quot;</font> \
+        {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$ttl3</font> \
+        {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$ttl4</font> \
+        {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$ttl5</font> \
+      ]]]
+
+      <b><font color=#3a6797>set</font></b> widlist1 [<b><font color=#3a6797>list</font></b>]
+      <b><font color=#3a6797>foreach</font></b> it <font color=#1b1baa>$widlist</font> {
+        <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$it</font> w nei pos r c opt atr
+        <b><font color=#3a6797>set</font></b> opt [<b><font color=#3a6797>string</font></b> map {<font color=#1b1baa>$qdlg</font>.fra <font color=#1b1baa>$qdlg</font>.fra.nbk.f1} <font color=#1b1baa>$opt</font>]
+        <b><font color=#3a6797>lappend</font></b> widlist1 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$w</font> <font color=#1b1baa>$nei</font> <font color=#1b1baa>$pos</font> <font color=#1b1baa>$r</font> <font color=#1b1baa>$c</font> <font color=#1b1baa>$opt</font> <font color=#1b1baa>$atr</font>]
+      }
+      <b><font color=#3a6797>set</font></b> widlist [<b><font color=#ca14ca>my</font></b> paveWindow <font color=#1b1baa>$qdlg</font>.fra <font color=#1b1baa>$widlist0</font> \
+        <font color=#1b1baa>$qdlg</font>.fra.nbk.f1 <font color=#1b1baa>$widlist1</font> \
+        <font color=#1b1baa>$qdlg</font>.fra.nbk.f2 <font color=#1b1baa>$widlist2</font> \
+        {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$widlist3</font> \
+        {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$widlist4</font> \
+        {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$widlist5</font> \
+      ]
+      <b><font color=#3a6797>set</font></b> tab2 nbk.f1.
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$precom</font> ne {}} {
+      {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$precom</font>  ;<i><font color=#4b5d50># actions before showModal</font></i>
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$themecolors</font> ne {}} {
+      <i><font color=#4b5d50># themed colors are set as sequentional '-theme' args</font></i>
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$themecolors</font>]==2} {
+        <i><font color=#4b5d50># when only 2 main fb/bg colors are set (esp. for TKE)</font></i>
+        <b><font color=#3a6797>lassign</font></b> [::apave::parseOptions <font color=#1b1baa>$optsMisc</font> <font color=#653760>-foreground</font> black \
+          <font color=#653760>-background</font> white <font color=#653760>-selectforeground</font> black \
+          <font color=#653760>-selectbackground</font> gray <font color=#653760>-insertbackground</font> black] v0 v1 v2 v3 v4
+        <i><font color=#4b5d50># the rest colors should be added, namely:</font></i>
+        <i><font color=#4b5d50>#   tfg2 tbg2 tfgS tbgS tfgD tbgD tcur bclr help fI bI fM bM fW bW bHL2</font></i>
+        <b><font color=#3a6797>lappend</font></b> themecolors <font color=#1b1baa>$v0</font> <font color=#1b1baa>$v1</font> <font color=#1b1baa>$v2</font> <font color=#1b1baa>$v3</font> <font color=#1b1baa>$v3</font> <font color=#1b1baa>$v1</font> <font color=#1b1baa>$v4</font> <font color=#1b1baa>$v4</font> <font color=#1b1baa>$v3</font> <font color=#1b1baa>$v2</font> <font color=#1b1baa>$v3</font> <font color=#1b1baa>$v0</font> <font color=#1b1baa>$v1</font> black #ffff9e <font color=#1b1baa>$v1</font>
+      }
+      <b><font color=#3a6797>catch</font></b> {
+        <b><font color=#ca14ca>my</font></b> themeWindow <font color=#1b1baa>$qdlg</font> <font color=#1b1baa>$themecolors</font> no
+      }
+    }
+    <i><font color=#4b5d50># after creating widgets - show dialog texts if any</font></i>
+    <b><font color=#ca14ca>my</font></b> SetGetTexts set <font color=#1b1baa>$qdlg</font>.fra <font color=#1b1baa>$inopts</font> <font color=#1b1baa>$widlist</font>
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> LowercaseWidgetName <font color=#1b1baa>$qdlg</font>.fra.<font color=#1b1baa>$tab2$defb</font>] focusnow
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$textmode</font>} {
+      <b><font color=#3a6797>set</font></b> wtxt [<b><font color=#ca14ca>my</font></b> TexM]
+      <b><font color=#ca14ca>my</font></b> displayTaggedText <font color=#1b1baa>$wtxt</font> msg <font color=#1b1baa>$tags</font>
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$defb</font> eq <font color=#8b2a0e>&quot;ButTEXT&quot;</font>} {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$readonly</font>} {
+          <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> LowercaseWidgetName <font color=#1b1baa>$Defb1</font>] focusnow
+        } <b><font color=#3a6797>else</font></b> {
+          <b><font color=#3a6797>set</font></b> focusnow <font color=#1b1baa>$wtxt</font>
+          <b><font color=#3a6797>catch</font></b> <font color=#8b2a0e>&quot;::tk::TextSetCursor <font color=#1b1baa>$</font>focusnow <font color=#1b1baa>$</font>curpos&quot;</font>
+          <b><font color=#3a6797>foreach</font></b> k {w W} \
+            {<b><font color=#3a6797>catch</font></b> <font color=#8b2a0e>&quot;bind <font color=#1b1baa>$</font>focusnow &lt;Control-<font color=#1b1baa>$</font>k&gt; <font color=#1b1baa>{[</font>self<font color=#1b1baa>]</font> res <font color=#1b1baa>$</font>qdlg 1; break<font color=#1b1baa>}</font>&quot;</font>}
+        }
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$readonly</font>} {
+        <b><font color=#ca14ca>my</font></b> readonlyWidget ::<font color=#1b1baa>$wtxt</font> true false
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$savetext</font> ne {}} {
+        <b><font color=#ca14ca>my</font></b> askForSave <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$savetext</font>
+      }
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$focusmatch</font> ne {}} {
+      <b><font color=#3a6797>foreach</font></b> w <font color=#1b1baa>$widlist</font> {
+        <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$w</font> widname
+        <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> LowercaseWidgetName <font color=#1b1baa>$widname</font>] wn rn
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match <font color=#1b1baa>$focusmatch</font> <font color=#1b1baa>$rn</font>]} {
+          <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> LowercaseWidgetName <font color=#1b1baa>$qdlg</font>.fra.<font color=#1b1baa>$wn</font>] focusnow
+          <b><font color=#ca14ca>break</font></b>
+        }
+      }
+    }
+    <b><font color=#3a6797>catch</font></b> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>binds&quot;</font>
+    <b><font color=#3a6797>set</font></b> args [::apave::removeOptions <font color=#1b1baa>$args</font> <font color=#653760>-focus</font>]
+    <b><font color=#3a6797>set</font></b> ::apave::querydlg <font color=#1b1baa>$qdlg</font>
+    <b><font color=#ca14ca>my</font></b> showModal <font color=#1b1baa>$qdlg</font> <font color=#653760>-modal</font> <font color=#1b1baa>$modal</font> <font color=#653760>-waitvar</font> <font color=#1b1baa>$waitvar</font> <font color=#653760>-onclose</font> <font color=#1b1baa>$onclose</font> \
+      <font color=#653760>-focus</font> <font color=#1b1baa>$focusnow</font> <font color=#653760>-geometry</font> <font color=#1b1baa>$geometry</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$minsize</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$qdlg</font>] || (!<font color=#1b1baa>$modal</font> && !<font color=#1b1baa>$waitvar</font>)} {
+      <b><font color=#ca14ca>return</font></b> 0
+    }
+    <b><font color=#3a6797>set</font></b> pdgeometry [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$qdlg</font>]
+    <i><font color=#4b5d50># the dialog's result is defined by &quot;pave res&quot; + checkbox's value</font></i>
+    <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>set</font></b> result [<b><font color=#ca14ca>my</font></b> res <font color=#1b1baa>$qdlg</font>]]
+    <b><font color=#3a6797>set</font></b> chv <font color=#1b1baa>$CheckNomore</font>
+    <b><font color=#3a6797>if</font></b> { [<b><font color=#3a6797>string</font></b> is integer <font color=#1b1baa>$res</font>] } {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> && <font color=#1b1baa>$chv</font>} { <b><font color=#3a6797>incr</font></b> result 10 }
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$result</font> ne {} ? 1 : 0}]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> && <font color=#1b1baa>$chv</font>} { <b><font color=#3a6797>append</font></b> result 10 }
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$textmode</font> && !<font color=#1b1baa>$readonly</font>} {
+      <b><font color=#3a6797>set</font></b> focusnow [<b><font color=#ca14ca>my</font></b> TexM]
+      <b><font color=#3a6797>set</font></b> textcont [<font color=#1b1baa>$focusnow</font> get 1.0 end]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> && <font color=#1b1baa>$postcom</font> ne {}} {
+        {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$postcom</font> textcont [<b><font color=#ca14ca>my</font></b> TexM] ;<i><font color=#4b5d50># actions after showModal</font></i>
+      }
+      <b><font color=#3a6797>set</font></b> textcont <font color=#8b2a0e>&quot; <font color=#1b1baa>[$</font>focusnow index insert<font color=#1b1baa>]</font> <font color=#1b1baa>$</font>textcont&quot;</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> textcont {}
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> && <font color=#1b1baa>$inopts</font> ne {}} {
+      <b><font color=#ca14ca>my</font></b> SetGetTexts get <font color=#1b1baa>$qdlg</font>.fra <font color=#1b1baa>$inopts</font> <font color=#1b1baa>$widlist</font>
+      <b><font color=#3a6797>set</font></b> inopts <font color=#8b2a0e>&quot; <font color=#1b1baa>[</font>my GetVarsValues <font color=#1b1baa>$</font>widlist<font color=#1b1baa>]</font>&quot;</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> inopts {}
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$textmode</font> && <font color=#1b1baa>$rotext</font> ne {}} {
+      <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$rotext</font> [<b><font color=#3a6797>string</font></b> trimright [[<b><font color=#ca14ca>my</font></b> TexM] get 1.0 end]]
+    }
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$stay</font>} {
+      <b><font color=#134070>destroy</font></b> <font color=#1b1baa>$qdlg</font>
+      <b><font color=#3a6797>update</font></b>
+      <i><font color=#4b5d50># pause a bit and restore the old focus</font></i>
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$focusback</font> ne {} && [<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$focusback</font>]} {
+        <b><font color=#3a6797>set</font></b> w <font color=#8b2a0e>&quot;.<font color=#1b1baa>[</font>lindex <font color=#1b1baa>[</font>split <font color=#1b1baa>$</font>focusback .<font color=#1b1baa>]</font> 1<font color=#1b1baa>]</font>&quot;</font>
+        <b><font color=#3a6797>after</font></b> 50 [<b><font color=#3a6797>list</font></b> if <font color=#8b2a0e>&quot;\[winfo exist <font color=#1b1baa>$</font>focusback\]&quot;</font> <font color=#8b2a0e>&quot;focus -force <font color=#1b1baa>$</font>focusback&quot;</font> elseif <font color=#8b2a0e>&quot;\[winfo exist <font color=#1b1baa>$</font>w\]&quot;</font> <font color=#8b2a0e>&quot;focus <font color=#1b1baa>$</font>w&quot;</font>]
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>after</font></b> 50 list focus .
+      }
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wasgeo</font>} {
+      <b><font color=#3a6797>lassign</font></b> [::apave::splitGeometry <font color=#1b1baa>$pdgeometry</font>] w h x y
+      <b><font color=#3a6797>catch</font></b> {
+        <i><font color=#4b5d50># geometry option can contain pointer/root etc.</font></i>
+        <b><font color=#3a6797>if</font></b> {abs(<font color=#1b1baa>$x</font>-<font color=#1b1baa>$gx</font>)&lt;30} {<b><font color=#3a6797>set</font></b> x <font color=#1b1baa>$gx</font>}
+        <b><font color=#3a6797>if</font></b> {abs(<font color=#1b1baa>$y</font>-<font color=#1b1baa>$gy</font>)&lt;30} {<b><font color=#3a6797>set</font></b> y <font color=#1b1baa>$gy</font>}
+      }
+      <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$result</font> <font color=#1b1baa>${w}</font>x<font color=#1b1baa>$h$x$y</font> <font color=#1b1baa>$textcont</font> [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$inopts</font>]]
+    }
+    <b><font color=#ca14ca>return</font></b> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>result<font color=#1b1baa>$</font>textcont<font color=#1b1baa>$</font>inopts&quot;</font>
+  }
+<a id=EOC_APaveDialog></a>
+<i><font color=#4b5d50># ________________________ EOC APaveDialog _________________________ #</font></i>
+
+}
+<a id=EOF></a>
+<i><font color=#4b5d50># _____________________________ EOF _____________________________________ #</font></i>
+
+</pre>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../index.html"><font color=#1a1a1a size=6>  <b>apavedialog.tcl</b></font></div></td></table>
+
+</section>
+<script>
+  writeFooter('Document generated by <a href="'+homeLINK()+'/en/tcl/alited/index.html">alited</a> &amp; <a href="'+homeLINK()+'/en/tcl/mulster/index.html">mulster</a></a>');
+</script>
+</div>
+</body>
+</html>

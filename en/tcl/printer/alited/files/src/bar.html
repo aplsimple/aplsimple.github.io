@@ -1,0 +1,854 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<meta name="author" content="aplsimple">
+<meta name="description" content="aplsimple's home page">
+<meta name="keywords" content="aplsimple,home">
+</head>
+<style>
+table{
+background-color: #f9f9f9;
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+box-shadow: none;
+filter: none;
+}
+pre{
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+}
+</style>
+<script>
+function homeLINK() {
+  homelink = document.baseURI;
+  ilen = 19
+  ibase = homelink.indexOf('aplsimple.github');
+  if (ibase<0) { ibase = homelink.indexOf('aplsimple_github'); ilen += 10 };
+  if (ibase>=0) { homelink = homelink.substring(0,ibase+ilen) };
+  return homelink;
+};
+document.write(' \
+<link rel="icon" type="image/jpg" href="'+homeLINK()+'/zoo/favicon.jpg">');
+document.write('<'+'script src="'+homeLINK()+'/zoo/funcs.js">'+'<'+'/script>');
+document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'+'/script>');
+</script>
+<body>
+<div id="wrapper">
+<div name="divd1" ALIGN="CENTER"> <FONT SIZE=5em color=#b01c20><B>
+<noscript>THIS PAGE IS NOT WORKING WITHOUT JAVASCRIPT!
+<BR>
+<BR>PLEASE, SWITCH ON JAVASCRIPT IN SETTINGS OF YOUR BROWSER AND RELOAD THE PAGE.
+</noscript>
+</B></FONT></div>
+<div id='doc3' class='yui-t2'>
+<section id=sec2>
+<div id='hd' class='banner'>
+<script>document.write(' \
+<link rel="stylesheet" href="'+homeLINK()+'/en/zoo/style.css">');
+</script>
+<link rel="stylesheet" href="../../css/style.css">
+
+<title>bar.tcl</title>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
+
+<div id="bodyContent" class="dokuwiki">
+<div id="dw__toc" class="dw__toc">
+<h3 class="toggle open" style="cursor: pointer;">bar.tcl</h3>
+<div aria-expanded="true" style="">
+
+<ul class="toc">
+<li><b><a href="#bar.tcl">bar.tcl</a></b></li>
+<li><b><a href="#Variables">Variables</a></b></li>
+<li><b><a href="#Main_procs">Main_procs</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#bar::BAR">BAR</a><span class=tooltiptext> bar::BAR : Runs the tab bar's method.
+args - method's name and its arguments</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::PopupTip">PopupTip</a><span class=tooltiptext> bar::PopupTip : Makes tooltips (full file names) for popup menu items.
+wmenu - path to popup menu
+idx - index of item
+TID - ID of item's tab</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::FillBar">FillBar</a><span class=tooltiptext> bar::FillBar : Fills the bar of tabs.
+wframe - frame's path to place the bar in
+newproject - if yes, creates the bar from scratch</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::UniqueTab">UniqueTab</a><span class=tooltiptext> bar::UniqueTab : Returns a unique name for a tab.
+tabs - list of tabs
+tab - tab name to be checked for its duplicate
+args - options of lsearch to find a duplicate name
+If some file has a tail name (tab name) equal to an existing one's,
+the new tab name should get "(N)" suffix to be unique.
+This is required by bartabs package: no duplicates allowed.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::UniqueListTab">UniqueListTab</a><span class=tooltiptext> bar::UniqueListTab : Returns a unique tab name for a file.
+fname - file name</span></div></li></ul>
+<li><b><a href="#Menu_additions">Menu_additions</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#bar::SelTab">SelTab</a><span class=tooltiptext> bar::SelTab : Makes a tab selected / unselected.
+tab - tab's ID
+mode - if 1, selects the tab</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::SelTabVis">SelTabVis</a><span class=tooltiptext> bar::SelTabVis : Makes visible tabs selected / unselected.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::SelTabAll">SelTabAll</a><span class=tooltiptext> bar::SelTabAll : Makes all tabs selected / unselected.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::SelTabLeft">SelTabLeft</a><span class=tooltiptext> bar::SelTabLeft : Makes all left tabs selected / unselected.
+tab - tab's ID</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::SelTabRight">SelTabRight</a><span class=tooltiptext> bar::SelTabRight : Makes all right tabs selected / unselected.
+tab - tab's ID</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::DisableTabLeft">DisableTabLeft</a><span class=tooltiptext> bar::DisableTabLeft : Checks for left tabs to disable "select all at left".
+tab - tab's ID
+Returns 1, if no left tab exists, thus disabling the menu's item.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::DisableTabRight">DisableTabRight</a><span class=tooltiptext> bar::DisableTabRight : Checks for right tabs to disable "select all at right".
+tab - tab's ID
+Returns 1, if no right tab exists, thus disabling the menu's item.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::SortData">SortData</a><span class=tooltiptext> bar::SortData : Sets or gets data for sorting bar tabs.
+tab - tab info (if empty, sets all tabs' data)
+Returns a list of file's name, extension, date and size.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::CompareByDate">CompareByDate</a><span class=tooltiptext> bar::CompareByDate : Compares two tabs by date.
+t1 - 1st tab
+t2 - 2nd tab</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::CompareBySize">CompareBySize</a><span class=tooltiptext> bar::CompareBySize : Compares two tabs by size.
+t1 - 1st tab
+t2 - 2nd tab</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::CompareByExtn">CompareByExtn</a><span class=tooltiptext> bar::CompareByExtn : Compares two tabs by extension.
+t1 - 1st tab
+t2 - 2nd tab</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::Sort">Sort</a><span class=tooltiptext> bar::Sort : Sorts tabs.
+by - sort type (by name is default)
+ttl - sort title</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::SelFile">SelFile</a><span class=tooltiptext> bar::SelFile : Open a file from the file list even when it's closed
+(the file list may be open due to -tearoff option).</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::Lifo">Lifo</a><span class=tooltiptext> bar::Lifo : Sets -lifo option of the bar.</span></div></li></ul>
+<li><b><a href="#Identification">Identification</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#bar::CurrentTabID">CurrentTabID</a><span class=tooltiptext> bar::CurrentTabID : Gets ID of the current tab.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::CurrentTab">CurrentTab</a><span class=tooltiptext> bar::CurrentTab : Gets an attribute of the current tab.
+io - 0 to get ID, 1 - short name (tab label), 2 - full name, 3 - index
+TID - tab's ID</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::FileName">FileName</a><span class=tooltiptext> bar::FileName : Gets a file name of a tab.
+TID - tab's ID</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::FileTID">FileTID</a><span class=tooltiptext> bar::FileTID : Gets a tab's ID of a file name.
+fname - file name
+filesTIDs - prepared list of pairs "filename & TID"
+The *filesTIDs* is useful at massive calls of this proc.
+See also: FilesTIDs</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::FilesTIDs">FilesTIDs</a><span class=tooltiptext> bar::FilesTIDs : Gets a list of pairs "filename & TID".
+Useful at massive calls of FileTID proc.
+See also: FileTID</span></div></li></ul>
+<li><b><a href="#State_of_bar_/_tab">State_of_bar_/_tab</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#bar::SetBarState">SetBarState</a><span class=tooltiptext> bar::SetBarState : Sets attributes of the tab bar that are specific for alited.
+TID - tab's ID
+args - list of attributes + values</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::GetBarState">GetBarState</a><span class=tooltiptext> bar::GetBarState : Gets attributes of a tab that are specific for alited.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::SetTabState">SetTabState</a><span class=tooltiptext> bar::SetTabState : Sets attributes of a tab.
+TID - tab's ID
+args - list of attributes + values</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::GetTabState">GetTabState</a><span class=tooltiptext> bar::GetTabState : Gets attributes of a tab.
+TID - tab's ID (current one by default)
+args - list of attributes + values</span></div></li></ul>
+<li><b><a href="#Event_handlers">Event_handlers</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#bar::OnTabMove">OnTabMove</a><span class=tooltiptext> bar::OnTabMove : Handles moving a tab in the bar.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::OnTabSelection">OnTabSelection</a><span class=tooltiptext> bar::OnTabSelection : Handles selecting a tab in the bar.
+TID - tab's ID</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::OnControlClick">OnControlClick</a><span class=tooltiptext> bar::OnControlClick : Shows a number of tabs selected by Ctrl+Click.</span></div></li></ul>
+<li><b><a href="#Handle_Ctrl+Tab_keys">Handle_Ctrl+Tab_keys</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#bar::CurrentControlTab">CurrentControlTab</a><span class=tooltiptext> bar::CurrentControlTab : Keeps a list of last switched files, to switch between last two.
+fname - file name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::ControlTab">ControlTab</a><span class=tooltiptext> bar::ControlTab : Switches between last two active tabs.</span></div></li></ul>
+<li><b><a href="#Service">Service</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#bar::ColorBar">ColorBar</a><span class=tooltiptext> bar::ColorBar : Makes the bar of tabs to have a "marked tab" color
+consistent with current color scheme.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::InsertTab">InsertTab</a><span class=tooltiptext> bar::InsertTab : Inserts a new tab into the beginning of bar of tabs.
+tab - the tab
+tip - the tab's tip</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::RenameTitles">RenameTitles</a><span class=tooltiptext> bar::RenameTitles : After closing a tab, seeks and renames synonyms of tabs: "name (2)", "name (3)"
+TID - closed tab's ID</span></div></li></ul>
+<li><b><a href="#EOF">EOF</a></b></li>
+
+</ul>
+
+</div>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1><font color=#ca14ca> alited's source</font></h1>
+</p><p>
+The <a href="about.html">alited/src</a> directory contains alited's own source files.
+</p><p>
+Some additional alited's files are also contained in <a href="../lib/addon/hl_alm.html">alited/lib/addon</a> directory.
+</p><p>
+The library files are contained in alited/lib** directory.
+</p><p>
+<li><a href="about.html">about.tcl</a> - "About alited" dialogue.</li>
+<li><a href="alited.html">alited.tcl</a> - The alited's main script to start.</li>
+<li><a href="bar.html">bar.tcl</a> - Handles the bar of tabs.</li>
+<li><a href="check.html">check.tcl</a> - "Check Tcl" dialogue and procedures.</li>
+<li><a href="complete.html">complete.tcl</a> - Handles auto-completion.</li>
+<li><a href="edit.html">edit.tcl</a> - "Edit" menu's procedures.</li>
+<li><a href="favor.html">favor.tcl</a> - Handles the favorite and last visited units.</li>
+<li><a href="favor_ls.html">favor_ls.tcl</a> - "Saved lists of favorites" dialogue and procedures.</li>
+<li><a href="file.html">file.tcl</a> - "File" menu's procedures.</li>
+<li><a href="find.html">find.tcl</a> - "Find / Replace" dialogue and procedures.</li>
+<li><a href="format.html">format.tcl</a> - "Edit / Formats" menu's procedures.</li>
+<li><a href="img.html">img.tcl</a> - List of images used by alited.</li>
+<li><a href="indent.html">indent.tcl</a> - Handles text indentation.</li>
+<li><a href="info.html">info.tcl</a> - Handles the info bar.</li>
+<li><a href="ini.html">ini.tcl</a> - Handles initializing alited.</li>
+<li><a href="keys.html">keys.tcl</a> - Handles keyboard (mapping etc.).</li>
+<li><a href="main.html">main.tcl</a> - Handles the main form of alited.</li>
+<li><a href="menu.html">menu.tcl</a> - Handles alited's menus.</li>
+<li><a href="msgs.html">msgs.tcl</a> - Localized messages used in several places.</li>
+<li><a href="paver.html">paver.tcl</a> - "Tools / Paver" tool.</li>
+<li><a href="pkgIndex.html">pkgIndex.tcl</a> - Includes README.md text (for Ruff doc generator).</li>
+<li><a href="pref.html">pref.tcl</a> - "Preferences" dialogue and procedures.</li>
+<li><a href="preview.html">preview.tcl</a> - "Preview (theme, CS)" dialogue called by "Preferences".</li>
+<li><a href="printer.html">printer.tcl</a> - "Tools / Project Printer" dialogue and procedures.</li>
+<li><a href="project.html">project.tcl</a> - "Projects" dialogue and procedures.</li>
+<li><a href="run.html">run.tcl</a> - "Tools / Run..." dialogue and procedures.</li>
+<li><a href="tool.html">tool.tcl</a> - "Tools" menu's procedures.</li>
+<li><a href="tree.html">tree.tcl</a> - Handles the tree of units and files.</li>
+<li><a href="unit.html">unit.tcl</a> - Handles the unit tree.</li>
+<li><a href="unit_tpl.html">unit_tpl.tcl</a> - "Templates" dialogue and procedures.</li>
+</p><p>
+
+</p>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>bar.tcl</b></font></div></td></table>
+
+<pre class="code"><i><font color=#4b5d50>###########################################################<a id=bar.tcl></a></font></i>
+<i><font color=#4b5d50># Name:    bar.tcl</font></i>
+<i><font color=#4b5d50># Author:  Alex Plotnikov  (aplsimple@gmail.com)</font></i>
+<i><font color=#4b5d50># Date:    07/01/2021</font></i>
+<i><font color=#4b5d50># Brief:   Handles bar of tabs.</font></i>
+<i><font color=#4b5d50># License: MIT.</font></i>
+<i><font color=#4b5d50>###########################################################</font></i>
+<a id=Variables></a>
+<i><font color=#4b5d50># _________________________ Variables ________________________ #</font></i>
+
+<b><font color=#ca14ca>namespace</font></b> eval bar {
+  <b><font color=#3a6797>variable</font></b> ctrltablist [<b><font color=#3a6797>list</font></b>]  ;<i><font color=#4b5d50># selected tabs (with Ctrl+click)</font></i>
+  <b><font color=#3a6797>variable</font></b> whilesorting no
+}
+<a id=Main_procs></a>
+<i><font color=#4b5d50># _________________________ Main procs ________________________ #</font></i>
+<a id=bar::BAR></a>
+<b><font color=#ca14ca>proc</font></b> bar::BAR {args} {
+  <i><font color=#4b5d50># Runs the tab bar's method.</font></i>
+  <i><font color=#4b5d50>#   args - method's name and its arguments</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$args</font> 0] eq {popList}} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$args</font>] eq 1} {<b><font color=#3a6797>lappend</font></b> args {} {}}
+    <b><font color=#3a6797>lappend</font></b> args <font color=#1b1baa>$al(sortList)</font>
+  }
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$args</font> 1] eq {cget}} {
+    <b><font color=#3a6797>if</font></b> {![al(bts) isTab [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$args</font> 0]]} {
+      <b><font color=#ca14ca>return</font></b> {} ;<i><font color=#4b5d50># at closing tabs: cget must return &quot;&quot; to &quot;after&quot; proc</font></i>
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> [al(bts) <font color=#1b1baa>$al(BID)</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::PopupTip></a>
+<b><font color=#ca14ca>proc</font></b> bar::PopupTip {wmenu idx TID} {
+  <i><font color=#4b5d50># Makes tooltips (full file names) for popup menu items.</font></i>
+  <i><font color=#4b5d50># wmenu - path to popup menu</font></i>
+  <i><font color=#4b5d50># idx - index of item</font></i>
+  <i><font color=#4b5d50># TID - ID of item's tab</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$wmenu</font> cget <font color=#653760>-tearoff</font>]} {<b><font color=#3a6797>incr</font></b> idx}
+  ::baltip::tip <font color=#1b1baa>$wmenu</font> [alited::file::FileStat [FileName <font color=#1b1baa>$TID</font>]] <font color=#653760>-index</font> <font color=#1b1baa>$idx</font> <font color=#653760>-shiftX</font> 10 <font color=#653760>-ontop</font> 1
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::FillBar></a>
+<b><font color=#ca14ca>proc</font></b> bar::FillBar {wframe {newproject no}} {
+  <i><font color=#4b5d50># Fills the bar of tabs.</font></i>
+  <i><font color=#4b5d50>#   wframe - frame's path to place the bar in</font></i>
+  <i><font color=#4b5d50>#   newproject - if yes, creates the bar from scratch</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>update</font></b> ;<i><font color=#4b5d50># to get real sizes of -wbase</font></i>
+  <b><font color=#3a6797>set</font></b> wbase [<font color=#1b1baa>$obPav</font> LbxInfo]
+  <b><font color=#3a6797>set</font></b> lab0 [msgcat::mc (Un)Select]
+  <b><font color=#3a6797>set</font></b> lab1 [msgcat::mc {... Visible}]
+  <b><font color=#3a6797>set</font></b> lab2 [msgcat::mc {... All at Left}]
+  <b><font color=#3a6797>set</font></b> lab3 [msgcat::mc {... All at Right}]
+  <b><font color=#3a6797>set</font></b> lab4 [msgcat::mc {... All}]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(ED,btsbd)</font>} {<b><font color=#3a6797>set</font></b> bd {<font color=#653760>-bd</font> 2 <font color=#653760>-relief</font> sunken}} {<b><font color=#3a6797>set</font></b> bd {}}
+  <b><font color=#3a6797>set</font></b> bar1Opts [<b><font color=#3a6797>list</font></b> <font color=#653760>-wbar</font> <font color=#1b1baa>$wframe</font> <font color=#653760>-wbase</font> <font color=#1b1baa>$wbase</font> <font color=#653760>-pady</font> 2 <font color=#653760>-scrollsel</font> no <font color=#653760>-lifo</font> <font color=#1b1baa>$al(lifo)</font> \
+    <font color=#653760>-lowlist</font> <font color=#1b1baa>$al(FONTSIZE,small)</font> <font color=#653760>-lablen</font> <font color=#1b1baa>$al(INI,barlablen)</font> <font color=#653760>-tiplen</font> <font color=#1b1baa>$al(INI,bartiplen)</font> \
+    <font color=#653760>-bg</font> [<b><font color=#3a6797>lindex</font></b> [<font color=#1b1baa>$obPav</font> csGet] 3] <font color=#653760>-popuptip</font> ::alited::bar::PopupTip \
+    <font color=#653760>-menu</font> [<b><font color=#3a6797>list</font></b> \
+      sep \
+      <font color=#8b2a0e>&quot;com <font color=#1b1baa>{$</font>lab0<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>::alited::bar::SelTab %t<font color=#1b1baa>}</font> <font color=#1b1baa>{}</font> <font color=#1b1baa>{}</font>&quot;</font> \
+      <font color=#8b2a0e>&quot;com <font color=#1b1baa>{$</font>lab1<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>::alited::bar::SelTabVis<font color=#1b1baa>}</font> <font color=#1b1baa>{}</font> <font color=#1b1baa>{}</font>&quot;</font> \
+      <font color=#8b2a0e>&quot;com <font color=#1b1baa>{$</font>lab2<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>::alited::bar::SelTabLeft %t<font color=#1b1baa>}</font> <font color=#1b1baa>{}</font> <font color=#1b1baa>{{</font>\[::alited::bar::DisableTabLeft %t\]<font color=#1b1baa>}}</font>&quot;</font> \
+      <font color=#8b2a0e>&quot;com <font color=#1b1baa>{$</font>lab3<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>::alited::bar::SelTabRight %t<font color=#1b1baa>}</font> <font color=#1b1baa>{}</font> <font color=#1b1baa>{{</font>\[::alited::bar::DisableTabRight %t\]<font color=#1b1baa>}}</font>&quot;</font> \
+      <font color=#8b2a0e>&quot;com <font color=#1b1baa>{$</font>lab4<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>::alited::bar::SelTabAll<font color=#1b1baa>}</font> <font color=#1b1baa>{}</font> <font color=#1b1baa>{}</font>&quot;</font>] \
+    <font color=#653760>-separator</font> no <font color=#653760>-font</font> apaveFontDefTypedsmall \
+    <font color=#653760>-csel2</font> {alited::bar::OnTabSelection %t} \
+    <font color=#653760>-csel3</font> alited::bar::OnControlClick \
+    <font color=#653760>-cdel</font> {alited::file::CloseFile %t yes} \
+    <font color=#653760>-cmov2</font> alited::bar::OnTabMove \
+    <font color=#653760>-title</font> <font color=#1b1baa>$al(MC,filelist)</font> \
+    <font color=#653760>-expand</font> 9 <font color=#653760>-padx</font> 0 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$bd</font>]
+  <b><font color=#3a6797>set</font></b> tabs [<b><font color=#3a6797>set</font></b> files [<b><font color=#3a6797>set</font></b> posis [<b><font color=#3a6797>set</font></b> wraps [<b><font color=#3a6797>list</font></b>]]]]
+  <b><font color=#3a6797>foreach</font></b> tab <font color=#1b1baa>$al(tabs)</font> {
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$tab</font> \t] tab pos wrap
+    <b><font color=#3a6797>lappend</font></b> files <font color=#1b1baa>$tab</font>
+    <b><font color=#3a6797>lappend</font></b> posis <font color=#1b1baa>$pos</font>
+    <b><font color=#3a6797>lappend</font></b> wraps <font color=#1b1baa>$wrap</font>
+    <b><font color=#3a6797>set</font></b> tab [UniqueTab <font color=#1b1baa>$tabs</font> [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$tab</font>]]
+    <b><font color=#3a6797>lappend</font></b> tabs <font color=#1b1baa>$tab</font>
+    <b><font color=#3a6797>lappend</font></b> bar1Opts <font color=#653760>-tab</font> <font color=#1b1baa>$tab</font>
+  }
+  <b><font color=#3a6797>set</font></b> byname [msgcat::mc Sort]
+  <b><font color=#3a6797>set</font></b> bydate [msgcat::mc {... by date}]
+  <b><font color=#3a6797>set</font></b> bysize [msgcat::mc {... by size}]
+  <b><font color=#3a6797>set</font></b> byextn [msgcat::mc {... by extension}]
+  <b><font color=#3a6797>set</font></b> ttl [msgcat::mc {Files to Beginning}]
+  <b><font color=#3a6797>set</font></b> tip [msgcat::mc \
+    <font color=#8b2a0e>&quot;If it's checked, open files would be placed\nonto the beginning page of the bar.&quot;</font>]
+  <b><font color=#3a6797>lappend</font></b> bar1Opts <font color=#653760>-menu</font> [<b><font color=#3a6797>list</font></b> \
+    sep \
+    <font color=#8b2a0e>&quot;com <font color=#1b1baa>{$</font>byname<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>alited::bar::Sort Name<font color=#1b1baa>}</font>&quot;</font> \
+    <font color=#8b2a0e>&quot;com <font color=#1b1baa>{$</font>bydate<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>alited::bar::Sort Date <font color=#1b1baa>{</font>\n<font color=#1b1baa>$</font>bydate<font color=#1b1baa>}}</font>&quot;</font> \
+    <font color=#8b2a0e>&quot;com <font color=#1b1baa>{$</font>bysize<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>alited::bar::Sort Size <font color=#1b1baa>{</font>\n<font color=#1b1baa>$</font>bysize<font color=#1b1baa>}}</font>&quot;</font> \
+    <font color=#8b2a0e>&quot;com <font color=#1b1baa>{$</font>byextn<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>alited::bar::Sort Extn <font color=#1b1baa>{</font>\n<font color=#1b1baa>$</font>byextn<font color=#1b1baa>}}</font>&quot;</font> \
+    sep \
+    <font color=#8b2a0e>&quot;chb <font color=#1b1baa>{$</font>ttl<font color=#1b1baa>}</font> alited::bar::Lifo <font color=#1b1baa>{}</font> <font color=#1b1baa>{}</font> <font color=#1b1baa>{$</font>tip<font color=#1b1baa>}</font> ::alited::al(lifo)&quot;</font> \
+    ]
+  <b><font color=#3a6797>set</font></b> curname [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tabs</font> <font color=#1b1baa>$al(curtab)</font>]
+  <b><font color=#3a6797>catch</font></b> {BAR removeAll}
+  <b><font color=#3a6797>catch</font></b> {::bartabs::Bars create al(bts)}   ;<i><font color=#4b5d50># al(bts) is Bars object</font></i>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$newproject</font> || [<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> al(BID) [al(bts) create al(bt) <font color=#1b1baa>$bar1Opts</font> <font color=#1b1baa>$curname</font>]}]} {
+    <b><font color=#3a6797>foreach</font></b> tab <font color=#1b1baa>$tabs</font> {BAR insertTab <font color=#1b1baa>$tab</font>}
+  }
+  <b><font color=#3a6797>set</font></b> tabs [BAR listTab]
+  <b><font color=#3a6797>foreach</font></b> tab <font color=#1b1baa>$tabs</font> fname <font color=#1b1baa>$files</font> pos <font color=#1b1baa>$posis</font> wrap <font color=#1b1baa>$wraps</font> {
+    <b><font color=#3a6797>set</font></b> tid [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tab</font> 0]
+    SetTabState <font color=#1b1baa>$tid</font> <font color=#653760>--fname</font> <font color=#1b1baa>$fname</font> <font color=#653760>--pos</font> <font color=#1b1baa>$pos</font> <font color=#653760>--wrap</font> <font color=#1b1baa>$wrap</font>
+    BAR <font color=#1b1baa>$tid</font> configure <font color=#653760>-tip</font> [alited::file::FileStat <font color=#1b1baa>$fname</font>]
+  }
+  <b><font color=#3a6797>set</font></b> curname [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$files</font> <font color=#1b1baa>$al(curtab)</font>]
+  SetBarState -1 <font color=#1b1baa>$curname</font> [<font color=#1b1baa>$obPav</font> Text] [<font color=#1b1baa>$obPav</font> SbvText]
+  ColorBar
+  alited::file::CheckForNew
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::UniqueTab></a>
+<b><font color=#ca14ca>proc</font></b> bar::UniqueTab {tabs tab args} {
+  <i><font color=#4b5d50># Returns a unique name for a tab.</font></i>
+  <i><font color=#4b5d50>#   tabs - list of tabs</font></i>
+  <i><font color=#4b5d50>#   tab - tab name to be checked for its duplicate</font></i>
+  <i><font color=#4b5d50>#   args - options of lsearch to find a duplicate name</font></i>
+  <i><font color=#4b5d50># If some file has a tail name (tab name) equal to an existing one's,</font></i>
+  <i><font color=#4b5d50># the new tab name should get &quot;(N)&quot; suffix to be unique.</font></i>
+  <i><font color=#4b5d50># This is required by bartabs package: no duplicates allowed.</font></i>
+
+  <b><font color=#3a6797>set</font></b> cnttab 1
+  <b><font color=#3a6797>set</font></b> taborig <font color=#1b1baa>$tab</font>
+  <b><font color=#3a6797>while</font></b> {1} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lsearch</font></b> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font> <font color=#1b1baa>$tabs</font> <font color=#1b1baa>$tab</font>]==-1} <b><font color=#ca14ca>break</font></b>
+    <b><font color=#3a6797>set</font></b> tab <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>taborig (<font color=#1b1baa>[</font>incr cnttab<font color=#1b1baa>]</font>)&quot;</font>
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$tab</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::UniqueListTab></a>
+<b><font color=#ca14ca>proc</font></b> bar::UniqueListTab {fname} {
+  <i><font color=#4b5d50># Returns a unique tab name for a file.</font></i>
+  <i><font color=#4b5d50>#   fname - file name</font></i>
+
+  <b><font color=#ca14ca>return</font></b> [UniqueTab [BAR listTab] [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>] <font color=#653760>-index</font> 1]
+}
+<a id=Menu_additions></a>
+<i><font color=#4b5d50># ________________________ Menu additions _________________________ #</font></i>
+<a id=bar::SelTab></a>
+<b><font color=#ca14ca>proc</font></b> bar::SelTab {tab {mode -1}} {
+  <i><font color=#4b5d50># Makes a tab selected / unselected.</font></i>
+  <i><font color=#4b5d50>#   tab - tab's ID</font></i>
+  <i><font color=#4b5d50>#   mode - if 1, selects the tab</font></i>
+
+  <b><font color=#3a6797>set</font></b> selected [BAR cget <font color=#653760>-select</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mode</font> == 1 || <font color=#1b1baa>$tab</font> in <font color=#1b1baa>$selected</font>} {
+    BAR unselectTab <font color=#1b1baa>$tab</font>
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$mode</font> == 0 || <font color=#1b1baa>$tab</font> ni <font color=#1b1baa>$selected</font>} {
+    BAR selectTab <font color=#1b1baa>$tab</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::SelTabVis></a>
+<b><font color=#ca14ca>proc</font></b> bar::SelTabVis {} {
+  <i><font color=#4b5d50># Makes visible tabs selected / unselected.</font></i>
+
+  <b><font color=#3a6797>foreach</font></b> tab [BAR listFlag v] {
+    SelTab <font color=#1b1baa>$tab</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::SelTabAll></a>
+<b><font color=#ca14ca>proc</font></b> bar::SelTabAll {} {
+  <i><font color=#4b5d50># Makes all tabs selected / unselected.</font></i>
+
+  <b><font color=#3a6797>set</font></b> mode [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>llength</font></b> [BAR cget <font color=#653760>-select</font>]]&gt;0}]
+  <b><font color=#3a6797>foreach</font></b> tab [BAR listTab] {
+    SelTab [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tab</font> 0] <font color=#1b1baa>$mode</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::SelTabLeft></a>
+<b><font color=#ca14ca>proc</font></b> bar::SelTabLeft {tab} {
+  <i><font color=#4b5d50># Makes all left tabs selected / unselected.</font></i>
+  <i><font color=#4b5d50>#   tab - tab's ID</font></i>
+
+  <b><font color=#3a6797>foreach</font></b> t [BAR listTab] {
+    <b><font color=#3a6797>set</font></b> t [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$t</font> 0]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$t</font> eq <font color=#1b1baa>$tab</font>} <b><font color=#ca14ca>break</font></b>
+    SelTab <font color=#1b1baa>$t</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::SelTabRight></a>
+<b><font color=#ca14ca>proc</font></b> bar::SelTabRight {tab} {
+  <i><font color=#4b5d50># Makes all right tabs selected / unselected.</font></i>
+  <i><font color=#4b5d50>#   tab - tab's ID</font></i>
+
+  <b><font color=#3a6797>set</font></b> cntrd no
+  <b><font color=#3a6797>foreach</font></b> t [BAR listTab] {
+    <b><font color=#3a6797>set</font></b> t [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$t</font> 0]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$t</font> eq <font color=#1b1baa>$tab</font>} {
+      <b><font color=#3a6797>set</font></b> cntrd yes
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$cntrd</font>} {
+      SelTab <font color=#1b1baa>$t</font>
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::DisableTabLeft></a>
+<b><font color=#ca14ca>proc</font></b> bar::DisableTabLeft {tab} {
+  <i><font color=#4b5d50># Checks for left tabs to disable &quot;select all at left&quot;.</font></i>
+  <i><font color=#4b5d50>#   tab - tab's ID</font></i>
+  <i><font color=#4b5d50># Returns 1, if no left tab exists, thus disabling the menu's item.</font></i>
+
+  <b><font color=#3a6797>set</font></b> i [CurrentTab 3 <font color=#1b1baa>$tab</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i</font>} {<b><font color=#ca14ca>return</font></b> 0}
+  <b><font color=#ca14ca>return</font></b> 1
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::DisableTabRight></a>
+<b><font color=#ca14ca>proc</font></b> bar::DisableTabRight {tab} {
+  <i><font color=#4b5d50># Checks for right tabs to disable &quot;select all at right&quot;.</font></i>
+  <i><font color=#4b5d50>#   tab - tab's ID</font></i>
+  <i><font color=#4b5d50># Returns 1, if no right tab exists, thus disabling the menu's item.</font></i>
+
+  <b><font color=#3a6797>set</font></b> i [CurrentTab 3 <font color=#1b1baa>$tab</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i</font> &lt; ([<b><font color=#3a6797>llength</font></b> [BAR listTab]]-1)} {<b><font color=#ca14ca>return</font></b> 0}
+  <b><font color=#ca14ca>return</font></b> 1
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::SortData></a>
+<b><font color=#ca14ca>proc</font></b> bar::SortData {{tab <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Sets or gets data for sorting bar tabs.</font></i>
+  <i><font color=#4b5d50>#   tab - tab info (if empty, sets all tabs' data)</font></i>
+  <i><font color=#4b5d50># Returns a list of file's name, extension, date and size.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tab</font> eq {}} {
+    <b><font color=#3a6797>set</font></b> sortdata [<b><font color=#3a6797>list</font></b>]
+    <b><font color=#3a6797>foreach</font></b> tab [BAR listTab] {
+      <b><font color=#3a6797>set</font></b> tid [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tab</font> 0]
+      <b><font color=#3a6797>set</font></b> fname [FileName <font color=#1b1baa>$tid</font>]
+      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>file</font></b> stat <font color=#1b1baa>$fname</font> ares}]} {
+        BAR <font color=#1b1baa>$tid</font> configure <font color=#653760>--sortdate</font> <font color=#1b1baa>$ares(mtime)</font> <font color=#653760>--sortsize</font> <font color=#1b1baa>$ares(size)</font>
+      }
+    }
+    <b><font color=#ca14ca>return</font></b> {}
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> tid [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tab</font> 0]
+    <b><font color=#3a6797>lassign</font></b> [BAR <font color=#1b1baa>$tid</font> cget <font color=#653760>-text</font> <font color=#653760>--sortdate</font> <font color=#653760>--sortsize</font>] fname date size
+    <b><font color=#3a6797>set</font></b> ext [<b><font color=#3a6797>file</font></b> extension <font color=#1b1baa>$fname</font>]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>string</font></b> first <font color=#8b2a0e>&quot; \(&quot;</font> <font color=#1b1baa>$ext</font>]]&gt;-1} {
+      <b><font color=#3a6797>set</font></b> ext [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$ext</font> 0 <font color=#1b1baa>$i</font>-1]
+    }
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$ext</font> <font color=#1b1baa>$date</font> <font color=#1b1baa>$size</font>]
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::CompareByDate></a>
+<b><font color=#ca14ca>proc</font></b> bar::CompareByDate {t1 t2} {
+  <i><font color=#4b5d50># Compares two tabs by date.</font></i>
+  <i><font color=#4b5d50>#   t1 - 1st tab</font></i>
+  <i><font color=#4b5d50>#   t2 - 2nd tab</font></i>
+
+  <b><font color=#3a6797>lassign</font></b> [SortData <font color=#1b1baa>$t1</font>] fname1 - date1
+  <b><font color=#3a6797>lassign</font></b> [SortData <font color=#1b1baa>$t2</font>] fname2 - date2
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$date1</font> &lt; <font color=#1b1baa>$date2</font>} {
+    <b><font color=#3a6797>set</font></b> res -1
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$date1</font> &gt; <font color=#1b1baa>$date2</font>} {
+    <b><font color=#3a6797>set</font></b> res 1
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$::alited::al(incdec)</font> eq {increasing}} {
+    <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>string</font></b> compare <font color=#653760>-nocase</font> <font color=#1b1baa>$fname1</font> <font color=#1b1baa>$fname2</font>]
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>string</font></b> compare <font color=#653760>-nocase</font> <font color=#1b1baa>$fname2</font> <font color=#1b1baa>$fname1</font>]
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::CompareBySize></a>
+<b><font color=#ca14ca>proc</font></b> bar::CompareBySize {t1 t2} {
+  <i><font color=#4b5d50># Compares two tabs by size.</font></i>
+  <i><font color=#4b5d50>#   t1 - 1st tab</font></i>
+  <i><font color=#4b5d50>#   t2 - 2nd tab</font></i>
+
+  <b><font color=#3a6797>lassign</font></b> [SortData <font color=#1b1baa>$t1</font>] fname1 - - size1
+  <b><font color=#3a6797>lassign</font></b> [SortData <font color=#1b1baa>$t2</font>] fname2 - - size2
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$size1</font> &lt; <font color=#1b1baa>$size2</font>} {
+    <b><font color=#3a6797>set</font></b> res -1
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$size1</font> &gt; <font color=#1b1baa>$size2</font>} {
+    <b><font color=#3a6797>set</font></b> res 1
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$::alited::al(incdec)</font> eq {increasing}} {
+    <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>string</font></b> compare <font color=#653760>-nocase</font> <font color=#1b1baa>$fname1</font> <font color=#1b1baa>$fname2</font>]
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>string</font></b> compare <font color=#653760>-nocase</font> <font color=#1b1baa>$fname2</font> <font color=#1b1baa>$fname1</font>]
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::CompareByExtn></a>
+<b><font color=#ca14ca>proc</font></b> bar::CompareByExtn {t1 t2} {
+  <i><font color=#4b5d50># Compares two tabs by extension.</font></i>
+  <i><font color=#4b5d50>#   t1 - 1st tab</font></i>
+  <i><font color=#4b5d50>#   t2 - 2nd tab</font></i>
+
+  <b><font color=#3a6797>lassign</font></b> [SortData <font color=#1b1baa>$t1</font>] fname1 ext1
+  <b><font color=#3a6797>lassign</font></b> [SortData <font color=#1b1baa>$t2</font>] fname2 ext2
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>string</font></b> compare <font color=#653760>-nocase</font> <font color=#1b1baa>$ext1</font> <font color=#1b1baa>$ext2</font>]]==0} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::alited::al(incdec)</font> eq {increasing}} {
+      <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>string</font></b> compare <font color=#653760>-nocase</font> <font color=#1b1baa>$fname1</font> <font color=#1b1baa>$fname2</font>]
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>string</font></b> compare <font color=#653760>-nocase</font> <font color=#1b1baa>$fname2</font> <font color=#1b1baa>$fname1</font>]
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::Sort></a>
+<b><font color=#ca14ca>proc</font></b> bar::Sort {by {ttl <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Sorts tabs.</font></i>
+  <i><font color=#4b5d50>#   by - sort type (by name is default)</font></i>
+  <i><font color=#4b5d50>#   ttl - sort title</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited obDl2 obDl2
+  <b><font color=#3a6797>variable</font></b> whilesorting
+  <b><font color=#3a6797>set</font></b> ::alited::al(incdec) [<b><font color=#3a6797>set</font></b> ::alited::al(incdec<font color=#1b1baa>$by</font>)]
+  <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$obDl2</font> input {} [msgcat::mc Sort] [<b><font color=#3a6797>list</font></b> \
+    radA  {{  }} {<font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>::alited::al(incdec)&quot;</font> increasing decreasing} \
+  ] <font color=#653760>-head</font> [msgcat::mc {Sort files}]<font color=#1b1baa>$ttl</font>] res ::alited::al(incdec)
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font>} {
+    <b><font color=#3a6797>set</font></b> whilesorting yes
+    SortData
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$by</font> eq {Name}} {<b><font color=#3a6797>set</font></b> cmd {}} {<b><font color=#3a6797>set</font></b> cmd alited::bar::CompareBy<font color=#1b1baa>$by</font>}
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::alited::al(incdec)</font> in [<b><font color=#3a6797>list</font></b> increasing [msgcat::mc increasing]]} {
+      <b><font color=#3a6797>set</font></b> ::alited::al(incdec) increasing
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> ::alited::al(incdec) decreasing
+    }
+    BAR sort -<font color=#1b1baa>$::alited::al(incdec)</font> <font color=#1b1baa>$cmd</font>
+    <b><font color=#3a6797>set</font></b> ::alited::al(incdec<font color=#1b1baa>$by</font>) <font color=#1b1baa>$::alited::al(incdec)</font>
+    <b><font color=#3a6797>set</font></b> whilesorting no
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::SelFile></a>
+<b><font color=#ca14ca>proc</font></b> bar::SelFile {TID tip} {
+  <i><font color=#4b5d50># Open a file from the file list even when it's closed</font></i>
+  <i><font color=#4b5d50># (the file list may be open due to -tearoff option).</font></i>
+
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$tip</font> \n] fname
+  <b><font color=#3a6797>if</font></b> {[alited::file::OpenFile <font color=#1b1baa>$fname</font> yes] eq {}} {
+    BAR <font color=#1b1baa>$TID</font> show
+    <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> alited::Balloon1 <font color=#1b1baa>$fname</font>]
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::Lifo></a>
+<b><font color=#ca14ca>proc</font></b> bar::Lifo {} {
+  <i><font color=#4b5d50># Sets -lifo option of the bar.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  BAR configure <font color=#653760>-lifo</font> <font color=#1b1baa>$al(lifo)</font>
+}
+<a id=Identification></a>
+<i><font color=#4b5d50># ________________________ Identification  _________________________ #</font></i>
+<a id=bar::CurrentTabID></a>
+<b><font color=#ca14ca>proc</font></b> bar::CurrentTabID {} {
+  <i><font color=#4b5d50># Gets ID of the current tab.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> [BAR cget <font color=#653760>-tabcurrent</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::CurrentTab></a>
+<b><font color=#ca14ca>proc</font></b> bar::CurrentTab {io {TID <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Gets an attribute of the current tab.</font></i>
+  <i><font color=#4b5d50>#   io - 0 to get ID, 1 - short name (tab label), 2 - full name, 3 - index</font></i>
+  <i><font color=#4b5d50>#   TID - tab's ID</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> eq {}} {<b><font color=#3a6797>set</font></b> TID [CurrentTabID]}
+  <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$io</font> {
+    0 {<b><font color=#3a6797>set</font></b> res <font color=#1b1baa>$TID</font>}
+    1 {<b><font color=#3a6797>set</font></b> res [BAR <font color=#1b1baa>$TID</font> cget <font color=#653760>-text</font>]}
+    2 {<b><font color=#3a6797>set</font></b> res [FileName <font color=#1b1baa>$TID</font>]}
+    3 {<b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-index</font> 0 [BAR listTab] <font color=#1b1baa>$TID</font>]}
+    <b><font color=#3a6797>default</font></b> {<b><font color=#3a6797>set</font></b> res {}}
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::FileName></a>
+<b><font color=#ca14ca>proc</font></b> bar::FileName {{TID <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Gets a file name of a tab.</font></i>
+  <i><font color=#4b5d50>#   TID - tab's ID</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> eq {}} {<b><font color=#3a6797>set</font></b> TID [CurrentTabID]}
+  <b><font color=#3a6797>set</font></b> tip [BAR <font color=#1b1baa>$TID</font> cget <font color=#653760>-tip</font>]
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$tip</font> \n] 0]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::FileTID></a>
+<b><font color=#ca14ca>proc</font></b> bar::FileTID {fname {filesTIDs <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Gets a tab's ID of a file name.</font></i>
+  <i><font color=#4b5d50>#   fname - file name</font></i>
+  <i><font color=#4b5d50>#   filesTIDs - prepared list of pairs &quot;filename & TID&quot;</font></i>
+  <i><font color=#4b5d50># The *filesTIDs* is useful at massive calls of this proc.</font></i>
+  <i><font color=#4b5d50># See also: FilesTIDs</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$filesTIDs</font>]} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-exact</font> <font color=#653760>-index</font> 0 <font color=#1b1baa>$filesTIDs</font> <font color=#1b1baa>$fname</font>]]&gt;=0} {
+      <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$filesTIDs</font> <font color=#1b1baa>$i</font> 1]
+    }
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>foreach</font></b> tab [BAR listTab] {
+      <b><font color=#3a6797>set</font></b> TID2 [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tab</font> 0]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> eq [FileName <font color=#1b1baa>$TID2</font>]} {
+        <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$TID2</font>
+      }
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> {}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::FilesTIDs></a>
+<b><font color=#ca14ca>proc</font></b> bar::FilesTIDs {} {
+  <i><font color=#4b5d50># Gets a list of pairs &quot;filename & TID&quot;.</font></i>
+  <i><font color=#4b5d50># Useful at massive calls of FileTID proc.</font></i>
+  <i><font color=#4b5d50># See also: FileTID</font></i>
+
+  <b><font color=#3a6797>set</font></b> filesTIDs [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>foreach</font></b> tab [BAR listTab] {
+    <b><font color=#3a6797>set</font></b> TID [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tab</font> 0]
+    <b><font color=#3a6797>lappend</font></b> filesTIDs [<b><font color=#3a6797>list</font></b> [FileName <font color=#1b1baa>$TID</font>] <font color=#1b1baa>$TID</font>]
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$filesTIDs</font>
+}
+<a id=State_of_bar_/_tab></a>
+<i><font color=#4b5d50># ________________________ State of bar / tab _________________________ #</font></i>
+<a id=bar::SetBarState></a>
+<b><font color=#ca14ca>proc</font></b> bar::SetBarState {TID args} {
+  <i><font color=#4b5d50># Sets attributes of the tab bar that are specific for alited.</font></i>
+  <i><font color=#4b5d50>#   TID - tab's ID</font></i>
+  <i><font color=#4b5d50>#   args - list of attributes + values</font></i>
+
+  BAR configure <font color=#653760>-ALITED</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$TID</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::GetBarState></a>
+<b><font color=#ca14ca>proc</font></b> bar::GetBarState {} {
+  <i><font color=#4b5d50># Gets attributes of a tab that are specific for alited.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> [BAR cget <font color=#653760>-ALITED</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::SetTabState></a>
+<b><font color=#ca14ca>proc</font></b> bar::SetTabState {TID args} {
+  <i><font color=#4b5d50># Sets attributes of a tab.</font></i>
+  <i><font color=#4b5d50>#   TID - tab's ID</font></i>
+  <i><font color=#4b5d50>#   args - list of attributes + values</font></i>
+
+  <b><font color=#3a6797>if</font></b> {![BAR isTab <font color=#1b1baa>$TID</font>]} <b><font color=#ca14ca>return</font></b>
+  BAR <font color=#1b1baa>$TID</font> configure {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::GetTabState></a>
+<b><font color=#ca14ca>proc</font></b> bar::GetTabState {{TID <font color=#8b2a0e>&quot;&quot;</font>} args} {
+  <i><font color=#4b5d50># Gets attributes of a tab.</font></i>
+  <i><font color=#4b5d50>#   TID - tab's ID (current one by default)</font></i>
+  <i><font color=#4b5d50>#   args - list of attributes + values</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> eq {}} {<b><font color=#3a6797>set</font></b> TID [CurrentTabID]}
+  <b><font color=#3a6797>if</font></b> {![BAR isTab <font color=#1b1baa>$TID</font>]} {<b><font color=#ca14ca>return</font></b> {}}
+  <b><font color=#ca14ca>return</font></b> [BAR <font color=#1b1baa>$TID</font> cget {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
+}
+<a id=Event_handlers></a>
+<i><font color=#4b5d50># ________________________ Event handlers _________________________ #</font></i>
+<a id=bar::OnTabMove></a>
+<b><font color=#ca14ca>proc</font></b> bar::OnTabMove {} {
+  <i><font color=#4b5d50># Handles moving a tab in the bar.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  alited::ini::SaveCurrentIni <font color=#1b1baa>$al(INI,save_onmove)</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::OnTabSelection></a>
+<b><font color=#ca14ca>proc</font></b> bar::OnTabSelection {TID} {
+  <i><font color=#4b5d50># Handles selecting a tab in the bar.</font></i>
+  <i><font color=#4b5d50>#   TID - tab's ID</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> whilesorting
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$whilesorting</font>} <b><font color=#ca14ca>return</font></b>
+  alited::favor::SkipVisited yes
+  <b><font color=#3a6797>set</font></b> fname [FileName <font color=#1b1baa>$TID</font>]
+  alited::main::ShowText
+  alited::file::SbhText
+  alited::find::ClearTags
+  alited::ini::SaveCurrentIni <font color=#1b1baa>$al(INI,save_onselect)</font>
+  alited::edit::CheckSaveIcons [alited::file::IsModified <font color=#1b1baa>$TID</font>]
+  alited::edit::CheckUndoRedoIcons [alited::main::CurrentWTXT] <font color=#1b1baa>$TID</font>
+  <b><font color=#3a6797>if</font></b> {[alited::edit::CommentChar] ne {}} {<b><font color=#3a6797>set</font></b> cmnst normal} {<b><font color=#3a6797>set</font></b> cmnst disabled}
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> wtxt [alited::main::GetWTXT <font color=#1b1baa>$TID</font>]] ne {}} {
+    <b><font color=#3a6797>set</font></b> al(wrapwords) [<b><font color=#3a6797>expr</font></b> {[<font color=#1b1baa>$wtxt</font> cget <font color=#653760>-wrap</font>] eq {word}}]
+  }
+  CurrentControlTab <font color=#1b1baa>$fname</font>
+  alited::menu::FillRunItems <font color=#1b1baa>$fname</font>
+  alited::main::HighlightLine
+  <b><font color=#3a6797>lassign</font></b> [alited::main::CalcIndentation <font color=#1b1baa>$wtxt</font>] indent indentchar
+  ::apave::setTextIndent <font color=#1b1baa>$indent</font> <font color=#1b1baa>$indentchar</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(prjindentAuto)</font>} {alited::main::UpdateProjectInfo <font color=#1b1baa>$indent</font>}
+  <b><font color=#3a6797>after</font></b> 10 {
+    ::alited::tree::SeeSelection
+    ::alited::main::UpdateGutter
+    ::alited::favor::SkipVisited no
+  }
+  <b><font color=#3a6797>if</font></b> {![alited::file::IsNoName <font color=#1b1baa>$fname</font>] && ![<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fname</font>]} {
+    <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> alited::Balloon1 <font color=#1b1baa>$fname</font>]
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::OnControlClick></a>
+<b><font color=#ca14ca>proc</font></b> bar::OnControlClick {} {
+  <i><font color=#4b5d50># Shows a number of tabs selected by Ctrl+Click.</font></i>
+
+  <b><font color=#3a6797>set</font></b> llen [<b><font color=#3a6797>llength</font></b> [alited::bar::BAR cget <font color=#653760>-select</font>]]
+  <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map <font color=#8b2a0e>&quot;%n <font color=#1b1baa>$</font>llen&quot;</font> [msgcat::mc {Selected files: %n}]]
+  alited::Message <font color=#1b1baa>$msg</font> 3
+}
+<a id=Handle_Ctrl+Tab_keys></a>
+<i><font color=#4b5d50># ________________________ Handle Ctrl+Tab keys ______________________ #</font></i>
+<a id=bar::CurrentControlTab></a>
+<b><font color=#ca14ca>proc</font></b> bar::CurrentControlTab {{fname <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Keeps a list of last switched files, to switch between last two.</font></i>
+  <i><font color=#4b5d50>#   fname - file name</font></i>
+
+  <b><font color=#3a6797>variable</font></b> ctrltablist
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> ret [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$fname</font> eq {}}]]} {
+    <b><font color=#3a6797>set</font></b> fname [FileName]
+  }
+  ::apave::PushInList ctrltablist <font color=#1b1baa>$fname</font> <font color=#1b1baa>$ret</font>
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$fname</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::ControlTab></a>
+<b><font color=#ca14ca>proc</font></b> bar::ControlTab {} {
+  <i><font color=#4b5d50># Switches between last two active tabs.</font></i>
+
+  <b><font color=#3a6797>variable</font></b> ctrltablist
+  alited::favor::SkipVisited yes
+  <b><font color=#3a6797>set</font></b> fname [CurrentControlTab]
+  <b><font color=#3a6797>set</font></b> found no
+  <b><font color=#3a6797>while</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$ctrltablist</font>]} {
+    <b><font color=#3a6797>set</font></b> fnext [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$ctrltablist</font> 0]
+    <b><font color=#3a6797>foreach</font></b> tab [BAR listTab] {
+      <b><font color=#3a6797>set</font></b> TID [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tab</font> 0]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fnext</font> eq [FileName <font color=#1b1baa>$TID</font>]} {
+        <b><font color=#3a6797>set</font></b> found yes
+        <b><font color=#ca14ca>break</font></b>
+      }
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$found</font>} <b><font color=#ca14ca>break</font></b>
+    <i><font color=#4b5d50># if the file was closed, remove it from the ctrl-tabbed</font></i>
+    <b><font color=#3a6797>set</font></b> ctrltablist [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$ctrltablist</font> 0 0]
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$found</font>} {
+    CurrentControlTab <font color=#1b1baa>$fname</font>
+    BAR <font color=#1b1baa>$TID</font> show
+  }
+  <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;focus \[alited::main::CurrentWTXT\]; alited::favor::SkipVisited no&quot;</font>
+}
+<a id=Service></a>
+<i><font color=#4b5d50># ________________________ Service  _________________________ #</font></i>
+<a id=bar::ColorBar></a>
+<b><font color=#ca14ca>proc</font></b> bar::ColorBar {} {
+  <i><font color=#4b5d50># Makes the bar of tabs to have a &quot;marked tab&quot; color</font></i>
+  <i><font color=#4b5d50># consistent with current color scheme.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited obPav obPav
+  <b><font color=#3a6797>set</font></b> cs [<font color=#1b1baa>$obPav</font> csCurrent]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$cs</font>&gt;-1} {
+    <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$obPav</font> csGet <font color=#1b1baa>$cs</font>] cfg2 cfg1 cbg2 cbg1 cfhh - - - - - - - - - - - - fgmark
+    <i><font color=#4b5d50># %t wildcard means &quot;a tooltip on the list of files&quot;:</font></i>
+    BAR configure <font color=#653760>-fgmark</font> <font color=#1b1baa>$fgmark</font> <font color=#653760>-comlist</font> {::alited::bar::SelFile %ID <font color=#8b2a0e>&quot;%t&quot;</font>}
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::InsertTab></a>
+<b><font color=#ca14ca>proc</font></b> bar::InsertTab {tab tip} {
+  <i><font color=#4b5d50># Inserts a new tab into the beginning of bar of tabs.</font></i>
+  <i><font color=#4b5d50>#   tab - the tab</font></i>
+  <i><font color=#4b5d50>#   tip - the tab's tip</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> TID [BAR insertTab <font color=#1b1baa>$tab</font> 0]
+  BAR <font color=#1b1baa>$TID</font> configure <font color=#653760>-tip</font> <font color=#1b1baa>$tip</font>
+  SetTabState <font color=#1b1baa>$TID</font> <font color=#653760>--fname</font> <font color=#1b1baa>$tip</font>
+  alited::ini::SaveCurrentIni <font color=#1b1baa>$al(INI,save_onadd)</font>
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$TID</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::RenameTitles></a>
+<b><font color=#ca14ca>proc</font></b> bar::RenameTitles {TID} {
+  <i><font color=#4b5d50># After closing a tab, seeks and renames synonyms of tabs: &quot;name (2)&quot;, &quot;name (3)&quot;</font></i>
+  <i><font color=#4b5d50>#   TID - closed tab's ID</font></i>
+
+  <b><font color=#3a6797>set</font></b> names [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>foreach</font></b> tab [BAR listTab] {
+    <b><font color=#3a6797>set</font></b> TID2 [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tab</font> 0]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID2</font> ne <font color=#1b1baa>$TID</font>} {
+      <b><font color=#3a6797>set</font></b> name [<b><font color=#3a6797>file</font></b> tail [FileName <font color=#1b1baa>$TID2</font>]]
+      <b><font color=#3a6797>set</font></b> icnt 1
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-exact</font> <font color=#653760>-index</font> 1 <font color=#1b1baa>$names</font> <font color=#1b1baa>$name</font>]]&gt;-1} {
+        <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$names</font> <font color=#1b1baa>$i</font>] tid name icnt
+        <b><font color=#3a6797>incr</font></b> icnt
+        <b><font color=#3a6797>set</font></b> names [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$names</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$tid</font> <font color=#1b1baa>$name</font> <font color=#1b1baa>$icnt</font>]]
+        <b><font color=#3a6797>set</font></b> name <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>name (<font color=#1b1baa>$</font>icnt)&quot;</font>
+      }
+      <b><font color=#3a6797>lappend</font></b> names [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$TID2</font> <font color=#1b1baa>$name</font> <font color=#1b1baa>$icnt</font>]
+    }
+  }
+  <b><font color=#3a6797>set</font></b> doupdate no
+  <b><font color=#3a6797>foreach</font></b> name <font color=#1b1baa>$names</font> {
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$name</font> TID2 name
+    <b><font color=#3a6797>if</font></b> {[BAR <font color=#1b1baa>$TID2</font> cget <font color=#653760>-text</font>] ne <font color=#1b1baa>$name</font>} {
+      <b><font color=#3a6797>set</font></b> doupdate yes
+      BAR <font color=#1b1baa>$TID2</font> configure <font color=#653760>-text</font> <font color=#1b1baa>$name</font>
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$doupdate</font>} {BAR draw no}
+}
+<a id=EOF></a>
+<i><font color=#4b5d50># _________________________________ EOF _________________________________ #</font></i>
+
+</pre>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>bar.tcl</b></font></div></td></table>
+
+</section>
+<script>
+  writeFooter('Document generated by <a href="'+homeLINK()+'/en/tcl/alited/index.html">alited</a> &amp; <a href="'+homeLINK()+'/en/tcl/mulster/index.html">mulster</a></a>');
+</script>
+</div>
+</body>
+</html>

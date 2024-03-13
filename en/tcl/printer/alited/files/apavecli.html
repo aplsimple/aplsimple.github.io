@@ -1,0 +1,192 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<meta name="author" content="aplsimple">
+<meta name="description" content="aplsimple's home page">
+<meta name="keywords" content="aplsimple,home">
+</head>
+<style>
+table{
+background-color: #f9f9f9;
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+box-shadow: none;
+filter: none;
+}
+pre{
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+}
+</style>
+<script>
+function homeLINK() {
+  homelink = document.baseURI;
+  ilen = 19
+  ibase = homelink.indexOf('aplsimple.github');
+  if (ibase<0) { ibase = homelink.indexOf('aplsimple_github'); ilen += 10 };
+  if (ibase>=0) { homelink = homelink.substring(0,ibase+ilen) };
+  return homelink;
+};
+document.write(' \
+<link rel="icon" type="image/jpg" href="'+homeLINK()+'/zoo/favicon.jpg">');
+document.write('<'+'script src="'+homeLINK()+'/zoo/funcs.js">'+'<'+'/script>');
+document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'+'/script>');
+</script>
+<body>
+<div id="wrapper">
+<div name="divd1" ALIGN="CENTER"> <FONT SIZE=5em color=#b01c20><B>
+<noscript>THIS PAGE IS NOT WORKING WITHOUT JAVASCRIPT!
+<BR>
+<BR>PLEASE, SWITCH ON JAVASCRIPT IN SETTINGS OF YOUR BROWSER AND RELOAD THE PAGE.
+</noscript>
+</B></FONT></div>
+<div id='doc3' class='yui-t2'>
+<section id=sec2>
+<div id='hd' class='banner'>
+<script>document.write(' \
+<link rel="stylesheet" href="'+homeLINK()+'/en/zoo/style.css">');
+</script>
+<link rel="stylesheet" href="../css/style.css">
+
+<title>apavecli.tcl</title>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
+
+<div id="bodyContent" class="dokuwiki">
+<div id="dw__toc" class="dw__toc">
+<h3 class="toggle open" style="cursor: pointer;">apavecli.tcl</h3>
+<div aria-expanded="true" style="">
+
+<ul class="toc">
+<li><b><a href="#apavecli.tcl">apavecli.tcl</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#apavecli::input">input</a><span class=tooltiptext> apavecli::input</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#apavecli::run">run</a><span class=tooltiptext> apavecli::run</span></div></li></ul>
+
+</ul>
+
+</div>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1><font color=#ca14ca> apave</font></h1>
+</p><p>
+A library for GUI development with Tcl/Tk.
+</p><p>
+Docs:
+</p><p>
+<a href="https://aplsimple.github.io/en/tcl/pave">Full description</a>
+</p><p>
+
+</p>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../index.html"><font color=#1a1a1a size=6>  <b>apavecli.tcl</b></font></div></td></table>
+
+<pre class="code"><i><font color=#ff0000>#! /usr/bin/env tclsh<a id=apavecli.tcl></a></font></i>
+
+<i><font color=#4b5d50>############################################################################</font></i>
+<i><font color=#4b5d50>#</font></i>
+<i><font color=#4b5d50># Runs pave dialogs from CLI.</font></i>
+<i><font color=#4b5d50># Scripted by Alex Plotnikov.</font></i>
+<i><font color=#4b5d50>#</font></i>
+<i><font color=#4b5d50># After choosing 'OK' in a dialog, the dialog's result is written to stdout.</font></i>
+<i><font color=#4b5d50># The output would be sort of:</font></i>
+<i><font color=#4b5d50>#   #!/bin/bash</font></i>
+<i><font color=#4b5d50>#   export var1='value 1'</font></i>
+<i><font color=#4b5d50>#   export var2='value 2'</font></i>
+<i><font color=#4b5d50>#   ...</font></i>
+<i><font color=#4b5d50>#   export varN='value 3'</font></i>
+<i><font color=#4b5d50># The output may be redirected to temp file. After analizing the result of</font></i>
+<i><font color=#4b5d50># dialog (1 if 'OK', otherwise 0), the output temp file may be sourced to</font></i>
+<i><font color=#4b5d50># execute the &quot;export ...&quot; commands. So that the dialog's variable values</font></i>
+<i><font color=#4b5d50># would be assigned to the environment variables with appropriate names,</font></i>
+<i><font color=#4b5d50># within the current shell.</font></i>
+<i><font color=#4b5d50>#</font></i>
+<i><font color=#4b5d50># Example:</font></i>
+<i><font color=#4b5d50>#</font></i>
+<i><font color=#4b5d50># tclsh ~/UTILS/pave/pavecli.tcl &quot;&quot; &quot;TEST OF pavecli&quot; \</font></i>
+<i><font color=#4b5d50>    {    ent1  {&quot;   Find: &quot;} {&quot;$::EN1 2 3&quot;}    ent2  {&quot;Replace: &quot;} \</font></i>
+<i><font color=#4b5d50>    {&quot;$::EN2 $::EN4&quot;}  labo {{} {-anchor w} {-t &quot;\\nOptions:&quot; -font \</font></i>
+<i><font color=#4b5d50>    {-weight bold}}}  {}    radA  {{Match:   }} {{RE  } Exact &quot;Glob&quot; \</font></i>
+<i><font color=#4b5d50>    {RE  }}    seh   {{} {} {}} {}    chb1  {{Match whole word only}} \</font></i>
+<i><font color=#4b5d50>    {1}    chb2  {{Match case           }} {1}    seh2  {{} {} {}} {}  \</font></i>
+<i><font color=#4b5d50>    v_    {{} {} {}} {}    cbx1  {{Where:   }} {{&quot;in file&quot;} {in file}  \</font></i>
+<i><font color=#4b5d50>    {in session} {in directory}}    } -head &quot;Enter data:&quot; -weight bold \</font></i>
+<i><font color=#4b5d50>    == EN1 EN2 V1 C1 C2 W1 &gt; tmp.sh ; \</font></i>
+<i><font color=#4b5d50> if [ $? -eq 1 ]; then source tmp.sh; fi ; \</font></i>
+<i><font color=#4b5d50> rm tmp.sh ; \</font></i>
+<i><font color=#4b5d50> echo &quot;EN1=$EN1, EN2=$EN2, V1=$V1, C1=$C1, C2=$C2, W1=$W1&quot;</font></i>
+<i><font color=#4b5d50>#</font></i>
+<i><font color=#4b5d50># The end of command looks like this:</font></i>
+<i><font color=#4b5d50>#   == EN1 EN2 V1 C1 C2 W1  &gt; tmp.sh</font></i>
+<i><font color=#4b5d50># which sets the EN1, EN2, V1, C1, C2 and W1 output variables and redirects</font></i>
+<i><font color=#4b5d50># their assignment to tmp.sh file. After checking the command's result, the</font></i>
+<i><font color=#4b5d50># tmp.sh file is executed in the current shell, by 'source' command.</font></i>
+<i><font color=#4b5d50>#</font></i>
+<i><font color=#4b5d50># So the EN1, EN2, V1, C1, C2 and W1 environment variables would correspond</font></i>
+<i><font color=#4b5d50># to the  dialog's variables.</font></i>
+<i><font color=#4b5d50>#</font></i>
+<i><font color=#4b5d50># See also:</font></i>
+<i><font color=#4b5d50>#    https://aplsimple.github.io/en/tcl/pave</font></i>
+<i><font color=#4b5d50>#</font></i>
+<i><font color=#4b5d50>############################################################################</font></i>
+
+<b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>package</font></b> require apave}]} {
+  <b><font color=#3a6797>set</font></b> ::apavedir [<b><font color=#3a6797>file</font></b> dirname [<b><font color=#3a6797>info</font></b> script]]
+  <b><font color=#3a6797>lappend</font></b> auto_path <font color=#1b1baa>$::apavedir</font>
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>package</font></b> require apave}]} {
+    <b><font color=#3a6797>lset</font></b> auto_path end <font color=#1b1baa>$::apavedir</font>/pave
+    <b><font color=#3a6797>package</font></b> require apave
+  }
+}
+
+<b><font color=#ca14ca>namespace</font></b> eval apavecli {
+}
+
+<i><font color=#4b5d50>#=== Input dialog for getting data<a id=apavecli::input></a></font></i>
+<b><font color=#ca14ca>proc</font></b> ::apavecli::input {args} {
+
+  ::apave::APave create dialog
+  <b><font color=#3a6797>set</font></b> cmd [<b><font color=#3a6797>subst</font></b> <font color=#653760>-nocommands</font> <font color=#653760>-novariables</font> [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$args</font> 1 end-1]]
+  <b><font color=#3a6797>set</font></b> dp [<b><font color=#3a6797>string</font></b> last <font color=#8b2a0e>&quot; ==&quot;</font> <font color=#1b1baa>$cmd</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dp</font>&lt;0} {<b><font color=#3a6797>set</font></b> dp 999999}
+  <b><font color=#3a6797>set</font></b> data [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$cmd</font> <font color=#1b1baa>$dp</font>+3 end]
+  <b><font color=#3a6797>set</font></b> data [<b><font color=#3a6797>split</font></b> [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$data</font>]]
+  <b><font color=#3a6797>set</font></b> cmd <font color=#8b2a0e>&quot;dialog input <font color=#1b1baa>[</font>string range <font color=#1b1baa>$</font>cmd 0 <font color=#1b1baa>$</font>dp-1<font color=#1b1baa>]</font>&quot;</font>
+  <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>eval</font></b> <font color=#1b1baa>$cmd</font>]
+  <b><font color=#3a6797>set</font></b> r [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$res</font> 0]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$r</font> && <font color=#1b1baa>$data</font> ne <font color=#8b2a0e>&quot;&quot;</font>} {
+    <b><font color=#3a6797>set</font></b> rind 0
+    <b><font color=#3a6797>puts</font></b> <font color=#8b2a0e>&quot;#!/bin/bash&quot;</font>
+    <b><font color=#3a6797>foreach</font></b> res [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$res</font> 1 end] {
+      <b><font color=#3a6797>puts</font></b> <font color=#8b2a0e>&quot;export <font color=#1b1baa>[</font>lindex <font color=#1b1baa>$</font>data <font color=#1b1baa>$</font>rind<font color=#1b1baa>]</font>='<font color=#1b1baa>$</font>res'&quot;</font>
+      <b><font color=#3a6797>incr</font></b> rind
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$r</font>
+}
+
+<i><font color=#4b5d50>#=== Run dialog<a id=apavecli::run></a></font></i>
+<b><font color=#ca14ca>proc</font></b> ::apavecli::run {} {
+
+  apave::initWM
+  <b><font color=#3a6797>set</font></b> res [::apavecli::input <font color=#1b1baa>$::argv</font>]
+  ::apave::APave destroy
+  <b><font color=#3a6797>exit</font></b> <font color=#1b1baa>$res</font>
+}
+
+::apavecli::run
+
+<i><font color=#4b5d50>#%   DOCTEST   SOURCE   tests/apavecli.test</font></i>
+
+</pre>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../index.html"><font color=#1a1a1a size=6>  <b>apavecli.tcl</b></font></div></td></table>
+
+</section>
+<script>
+  writeFooter('Document generated by <a href="'+homeLINK()+'/en/tcl/alited/index.html">alited</a> &amp; <a href="'+homeLINK()+'/en/tcl/mulster/index.html">mulster</a></a>');
+</script>
+</div>
+</body>
+</html>

@@ -1,0 +1,689 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<meta name="author" content="aplsimple">
+<meta name="description" content="aplsimple's home page">
+<meta name="keywords" content="aplsimple,home">
+</head>
+<style>
+table{
+background-color: #f9f9f9;
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+box-shadow: none;
+filter: none;
+}
+pre{
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+}
+</style>
+<script>
+function homeLINK() {
+  homelink = document.baseURI;
+  ilen = 19
+  ibase = homelink.indexOf('aplsimple.github');
+  if (ibase<0) { ibase = homelink.indexOf('aplsimple_github'); ilen += 10 };
+  if (ibase>=0) { homelink = homelink.substring(0,ibase+ilen) };
+  return homelink;
+};
+document.write(' \
+<link rel="icon" type="image/jpg" href="'+homeLINK()+'/zoo/favicon.jpg">');
+document.write('<'+'script src="'+homeLINK()+'/zoo/funcs.js">'+'<'+'/script>');
+document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'+'/script>');
+</script>
+<body>
+<div id="wrapper">
+<div name="divd1" ALIGN="CENTER"> <FONT SIZE=5em color=#b01c20><B>
+<noscript>THIS PAGE IS NOT WORKING WITHOUT JAVASCRIPT!
+<BR>
+<BR>PLEASE, SWITCH ON JAVASCRIPT IN SETTINGS OF YOUR BROWSER AND RELOAD THE PAGE.
+</noscript>
+</B></FONT></div>
+<div id='doc3' class='yui-t2'>
+<section id=sec2>
+<div id='hd' class='banner'>
+<script>document.write(' \
+<link rel="stylesheet" href="'+homeLINK()+'/en/zoo/style.css">');
+</script>
+<link rel="stylesheet" href="../../css/style.css">
+
+<title>complete.tcl</title>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
+
+<div id="bodyContent" class="dokuwiki">
+<div id="dw__toc" class="dw__toc">
+<h3 class="toggle open" style="cursor: pointer;">complete.tcl</h3>
+<div aria-expanded="true" style="">
+
+<ul class="toc">
+<li><b><a href="#complete.tcl">complete.tcl</a></b></li>
+<li><b><a href="#Variables">Variables</a></b></li>
+<li><b><a href="#Common">Common</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#complete::CursorCoordsChar">CursorCoordsChar</a><span class=tooltiptext> complete::CursorCoordsChar : Gets cursor's screen coordinates and a character under cursor in a text.
+wtxt - text's path
+shift - shift from the cursor where to get non-empty char
+Returns a list of X, Y coordinates and a character under the cursor.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#complete::TextCursorCoordinates">TextCursorCoordinates</a><span class=tooltiptext> complete::TextCursorCoordinates : Gets cursor's screen coordinates under cursor in a text.
+Also, sets the focus on the text (to make this task be possible at all).
+wtxt - text's path
+Returns a list of X and Y coordinates.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#complete::AllSessionCommands">AllSessionCommands</a><span class=tooltiptext> complete::AllSessionCommands : Gets all commands available in Tcl/Tk and in session files.
+currentTID - ID of a current tab
+idx1 - starting position of the current word
+If currentTID is set, the commands of this TID are shown unqualified.
+Returns a list of "proc variables + commands" and a flag "with commands"</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#complete::IsMatch">IsMatch</a><span class=tooltiptext> complete::IsMatch : Check matching a word to a command.
+curword - the word
+com - the command</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#complete::MatchedCommands">MatchedCommands</a><span class=tooltiptext> complete::MatchedCommands : Gets commands that are matched to a current (under cursor) word.
+curword - current word to match
+args - contains idx1, idx2 indices
+Returns list of current word, begin and end of it.</span></div></li></ul>
+<li><b><a href="#GUI">GUI</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#complete::SelectCommand">SelectCommand</a><span class=tooltiptext> complete::SelectCommand : Handles a selection of command for auto completion.
+obj - apave object
+lbx - listbox's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#complete::WinGeometry">WinGeometry</a><span class=tooltiptext> complete::WinGeometry : Checks and corrects the completion window's geometry (esp. for KDE).
+lht - height of completion list</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#complete::PickCommand">PickCommand</a><span class=tooltiptext> complete::PickCommand : Shows a frame of commands for auto completion,
+allowing a user to select from it.
+wtxt - text's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#complete::ColorPick">ColorPick</a><span class=tooltiptext> complete::ColorPick : Sets colors for pick list.
+wtxt - text's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#complete::EntReturn">EntReturn</a><span class=tooltiptext> complete::EntReturn : Handles pressing Return on entry.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#complete::PickValid">PickValid</a><span class=tooltiptext> complete::PickValid : Validates the word picker's input.
+wtxt - text's path
+V - %V of -validatecommand: validation condition
+d - %d of -validatecommand: 1 for insert, 0 for delete
+i - %i of -validatecommand: index of character
+s - %s of -validatecommand: current value of entry
+S - %S of -validatecommand: string being inserted/deleted</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#complete::PickFocusOut">PickFocusOut</a><span class=tooltiptext> complete::PickFocusOut : Closes the word picker at "focus out" event.
+w - a current widget</span></div></li></ul>
+<li><b><a href="#Main">Main</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#complete::AutoCompleteCommand">AutoCompleteCommand</a><span class=tooltiptext> complete::AutoCompleteCommand : Runs auto completion of commands.</span></div></li></ul>
+<li><b><a href="#EOF">EOF</a></b></li>
+
+</ul>
+
+</div>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1><font color=#ca14ca> alited's source</font></h1>
+</p><p>
+The <a href="about.html">alited/src</a> directory contains alited's own source files.
+</p><p>
+Some additional alited's files are also contained in <a href="../lib/addon/hl_alm.html">alited/lib/addon</a> directory.
+</p><p>
+The library files are contained in alited/lib** directory.
+</p><p>
+<li><a href="about.html">about.tcl</a> - "About alited" dialogue.</li>
+<li><a href="alited.html">alited.tcl</a> - The alited's main script to start.</li>
+<li><a href="bar.html">bar.tcl</a> - Handles the bar of tabs.</li>
+<li><a href="check.html">check.tcl</a> - "Check Tcl" dialogue and procedures.</li>
+<li><a href="complete.html">complete.tcl</a> - Handles auto-completion.</li>
+<li><a href="edit.html">edit.tcl</a> - "Edit" menu's procedures.</li>
+<li><a href="favor.html">favor.tcl</a> - Handles the favorite and last visited units.</li>
+<li><a href="favor_ls.html">favor_ls.tcl</a> - "Saved lists of favorites" dialogue and procedures.</li>
+<li><a href="file.html">file.tcl</a> - "File" menu's procedures.</li>
+<li><a href="find.html">find.tcl</a> - "Find / Replace" dialogue and procedures.</li>
+<li><a href="format.html">format.tcl</a> - "Edit / Formats" menu's procedures.</li>
+<li><a href="img.html">img.tcl</a> - List of images used by alited.</li>
+<li><a href="indent.html">indent.tcl</a> - Handles text indentation.</li>
+<li><a href="info.html">info.tcl</a> - Handles the info bar.</li>
+<li><a href="ini.html">ini.tcl</a> - Handles initializing alited.</li>
+<li><a href="keys.html">keys.tcl</a> - Handles keyboard (mapping etc.).</li>
+<li><a href="main.html">main.tcl</a> - Handles the main form of alited.</li>
+<li><a href="menu.html">menu.tcl</a> - Handles alited's menus.</li>
+<li><a href="msgs.html">msgs.tcl</a> - Localized messages used in several places.</li>
+<li><a href="paver.html">paver.tcl</a> - "Tools / Paver" tool.</li>
+<li><a href="pkgIndex.html">pkgIndex.tcl</a> - Includes README.md text (for Ruff doc generator).</li>
+<li><a href="pref.html">pref.tcl</a> - "Preferences" dialogue and procedures.</li>
+<li><a href="preview.html">preview.tcl</a> - "Preview (theme, CS)" dialogue called by "Preferences".</li>
+<li><a href="printer.html">printer.tcl</a> - "Tools / Project Printer" dialogue and procedures.</li>
+<li><a href="project.html">project.tcl</a> - "Projects" dialogue and procedures.</li>
+<li><a href="run.html">run.tcl</a> - "Tools / Run..." dialogue and procedures.</li>
+<li><a href="tool.html">tool.tcl</a> - "Tools" menu's procedures.</li>
+<li><a href="tree.html">tree.tcl</a> - Handles the tree of units and files.</li>
+<li><a href="unit.html">unit.tcl</a> - Handles the unit tree.</li>
+<li><a href="unit_tpl.html">unit_tpl.tcl</a> - "Templates" dialogue and procedures.</li>
+</p><p>
+
+</p>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>complete.tcl</b></font></div></td></table>
+
+<pre class="code"><i><font color=#4b5d50>###########################################################<a id=complete.tcl></a></font></i>
+<i><font color=#4b5d50># Name:    complete.tcl</font></i>
+<i><font color=#4b5d50># Author:  Alex Plotnikov  (aplsimple@gmail.com)</font></i>
+<i><font color=#4b5d50># Date:    06/27/2021</font></i>
+<i><font color=#4b5d50># Brief:   Handles auto completion.</font></i>
+<i><font color=#4b5d50># License: MIT.</font></i>
+<i><font color=#4b5d50>###########################################################</font></i>
+<a id=Variables></a>
+<i><font color=#4b5d50># _________________________ Variables ________________________ #</font></i>
+
+<b><font color=#ca14ca>namespace</font></b> eval complete {
+  <b><font color=#3a6797>variable</font></b> win .pickcommand
+  <b><font color=#3a6797>variable</font></b> comms [<b><font color=#3a6797>list</font></b>]   ;<i><font color=#4b5d50># list of available commands</font></i>
+  <b><font color=#3a6797>variable</font></b> commsorig [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>variable</font></b> word {}
+  <b><font color=#3a6797>variable</font></b> wordorig {}
+  <b><font color=#3a6797>variable</font></b> obj {}
+  <b><font color=#3a6797>variable</font></b> maxwidth 20    ;<i><font color=#4b5d50># maximum width of command</font></i>
+  <b><font color=#3a6797>variable</font></b> tclcoms [<b><font color=#3a6797>list</font></b>] ;<i><font color=#4b5d50># list of Tcl/Tk commands with arguments</font></i>
+}
+<a id=Common></a>
+<i><font color=#4b5d50># ________________________ Common _________________________ #</font></i>
+<a id=complete::CursorCoordsChar></a>
+<b><font color=#ca14ca>proc</font></b> complete::CursorCoordsChar {wtxt shift} {
+  <i><font color=#4b5d50># Gets cursor's screen coordinates and a character under cursor in a text.</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+  <i><font color=#4b5d50>#   shift - shift from the cursor where to get non-empty char</font></i>
+  <i><font color=#4b5d50># Returns a list of X, Y coordinates and a character under the cursor.</font></i>
+
+  <b><font color=#3a6797>set</font></b> poi [<font color=#1b1baa>$wtxt</font> index insert]
+  <b><font color=#3a6797>set</font></b> ch [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$poi</font> [<font color=#1b1baa>$wtxt</font> index {insert +1c}]]
+  <b><font color=#3a6797>set</font></b> nl [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$poi</font>)}]
+  <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$nl</font>.0 <font color=#1b1baa>$nl</font>.end] eq {}} {
+    <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$wtxt</font> bbox insert] X Y - h
+    <b><font color=#3a6797>set</font></b> w 0
+    <b><font color=#3a6797>set</font></b> ch -
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$ch</font>] eq {}} {<b><font color=#3a6797>set</font></b> pos <font color=#8b2a0e>&quot;insert <font color=#1b1baa>$</font>shift&quot;</font>} {<b><font color=#3a6797>set</font></b> pos insert}
+    <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$wtxt</font> index <font color=#1b1baa>$pos</font>]
+    <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$wtxt</font> bbox <font color=#1b1baa>$pos</font>] X Y w h
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$h</font> eq {}} {<b><font color=#3a6797>set</font></b> X [<b><font color=#3a6797>set</font></b> Y [<b><font color=#3a6797>set</font></b> w [<b><font color=#3a6797>set</font></b> h 0]]]}
+  <b><font color=#3a6797>incr</font></b> X <font color=#1b1baa>$w</font>
+  <b><font color=#3a6797>incr</font></b> Y <font color=#1b1baa>$h</font>
+  <b><font color=#3a6797>set</font></b> p [<b><font color=#134070>winfo</font></b> parent <font color=#1b1baa>$wtxt</font>]
+  <b><font color=#3a6797>while</font></b> 1 {
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#134070>winfo</font></b> geometry <font color=#1b1baa>$p</font>] x+] w h x y
+    <b><font color=#3a6797>incr</font></b> X <font color=#1b1baa>$x</font>
+    <b><font color=#3a6797>incr</font></b> Y <font color=#1b1baa>$y</font>
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> p [<b><font color=#134070>winfo</font></b> parent <font color=#1b1baa>$p</font>]}] || <font color=#1b1baa>$p</font> in {{} {.}}} <b><font color=#ca14ca>break</font></b>
+  }
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$X</font> <font color=#1b1baa>$Y</font> <font color=#1b1baa>$ch</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=complete::TextCursorCoordinates></a>
+<b><font color=#ca14ca>proc</font></b> complete::TextCursorCoordinates {{wtxt <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Gets cursor's screen coordinates under cursor in a text.</font></i>
+  <i><font color=#4b5d50># Also, sets the focus on the text (to make this task be possible at all).</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+  <i><font color=#4b5d50># Returns a list of X and Y coordinates.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtxt</font> eq {}} {
+    <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+  }
+  <b><font color=#134070>focus</font></b> <font color=#1b1baa>$wtxt</font>
+  <b><font color=#3a6797>set</font></b> res [CursorCoordsChar <font color=#1b1baa>$wtxt</font> {}]
+  <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$res</font> X Y ch
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ch</font> eq {} || <font color=#1b1baa>$ch</font> eq <font color=#8b2a0e>&quot;\n&quot;</font>} {
+    <i><font color=#4b5d50># EOL =&gt; get a previous char's coordinates</font></i>
+    <b><font color=#3a6797>set</font></b> res [CursorCoordsChar <font color=#1b1baa>$wtxt</font> -1c]
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=complete::AllSessionCommands></a>
+<b><font color=#ca14ca>proc</font></b> complete::AllSessionCommands {{currentTID <font color=#8b2a0e>&quot;&quot;</font>} {idx1 0}} {
+  <i><font color=#4b5d50># Gets all commands available in Tcl/Tk and in session files.</font></i>
+  <i><font color=#4b5d50>#   currentTID - ID of a current tab</font></i>
+  <i><font color=#4b5d50>#   idx1 - starting position of the current word</font></i>
+  <i><font color=#4b5d50># If currentTID is set, the commands of this TID are shown unqualified.</font></i>
+  <i><font color=#4b5d50># Returns a list of &quot;proc variables + commands&quot; and a flag &quot;with commands&quot;</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> isread [<b><font color=#3a6797>info</font></b> exists al(_SessionCommands)]]} {
+    <b><font color=#3a6797>unset</font></b> al(_SessionCommands)
+  } <b><font color=#3a6797>else</font></b> {
+    alited::info::Put <font color=#1b1baa>$al(MC,wait)</font> {} yes yes
+    <b><font color=#3a6797>update</font></b>
+  }
+  <b><font color=#3a6797>set</font></b> al(_SessionCommands) [<b><font color=#3a6797>dict</font></b> create]
+  <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>list</font></b>]
+  <i><font color=#4b5d50># first, add variables</font></i>
+  <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+  <b><font color=#3a6797>lassign</font></b> [alited::favor::CurrentName] itemID name l1 l2
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$l2</font> eq {}} {<b><font color=#3a6797>set</font></b> l1 [<b><font color=#3a6797>set</font></b> l2 0]}
+  <b><font color=#3a6797>catch</font></b> {
+    <i><font color=#4b5d50># get variables from the current proc's header</font></i>
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$l1</font>.0 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$l1</font>+4}].0] \n] h1 h2 h3 h4
+    <b><font color=#3a6797>foreach</font></b> i {2 3 4} {
+      <b><font color=#3a6797>incr</font></b> l1
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$h1</font> end] eq <font color=#8b2a0e>&quot;\\&quot;</font>} {
+        <b><font color=#3a6797>set</font></b> h1 [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$h1</font> \\]\ [<b><font color=#3a6797>set</font></b> h<font color=#1b1baa>$i</font>]
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#ca14ca>break</font></b>
+      }
+    }
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$h1</font> \{] typ - argums
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$typ</font> in {<b><font color=#ca14ca>proc</font></b> method}} {
+      <b><font color=#3a6797>foreach</font></b> v <font color=#1b1baa>$argums</font> {
+        <b><font color=#3a6797>lappend</font></b> res \$[<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$v</font> 0]
+      }
+    }
+  }
+  <i><font color=#4b5d50># get variables from the current proc's body</font></i>
+  <b><font color=#3a6797>set</font></b> RE {(?:(((^\s*|\[\s*|\{\s*)+((set|unset|append|lappend|incr|variable|global)\s+)}
+  <b><font color=#3a6797>append</font></b> RE {)|\$)([:a-zA-Z0-9_]*[\(]*[:a-zA-Z0-9_,\$]*[\)]*))}
+  <b><font color=#3a6797>foreach</font></b> line [<b><font color=#3a6797>split</font></b> [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$l1</font>.0 [<b><font color=#3a6797>incr</font></b> l2].0] \n] {
+    <b><font color=#3a6797>foreach</font></b> {- - - - - - v} [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-all</font> <font color=#653760>-inline</font> <font color=#1b1baa>$RE</font> <font color=#1b1baa>$line</font>] {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match *(* <font color=#1b1baa>$v</font>] || [<b><font color=#3a6797>string</font></b> match *)* <font color=#1b1baa>$v</font>]} {
+        <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> match *(*) <font color=#1b1baa>$v</font>]} {
+          <b><font color=#3a6797>set</font></b> v [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$v</font> ()]
+        }
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$v</font> ni {{} : ::} && [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-exact</font> <font color=#1b1baa>$res</font> <font color=#1b1baa>$v</font>]==-1} {
+        <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> match \$* <font color=#1b1baa>$v</font>]} {<b><font color=#3a6797>set</font></b> v \$<font color=#1b1baa>$v</font>}
+        <b><font color=#3a6797>lappend</font></b> res <font color=#1b1baa>$v</font>
+      }
+    }
+  }
+  <b><font color=#3a6797>set</font></b> idx1 [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$wtxt</font> index insert])}].<font color=#1b1baa>$idx1</font>
+  <b><font color=#3a6797>set</font></b> isdol [<b><font color=#3a6797>expr</font></b> {[<font color=#1b1baa>$wtxt</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idx1 -1 c&quot;</font>] eq {$}}]
+  <b><font color=#3a6797>set</font></b> isdol1 [<b><font color=#3a6797>expr</font></b> {[<font color=#1b1baa>$wtxt</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idx1 -2 c&quot;</font> <font color=#1b1baa>$idx1</font>] eq {<font color=#1b1baa>$:</font>}}]
+  <b><font color=#3a6797>set</font></b> isdol2 [<b><font color=#3a6797>expr</font></b> {[<font color=#1b1baa>$wtxt</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idx1 -3 c&quot;</font> <font color=#1b1baa>$idx1</font>] eq {<font color=#1b1baa>$::</font>}}]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$isdol1</font> || <font color=#1b1baa>$isdol2</font>} {
+    <b><font color=#3a6797>foreach</font></b> v [<b><font color=#3a6797>info</font></b> vars ::*] {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$v</font>]==1} {<b><font color=#3a6797>lappend</font></b> res \$<font color=#1b1baa>$v</font>}
+    }
+  }
+  <i><font color=#4b5d50># if it's not a variable's value, add also commands</font></i>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$isdol</font> || <font color=#1b1baa>$isdol1</font> || <font color=#1b1baa>$isdol2</font>} {
+    <b><font color=#3a6797>set</font></b> withcomm no
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> withcomm yes
+    <i><font color=#4b5d50># get commands available in files of current session</font></i>
+    <b><font color=#3a6797>foreach</font></b> tab [alited::SessionList] {
+      <b><font color=#3a6797>set</font></b> TID [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tab</font> 0]
+      <b><font color=#3a6797>lassign</font></b> [alited::main::GetText <font color=#1b1baa>$TID</font> no no] curfile wtxt
+      <b><font color=#3a6797>foreach</font></b> it <font color=#1b1baa>$al(_unittree,$TID)</font> {
+        <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$it</font> lev leaf fl1 ttl l1 l2
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$leaf</font> && [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$ttl</font>]==1} {
+          <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> eq <font color=#1b1baa>$currentTID</font>} {
+            <b><font color=#3a6797>set</font></b> ttl [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$ttl</font> :] end]
+          }
+          <b><font color=#3a6797>lappend</font></b> res <font color=#1b1baa>$ttl</font>
+          <i><font color=#4b5d50># save arguments of proc/method</font></i>
+          <b><font color=#3a6797>set</font></b> h [alited::unit::GetHeader {} {} 0 <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$l1</font> <font color=#1b1baa>$l2</font>]
+          <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>dict</font></b> set al(_SessionCommands) <font color=#1b1baa>$ttl</font> [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$h</font> \n] 0 2]}
+        }
+      }
+    }
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$al(ED,TclKeyWords)</font>]} {
+      <b><font color=#3a6797>lappend</font></b> res {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$al(ED,TclKeyWords)</font>  ;<i><font color=#4b5d50># user's commands</font></i>
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$isread</font>} {alited::info::Clear end}
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font> <font color=#1b1baa>$withcomm</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=complete::IsMatch></a>
+<b><font color=#ca14ca>proc</font></b> complete::IsMatch {curword com} {
+  <i><font color=#4b5d50># Check matching a word to a command.</font></i>
+  <i><font color=#4b5d50>#   curword - the word</font></i>
+  <i><font color=#4b5d50>#   com - the command</font></i>
+
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> match <font color=#1b1baa>${curword}<b><font color=#3a6797></font>*</font></b> <font color=#1b1baa>$com</font>] || \
+    [<b><font color=#3a6797>string</font></b> match <font color=#1b1baa>${curword}<b><font color=#3a6797></font>*</font></b> [<b><font color=#3a6797>namespace</font></b> tail <font color=#1b1baa>$com</font>]] || \
+    [<b><font color=#3a6797>regexp</font></b> <font color=#8b2a0e>&quot;^\[\$\]?<font color=#1b1baa>${</font>curword<font color=#1b1baa>}</font>&quot;</font> <font color=#1b1baa>$com</font>]}]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=complete::MatchedCommands></a>
+<b><font color=#ca14ca>proc</font></b> complete::MatchedCommands {{curword <font color=#8b2a0e>&quot;&quot;</font>} args} {
+  <i><font color=#4b5d50># Gets commands that are matched to a current (under cursor) word.</font></i>
+  <i><font color=#4b5d50>#   curword - current word to match</font></i>
+  <i><font color=#4b5d50>#   args - contains idx1, idx2 indices</font></i>
+  <i><font color=#4b5d50># Returns list of current word, begin and end of it.</font></i>
+
+  <b><font color=#3a6797>variable</font></b> comms
+  <b><font color=#3a6797>variable</font></b> commsorig
+  <b><font color=#3a6797>variable</font></b> maxwidth
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$curword</font> eq {}} {
+    <b><font color=#3a6797>lassign</font></b> [alited::find::GetWordOfText noselect2 yes] curword idx1 idx2
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$args</font> idx1 idx2
+  }
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>namespace</font></b> exists ::alited::repl]} {
+    <b><font color=#ca14ca>namespace</font></b> eval ::alited {
+      <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::LIBDIR</font> repl repl.tcl]
+    }
+  }
+  <b><font color=#3a6797>lassign</font></b> [AllSessionCommands [alited::bar::CurrentTabID] <font color=#1b1baa>$idx1</font>] allcomms withcomms
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$withcomms</font>} {
+    <b><font color=#3a6797>lappend</font></b> allcomms {<b><font color=#3a6797>*</font></b>}[<b><font color=#3a6797>lindex</font></b> [::alited::repl::complete command {}] 1]
+  }
+  <b><font color=#3a6797>set</font></b> comms [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>set</font></b> excluded [<b><font color=#3a6797>list</font></b> {[._]*} alimg_* bts_*]
+  <b><font color=#3a6797>set</font></b> maxwidth 20
+  <b><font color=#3a6797>foreach</font></b> com <font color=#1b1baa>$allcomms</font> {
+    <b><font color=#3a6797>set</font></b> incl 1
+    <b><font color=#3a6797>foreach</font></b> ex <font color=#1b1baa>$excluded</font> {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match <font color=#1b1baa>$ex</font> <font color=#1b1baa>$com</font>]} {
+        <b><font color=#3a6797>set</font></b> incl 0
+        <b><font color=#ca14ca>break</font></b>
+      }
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$incl</font> && [IsMatch <font color=#1b1baa>$curword</font> <font color=#1b1baa>$com</font>]} {
+      <b><font color=#3a6797>lappend</font></b> comms <font color=#1b1baa>$com</font>
+      <b><font color=#3a6797>set</font></b> maxwidth [<b><font color=#3a6797>expr</font></b> {max(<font color=#1b1baa>$maxwidth</font>,[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$com</font>])}]
+    }
+  }
+  <b><font color=#3a6797>set</font></b> commsorig <font color=#1b1baa>$comms</font>
+  <b><font color=#3a6797>set</font></b> comms [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-dictionary</font> <font color=#653760>-unique</font> <font color=#1b1baa>$comms</font>]
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$curword</font> <font color=#1b1baa>$idx1</font> <font color=#1b1baa>$idx2</font>]
+}
+<a id=GUI></a>
+<i><font color=#4b5d50># ________________________ GUI _________________________ #</font></i>
+<a id=complete::SelectCommand></a>
+<b><font color=#ca14ca>proc</font></b> complete::SelectCommand {obj lbx} {
+  <i><font color=#4b5d50># Handles a selection of command for auto completion.</font></i>
+  <i><font color=#4b5d50>#   obj - apave object</font></i>
+  <i><font color=#4b5d50>#   lbx - listbox's path</font></i>
+
+  <b><font color=#3a6797>variable</font></b> win
+  <font color=#1b1baa>$obj</font> res <font color=#1b1baa>$win</font> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$::alited::complete::comms</font> [<font color=#1b1baa>$lbx</font> curselection]]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=complete::WinGeometry></a>
+<b><font color=#ca14ca>proc</font></b> complete::WinGeometry {lht} {
+  <i><font color=#4b5d50># Checks and corrects the completion window's geometry (esp. for KDE).</font></i>
+  <i><font color=#4b5d50>#   lht - height of completion list</font></i>
+
+  <b><font color=#3a6797>variable</font></b> win
+  <b><font color=#3a6797>update</font></b>
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font>] x+] w h x y
+  <b><font color=#3a6797>set</font></b> h2 [<b><font color=#134070>winfo</font></b> reqheight <font color=#1b1baa>$win</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$h2</font>&gt;20} {
+    <b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font> <font color=#1b1baa>${w}</font>x<font color=#1b1baa>${h2}</font>+<font color=#1b1baa>${x}</font>+<font color=#1b1baa>${y}</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font> 220x325+<font color=#1b1baa>${x}</font>+<font color=#1b1baa>${y}</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=complete::PickCommand></a>
+<b><font color=#ca14ca>proc</font></b> complete::PickCommand {wtxt} {
+  <i><font color=#4b5d50># Shows a frame of commands for auto completion,</font></i>
+  <i><font color=#4b5d50># allowing a user to select from it.</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+
+  <b><font color=#3a6797>variable</font></b> win
+  <b><font color=#3a6797>variable</font></b> obj
+  <b><font color=#3a6797>variable</font></b> word
+  <b><font color=#3a6797>variable</font></b> comms
+  <b><font color=#3a6797>variable</font></b> commsorig
+  <b><font color=#3a6797>variable</font></b> wordorig
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> llen [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$comms</font>]]==0} {<b><font color=#ca14ca>return</font></b> {}}
+  <b><font color=#3a6797>set</font></b> word <font color=#1b1baa>$wordorig</font>
+  <i><font color=#4b5d50># check for variables if any exist</font></i>
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> il 0; <b><font color=#3a6797>set</font></b> icv -1} {<font color=#1b1baa>$il</font>&lt;<font color=#1b1baa>$llen</font>}  {<b><font color=#3a6797>incr</font></b> il} {
+    <b><font color=#3a6797>set</font></b> cv [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$comms</font> <font color=#1b1baa>$il</font>]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first \$ <font color=#1b1baa>$cv</font>]&lt;0} <b><font color=#ca14ca>break</font></b>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$cv</font> eq <font color=#8b2a0e>&quot;\$<font color=#1b1baa>$</font>wordorig&quot;</font>} {<b><font color=#3a6797>set</font></b> icv <font color=#1b1baa>$il</font>}
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$icv</font>&gt;=0 && <font color=#1b1baa>$il</font>&gt;1 && [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$wordorig</font>]==1} {
+    <b><font color=#3a6797>set</font></b> i 0
+    <b><font color=#3a6797>foreach</font></b> c <font color=#1b1baa>$commsorig</font> {<b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$c</font> eq <font color=#8b2a0e>&quot;\$wordorig&quot;</font>} {<b><font color=#3a6797>incr</font></b> i}}
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i</font>&lt;2} { ;<i><font color=#4b5d50># 1 occurence of 1 letter =&gt; remove it</font></i>
+      <b><font color=#3a6797>set</font></b> comms [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$comms</font> <font color=#1b1baa>$icv</font> <font color=#1b1baa>$icv</font>]
+      <b><font color=#3a6797>incr</font></b> llen -1
+      <b><font color=#3a6797>incr</font></b> il -1
+    }
+  }
+  <b><font color=#3a6797>set</font></b> commsorig <font color=#1b1baa>$comms</font>
+  <b><font color=#3a6797>set</font></b> mlen 16
+  <b><font color=#3a6797>set</font></b> lht [<b><font color=#3a6797>expr</font></b> {max(min(<font color=#1b1baa>$llen</font>,<font color=#1b1baa>$mlen</font>),1)}]
+  <b><font color=#3a6797>set</font></b> obj ::alited::pavedPickCommand
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$win</font>}
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::alited::al(IsWindows)</font>} {
+    <b><font color=#134070>toplevel</font></b> <font color=#1b1baa>$win</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#134070>frame</font></b> <font color=#1b1baa>$win</font>
+    <b><font color=#134070>wm</font></b> manage <font color=#1b1baa>$win</font>
+    <i><font color=#4b5d50># the line below is of an issue in kubuntu (KDE?): small sizes of the popup window</font></i>
+    <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> ::alited::complete::WinGeometry <font color=#1b1baa>$lht</font>]
+  }
+  <b><font color=#134070>wm</font></b> withdraw <font color=#1b1baa>$win</font>
+  <b><font color=#134070>wm</font></b> overrideredirect <font color=#1b1baa>$win</font> 1
+  <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$obj</font> destroy}
+  ::apave::APave create <font color=#1b1baa>$obj</font> <font color=#1b1baa>$win</font>
+  <b><font color=#3a6797>set</font></b> lwidgets [<b><font color=#3a6797>list</font></b> \
+    <font color=#8b2a0e>&quot;Ent - - - - <font color=#1b1baa>{</font>pack -expand 1 -fill x<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>-w <font color=#1b1baa>$</font>::alited::complete::maxwidth \</font>
+<font color=#8b2a0e>    -tvar ::alited::complete::word -validate key \</font>
+<font color=#8b2a0e>    -validatecommand <font color=#1b1baa>{</font>alited::complete::PickValid <font color=#1b1baa>$</font>wtxt %V %d %i %s %S<font color=#1b1baa>}}</font>&quot;</font> \
+    <font color=#8b2a0e>&quot;fra - - - - <font color=#1b1baa>{</font>pack -expand 1 -fill both<font color=#1b1baa>}</font>&quot;</font> \
+    <font color=#8b2a0e>&quot;.Lbx - - - - <font color=#1b1baa>{</font>pack -side left -expand 1 -fill both<font color=#1b1baa>}</font> \</font>
+<font color=#8b2a0e>    <font color=#1b1baa>{</font>-h <font color=#1b1baa>$</font>lht -w <font color=#1b1baa>$</font>::alited::complete::maxwidth \</font>
+<font color=#8b2a0e>    -lvar ::alited::complete::comms -exportselection 0<font color=#1b1baa>}</font>&quot;</font>
+  ]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$llen</font>&gt;<font color=#1b1baa>$mlen</font>} {
+    <i><font color=#4b5d50># add vertical scrollbar if number of items exceeds max.height</font></i>
+    <b><font color=#3a6797>lappend</font></b> lwidgets {.sbvPick + L - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> both} {}}
+  }
+  <font color=#1b1baa>$obj</font> paveWindow <font color=#1b1baa>$win</font> <font color=#1b1baa>$lwidgets</font>
+  <b><font color=#3a6797>set</font></b> ent [<font color=#1b1baa>$obj</font> Ent]
+  <b><font color=#3a6797>set</font></b> lbx [<font color=#1b1baa>$obj</font> Lbx]
+  <b><font color=#3a6797>foreach</font></b> ev {ButtonPress-1 Return KP_Enter KeyPress-space} {
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>bind</font></b> <font color=#1b1baa>$lbx</font> &lt;<font color=#1b1baa>$ev</font>&gt; <font color=#8b2a0e>&quot;after idle <font color=#1b1baa>{</font>::alited::complete::SelectCommand <font color=#1b1baa>$</font>obj <font color=#1b1baa>$</font>lbx<font color=#1b1baa>}</font>&quot;</font>}
+  }
+  ColorPick <font color=#1b1baa>$wtxt</font>
+  <font color=#1b1baa>$lbx</font> selection set 0
+  <b><font color=#3a6797>lassign</font></b> [TextCursorCoordinates <font color=#1b1baa>$wtxt</font>] X Y
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::alited::al(IsWindows)</font>} {
+    <b><font color=#3a6797>incr</font></b> X 10
+    <b><font color=#3a6797>incr</font></b> Y 40
+    <b><font color=#3a6797>after</font></b> 100 <font color=#8b2a0e>&quot;wm deiconify <font color=#1b1baa>$</font>win&quot;</font>
+  }
+  <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;::apave::CursorAtEnd <font color=#1b1baa>$</font>ent&quot;</font>
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$ent</font> &lt;Return&gt; {+ alited::complete::EntReturn}
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;FocusOut&gt; {alited::complete::PickFocusOut %W}
+  <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$obj</font> showModal <font color=#1b1baa>$win</font> <font color=#653760>-focus</font> <font color=#1b1baa>$ent</font> <font color=#653760>-modal</font> no <font color=#653760>-geometry</font> +<font color=#1b1baa>$X</font>+<font color=#1b1baa>$Y</font>]
+  <b><font color=#134070>destroy</font></b> <font color=#1b1baa>$win</font>
+  <font color=#1b1baa>$obj</font> destroy
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> ne <font color=#8b2a0e>&quot;0&quot;</font>} {<b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>}
+  <b><font color=#ca14ca>return</font></b> {}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=complete::ColorPick></a>
+<b><font color=#ca14ca>proc</font></b> complete::ColorPick {wtxt} {
+  <i><font color=#4b5d50># Sets colors for pick list.</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+
+  <b><font color=#3a6797>variable</font></b> obj
+  <b><font color=#3a6797>variable</font></b> comms
+  <b><font color=#3a6797>set</font></b> lbx [<font color=#1b1baa>$obj</font> Lbx]
+  <b><font color=#3a6797>set</font></b> llen [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$comms</font>]
+  <b><font color=#3a6797>lassign</font></b> [::hl_tcl::hl_colors <font color=#1b1baa>$wtxt</font>] fgcom - - fgvar
+  <b><font color=#3a6797>set</font></b> i 0
+  <b><font color=#3a6797>foreach</font></b> com <font color=#1b1baa>$comms</font> {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$com</font> 0] eq {$}} {
+      <font color=#1b1baa>$lbx</font> itemconfigure <font color=#1b1baa>$i</font> <font color=#653760>-foreground</font> <font color=#1b1baa>$fgvar</font>  ;<i><font color=#4b5d50># variable</font></i>
+    } <b><font color=#3a6797>else</font></b> {
+      <font color=#1b1baa>$lbx</font> itemconfigure <font color=#1b1baa>$i</font> <font color=#653760>-foreground</font> <font color=#1b1baa>$fgcom</font>  ;<i><font color=#4b5d50># command</font></i>
+    }
+    <b><font color=#3a6797>incr</font></b> i
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=complete::EntReturn></a>
+<b><font color=#ca14ca>proc</font></b> complete::EntReturn {} {
+  <i><font color=#4b5d50># Handles pressing Return on entry.</font></i>
+
+  <b><font color=#3a6797>variable</font></b> win
+  <b><font color=#3a6797>variable</font></b> obj
+  <b><font color=#3a6797>variable</font></b> word
+  <b><font color=#3a6797>set</font></b> lbx [<font color=#1b1baa>$obj</font> Lbx]
+  <b><font color=#3a6797>set</font></b> idx [<font color=#1b1baa>$lbx</font> curselection]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$idx</font> eq {} || [<b><font color=#3a6797>set</font></b> com [<font color=#1b1baa>$lbx</font> get <font color=#1b1baa>$idx</font>]] eq {}} {
+    <b><font color=#3a6797>set</font></b> com <font color=#1b1baa>$word</font>
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$com</font> ne {}} {<font color=#1b1baa>$obj</font> res <font color=#1b1baa>$win</font> <font color=#1b1baa>$com</font>}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=complete::PickValid></a>
+<b><font color=#ca14ca>proc</font></b> complete::PickValid {wtxt V d i s S} {
+  <i><font color=#4b5d50># Validates the word picker's input.</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+  <i><font color=#4b5d50>#   V - %V of -validatecommand: validation condition</font></i>
+  <i><font color=#4b5d50>#   d - %d of -validatecommand: 1 for insert, 0 for delete</font></i>
+  <i><font color=#4b5d50>#   i - %i of -validatecommand: index of character</font></i>
+  <i><font color=#4b5d50>#   s - %s of -validatecommand: current value of entry</font></i>
+  <i><font color=#4b5d50>#   S - %S of -validatecommand: string being inserted/deleted</font></i>
+
+  <b><font color=#3a6797>variable</font></b> win
+  <b><font color=#3a6797>variable</font></b> obj
+  <b><font color=#3a6797>variable</font></b> comms
+  <b><font color=#3a6797>variable</font></b> commsorig
+  <b><font color=#3a6797>variable</font></b> wordorig
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$V</font> eq {focusin}} {
+    ::apave::CursorAtEnd [<font color=#1b1baa>$obj</font> Ent]
+  }
+  <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$d</font> {
+    0 {
+      <b><font color=#3a6797>set</font></b> curword [<b><font color=#3a6797>string</font></b> replace <font color=#1b1baa>$s</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
+      <b><font color=#3a6797>set</font></b> lc [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$curword</font>]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$lc</font> && <font color=#1b1baa>$lc</font>&lt;[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$wordorig</font>]} {
+        <font color=#1b1baa>$obj</font> res <font color=#1b1baa>$win</font> [<b><font color=#3a6797>list</font></b> _alited_ <font color=#1b1baa>$curword</font>] ;<i><font color=#4b5d50># to remake the list</font></i>
+      }
+    }
+    1 {
+      <b><font color=#3a6797>set</font></b> curword [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$s</font> 0 <font color=#1b1baa>$i</font>]<font color=#1b1baa>$S</font>[<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$s</font> <font color=#1b1baa>$i</font> end]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$curword</font>]==1 && <font color=#1b1baa>$curword</font> ne <font color=#1b1baa>$wordorig</font>} {
+        <font color=#1b1baa>$obj</font> res <font color=#1b1baa>$win</font> [<b><font color=#3a6797>list</font></b> _alited_ <font color=#1b1baa>$curword</font>] ;<i><font color=#4b5d50># to remake the list</font></i>
+      }
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$d</font> != -1} {
+    <b><font color=#3a6797>set</font></b> fltcomms [<b><font color=#3a6797>list</font></b>]
+    <b><font color=#3a6797>foreach</font></b> com <font color=#1b1baa>$commsorig</font> {
+      <b><font color=#3a6797>if</font></b> {[IsMatch <font color=#1b1baa>$curword</font> <font color=#1b1baa>$com</font>]} {
+        <b><font color=#3a6797>lappend</font></b> fltcomms <font color=#1b1baa>$com</font>
+      }
+    }
+    <b><font color=#3a6797>set</font></b> comms <font color=#1b1baa>$fltcomms</font>
+    ColorPick <font color=#1b1baa>$wtxt</font>
+    <b><font color=#3a6797>update</font></b>
+  }
+  <b><font color=#3a6797>catch</font></b> {
+    <b><font color=#3a6797>set</font></b> lbx [<font color=#1b1baa>$obj</font> Lbx]
+    <font color=#1b1baa>$lbx</font> selection clear 0 end
+    <font color=#1b1baa>$lbx</font> selection set 0
+    <font color=#1b1baa>$lbx</font> activate 0
+    <font color=#1b1baa>$lbx</font> see 0
+    <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$obj</font> csGet] - - - - - bg fg
+    <font color=#1b1baa>$lbx</font> itemconfigure 0 <font color=#653760>-selectbackground</font> <font color=#1b1baa>$bg</font> <font color=#653760>-selectforeground</font> <font color=#1b1baa>$fg</font>
+  }
+  <b><font color=#ca14ca>return</font></b> 1
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=complete::PickFocusOut></a>
+<b><font color=#ca14ca>proc</font></b> complete::PickFocusOut {w} {
+  <i><font color=#4b5d50># Closes the word picker at &quot;focus out&quot; event.</font></i>
+  <i><font color=#4b5d50>#   w - a current widget</font></i>
+
+  <b><font color=#3a6797>variable</font></b> win
+  <b><font color=#3a6797>variable</font></b> obj
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>focus</font></b>] ni [<b><font color=#3a6797>list</font></b> [<font color=#1b1baa>$obj</font> Ent] [<font color=#1b1baa>$obj</font> Lbx]]} {
+    <font color=#1b1baa>$obj</font> res <font color=#1b1baa>$win</font> 0
+  }
+}
+<a id=Main></a>
+<i><font color=#4b5d50># ________________________ Main _________________________ #</font></i>
+<a id=complete::AutoCompleteCommand></a>
+<b><font color=#ca14ca>proc</font></b> complete::AutoCompleteCommand {} {
+  <i><font color=#4b5d50># Runs auto completion of commands.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> tclcoms
+  <b><font color=#3a6797>variable</font></b> wordorig
+  <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+  <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$wtxt</font> index insert]
+  <b><font color=#3a6797>set</font></b> row [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$pos</font>)}]
+  <b><font color=#3a6797>set</font></b> charsOn [<font color=#1b1baa>$wtxt</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos -1 char&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos +1 char&quot;</font>]
+  <b><font color=#3a6797>set</font></b> leftpart [<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$row</font>.0 <font color=#1b1baa>$pos</font>]]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(acc_19)</font> eq {Tab} && (![<b><font color=#3a6797>regexp</font></b> {[[:alnum:]_]} <font color=#1b1baa>$charsOn</font>] || <font color=#1b1baa>$leftpart</font> eq {})} {
+    <i><font color=#4b5d50># (if the cursor isn't over a word)</font></i>
+    <i><font color=#4b5d50># Tab is the indentation on the line's beginning or Tab char otherwise</font></i>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$leftpart</font> eq {}} {
+      <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$pos</font> [alited::main::CalcPad <font color=#1b1baa>$wtxt</font>]
+    } <b><font color=#3a6797>else</font></b> {
+      <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$pos</font> \t
+    }
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$tclcoms</font>]} {
+    <b><font color=#3a6797>set</font></b> tclcoms [::hl_tcl::hl_commands]
+    <b><font color=#3a6797>foreach</font></b> cmd {<b><font color=#3a6797>exit</font></b> break continue pwd pid} {
+      <i><font color=#4b5d50># these commands mostly without arguments: below, don't add { } after them</font></i>
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-exact</font> <font color=#1b1baa>$tclcoms</font> <font color=#1b1baa>$cmd</font>]]&gt;-1} {
+        <b><font color=#3a6797>set</font></b> tclcoms [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$tclcoms</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
+      }
+    }
+  }
+  <b><font color=#3a6797>lassign</font></b> [MatchedCommands] wordorig idx1 idx2
+  <b><font color=#3a6797>while</font></b> 1 {
+    <b><font color=#3a6797>set</font></b> com [PickCommand <font color=#1b1baa>$wtxt</font>]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$com</font>]==2 && [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$com</font> 0] eq {_alited_}} {
+      <b><font color=#3a6797>set</font></b> wordorig [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$com</font> 1]
+      MatchedCommands <font color=#1b1baa>$wordorig</font> <font color=#1b1baa>$idx1</font> <font color=#1b1baa>$idx2</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#ca14ca>break</font></b>
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$com</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> isvar [<b><font color=#3a6797>string</font></b> match \$* <font color=#1b1baa>$com</font>]
+    <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$wtxt</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>row.<font color=#1b1baa>$</font>idx1 -1 c&quot;</font>] eq <font color=#8b2a0e>&quot;\$&quot;</font>} {
+      <b><font color=#3a6797>incr</font></b> idx1 -1
+    } <b><font color=#3a6797>elseif</font></b> {[<font color=#1b1baa>$wtxt</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>row.<font color=#1b1baa>$</font>idx1 -2 c&quot;</font> <font color=#1b1baa>$row</font>.<font color=#1b1baa>$idx1</font>] eq <font color=#8b2a0e>&quot;\$:&quot;</font>} {
+      <b><font color=#3a6797>incr</font></b> idx1 -2
+    } <b><font color=#3a6797>elseif</font></b> {[<font color=#1b1baa>$wtxt</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>row.<font color=#1b1baa>$</font>idx1 -3 c&quot;</font> <font color=#1b1baa>$row</font>.<font color=#1b1baa>$idx1</font>] eq <font color=#8b2a0e>&quot;\$::&quot;</font>} {
+      <b><font color=#3a6797>incr</font></b> idx1 -3
+    } <b><font color=#3a6797>elseif</font></b> {[<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$row</font>.<font color=#1b1baa>$idx1</font>] eq <font color=#8b2a0e>&quot;\$&quot;</font>} {
+      <i><font color=#4b5d50># replace $variable</font></i>
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$isvar</font>} {
+      <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$com</font> 1 end]
+    }
+    <font color=#1b1baa>$wtxt</font> delete <font color=#1b1baa>$row</font>.<font color=#1b1baa>$idx1</font> <font color=#1b1baa>$row</font>.[<b><font color=#3a6797>incr</font></b> idx2]
+    <b><font color=#3a6797>set</font></b> pos <font color=#1b1baa>$row</font>.<font color=#1b1baa>$idx1</font>
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$isvar</font>} {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$al(_SessionCommands)</font> <font color=#1b1baa>$com</font>]
+      && [<b><font color=#3a6797>set</font></b> argums [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$al(_SessionCommands)</font> <font color=#1b1baa>$com</font>]] ne {}} {
+        <i><font color=#4b5d50># add all of the unit's arguments</font></i>
+        <b><font color=#3a6797>catch</font></b> {
+          <b><font color=#3a6797>foreach</font></b> ar <font color=#1b1baa>$argums</font> {
+            <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$ar</font>]==1} {
+              <b><font color=#3a6797>append</font></b> com <font color=#8b2a0e>&quot; \$<font color=#1b1baa>$</font>ar&quot;</font>
+            } <b><font color=#3a6797>else</font></b> {
+              <b><font color=#3a6797>append</font></b> com <font color=#8b2a0e>&quot; <font color=#1b1baa>{</font>\$<font color=#1b1baa>$</font>ar<font color=#1b1baa>}</font>&quot;</font> ;<i><font color=#4b5d50># default value to be seen</font></i>
+            }
+          }
+        }
+      } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$com</font> in <font color=#1b1baa>$tclcoms</font>} {
+        <b><font color=#3a6797>append</font></b> com { }
+      }
+    }
+    <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$pos</font> <font color=#1b1baa>$com</font>
+    ::alited::main::HighlightLine
+  }
+  <b><font color=#134070>focus</font></b> <font color=#653760>-force</font> <font color=#1b1baa>$wtxt</font>
+}<a id=EOF></a>
+<i><font color=#4b5d50># _________________________________ EOF _________________________________ #</font></i>
+
+</pre>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>complete.tcl</b></font></div></td></table>
+
+</section>
+<script>
+  writeFooter('Document generated by <a href="'+homeLINK()+'/en/tcl/alited/index.html">alited</a> &amp; <a href="'+homeLINK()+'/en/tcl/mulster/index.html">mulster</a></a>');
+</script>
+</div>
+</body>
+</html>

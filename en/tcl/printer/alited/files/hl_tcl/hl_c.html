@@ -1,0 +1,1099 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<meta name="author" content="aplsimple">
+<meta name="description" content="aplsimple's home page">
+<meta name="keywords" content="aplsimple,home">
+</head>
+<style>
+table{
+background-color: #f9f9f9;
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+box-shadow: none;
+filter: none;
+}
+pre{
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+}
+</style>
+<script>
+function homeLINK() {
+  homelink = document.baseURI;
+  ilen = 19
+  ibase = homelink.indexOf('aplsimple.github');
+  if (ibase<0) { ibase = homelink.indexOf('aplsimple_github'); ilen += 10 };
+  if (ibase>=0) { homelink = homelink.substring(0,ibase+ilen) };
+  return homelink;
+};
+document.write(' \
+<link rel="icon" type="image/jpg" href="'+homeLINK()+'/zoo/favicon.jpg">');
+document.write('<'+'script src="'+homeLINK()+'/zoo/funcs.js">'+'<'+'/script>');
+document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'+'/script>');
+</script>
+<body>
+<div id="wrapper">
+<div name="divd1" ALIGN="CENTER"> <FONT SIZE=5em color=#b01c20><B>
+<noscript>THIS PAGE IS NOT WORKING WITHOUT JAVASCRIPT!
+<BR>
+<BR>PLEASE, SWITCH ON JAVASCRIPT IN SETTINGS OF YOUR BROWSER AND RELOAD THE PAGE.
+</noscript>
+</B></FONT></div>
+<div id='doc3' class='yui-t2'>
+<section id=sec2>
+<div id='hd' class='banner'>
+<script>document.write(' \
+<link rel="stylesheet" href="'+homeLINK()+'/en/zoo/style.css">');
+</script>
+<link rel="stylesheet" href="../../css/style.css">
+
+<title>hl_c.tcl</title>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
+
+<div id="bodyContent" class="dokuwiki">
+<div id="dw__toc" class="dw__toc">
+<h3 class="toggle open" style="cursor: pointer;">hl_c.tcl</h3>
+<div aria-expanded="true" style="">
+
+<ul class="toc">
+<li><b><a href="#hl_c.tcl">hl_c.tcl</a></b></li>
+<li><b><a href="#Common_data">Common_data</a></b></li>
+<li><b><a href="#STATIC_highlighting">STATIC_highlighting</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#my::HighlightCmd">HighlightCmd</a><span class=tooltiptext> my::HighlightCmd : Highlights C commands.
+txt - text widget's path
+line - line to be highlighted
+ln - line number
+pri - column number to highlighted from
+i - current position in 'line'</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#my::HighlightLine">HighlightLine</a><span class=tooltiptext> my::HighlightLine : Highlightes a line in text.
+txt - text widget's path
+ln - line's number
+currQtd - 0, 1 or 2 referring to comment/string/char
+Returns currQtd for the end of the line.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#my::HighlightAll">HighlightAll</a><span class=tooltiptext> my::HighlightAll : Highlights all of a text.
+txt - text widget's path
+Makes a coroutine from this.
+See also: CoroHighlightAll
+let them work one by one:</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#my::CoroHighlightAll">CoroHighlightAll</a><span class=tooltiptext> my::CoroHighlightAll : Highlights all of a text as a coroutine.
+txt - text widget's path
+See also: HighlightAll</span></div></li></ul>
+<li><b><a href="#DYNAMIC_highlighting">DYNAMIC_highlighting</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#my::RemoveTags">RemoveTags</a><span class=tooltiptext> my::RemoveTags : Removes tags in text.
+txt - text widget's path
+from - starting index
+to - ending index</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#my::CountQSH">CountQSH</a><span class=tooltiptext> my::CountQSH : Counts quotes, slashes, comments in a line
+txt - text widget's path
+ln - line's index</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#my::MemPos1">MemPos1</a><span class=tooltiptext> my::MemPos1 : Checks and sets the cursor's width, depending on its position.
+txt - text widget's path
+donorm - if yes, forces "normal" cursor
+K - key (%K of bind)
+s - state (%s of bind)
+This fixes an issue with text cursor: less width at 0th column.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#my::MemPos">MemPos</a><span class=tooltiptext> my::MemPos : Remembers the state of current line.
+txt - text widget's path
+doit - argument for ShowCurrentLine
+See also: ShowCurrentLine</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#my::Modified">Modified</a><span class=tooltiptext> my::Modified : Handles modifications of text.
+txt - text widget's path
+Makes a coroutine from this.
+See also: CoroModified</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#my::CoroRun">CoroRun</a><span class=tooltiptext> my::CoroRun</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#my::CoroModified">CoroModified</a><span class=tooltiptext> my::CoroModified : Handles modifications of text.
+txt - text widget's path
+See also: Modified</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#my::LineState">LineState</a><span class=tooltiptext> my::LineState : Gets an initial state of line.
+txt - text widget's path
+tSTR - ranges of string tags
+tCMN - ranges of comment tags
+l1 - the line's index
+Returns: a flag of 'quoted' line or -1.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#my::ShowCurrentLine">ShowCurrentLine</a><span class=tooltiptext> my::ShowCurrentLine : Shows the current line.
+txt - text widget's path
+doit - if yes, forces updating current line's background</span></div></li></ul>
+<li><b><a href="#INTERFACE_procedures">INTERFACE_procedures</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#hl_c::hl_readonly">hl_readonly</a><span class=tooltiptext> hl_c::hl_readonly : Makes the text widget be readonly or gets its 'read-only' state.
+txt - text widget's path
+ro - flag "the text widget is readonly"
+com2 - command to be called at viewing and after changes
+If 'ro' argument is omitted, returns the widget's 'read-only' state.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#hl_c::hl_init">hl_init</a><span class=tooltiptext> hl_c::hl_init : Initializes highlighting.
+txt - text widget's path
+args - dict of options
+The 'args' options include:
+-- - means that only args' options will be initialized (defaults skipped)
+-dark - flag "the text widget has dark background"
+-readonly - flag "read-only"
+-optRE - flag "use of RE to highlight options"
+-multiline - flag "allowed multi-line strings"
+-cmd - command to watch editing/viewing
+-cmdpos - command to watch cursor positioning
+-colors - list of colors: clrCOM, clrCOMTK, clrSTR, clrVAR, clrCMN, clrPROC
+-font - attributes of font
+-seen - lines seen at start
+-dobind - if yes, forces key bindings
+This procedure has to be called before writing a text in the text widget.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#hl_c::hl_text">hl_text</a><span class=tooltiptext> hl_c::hl_text : Highlights C code of a text widget.
+txt - text widget's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#hl_c::hl_all">hl_all</a><span class=tooltiptext> hl_c::hl_all : Updates ("rehighlights") all highlighted and existing text widgets.
+args - dict of options
+See also: hl_init</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#hl_c::hl_colors">hl_colors</a><span class=tooltiptext> hl_c::hl_colors : Gets the main colors for highlighting (except for "curr.line").
+txt - text widget's path or {} or an index of default colors
+dark - flag "dark scheme"
+Returns a list of colors for COM COMTK STR VAR CMN PROC OPT BRAC \</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#hl_c::hl_line">hl_line</a><span class=tooltiptext> hl_c::hl_line : Updates a current line's highlighting.
+txt - text's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#hl_c::isdone">isdone</a><span class=tooltiptext> hl_c::isdone : Checks if the highlighting of the text is done.
+txt - text's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#hl_c::clearup">clearup</a><span class=tooltiptext> hl_c::clearup : Clears data related to text (esp. at deleting it).
+txt - text's path</span></div></li></ul>
+<li><b><a href="#EOF">EOF</a></b></li>
+
+</ul>
+
+</div>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1><font color=#ca14ca> hl_tcl</font></h1>
+</p><p>
+The <i><font color=#1b1baa>hl_tcl</font></i> package is a syntax highlighter for Tcl/Tk code.
+</p><p>
+It can be applied to a <i><font color=#1b1baa>Tk text</font></i> widget or to a static html page.
+</p><p>
+The <i><font color=#1b1baa>Tk text</font></i> widget may be made read-only or editable. Also, the <i><font color=#1b1baa>hl_tcl</font></i> may take an argument, sort of command to watch the viewing / editing.
+</p><p>
+When applied to html pages, the <i><font color=#1b1baa>hl_tcl</font></i> highlights Tcl/Tk code snippets embedded between <a href="&lt;">&lt;</a>code<a href="&gt;">&gt;</a> <a href="&lt;">&lt;</a>/code<a href="&gt;">&gt;</a> tags.
+</p><p>
+The <i><font color=#1b1baa>hl_tcl</font></i> has highlighted its own code in <a href="https://aplsimple.github.io/en/tcl/hl_tcl/hl_tcl.html">Reference</a>.
+</p><p>
+<h2><font color=#ca14ca> Some of blah-blah</font></h2>
+</p><p>
+The Tcl being incredibly dynamic language sets a lot of problems before any Tcl syntax highlighter. Probably, the usage of quotes and esp. the strings spanning several lines are the main challenges.
+</p><p>
+Below is a line that brings most (not <i><font color=#1b1baa>hl_tcl</font></i>, as seen in <a href="https://aplsimple.github.io/en/tcl/hl_tcl/hl_tcl.html">Reference</a>) of Tcl highlighters in a stupor:
+</p><p>
+      if {[set i [string first {"} $line $i]]==-1} {return no}
+</p><p>
+... as well as this one:
+</p><p>
+      regsub -all {(([^A-Z@]|\\@)[.?!]("|'|'')?([])])?) } $fieldText {\1  } fieldText
+</p><p>
+Good luck for a highlighter when the second line (or similar) follows the first, giving it a matching quote and thus bringing it out of the stupor.
+</p><p>
+Those orphan quotes are often used in <font color=#1b1baa>regexp</font> and <font color=#1b1baa>regsub</font> Tcl commands, so that when a honest Tcl highlighter (like <a href="https://www.geany.org" title="Geany IDE">Geany</a>) stumbles upon an orphan quote, it tries its best to highlight the rest of code as a string, till the next unmatched quote.
+</p><p>
+Thus, we have
+</p><p>
+<img src="https://aplsimple.github.io/en/tcl/hl_tcl/files/hltcl1.png" class="media" alt="">
+</p><p>
+... instead of
+</p><p>
+<img src="https://aplsimple.github.io/en/tcl/hl_tcl/files/hltcl2.png" class="media" alt="">
+</p><p>
+There are "tricky" highlighters (like <a href="https://wiki.gnome.org/Apps/Gedit" title="Gedit editor">Gedit</a>) that behave more wisely at the stumbling an orphan quote: they permit only a one-line Tcl strings (if not continued with \\), so that the string highlighting would be most likely finished in the same line it started. No problems except for this silly line. And no delays due to the highlighting the rest of code...
+</p><p>
+... as seen in:
+</p><p>
+<img src="https://aplsimple.github.io/en/tcl/hl_tcl/files/hltcl3.png" class="media" alt="">
+</p><p>
+<h2><font color=#ca14ca> Some of editors</font></h2>
+</p><p>
+<a href="https://www.geany.org" title="Geany IDE">Geany</a>. Probably, the best Tcl highlighter. And the great programming tool at that. Still, it has few drawbacks:
+</p><p>
+<li>doesn't highlight the above mentioned Tcl lines properly</li>
+<li>doesn't highlight <font color=#1b1baa>${var}</font> in contrast with <font color=#1b1baa>$var</font></li>
+<li>tries to highlight any (even hexidecimal) number it encounters, thus <font color=#1b1baa>set a 1fix</font> or <font color=#1b1baa>set b #abxxx</font> looks a bit peculiar</li>
+<li><font color=#1b1baa>set c {{#000} #FFF}</font> is quite a legal Tcl command as well as <font color=#1b1baa>set c {#000 #FFF}</font>, not for Geany</li>
+<li>no highlighting TclOO (<font color=#1b1baa>method, mixin, my</font> etc.)</li>
+</p><p>
+<a href="http://www.vim.org/" title="Vim editor">Vim</a>. Probably, the fastest Tcl highlighter. Great and awful. Nonetheless:
+</p><p>
+<li>tricky with those above mentioned Tcl lines</li>
+<li>doesn't highlight ttk commands (Tk only) and TclOO</li>
+<li>tries to highlight every bit of Tcl, e.g. <font color=#1b1baa>set set set</font> is highlighted as three <font color=#1b1baa>set</font> commands ;)</li>
+<li>as a result, much more florid than most of others</li>
+</p><p>
+<a href="https://kate-editor.org" title="Kate editor">Kate</a>. As nearly good as Geany. As nearly florid as Vim (<font color=#1b1baa>set set set</font>). Doesn't highlight ttk and TclOO.
+</p><p>
+<a href="https://github.com/phase1geo/tke/" title="TKE editor">TKE</a>. Written in Tcl/Tk, it might be the best of all to highlight the Tcl/Tk. In spite of its suspended state it still can. Issues with highlighting strings and the performance.
+</p><p>
+<a href="http://mate-desktop.org" title="Pluma editor">Pluma</a> and <a href="https://wiki.gnome.org/Apps/Gedit" title="Gedit editor">Gedit</a> seem to use the same Tcl highlighting engine that gives rather good results. Still, the mentioned above drawbacks are here too. And no highlighting of tk, ttk, TclOO.
+</p><p>
+<a href="https://notepad-plus-plus.org/" title="Notepad++ official site">Notepad++</a>. Very fast Tcl highlighter. And very basic. All the same drawbacks. No highlighting of tk, ttk, TclOO. <i><font color=#1b1baa>Plus</font></i> an obsolete version of Tcl, i.e. no highlighting <font color=#1b1baa>lset, lassign</font> etc.
+</p><p>
+<h2><font color=#ca14ca> What can we do?</font></h2>
+</p><p>
+To develop an ideal (correct and fast) Tcl/Tk highlighter, we would have to dive into Tcl core. Though, no hopes to achieve the ideal through repeating the core in Tcl/Tk or massively using the regular expressions.
+</p><p>
+That said, while implementing Tcl/Tk highlighter <i><font color=#1b1baa>in pure Tcl/Tk</font></i>, we might hope to achieve a reasonable compromise between the performance and the elimination of blunders.
+</p><p>
+It seems <i><font color=#1b1baa>hl_tcl</font></i> got close to this compromise. Specifically, it provides:
+</p><p>
+<li>special highlighting for Tcl and TclOO commands</li>
+<li>special highlighting for Tk and ttk commands</li>
+<li>allowing additional commands to highlight (as Tk ones)</li>
+<li>special highlighting for declarations <font color=#1b1baa>proc, method, oo::class</font> etc. as well as <font color=#1b1baa>return, yield</font></li>
+<li>special highlighting for <font color=#1b1baa>#comments</font>, <font color=#1b1baa>$variables</font>, <font color=#1b1baa>"strings"</font>, <font color=#1b1baa>-options</font></li>
+<li>in-line comments being recognized and thus highlighted only after <font color=#1b1baa>;#</font></li>
+<li>proper handling of most <font color=#1b1baa>regexp</font> and <font color=#1b1baa>regsub</font> expressions containing a quote</li>
+<li>highlighting the multi-line strings, with possible switching this mode off (a-la Gedit) to improve the performance</li>
+<li>customizing colors of the highlighting</li>
+<li>highlighting viewable/editable <i><font color=#1b1baa>Tk text</font></i> widget and static html pages</li>
+<li>good performance at editing 1000-4000 LOC and rather acceptable for 4000-9000 LOC</li>
+<li>even monstrous 10000 LOC and more are handled fast at the "tricky" mode a-la Gedit</li>
+</p><p>
+The <i><font color=#1b1baa>hl_tcl</font></i> doesn't provide the following:
+</p><p>
+<li>highlighting <i><font color=#1b1baa>numbers</font></i></li>
+<li>highlighting <i><font color=#1b1baa>brackets</font></i>, except for matched ones and inside the strings</li>
+</p><p>
+These are in no way critical drawbacks. A little less florid Tcl code might be even preferable for other tastes.
+</p><p>
+The Tcl can arrange its pitfalls for <i><font color=#1b1baa>hl_tcl</font></i> (I know where). Also, tricky practices or tastes can make a fool of <i><font color=#1b1baa>hl_tcl</font></i>. Still hopefully these pranks are few and rare to encounter.
+</p><p>
+<h2><font color=#ca14ca> Use for text widget</font></h2>
+</p><p>
+The code below:
+</p><p>
+      package require hl_tcl
+</p><p>
+      proc ::stub {args} {puts "stub: $args"}
+</p><p>
+      ::hl_tcl::hl_init $::txt -readonly yes -cmd ::stub
+</p><p>
+      #... inserting a text into the text widget
+</p><p>
+      ::hl_tcl::hl_text $::txt
+</p><p>
+sets an example of <i><font color=#1b1baa>hl_tcl</font></i> usage. Here are the details:
+</p><p>
+<li><b><font color=#1b1baa>::stub</font></b> is a procedure to watch the text editing; here it simply puts out the text's last index;</li>
+</p><p>
+<li><b><font color=#1b1baa>hl_init</font></b> is called <i><font color=#1b1baa>before</font></i> filling the text widget with a Tcl code; it sets the highlighting options and disables the highlighting till <i><font color=#1b1baa>hl_text</font></i> runs;</li>
+</p><p>
+<li><b><font color=#1b1baa>hl_text</font></b> runs to highlight the Tcl code of the text widget and to view/edit it.</li>
+</p><p>
+The <b><font color=#1b1baa>hl_init</font></b> takes arguments:
+</p><p>
+<li><i><font color=#1b1baa>txt</font></i> is the text widget's path</li>
+<li><i><font color=#1b1baa>args</font></i> contains options of text widget (omittable)</li>
+</p><p>
+The <i><font color=#1b1baa>args</font></i> is a list of <i><font color=#1b1baa>-option "value"</font></i> where <i><font color=#1b1baa>-option</font></i> may be:
+</p><p>
+<li><i><font color=#1b1baa>-colors</font></i> - list of colors: clrCOM, clrCOMTK, clrSTR, clrVAR, clrCMN, clrPROC, clrOPT</li>
+<li><i><font color=#1b1baa>-dark</font></i> - flag "dark background of text", i.e. simplified <i><font color=#1b1baa>-colors</font></i> (default "no")</li>
+<li><i><font color=#1b1baa>-font</font></i> - attributes of text font</li>
+<li><i><font color=#1b1baa>-readonly</font></i> - flag "text is read-only" (default "no")</li>
+<li><i><font color=#1b1baa>-multiline</font></i> - flag "multi-line strings" (default "yes")</li>
+<li><i><font color=#1b1baa>-cmd</font></i> - command to watch editing/viewing (default "")</li>
+<li><i><font color=#1b1baa>-cmdpos</font></i> - command to watch cursor positioning (default "")</li>
+<li><i><font color=#1b1baa>-seen</font></i> - number of first lines seen at start (default 500)</li>
+<li><i><font color=#1b1baa>-optRE</font></i> - flag "use a regular expression to highlight options" (default "yes")</li>
+<li><i><font color=#1b1baa>-keywords</font></i> - additional commands to highlight (as Tk ones)</li>
+<li><i><font color=#1b1baa>-dobind</font></i> - if <font color=#1b1baa>true</font>, forces keys binding at repeating calls of hl_init</li>
+<li><i><font color=#1b1baa>-plaintext</font></i> - <font color=#1b1baa>true</font> for plain texts with no highlighting</li>
+<li><i><font color=#1b1baa>-plaincom</font></i> - a command for plain highlighting line by line</li>
+</p><p>
+<b><font color=#1b1baa>Note</font></b>: <font color=#1b1baa>-seen 500</font> and <font color=#1b1baa>-multiline no</font> can improve the performance a lot. It's recommended to use <font color=#1b1baa>-seen 500</font> (or any other reasonable limit, e.g. <font color=#1b1baa>-seen 200</font>) at any rate, except for static html pages.
+</p><p>
+A command for <i><font color=#1b1baa>-plaincom</font></i> option has two arguments: a current text's path and a current line's number. It should highlight the current line and return <font color=#1b1baa>true</font>, otherwise (if the current line is Tcl code) it returns <font color=#1b1baa>false</font>. An example of its usage is presented by <a href="https://github.com/aplsimple/alited">alited editor</a> (<font color=#1b1baa>lib/addon</font> directory).
+</p><p>
+The rest of <i><font color=#1b1baa>hl_tcl</font></i> procedures are:
+</p><p>
+<li> <b><font color=#1b1baa>hl_all</font></b> updates all highlighted existing text widgets, e.g. at changing a color scheme of application</li>
+<li> <b><font color=#1b1baa>hl_readonly</font></b> gets/sets a read-only mode and/or a command to watch a text widget at viewing/editing it</li>
+<li> <b><font color=#1b1baa>hl_colors</font></b> gets a list of colors for highlighting</li>
+</p><p>
+See details in <a href="https://aplsimple.github.io/en/tcl/hl_tcl/hl_tcl.html">Reference</a>.
+</p><p>
+
+<h2><font color=#ca14ca> Use for static html</font></h2>
+</p><p>
+In the <a href="https://chiselapp.com/user/aplsimple/repository/hl_tcl/download">hl_tcl.zip</a>, there is a Tcl script named <i><font color=#1b1baa>tcl_html.tcl</font></i> that highlights Tcl snippets of static html page(s).
+</p><p>
+It runs as follows:
+</p><p>
+      tclsh tcl_html.tcl "glob-pattern-of-html-files"
+</p><p>
+For example:
+</p><p>
+      tclsh ~/UTILS/hl_tcl/tcl_html.tcl "~/UTILS/mulster/tasks/ruff/src/*"
+</p><p>
+In this example, the html files are located in <font color=#1b1baa>~/UTILS/mulster/tasks/ruff/src</font>.
+</p><p>
+Perhaps, you would want to modify the <i><font color=#1b1baa>tcl_html.tcl</font></i>, this way:
+</p><p>
+<li>replace <font color=#1b1baa>"no"</font> with <font color=#1b1baa>"yes"</font> for dark html pages</li>
+</p><p>
+<li>replace <font color=#1b1baa><code class="tcl"></font> with html tags <i><font color=#1b1baa>starting</font></i> the Tcl code in your html files</li>
+</p><p>
+<li>replace <font color=#1b1baa></code></font> with html tags <i><font color=#1b1baa>finishing</font></i> the Tcl code in your html files</li>
+</p><p>
+These are arguments of <font color=#1b1baa>::hl_tcl_html::highlight</font> procedure.
+</p><p>
+The tag pairs can be multiple if the html pages contain them, e.g.
+</p><p>
+      ::hl_tcl_html::highlight $fhtml "no" \
+          {<code class="tcl">} {</code>} \
+          {<pre class="code">} {</pre>}
+</p><p>
+<h2><font color=#ca14ca> Links</font></h2>
+</p><p>
+<li><a href="https://aplsimple.github.io/en/tcl/hl_tcl/hl_tcl.html">Reference</a></li>
+</p><p>
+<li><a href="https://chiselapp.com/user/aplsimple/repository/hl_tcl/download">Source</a> (hl_tcl.zip)</li>
+</p><p>
+<li><a href="https://github.com/aplsimple/hl_tcl/releases/download/hl_tcl-0.6.1/hl_tcl-0.6.1.mp4">Demo of hl_tcl v0.6.1</a> (25 Mb)</li>
+</p><p>
+Note that <a href="https://aplsimple.github.io/en/tcl/hl_tcl/hl_tcl.html">hl_tcl</a> is still disposed to update.
+</p><p>
+
+</p>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>hl_c.tcl</b></font></div></td></table>
+
+<pre class="code"><i><font color=#4b5d50>###########################################################<a id=hl_c.tcl></a></font></i>
+<i><font color=#4b5d50># Name:    hl_c.tcl</font></i>
+<i><font color=#4b5d50># Author:  Alex Plotnikov  (aplsimple@gmail.com)</font></i>
+<i><font color=#4b5d50># Date:    06/16/2021</font></i>
+<i><font color=#4b5d50># Brief:   Handles highlighting C code.</font></i>
+<i><font color=#4b5d50># License: MIT.</font></i>
+<i><font color=#4b5d50>###########################################################</font></i>
+<a id=Common_data></a>
+<i><font color=#4b5d50># ______________________ Common data ____________________ #</font></i>
+
+<b><font color=#ca14ca>namespace</font></b> eval ::hl_c {
+
+  <b><font color=#ca14ca>namespace</font></b> eval my {
+
+    <b><font color=#3a6797>variable</font></b> data;  <b><font color=#3a6797>array</font></b> set data [<b><font color=#3a6797>list</font></b>]
+
+    <i><font color=#4b5d50># C reserved words</font></i>
+    <b><font color=#3a6797>set</font></b> data(PROC_C) [<b><font color=#3a6797>lsort</font></b> [<b><font color=#3a6797>list</font></b> goto return]]
+    <b><font color=#3a6797>set</font></b> data(CMD_C1) [<b><font color=#3a6797>list</font></b> \
+    auto break case char const continue default do double else enum extern \
+    float for if inline int long register restrict short signed sizeof \
+    static struct switch typedef union unsigned void volatile while \
+    ]
+    <i><font color=#4b5d50># other C token</font></i>
+    <b><font color=#3a6797>set</font></b> data(CMD_C2) [<b><font color=#3a6797>list</font></b> \
+    ifdef endif \
+    ]
+    <b><font color=#3a6797>set</font></b> data(CMD_C) [<b><font color=#3a6797>lsort</font></b> [<b><font color=#3a6797>concat</font></b> <font color=#1b1baa>$data(CMD_C1)</font> <font color=#1b1baa>$data(CMD_C2)</font>]]
+
+    <i><font color=#4b5d50># C++ reserved words</font></i>
+    <b><font color=#3a6797>set</font></b> data(CMD_CPP1) [<b><font color=#3a6797>list</font></b> \
+    and and_eq asm bitand bitor bool catch class compl const_cast delete \
+    dynamic_cast explicit false friend inline  mutable namespace new \
+    not not_eq operator or or_eq private public protected \
+    reinterpret_cast static_cast template this throw true try typeid \
+    typename using virtual wchar_t xor xor_eq \
+    ]
+
+    <i><font color=#4b5d50># C++ predefined identifiers</font></i>
+    <b><font color=#3a6797>set</font></b> data(CMD_CPP2) [<b><font color=#3a6797>list</font></b> \
+    cin cout endl include INT_MAX INT_MIN iomanip iostream main MAX_RAND \
+    npos NULL std string FALSE TRUE \
+    ]
+
+    <i><font color=#4b5d50># C++ united</font></i>
+    <b><font color=#3a6797>set</font></b> data(CMD_CPP) [<b><font color=#3a6797>lsort</font></b> [<b><font color=#3a6797>concat</font></b> <font color=#1b1baa>$data(CMD_CPP1)</font> <font color=#1b1baa>$data(CMD_CPP2)</font>]]
+
+    <i><font color=#4b5d50># regexp for key words and punctuation</font></i>
+    <b><font color=#3a6797>set</font></b> data(RE0) {\w+}
+    <b><font color=#3a6797>set</font></b> data(RE1) {[&lt;&gt;(){};=!%&^*+-.,\|:/\\#]+}
+
+    <i><font color=#4b5d50># characters of multiline comment, string and char and their counterparts</font></i>
+    <b><font color=#3a6797>set</font></b> data(PAIR1) [<b><font color=#3a6797>list</font></b> /* \&quot; ' //]
+    <b><font color=#3a6797>set</font></b> data(PAIR2) [<b><font color=#3a6797>list</font></b> */ \&quot; ']
+    <b><font color=#3a6797>set</font></b> data(PAIR_COMMENT) 0  ;<i><font color=#4b5d50># indices for multiline comment/ string/ char</font></i>
+    <b><font color=#3a6797>set</font></b> data(PAIR_STRING) 1
+    <b><font color=#3a6797>set</font></b> data(PAIR_CHAR) 2
+    <b><font color=#3a6797>set</font></b> data(PAIR_COMMENT1) 3
+  }
+}
+<a id=STATIC_highlighting></a>
+<i><font color=#4b5d50># _________________________ STATIC highlighting _________________________ #</font></i>
+<a id=my::HighlightCmd></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::my::HighlightCmd {txt line ln pri i} {
+  <i><font color=#4b5d50># Highlights C commands.</font></i>
+  <i><font color=#4b5d50>#   txt - text widget's path</font></i>
+  <i><font color=#4b5d50>#   line - line to be highlighted</font></i>
+  <i><font color=#4b5d50>#   ln - line number</font></i>
+  <i><font color=#4b5d50>#   pri - column number to highlighted from</font></i>
+  <i><font color=#4b5d50>#   i - current position in 'line'</font></i>
+
+  <b><font color=#3a6797>variable</font></b> data
+  <font color=#1b1baa>$txt</font> tag add tagSTD <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>ln.<font color=#1b1baa>$</font>pri&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>ln.<font color=#1b1baa>$</font>i&quot;</font>
+  <b><font color=#3a6797>set</font></b> st [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> <font color=#1b1baa>$pri</font> <font color=#1b1baa>$i</font>]
+  <b><font color=#3a6797>set</font></b> lcom [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> <font color=#653760>-all</font> <font color=#653760>-indices</font> <font color=#1b1baa>$data(RE0)</font> <font color=#1b1baa>$st</font>]
+  <b><font color=#3a6797>foreach</font></b> lc <font color=#1b1baa>$lcom</font> {
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$lc</font> i1 i2
+    <b><font color=#3a6797>set</font></b> word [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$st</font> <font color=#1b1baa>$i1</font> <font color=#1b1baa>$i2</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$word</font> in <font color=#1b1baa>$data(CMD_C)</font>} {
+      <font color=#1b1baa>$txt</font> tag add tagCOM <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>ln.<font color=#1b1baa>$</font>pri +<font color=#1b1baa>$</font>i1 char&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>ln.<font color=#1b1baa>$</font>pri +<font color=#1b1baa>[</font>incr i2<font color=#1b1baa>]</font> char&quot;</font>
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$word</font> in <font color=#1b1baa>$data(PROC_C)</font>} {
+      <font color=#1b1baa>$txt</font> tag add tagPROC <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>ln.<font color=#1b1baa>$</font>pri +<font color=#1b1baa>$</font>i1 char&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>ln.<font color=#1b1baa>$</font>pri +<font color=#1b1baa>[</font>incr i2<font color=#1b1baa>]</font> char&quot;</font>
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$word</font> in <font color=#1b1baa>$data(CMD_CPP)</font>} {
+      <font color=#1b1baa>$txt</font> tag add tagCOMTK <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>ln.<font color=#1b1baa>$</font>pri +<font color=#1b1baa>$</font>i1 char&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>ln.<font color=#1b1baa>$</font>pri +<font color=#1b1baa>[</font>incr i2<font color=#1b1baa>]</font> char&quot;</font>
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$word</font> in <font color=#1b1baa>$data(KEYWORDS,$txt)</font>} {
+      <font color=#1b1baa>$txt</font> tag add tagOPT <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>ln.<font color=#1b1baa>$</font>pri +<font color=#1b1baa>$</font>i1 char&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>ln.<font color=#1b1baa>$</font>pri +<font color=#1b1baa>[</font>incr i2<font color=#1b1baa>]</font> char&quot;</font>
+    }
+  }
+  <b><font color=#3a6797>set</font></b> lcom [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> <font color=#653760>-all</font> <font color=#653760>-indices</font> <font color=#1b1baa>$data(RE1)</font> <font color=#1b1baa>$st</font>]
+  <b><font color=#3a6797>foreach</font></b> lc <font color=#1b1baa>$lcom</font> {
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$lc</font> i1 i2
+    <font color=#1b1baa>$txt</font> tag add tagVAR <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>ln.<font color=#1b1baa>$</font>pri +<font color=#1b1baa>$</font>i1 char&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>ln.<font color=#1b1baa>$</font>pri +<font color=#1b1baa>[</font>incr i2<font color=#1b1baa>]</font> char&quot;</font>
+  }
+  <b><font color=#ca14ca>return</font></b>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=my::HighlightLine></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::my::HighlightLine {txt ln currQtd} {
+  <i><font color=#4b5d50># Highlightes a line in text.</font></i>
+  <i><font color=#4b5d50>#   txt - text widget's path</font></i>
+  <i><font color=#4b5d50>#   ln - line's number</font></i>
+  <i><font color=#4b5d50>#   currQtd - 0, 1 or 2 referring to comment/string/char</font></i>
+  <i><font color=#4b5d50># Returns currQtd for the end of the line.</font></i>
+
+  <b><font color=#3a6797>variable</font></b> data
+  <b><font color=#3a6797>set</font></b> line [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$ln</font>.0 <font color=#1b1baa>$ln</font>.end]
+  <b><font color=#3a6797>set</font></b> i1 [<b><font color=#3a6797>set</font></b> i0 0]
+  <b><font color=#3a6797>set</font></b> i2 [<b><font color=#3a6797>set</font></b> llen [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$line</font>]]
+  <b><font color=#3a6797>while</font></b> {<font color=#1b1baa>$i1</font>&lt;<font color=#1b1baa>$llen</font>} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$currQtd</font>&gt;-1} {
+      <i><font color=#4b5d50># if quoted then there follows a multiline comment or a string/char</font></i>
+      <i><font color=#4b5d50># =&gt; find its pair</font></i>
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$currQtd</font>==<font color=#1b1baa>$data(PAIR_COMMENT)</font>} {
+        <b><font color=#3a6797>set</font></b> tag tagCMN  ;<i><font color=#4b5d50># comment</font></i>
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> tag tagSTR  ;<i><font color=#4b5d50># string/char</font></i>
+      }
+      <b><font color=#3a6797>set</font></b> ch [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$data(PAIR2)</font> <font color=#1b1baa>$currQtd</font>]
+      <b><font color=#3a6797>set</font></b> i2 [<b><font color=#3a6797>string</font></b> first <font color=#1b1baa>$ch</font> <font color=#1b1baa>$line</font> <font color=#1b1baa>$i1</font>]
+      <b><font color=#3a6797>while</font></b> {<font color=#1b1baa>$i2</font>!=-1} {
+        <b><font color=#3a6797>if</font></b> {[::hl_tcl::my::NotEscaped <font color=#1b1baa>$line</font> <font color=#1b1baa>$i2</font>]} <b><font color=#ca14ca>break</font></b>
+        <b><font color=#3a6797>set</font></b> i2 [<b><font color=#3a6797>string</font></b> first <font color=#1b1baa>$ch</font> <font color=#1b1baa>$line</font> <font color=#1b1baa>$i2</font>+1]
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i2</font>==-1} {
+        <i><font color=#4b5d50># a pair not found - the comment/string/char is not ended</font></i>
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$currQtd</font>!=<font color=#1b1baa>$data(PAIR_COMMENT)</font> && \
+        (<font color=#1b1baa>$currQtd</font>==<font color=#1b1baa>$data(PAIR_CHAR)</font> || [<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$line</font> end] ne <font color=#8b2a0e>&quot;\\&quot;</font>)} {
+          <b><font color=#3a6797>set</font></b> currQtd -1  ;<i><font color=#4b5d50># char or string not ended properly</font></i>
+        }
+        <font color=#1b1baa>$txt</font> tag add <font color=#1b1baa>$tag</font> <font color=#1b1baa>$ln</font>.<font color=#1b1baa>$i0</font> <font color=#1b1baa>$ln</font>.end
+        <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$currQtd</font>
+      }
+      <i><font color=#4b5d50># the pair found - highlight an appropriate part of the line</font></i>
+      <b><font color=#3a6797>set</font></b> lp [<b><font color=#3a6797>string</font></b> length [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$data(PAIR2)</font> <font color=#1b1baa>$currQtd</font>]]
+      <font color=#1b1baa>$txt</font> tag add <font color=#1b1baa>$tag</font> <font color=#1b1baa>$ln</font>.[<b><font color=#3a6797>incr</font></b> i1 -<font color=#1b1baa>$lp</font>] <font color=#1b1baa>$ln</font>.[<b><font color=#3a6797>incr</font></b> i2 <font color=#1b1baa>$lp</font>]
+      <b><font color=#3a6797>set</font></b> i1 <font color=#1b1baa>$i2</font>
+      <b><font color=#3a6797>set</font></b> currQtd -1
+      <b><font color=#ca14ca>continue</font></b>
+    }
+    <i><font color=#4b5d50># not quoted - find a nearest &quot;quote&quot; (comment/string/char)</font></i>
+    <b><font color=#3a6797>set</font></b> i0 <font color=#1b1baa>$llen</font>
+    <b><font color=#3a6797>set</font></b> i 0
+    <b><font color=#3a6797>foreach</font></b> par <font color=#1b1baa>$data(PAIR1)</font> {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> p [<b><font color=#3a6797>string</font></b> first <font color=#1b1baa>$par</font> <font color=#1b1baa>$line</font> <font color=#1b1baa>$i1</font>]]&gt;-1 && <font color=#1b1baa>$p</font>&lt;<font color=#1b1baa>$i0</font> && [::hl_tcl::my::NotEscaped <font color=#1b1baa>$line</font> <font color=#1b1baa>$p</font>]} {
+        <b><font color=#3a6797>set</font></b> i0 <font color=#1b1baa>$p</font>
+        <b><font color=#3a6797>set</font></b> ip <font color=#1b1baa>$i</font>
+      }
+      <b><font color=#3a6797>incr</font></b> i
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i0</font>&lt;<font color=#1b1baa>$llen</font>} {
+      HighlightCmd <font color=#1b1baa>$txt</font> <font color=#1b1baa>$line</font> <font color=#1b1baa>$ln</font> <font color=#1b1baa>$i1</font> [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$i0</font>-1}]
+      <i><font color=#4b5d50># a comment/string/char was found</font></i>
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ip</font>==<font color=#1b1baa>$data(PAIR_COMMENT1)</font>} {
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> <font color=#653760>-start</font> <font color=#1b1baa>$i0</font> {\s*//\s*(!|TODO)} <font color=#1b1baa>$line</font>]} {
+          <font color=#1b1baa>$txt</font> tag add tagCMN2 <font color=#1b1baa>$ln</font>.<font color=#1b1baa>$i0</font> <font color=#1b1baa>$ln</font>.end
+        } <b><font color=#3a6797>else</font></b> {
+          <font color=#1b1baa>$txt</font> tag add tagCMN1 <font color=#1b1baa>$ln</font>.<font color=#1b1baa>$i0</font> <font color=#1b1baa>$ln</font>.end
+        }
+        <b><font color=#ca14ca>return</font></b> -1  ;<i><font color=#4b5d50># it was a one-line comment</font></i>
+      }
+      <b><font color=#3a6797>set</font></b> currQtd <font color=#1b1baa>$ip</font>
+      <b><font color=#3a6797>set</font></b> lp [<b><font color=#3a6797>string</font></b> length [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$data(PAIR2)</font> <font color=#1b1baa>$currQtd</font>]]
+      <b><font color=#3a6797>set</font></b> i1 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$i0</font>+<font color=#1b1baa>$lp</font>}]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i1</font>&gt;=(<font color=#1b1baa>$llen</font>-1)} {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$currQtd</font>==<font color=#1b1baa>$data(PAIR_COMMENT)</font>} {
+          <b><font color=#3a6797>set</font></b> tag tagCMN  ;<i><font color=#4b5d50># comment</font></i>
+        } <b><font color=#3a6797>else</font></b> {
+          <b><font color=#3a6797>set</font></b> tag tagSTR  ;<i><font color=#4b5d50># string/char</font></i>
+        }
+        <font color=#1b1baa>$txt</font> tag add <font color=#1b1baa>$tag</font> <font color=#1b1baa>$ln</font>.<font color=#1b1baa>$i0</font> <font color=#1b1baa>$ln</font>.end
+      }
+      <b><font color=#ca14ca>continue</font></b>
+    }
+    HighlightCmd <font color=#1b1baa>$txt</font> <font color=#1b1baa>$line</font> <font color=#1b1baa>$ln</font> <font color=#1b1baa>$i1</font> [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$llen</font>-1}]
+    <b><font color=#3a6797>set</font></b> currQtd -1
+    <b><font color=#ca14ca>break</font></b>
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$currQtd</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=my::HighlightAll></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::my::HighlightAll {txt} {
+  <i><font color=#4b5d50># Highlights all of a text.</font></i>
+  <i><font color=#4b5d50>#   txt - text widget's path</font></i>
+  <i><font color=#4b5d50># Makes a coroutine from this.</font></i>
+  <i><font color=#4b5d50># See also: CoroHighlightAll</font></i>
+
+  <i><font color=#4b5d50># let them work one by one:</font></i>
+  <b><font color=#3a6797>set</font></b> coroNo [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>incr</font></b> ::hl_c::my::data(CORALL)] % 10000000}]
+  <b><font color=#ca14ca>coroutine</font></b> co_HlAll<font color=#1b1baa>$coroNo</font> ::hl_c::my::CoroHighlightAll <font color=#1b1baa>$txt</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=my::CoroHighlightAll></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::my::CoroHighlightAll {txt} {
+  <i><font color=#4b5d50># Highlights all of a text as a coroutine.</font></i>
+  <i><font color=#4b5d50>#   txt - text widget's path</font></i>
+  <i><font color=#4b5d50># See also: HighlightAll</font></i>
+
+  <b><font color=#3a6797>variable</font></b> data
+  <b><font color=#3a6797>catch</font></b> {  ;<i><font color=#4b5d50># $txt may be destroyed, so catch this</font></i>
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$data(PLAINTEXT,$txt)</font>} {
+      <b><font color=#3a6797>set</font></b> tlen [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> [<font color=#1b1baa>$txt</font> index end] .] 0]
+      RemoveTags <font color=#1b1baa>$txt</font> 1.0 end
+      <b><font color=#3a6797>set</font></b> maxl [<b><font color=#3a6797>expr</font></b> {min(<font color=#1b1baa>$::hl_c::my::data(SEEN,$txt)</font>,<font color=#1b1baa>$tlen</font>)}]
+      <b><font color=#3a6797>set</font></b> maxl [<b><font color=#3a6797>expr</font></b> {min(<font color=#1b1baa>$::hl_c::my::data(SEEN,$txt)</font>,<font color=#1b1baa>$tlen</font>)}]
+      <b><font color=#3a6797>set</font></b> currQtd -1
+      <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> ln [<b><font color=#3a6797>set</font></b> lnseen 0]} {<font color=#1b1baa>$ln</font>&lt;=<font color=#1b1baa>$tlen</font>} {} {
+        <b><font color=#3a6797>set</font></b> currQtd [HighlightLine <font color=#1b1baa>$txt</font> <font color=#1b1baa>$ln</font> <font color=#1b1baa>$currQtd</font>]
+        <b><font color=#3a6797>incr</font></b> ln
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> lnseen]&gt;<font color=#1b1baa>$::hl_c::my::data(SEEN,$txt)</font>} {
+          <b><font color=#3a6797>set</font></b> lnseen 0
+          <b><font color=#3a6797>after</font></b> idle after 1 [<b><font color=#3a6797>info</font></b> coroutine]
+          <b><font color=#ca14ca>yield</font></b>
+        }
+      }
+    }
+  }
+  <b><font color=#3a6797>set</font></b> ::hl_c::my::data(REG_TXT,<font color=#1b1baa>$txt</font>) {1}
+  <b><font color=#ca14ca>return</font></b>
+}
+<a id=DYNAMIC_highlighting></a>
+<i><font color=#4b5d50># _________________________ DYNAMIC highlighting ________________________ #</font></i>
+<a id=my::RemoveTags></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::my::RemoveTags {txt from to} {
+  <i><font color=#4b5d50># Removes tags in text.</font></i>
+  <i><font color=#4b5d50>#   txt - text widget's path</font></i>
+  <i><font color=#4b5d50>#   from - starting index</font></i>
+  <i><font color=#4b5d50>#   to - ending index</font></i>
+
+  <b><font color=#3a6797>foreach</font></b> tag {tagCOM tagCOMTK tagSTR tagVAR tagCMN tagCMN1 tagCMN2 tagPROC tagOPT} {
+    <font color=#1b1baa>$txt</font> tag remove <font color=#1b1baa>$tag</font> <font color=#1b1baa>$from</font> <font color=#1b1baa>$to</font>
+  }
+  <b><font color=#ca14ca>return</font></b>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=my::CountQSH></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::my::CountQSH {txt ln} {
+  <i><font color=#4b5d50># Counts quotes, slashes, comments in a line</font></i>
+  <i><font color=#4b5d50>#   txt - text widget's path</font></i>
+  <i><font color=#4b5d50>#   ln - line's index</font></i>
+
+  <b><font color=#3a6797>set</font></b> ln [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$ln</font>)}]
+  <b><font color=#3a6797>set</font></b> st [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$ln</font>.0 <font color=#1b1baa>$ln</font>.end]
+  <b><font color=#3a6797>set</font></b> quotes 0
+  <b><font color=#3a6797>foreach</font></b> spch {<font color=#8b2a0e>&quot;\&quot;&quot;</font> '} {
+    <b><font color=#3a6797>incr</font></b> quotes [::hl_tcl::my::CountChar <font color=#1b1baa>$st</font> <font color=#1b1baa>$spch</font>]
+  }
+  <b><font color=#3a6797>set</font></b> slashes [::hl_tcl::my::CountChar <font color=#1b1baa>$st</font> <font color=#8b2a0e>&quot;\\&quot;</font>]
+  <b><font color=#3a6797>set</font></b> comments 0
+  <b><font color=#3a6797>foreach</font></b> spch {/ *} {
+    <b><font color=#3a6797>incr</font></b> comments [::hl_tcl::my::CountChar <font color=#1b1baa>$st</font> <font color=#1b1baa>$spch</font>]
+  }
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$quotes</font> <font color=#1b1baa>$slashes</font> <font color=#1b1baa>$comments</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=my::MemPos1></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::my::MemPos1 {txt {donorm yes} {K <font color=#8b2a0e>&quot;&quot;</font>} {s <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Checks and sets the cursor's width, depending on its position.</font></i>
+  <i><font color=#4b5d50>#   txt - text widget's path</font></i>
+  <i><font color=#4b5d50>#   donorm - if yes, forces &quot;normal&quot; cursor</font></i>
+  <i><font color=#4b5d50>#   K - key (%K of bind)</font></i>
+  <i><font color=#4b5d50>#   s - state (%s of bind)</font></i>
+  <i><font color=#4b5d50># This fixes an issue with text cursor: less width at 0th column.</font></i>
+
+  <b><font color=#3a6797>variable</font></b> data
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$K</font> eq <font color=#8b2a0e>&quot;Home&quot;</font> && [<b><font color=#3a6797>string</font></b> is digit <font color=#653760>-strict</font> <font color=#1b1baa>$s</font>] && \
+  [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$s</font> & 4}]==0 && [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$s</font> & 1}]==0} {
+    <i><font color=#4b5d50># Ctrl-Home & Shift-Home are passed</font></i>
+    <b><font color=#3a6797>set</font></b> p1 [<font color=#1b1baa>$txt</font> index insert]
+    <b><font color=#3a6797>set</font></b> line [<font color=#1b1baa>$txt</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>p1 linestart&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>p1 lineend&quot;</font>]
+    <b><font color=#3a6797>set</font></b> p [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$line</font>]-[<b><font color=#3a6797>string</font></b> length [<b><font color=#3a6797>string</font></b> trimleft <font color=#1b1baa>$line</font>]]}]
+    <b><font color=#3a6797>set</font></b> p2 [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$p1</font>)}].<font color=#1b1baa>$p</font>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$p</font> && <font color=#1b1baa>$p2</font> ne <font color=#1b1baa>$p1</font>} {
+      <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;::tk::TextSetCursor <font color=#1b1baa>$</font>txt <font color=#1b1baa>$</font>p2&quot;</font>
+      <b><font color=#ca14ca>return</font></b>
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$data(INSERTWIDTH,$txt)</font>==1} {
+    <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$txt</font> cget <font color=#653760>-insertwidth</font>]!=1} {<font color=#1b1baa>$txt</font> configure <font color=#653760>-insertwidth</font> 1}
+    <b><font color=#ca14ca>return</font></b> 0
+  }
+  <b><font color=#3a6797>set</font></b> insLC [<font color=#1b1baa>$txt</font> index insert]
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$insLC</font> .] L C
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$data(_INSPOS_,$txt)</font> eq <font color=#8b2a0e>&quot;&quot;</font>} {
+    <b><font color=#3a6797>set</font></b> L2 [<b><font color=#3a6797>set</font></b> C2 0]
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$data(_INSPOS_,$txt)</font> .] L2 C2
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$L</font>!=<font color=#1b1baa>$L2</font> || <font color=#1b1baa>$C</font>==0 || <font color=#1b1baa>$C2</font>==0} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$C</font> || <font color=#1b1baa>$donorm</font>} {
+      <font color=#1b1baa>$txt</font> configure <font color=#653760>-insertwidth</font> <font color=#1b1baa>$data(INSERTWIDTH,$txt)</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <font color=#1b1baa>$txt</font> configure <font color=#653760>-insertwidth</font> [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$data(INSERTWIDTH,$txt)</font>*2-1}]
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$insLC</font>
+}
+<a id=my::MemPos></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::my::MemPos {txt {doit no}} {
+  <i><font color=#4b5d50># Remembers the state of current line.</font></i>
+  <i><font color=#4b5d50>#   txt - text widget's path</font></i>
+  <i><font color=#4b5d50>#   doit - argument for ShowCurrentLine</font></i>
+  <i><font color=#4b5d50># See also: ShowCurrentLine</font></i>
+
+  <b><font color=#3a6797>variable</font></b> data
+  <b><font color=#3a6797>set</font></b> data(_INSPOS_,<font color=#1b1baa>$txt</font>) [MemPos1 <font color=#1b1baa>$txt</font> no]
+  <b><font color=#3a6797>set</font></b> ln [ShowCurrentLine <font color=#1b1baa>$txt</font> <font color=#1b1baa>$doit</font>]
+  <b><font color=#3a6797>set</font></b> data(CURPOS,<font color=#1b1baa>$txt</font>) <font color=#1b1baa>$ln</font>
+  <b><font color=#3a6797>set</font></b> data(CUR_LEN,<font color=#1b1baa>$txt</font>) [<font color=#1b1baa>$txt</font> index {end -1 char}]
+  <b><font color=#3a6797>lassign</font></b> [CountQSH <font color=#1b1baa>$txt</font> <font color=#1b1baa>$ln</font>] \
+    data(CNT_QUOTE,<font color=#1b1baa>$txt</font>) data(CNT_SLASH,<font color=#1b1baa>$txt</font>) data(CNT_COMMENT,<font color=#1b1baa>$txt</font>)
+  <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$txt</font> tag ranges tagBRACKET] ne {}}    {<font color=#1b1baa>$txt</font> tag remove tagBRACKET 1.0 end}
+  <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$txt</font> tag ranges tagBRACKETERR] ne {}} {<font color=#1b1baa>$txt</font> tag remove tagBRACKETERR 1.0 end}
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> cmd <font color=#1b1baa>$data(CMDPOS,$txt)</font>] ne {}} {
+    <i><font color=#4b5d50># run a command after changing position (with the state as arguments)</font></i>
+    <b><font color=#3a6797>append</font></b> cmd <font color=#8b2a0e>&quot; <font color=#1b1baa>$</font>txt <font color=#1b1baa>$</font>data(CUR_LEN,<font color=#1b1baa>$</font>txt) <font color=#1b1baa>$</font>ln <font color=#1b1baa>$</font>data(CNT_QUOTE,<font color=#1b1baa>$</font>txt) \</font>
+<font color=#8b2a0e>      <font color=#1b1baa>$</font>data(CNT_SLASH,<font color=#1b1baa>$</font>txt) <font color=#1b1baa>$</font>data(CNT_COMMENT,<font color=#1b1baa>$</font>txt)&quot;</font>
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>after</font></b> cancel <font color=#1b1baa>$data(CMDATFER,$txt)</font>}
+    <b><font color=#3a6797>set</font></b> data(CMDATFER,<font color=#1b1baa>$txt</font>) [<b><font color=#3a6797>after</font></b> idle <font color=#1b1baa>$cmd</font>]
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=my::Modified></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::my::Modified {txt oper pos1 args} {
+  <i><font color=#4b5d50># Handles modifications of text.</font></i>
+  <i><font color=#4b5d50>#   txt - text widget's path</font></i>
+  <i><font color=#4b5d50># Makes a coroutine from this.</font></i>
+  <i><font color=#4b5d50># See also: CoroModified</font></i>
+
+  <b><font color=#3a6797>variable</font></b> data
+  <b><font color=#3a6797>set</font></b> ar2 [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$args</font> 0]
+  <b><font color=#3a6797>set</font></b> posins [<font color=#1b1baa>$txt</font> index insert]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> pos1 [<b><font color=#3a6797>set</font></b> pos2 [<font color=#1b1baa>$txt</font> index <font color=#1b1baa>$pos1</font>]]}]} {
+    <b><font color=#3a6797>set</font></b> pos1 [<b><font color=#3a6797>set</font></b> pos2 <font color=#1b1baa>$posins</font>]
+  }
+  <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$oper</font> {
+    insert {
+      <b><font color=#3a6797>set</font></b> pos2 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$pos1</font> + [<b><font color=#3a6797>llength</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$ar2</font> \n]]}]
+    }
+    delete {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ar2</font> eq {} || [<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> pos2 [<font color=#1b1baa>$txt</font> index <font color=#1b1baa>$ar2</font>]}]} {
+        <b><font color=#3a6797>set</font></b> pos2 <font color=#1b1baa>$posins</font>
+      }
+    }
+  }
+  <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;::hl_c::my::CoroRun <font color=#1b1baa>$</font>txt <font color=#1b1baa>$</font>pos1 <font color=#1b1baa>$</font>pos2 <font color=#1b1baa>$</font>args&quot;</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=my::CoroRun></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::my::CoroRun {txt pos1 pos2 args} {
+
+  <b><font color=#3a6797>variable</font></b> data
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exist data(REG_TXT,<font color=#1b1baa>$txt</font>)] || <font color=#1b1baa>$data(REG_TXT,$txt)</font> eq {} || \
+  ![<b><font color=#3a6797>info</font></b> exist data(CUR_LEN,<font color=#1b1baa>$txt</font>)]} {
+    <b><font color=#ca14ca>return</font></b>  ;<i><font color=#4b5d50># skip changes till the highlighting done</font></i>
+  }
+  <i><font color=#4b5d50># let them work one by one</font></i>
+  <b><font color=#3a6797>set</font></b> i1 [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$pos1</font>)}]
+  <b><font color=#3a6797>set</font></b> i2 [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$pos2</font>)}]
+  <b><font color=#3a6797>set</font></b> coroNo [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>incr</font></b> ::hl_c::my::data(CORMOD)] % 10000000}]
+  <b><font color=#ca14ca>coroutine</font></b> CoModified<font color=#1b1baa>$coroNo</font> ::hl_c::my::CoroModified <font color=#1b1baa>$txt</font> <font color=#1b1baa>$i1</font> <font color=#1b1baa>$i2</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=my::CoroModified></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::my::CoroModified {txt {i1 -1} {i2 -1} args} {
+  <i><font color=#4b5d50># Handles modifications of text.</font></i>
+  <i><font color=#4b5d50>#   txt - text widget's path</font></i>
+  <i><font color=#4b5d50># See also: Modified</font></i>
+
+  <b><font color=#3a6797>catch</font></b> {
+    <b><font color=#3a6797>variable</font></b> data
+    <i><font color=#4b5d50># current line:</font></i>
+    <b><font color=#3a6797>set</font></b> ln [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$txt</font> index insert])}]
+    <i><font color=#4b5d50># ending line:</font></i>
+    <b><font color=#3a6797>set</font></b> endl [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$txt</font> index {end -1 char}])}]
+    <i><font color=#4b5d50># range of change:</font></i>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i1</font>!=-1} {
+      <b><font color=#3a6797>set</font></b> dl [<b><font color=#3a6797>expr</font></b> {abs(<font color=#1b1baa>$i2</font>-<font color=#1b1baa>$i1</font>)}]
+      <b><font color=#3a6797>set</font></b> ln <font color=#1b1baa>$i1</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> dl [<b><font color=#3a6797>expr</font></b> {abs(int(<font color=#1b1baa>$data(CUR_LEN,$txt)</font>) - <font color=#1b1baa>$endl</font>)}]
+    }
+    <i><font color=#4b5d50># begin and end of changes:</font></i>
+    <b><font color=#3a6797>set</font></b> ln1 [<b><font color=#3a6797>set</font></b> lno1 [<b><font color=#3a6797>expr</font></b> {max((<font color=#1b1baa>$ln</font>-<font color=#1b1baa>$dl</font>),1)}]]
+    <b><font color=#3a6797>set</font></b> ln2 [<b><font color=#3a6797>set</font></b> lno2 [<b><font color=#3a6797>expr</font></b> {min((<font color=#1b1baa>$ln</font>+<font color=#1b1baa>$dl</font>),<font color=#1b1baa>$endl</font>)}]]
+    <b><font color=#3a6797>lassign</font></b> [CountQSH <font color=#1b1baa>$txt</font> <font color=#1b1baa>$ln</font>] cntq cnts ccmnt
+    <i><font color=#4b5d50># flag &quot;highlight to the end&quot;:</font></i>
+    <b><font color=#3a6797>set</font></b> bf1 [<b><font color=#3a6797>expr</font></b> {abs(<font color=#1b1baa>$ln</font>-int(<font color=#1b1baa>$data(CURPOS,$txt)</font>))&gt;1 || <font color=#1b1baa>$dl</font>&gt;1 \
+    || <font color=#1b1baa>$cntq</font>!=<font color=#1b1baa>$data(CNT_QUOTE,$txt)</font> \
+    || <font color=#1b1baa>$ccmnt</font>!=<font color=#1b1baa>$data(CNT_COMMENT,$txt)</font>}]
+    <b><font color=#3a6797>set</font></b> bf2 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$cnts</font>!=<font color=#1b1baa>$data(CNT_SLASH,$txt)</font>}]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$bf1</font> && !<font color=#1b1baa>$data(MULTILINE,$txt)</font> || <font color=#1b1baa>$bf2</font>} {
+      <b><font color=#3a6797>set</font></b> lnt1 <font color=#1b1baa>$ln</font>
+      <b><font color=#3a6797>set</font></b> lnt2 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$ln</font>+1}]
+      <b><font color=#3a6797>while</font></b> {<font color=#1b1baa>$ln2</font>&lt;<font color=#1b1baa>$endl</font> && <font color=#1b1baa>$lnt1</font>&lt;<font color=#1b1baa>$endl</font> && <font color=#1b1baa>$lnt2</font>&lt;=<font color=#1b1baa>$endl</font> && ( \
+      [<font color=#1b1baa>$txt</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>lnt1.end -1 char&quot;</font> <font color=#1b1baa>$lnt1</font>.end] in {\\ \&quot;} ||
+      [<font color=#1b1baa>$txt</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>lnt2.end -1 char&quot;</font> <font color=#1b1baa>$lnt2</font>.end] in {\\ \&quot;}) || <font color=#1b1baa>$bf2</font>} {
+        <b><font color=#3a6797>incr</font></b> lnt1 ;<i><font color=#4b5d50># next lines be handled too, if ended with &quot;\\&quot;</font></i>
+        <b><font color=#3a6797>incr</font></b> lnt2
+        <b><font color=#3a6797>incr</font></b> ln2
+        <b><font color=#3a6797>set</font></b> bf2 0
+      }
+    }
+    <b><font color=#3a6797>set</font></b> tSTR [<font color=#1b1baa>$txt</font> tag ranges tagSTR]
+    <b><font color=#3a6797>set</font></b> tCMN [<font color=#1b1baa>$txt</font> tag ranges tagCMN]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ln1</font>==1} {
+      <b><font color=#3a6797>set</font></b> currQtd -1
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> currQtd [LineState <font color=#1b1baa>$txt</font> <font color=#1b1baa>$tSTR</font> <font color=#1b1baa>$tCMN</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>ln1.0 -1 chars&quot;</font>]
+    }
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$data(PLAINTEXT,$txt)</font>} {
+      <b><font color=#3a6797>set</font></b> lnseen 0
+      <font color=#1b1baa>$txt</font> tag add tagSTD <font color=#1b1baa>$ln1</font>.0 <font color=#1b1baa>$ln2</font>.end
+      <b><font color=#3a6797>while</font></b> {<font color=#1b1baa>$ln1</font>&lt;=<font color=#1b1baa>$ln2</font>} {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ln1</font>==<font color=#1b1baa>$ln2</font>} {
+          <b><font color=#3a6797>set</font></b> bf2 [LineState <font color=#1b1baa>$txt</font> <font color=#1b1baa>$tSTR</font> <font color=#1b1baa>$tCMN</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>ln1.end +1 chars&quot;</font>]
+        }
+        RemoveTags <font color=#1b1baa>$txt</font> <font color=#1b1baa>$ln1</font>.0 <font color=#1b1baa>$ln1</font>.end
+        <b><font color=#3a6797>set</font></b> currQtd [HighlightLine <font color=#1b1baa>$txt</font> <font color=#1b1baa>$ln1</font> <font color=#1b1baa>$currQtd</font>]
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ln1</font>==<font color=#1b1baa>$ln2</font> && (<font color=#1b1baa>$bf1</font> || <font color=#1b1baa>$bf2</font>!=<font color=#1b1baa>$currQtd</font>) && <font color=#1b1baa>$data(MULTILINE,$txt)</font>} {
+          <b><font color=#3a6797>set</font></b> ln2 <font color=#1b1baa>$endl</font>  ;<i><font color=#4b5d50># run to the end</font></i>
+        }
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> lnseen]&gt;<font color=#1b1baa>$::hl_c::my::data(SEEN,$txt)</font>} {
+          <b><font color=#3a6797>set</font></b> lnseen 0
+          <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>after</font></b> cancel <font color=#1b1baa>$data(COROATFER,$txt)</font>}
+          <b><font color=#3a6797>set</font></b> data(COROATFER,<font color=#1b1baa>$txt</font>) [<b><font color=#3a6797>after</font></b> idle after 1 [<b><font color=#3a6797>info</font></b> coroutine]]
+          <b><font color=#ca14ca>yield</font></b>
+        }
+        <b><font color=#3a6797>incr</font></b> ln1
+      }
+    }
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> cmd <font color=#1b1baa>$data(CMD,$txt)</font>] ne {}} {
+      <i><font color=#4b5d50># run a command after changes done (its arguments are txt, ln1, ln2)</font></i>
+      <b><font color=#3a6797>append</font></b> cmd <font color=#8b2a0e>&quot; <font color=#1b1baa>$</font>txt <font color=#1b1baa>$</font>lno1 <font color=#1b1baa>$</font>lno2 <font color=#1b1baa>$</font>args&quot;</font>
+      <b><font color=#3a6797>after</font></b> idle <font color=#1b1baa>$cmd</font>
+    }
+    MemPos <font color=#1b1baa>$txt</font>
+    <b><font color=#ca14ca>return</font></b>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=my::LineState></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::my::LineState {txt tSTR tCMN l1} {
+  <i><font color=#4b5d50># Gets an initial state of line.</font></i>
+  <i><font color=#4b5d50>#   txt - text widget's path</font></i>
+  <i><font color=#4b5d50>#   tSTR - ranges of string tags</font></i>
+  <i><font color=#4b5d50>#   tCMN - ranges of comment tags</font></i>
+  <i><font color=#4b5d50>#   l1 - the line's index</font></i>
+  <i><font color=#4b5d50># Returns: a flag of 'quoted' line or -1.</font></i>
+
+  <b><font color=#3a6797>set</font></b> i1 [<font color=#1b1baa>$txt</font> index <font color=#1b1baa>$l1</font>]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> prev [<b><font color=#3a6797>string</font></b> first -1 <font color=#1b1baa>$l1</font>]]&gt;-1} {
+    <b><font color=#3a6797>set</font></b> i1 [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>i1 -1 chars&quot;</font>]
+  }
+  <b><font color=#3a6797>if</font></b> {[::hl_tcl::my::SearchTag <font color=#1b1baa>$tCMN</font> [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>i1 -1 chars&quot;</font>]]!=-1} {
+    <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$txt</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>i1 -1 chars&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>i1 +1 chars&quot;</font>] eq {*/}} {
+      <b><font color=#ca14ca>return</font></b> -1
+    }
+    <b><font color=#ca14ca>return</font></b> 0
+  }
+  <b><font color=#3a6797>set</font></b> ch [<font color=#1b1baa>$txt</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>i1&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>i1 +1 chars&quot;</font>]
+  <b><font color=#3a6797>if</font></b> {[::hl_tcl::my::SearchTag <font color=#1b1baa>$tSTR</font> [<font color=#1b1baa>$txt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>i1 -1 chars&quot;</font>]]!=-1} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ch</font> eq <font color=#8b2a0e>&quot;\\&quot;</font>} {<b><font color=#ca14ca>return</font></b> 1}
+  }
+  <b><font color=#ca14ca>return</font></b> -1
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=my::ShowCurrentLine></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::my::ShowCurrentLine {txt {doit no}} {
+  <i><font color=#4b5d50># Shows the current line.</font></i>
+  <i><font color=#4b5d50>#   txt - text widget's path</font></i>
+  <i><font color=#4b5d50>#   doit - if yes, forces updating current line's background</font></i>
+
+  <b><font color=#3a6797>variable</font></b> data
+  <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$txt</font> index insert]
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$pos</font> .] ln cn
+  <b><font color=#3a6797>if</font></b> {[::hl_tcl::my::IsCurline <font color=#1b1baa>$txt</font>]} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$doit</font> || ![<b><font color=#3a6797>info</font></b> exists data(CURPOS,<font color=#1b1baa>$txt</font>)] || int(<font color=#1b1baa>$data(CURPOS,$txt)</font>)!=<font color=#1b1baa>$ln</font> || <font color=#1b1baa>$cn</font>&lt;2} {
+      <font color=#1b1baa>$txt</font> tag remove tagCURLINE 1.0 end
+      <font color=#1b1baa>$txt</font> tag add tagCURLINE [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$pos</font> linestart] [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$pos</font> lineend]+1displayindices
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$pos</font>
+}
+<a id=INTERFACE_procedures></a>
+<i><font color=#4b5d50># _________________________ INTERFACE procedures ________________________ #</font></i>
+<a id=hl_c::hl_readonly></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::hl_readonly {txt {ro -1} {com2 <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Makes the text widget be readonly or gets its 'read-only' state.</font></i>
+  <i><font color=#4b5d50>#   txt - text widget's path</font></i>
+  <i><font color=#4b5d50>#   ro - flag &quot;the text widget is readonly&quot;</font></i>
+  <i><font color=#4b5d50>#   com2 - command to be called at viewing and after changes</font></i>
+  <i><font color=#4b5d50># If 'ro' argument is omitted, returns the widget's 'read-only' state.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ro</font>==-1} {
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>info</font></b> exists ::hl_c::my::data(READONLY,<font color=#1b1baa>$txt</font>)] && <font color=#1b1baa>$::hl_c::my::data(READONLY,$txt)</font>}]
+  }
+  <b><font color=#3a6797>set</font></b> ::hl_c::my::data(READONLY,<font color=#1b1baa>$txt</font>) <font color=#1b1baa>$ro</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$com2</font> ne {}} {<b><font color=#3a6797>set</font></b> ::hl_c::my::data(CMD,<font color=#1b1baa>$txt</font>) <font color=#1b1baa>$com2</font>}
+  <b><font color=#3a6797>set</font></b> newcom <font color=#8b2a0e>&quot;::<font color=#1b1baa>$</font>txt.internal&quot;</font>
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> commands <font color=#1b1baa>$newcom</font>] eq <font color=#8b2a0e>&quot;&quot;</font>} {<b><font color=#3a6797>rename</font></b> <font color=#1b1baa>$txt</font> <font color=#1b1baa>$newcom</font>}
+  <b><font color=#3a6797>set</font></b> com <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>namespace current<font color=#1b1baa>]</font>::my::Modified <font color=#1b1baa>$</font>txt&quot;</font>
+  <i><font color=#4b5d50>#if {$com2 ne &quot;&quot;} {append com &quot; ; $com2&quot;}</font></i>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ro</font>} {<b><font color=#ca14ca>proc</font></b> ::<font color=#1b1baa>$txt</font> {args} <font color=#8b2a0e>&quot;</font>
+<font color=#8b2a0e>    if <font color=#1b1baa>{</font>!\[winfo exists <font color=#1b1baa>$</font>txt\]<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>return 0<font color=#1b1baa>}</font></font>
+<font color=#8b2a0e>    switch -exact -- \[lindex \$args 0\] \{</font>
+<font color=#8b2a0e>      insert \{<font color=#1b1baa>$</font>com2\}</font>
+<font color=#8b2a0e>      delete \{<font color=#1b1baa>$</font>com2\}</font>
+<font color=#8b2a0e>      replace \{<font color=#1b1baa>$</font>com2\}</font>
+<font color=#8b2a0e>      default \{ return \[eval <font color=#1b1baa>$</font>newcom \$args\] \}</font>
+<font color=#8b2a0e>    \}&quot;</font>
+  } <b><font color=#3a6797>else</font></b> {<b><font color=#ca14ca>proc</font></b> ::<font color=#1b1baa>$txt</font> {args} <font color=#8b2a0e>&quot;</font>
+<font color=#8b2a0e>    if <font color=#1b1baa>{</font>!\[winfo exists <font color=#1b1baa>$</font>txt\]<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>return 0<font color=#1b1baa>}</font></font>
+<font color=#8b2a0e>    switch -exact -- \[lindex \$args 0\] \{</font>
+<font color=#8b2a0e>      delete \{<font color=#1b1baa>$</font>com <font color=#1b1baa>{</font>*<font color=#1b1baa>}</font>\$args\}</font>
+<font color=#8b2a0e>      insert \{<font color=#1b1baa>$</font>com <font color=#1b1baa>{</font>*<font color=#1b1baa>}</font>\$args\}</font>
+<font color=#8b2a0e>      replace \{<font color=#1b1baa>$</font>com <font color=#1b1baa>{</font>*<font color=#1b1baa>}</font>\$args\}</font>
+<font color=#8b2a0e>    \}</font>
+<font color=#8b2a0e>    set _res_ \[eval <font color=#1b1baa>$</font>newcom \$args\]</font>
+<font color=#8b2a0e>    return \$_res_&quot;</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=hl_c::hl_init></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::hl_init {txt args} {
+  <i><font color=#4b5d50># Initializes highlighting.</font></i>
+  <i><font color=#4b5d50>#   txt - text widget's path</font></i>
+  <i><font color=#4b5d50>#   args - dict of options</font></i>
+  <i><font color=#4b5d50># The 'args' options include:</font></i>
+  <i><font color=#4b5d50>#   -- - means that only args' options will be initialized (defaults skipped)</font></i>
+  <i><font color=#4b5d50>#   -dark - flag &quot;the text widget has dark background&quot;</font></i>
+  <i><font color=#4b5d50>#   -readonly - flag &quot;read-only&quot;</font></i>
+  <i><font color=#4b5d50>#   -optRE - flag &quot;use of RE to highlight options&quot;</font></i>
+  <i><font color=#4b5d50>#   -multiline - flag &quot;allowed multi-line strings&quot;</font></i>
+  <i><font color=#4b5d50>#   -cmd - command to watch editing/viewing</font></i>
+  <i><font color=#4b5d50>#   -cmdpos - command to watch cursor positioning</font></i>
+  <i><font color=#4b5d50>#   -colors - list of colors: clrCOM, clrCOMTK, clrSTR, clrVAR, clrCMN, clrPROC</font></i>
+  <i><font color=#4b5d50>#   -font - attributes of font</font></i>
+  <i><font color=#4b5d50>#   -seen - lines seen at start</font></i>
+  <i><font color=#4b5d50>#   -dobind - if yes, forces key bindings</font></i>
+  <i><font color=#4b5d50># This procedure has to be called before writing a text in the text widget.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> setonly [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$args</font> 0] eq {--}}]]} {
+    <b><font color=#3a6797>set</font></b> args [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$args</font> 1 end]
+  }
+  ::hl_tcl::iscurline <font color=#1b1baa>$txt</font> 1
+  <b><font color=#3a6797>set</font></b> ::hl_c::my::data(REG_TXT,<font color=#1b1baa>$txt</font>) {}  ;<i><font color=#4b5d50># disables Modified at changing the text</font></i>
+  <b><font color=#3a6797>set</font></b> ::hl_c::my::data(KEYWORDS,<font color=#1b1baa>$txt</font>) {}
+  <b><font color=#3a6797>set</font></b> ::hl_c::my::data(DOBIND,<font color=#1b1baa>$txt</font>) 0
+  <b><font color=#3a6797>foreach</font></b> {opt val} {<font color=#653760>-dark</font> 0 <font color=#653760>-readonly</font> 0 <font color=#653760>-cmd</font> {} <font color=#653760>-cmdpos</font> {} <font color=#653760>-optRE</font> 1 <font color=#653760>-dobind</font> 0 \
+  <font color=#653760>-multiline</font> 1 <font color=#653760>-seen</font> 500 <font color=#653760>-plaintext</font> no <font color=#653760>-insertwidth</font> 2 <font color=#653760>-keywords</font> {}} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$args</font> <font color=#1b1baa>$opt</font>]} {
+      <b><font color=#3a6797>set</font></b> val [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$args</font> <font color=#1b1baa>$opt</font>]
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$setonly</font>} {
+      <b><font color=#ca14ca>continue</font></b>  ;<i><font color=#4b5d50># only those set in args are taken into account</font></i>
+    }
+    <b><font color=#3a6797>set</font></b> ::hl_c::my::data([<b><font color=#3a6797>string</font></b> toupper [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$opt</font> 1 end]],<font color=#1b1baa>$txt</font>) <font color=#1b1baa>$val</font>
+  }
+  <b><font color=#3a6797>set</font></b> ::hl_c::my::data(KEYWORDS,<font color=#1b1baa>$txt</font>) [<b><font color=#3a6797>lsort</font></b> <font color=#1b1baa>$::hl_c::my::data(KEYWORDS,$txt)</font>]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$args</font> <font color=#653760>-colors</font>]} {
+    <b><font color=#3a6797>set</font></b> ::hl_c::my::data(COLORS,<font color=#1b1baa>$txt</font>) [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$args</font> <font color=#653760>-colors</font>]
+    <b><font color=#3a6797>set</font></b> ::hl_c::my::data(SETCOLORS,<font color=#1b1baa>$txt</font>) 1
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists ::hl_c::my::data(COLORS,<font color=#1b1baa>$txt</font>)]}  {
+      <b><font color=#3a6797>set</font></b> clrCURL {}
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> clrCURL [<b><font color=#3a6797>lindex</font></b> [::apave::obj csGet] 16]}
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::hl_c::my::data(DARK,$txt)</font>} {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$clrCURL</font> eq {}} {<b><font color=#3a6797>set</font></b> clrCURL #29383c}
+        <b><font color=#3a6797>set</font></b> ::hl_c::my::data(COLORS,<font color=#1b1baa>$txt</font>) [<b><font color=#3a6797>list</font></b> {<b><font color=#3a6797>*</font></b>}[hl_colors <font color=#1b1baa>$txt</font>] <font color=#1b1baa>$clrCURL</font>]
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$clrCURL</font> eq {}} {<b><font color=#3a6797>set</font></b> clrCURL #efe0cd}
+        <b><font color=#3a6797>set</font></b> ::hl_c::my::data(COLORS,<font color=#1b1baa>$txt</font>) [<b><font color=#3a6797>list</font></b> {<b><font color=#3a6797>*</font></b>}[hl_colors <font color=#1b1baa>$txt</font>] <font color=#1b1baa>$clrCURL</font>]
+      }
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$setonly</font>} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$args</font> <font color=#653760>-font</font>]} {
+      <b><font color=#3a6797>set</font></b> ::hl_c::my::data(FONT,<font color=#1b1baa>$txt</font>) [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$args</font> <font color=#653760>-font</font>]
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> ::hl_c::my::data(FONT,<font color=#1b1baa>$txt</font>) [<b><font color=#134070>font</font></b> actual TkFixedFont]
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$setonly</font> || [<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$args</font> <font color=#653760>-readonly</font>]} {
+    hl_readonly <font color=#1b1baa>$txt</font> <font color=#1b1baa>$::hl_c::my::data(READONLY,$txt)</font>
+  }
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first ::hl_c:: [<b><font color=#134070>bind</font></b> <font color=#1b1baa>$txt</font>]]&lt;0} {
+    ::hl_tcl::my::BindToEvent <font color=#1b1baa>$txt</font> &lt;FocusIn&gt; ::hl_c::my::ShowCurrentLine <font color=#1b1baa>$txt</font>
+  }
+  <b><font color=#3a6797>set</font></b> ::hl_c::my::data(_INSPOS_,<font color=#1b1baa>$txt</font>) {}
+  my::MemPos <font color=#1b1baa>$txt</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=hl_c::hl_text></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::hl_text {txt} {
+  <i><font color=#4b5d50># Highlights C code of a text widget.</font></i>
+  <i><font color=#4b5d50>#   txt - text widget's path</font></i>
+
+  <b><font color=#3a6797>set</font></b> font0 <font color=#1b1baa>$::hl_c::my::data(FONT,$txt)</font>
+  <b><font color=#3a6797>set</font></b> font1 [<b><font color=#3a6797>set</font></b> font2 <font color=#1b1baa>$font0</font>]
+  <font color=#1b1baa>$txt</font> tag configure tagSTD <font color=#653760>-font</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>font0&quot;</font>
+  <font color=#1b1baa>$txt</font> tag add tagSTD 1.0 end
+  <b><font color=#3a6797>dict</font></b> set font1 <font color=#653760>-weight</font> bold
+  <b><font color=#3a6797>dict</font></b> set font2 <font color=#653760>-slant</font> italic
+  <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$::hl_c::my::data(COLORS,$txt)</font> \
+    clrCOM clrCOMTK clrSTR clrVAR clrCMN clrPROC clrOPT clrBRA clrCURL clrCMN2
+  <font color=#1b1baa>$txt</font> tag configure tagCOM <font color=#653760>-font</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>font1&quot;</font> <font color=#653760>-foreground</font> <font color=#1b1baa>$clrCOM</font>
+  <font color=#1b1baa>$txt</font> tag configure tagCOMTK <font color=#653760>-font</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>font1&quot;</font> <font color=#653760>-foreground</font> <font color=#1b1baa>$clrCOMTK</font>
+  <font color=#1b1baa>$txt</font> tag configure tagSTR <font color=#653760>-font</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>font0&quot;</font> <font color=#653760>-foreground</font> <font color=#1b1baa>$clrSTR</font>
+  <font color=#1b1baa>$txt</font> tag configure tagVAR <font color=#653760>-font</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>font0&quot;</font> <font color=#653760>-foreground</font> <font color=#1b1baa>$clrVAR</font>
+  <font color=#1b1baa>$txt</font> tag configure tagCMN <font color=#653760>-font</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>font2&quot;</font> <font color=#653760>-foreground</font> <font color=#1b1baa>$clrCMN</font>
+  <font color=#1b1baa>$txt</font> tag configure tagCMN1 <font color=#653760>-font</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>font2&quot;</font> <font color=#653760>-foreground</font> <font color=#1b1baa>$clrCMN</font>
+  <font color=#1b1baa>$txt</font> tag configure tagCMN2 <font color=#653760>-font</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>font2&quot;</font> <font color=#653760>-foreground</font> <font color=#1b1baa>$clrCMN2</font> ;<i><font color=#4b5d50>#red</font></i>
+  <font color=#1b1baa>$txt</font> tag configure tagPROC <font color=#653760>-font</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>font1&quot;</font> <font color=#653760>-foreground</font> <font color=#1b1baa>$clrPROC</font>
+  <font color=#1b1baa>$txt</font> tag configure tagOPT <font color=#653760>-font</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>font1&quot;</font> <font color=#653760>-foreground</font> <font color=#1b1baa>$clrOPT</font>
+  <font color=#1b1baa>$txt</font> tag configure tagBRACKET <font color=#653760>-font</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>font0&quot;</font> <font color=#653760>-foreground</font> <font color=#1b1baa>$clrBRA</font>
+  <font color=#1b1baa>$txt</font> tag configure tagBRACKETERR <font color=#653760>-font</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>font0&quot;</font> <font color=#653760>-foreground</font> white <font color=#653760>-background</font> red
+  <font color=#1b1baa>$txt</font> tag configure tagCURLINE <font color=#653760>-background</font> <font color=#1b1baa>$clrCURL</font>
+  <font color=#1b1baa>$txt</font> tag raise sel
+  <font color=#1b1baa>$txt</font> tag raise tagBRACKETERR
+  <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$txt</font> tag raise hilited;  <font color=#1b1baa>$txt</font> tag raise hilited2} ;<i><font color=#4b5d50># for apave package</font></i>
+  my::HighlightAll <font color=#1b1baa>$txt</font>
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists ::hl_c::my::data(BIND_TXT,<font color=#1b1baa>$txt</font>)] ||
+  [<b><font color=#3a6797>info</font></b> exists ::hl_c::my::data(DOBIND,<font color=#1b1baa>$txt</font>)] && <font color=#1b1baa>$::hl_c::my::data(DOBIND,$txt)</font>} {
+    ::hl_tcl::my::BindToEvent <font color=#1b1baa>$txt</font> &lt;FocusIn&gt; ::hl_c::my::MemPos <font color=#1b1baa>$txt</font>
+    ::hl_tcl::my::BindToEvent <font color=#1b1baa>$txt</font> &lt;KeyPress&gt; ::hl_c::my::MemPos1 <font color=#1b1baa>$txt</font> yes %K %s
+    ::hl_tcl::my::BindToEvent <font color=#1b1baa>$txt</font> &lt;KeyRelease&gt; ::hl_c::my::MemPos <font color=#1b1baa>$txt</font>
+    ::hl_tcl::my::BindToEvent <font color=#1b1baa>$txt</font> &lt;ButtonRelease-1&gt; ::hl_c::my::MemPos <font color=#1b1baa>$txt</font>
+    <b><font color=#3a6797>foreach</font></b> ev {Enter KeyRelease ButtonRelease-1} {
+      ::hl_tcl::my::BindToEvent <font color=#1b1baa>$txt</font> &lt;<font color=#1b1baa>$ev</font>&gt; ::hl_tcl::my::HighlightBrackets <font color=#1b1baa>$txt</font>
+    }
+    <b><font color=#3a6797>set</font></b> ::hl_c::my::data(BIND_TXT,<font color=#1b1baa>$txt</font>) yes
+  }
+  <b><font color=#3a6797>set</font></b> ro <font color=#1b1baa>$::hl_c::my::data(READONLY,$txt)</font>
+  <b><font color=#3a6797>set</font></b> com2 <font color=#1b1baa>$::hl_c::my::data(CMD,$txt)</font>
+  <b><font color=#3a6797>set</font></b> txtattrs [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$txt</font> <font color=#1b1baa>$ro</font> <font color=#1b1baa>$com2</font>]
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists ::hl_c::my::data(LIST_TXT)] || \
+  [<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-index</font> 0 <font color=#653760>-exact</font> <font color=#1b1baa>$::hl_c::my::data(LIST_TXT)</font> <font color=#1b1baa>$txt</font>]]==-1} {
+    <b><font color=#3a6797>lappend</font></b> ::hl_c::my::data(LIST_TXT) <font color=#1b1baa>$txtattrs</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> ::hl_c::my::data(LIST_TXT) [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$::hl_c::my::data(LIST_TXT)</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$txtattrs</font>]
+  }
+  hl_readonly <font color=#1b1baa>$txt</font> <font color=#1b1baa>$ro</font> <font color=#1b1baa>$com2</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=hl_c::hl_all></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::hl_all {args} {
+  <i><font color=#4b5d50># Updates (&quot;rehighlights&quot;) all highlighted and existing text widgets.</font></i>
+  <i><font color=#4b5d50>#   args - dict of options</font></i>
+  <i><font color=#4b5d50># See also: hl_init</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists ::hl_c::my::data(LIST_TXT)]} {
+    <b><font color=#3a6797>foreach</font></b> wattrs <font color=#1b1baa>$::hl_c::my::data(LIST_TXT)</font> {
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$wattrs</font> txt ro com2
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$txt</font>]} {
+        <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists ::hl_c::my::data(SETCOLORS,<font color=#1b1baa>$txt</font>)]} {
+          <b><font color=#3a6797>unset</font></b> ::hl_c::my::data(COLORS,<font color=#1b1baa>$txt</font>) ;<i><font color=#4b5d50># colors defined by DARK</font></i>
+        }
+        <i><font color=#4b5d50># args (if set) override the appropriate settings for $txt</font></i>
+        hl_init <font color=#1b1baa>$txt</font> -- {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
+        hl_text <font color=#1b1baa>$txt</font>
+      }
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=hl_c::hl_colors></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::hl_colors {txt {dark <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Gets the main colors for highlighting (except for &quot;curr.line&quot;).</font></i>
+  <i><font color=#4b5d50>#   txt - text widget's path or {} or an index of default colors</font></i>
+  <i><font color=#4b5d50>#   dark - flag &quot;dark scheme&quot;</font></i>
+  <i><font color=#4b5d50># Returns a list of colors for COM COMTK STR VAR CMN PROC OPT BRAC \</font></i>
+<i><font color=#4b5d50>   or, if the colors aren't initialized, &quot;standard&quot; colors.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists ::hl_c::my::data(COLORS,<font color=#1b1baa>$txt</font>)]}  {
+    <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$::hl_c::my::data(COLORS,$txt)</font>
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dark</font> eq {}} {<b><font color=#3a6797>set</font></b> dark <font color=#1b1baa>$::hl_c::my::data(DARK,$txt)</font>}
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> is integer <font color=#653760>-strict</font> <font color=#1b1baa>$txt</font>] || <font color=#1b1baa>$txt</font>&lt;0 || <font color=#1b1baa>$txt</font>&gt;3} {<b><font color=#3a6797>set</font></b> txt 0}
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dark</font>} {<b><font color=#3a6797>set</font></b> dark 1} {<b><font color=#3a6797>set</font></b> dark 0}
+  <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$::hl_tcl::my::data(SYNTAXCOLORS,$txt)</font> <font color=#1b1baa>$dark</font>]
+  <i><font color=#4b5d50># user keywords' color</font></i>
+  <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$res</font> 6 6 [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$res</font> 1]]
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=hl_c::hl_line></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::hl_line {txt} {
+  <i><font color=#4b5d50># Updates a current line's highlighting.</font></i>
+  <i><font color=#4b5d50>#   txt - text's path</font></i>
+
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$::hl_c::my::data(PLAINTEXT,$txt)</font>} {
+    <b><font color=#3a6797>set</font></b> ln0 [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$txt</font> index insert])}]
+    <b><font color=#3a6797>set</font></b> ln2 [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$txt</font> index end])}]
+    <b><font color=#3a6797>set</font></b> ln1 [<b><font color=#3a6797>expr</font></b> {max (1,<font color=#1b1baa>$ln0</font>-1)}]
+    <b><font color=#3a6797>set</font></b> ln2 [<b><font color=#3a6797>expr</font></b> {min (<font color=#1b1baa>$ln2</font>,<font color=#1b1baa>$ln0</font>+1)}]
+    <i><font color=#4b5d50># update lines: previous, current, next</font></i>
+    <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;::hl_c::my::CoroRun <font color=#1b1baa>$</font>txt <font color=#1b1baa>$</font>ln1 <font color=#1b1baa>$</font>ln2&quot;</font>
+  }
+  ::hl_c::my::MemPos <font color=#1b1baa>$txt</font> yes
+  <font color=#1b1baa>$txt</font> configure <font color=#653760>-insertwidth</font> <font color=#1b1baa>$::hl_c::my::data(INSERTWIDTH,$txt)</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=hl_c::isdone></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::isdone {txt} {
+  <i><font color=#4b5d50># Checks if the highlighting of the text is done.</font></i>
+  <i><font color=#4b5d50>#   txt - text's path</font></i>
+
+  <b><font color=#3a6797>variable</font></b> my::data
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>info</font></b> exist my::data(REG_TXT,<font color=#1b1baa>$txt</font>)] && <font color=#1b1baa>$my::data(REG_TXT,$txt)</font> ne {}}]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=hl_c::clearup></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_c::clearup {txt} {
+  <i><font color=#4b5d50># Clears data related to text (esp. at deleting it).</font></i>
+  <i><font color=#4b5d50>#   txt - text's path</font></i>
+
+  <b><font color=#3a6797>variable</font></b> my::data
+  <b><font color=#3a6797>foreach</font></b> key [<b><font color=#3a6797>array</font></b> names my::data *,<font color=#1b1baa>$txt</font>] {
+    <b><font color=#3a6797>unset</font></b> my::data(<font color=#1b1baa>$key</font>)
+  }
+  <b><font color=#3a6797>foreach</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-all</font> <font color=#653760>-exact</font> <font color=#653760>-index</font> 0 <font color=#1b1baa>$my::data(LIST_TXT)</font> <font color=#1b1baa>$txt</font>] {
+    <b><font color=#3a6797>set</font></b> my::data(LIST_TXT) [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$my::data(LIST_TXT)</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
+  }
+}
+<a id=EOF></a>
+<i><font color=#4b5d50># _________________________________ EOF _________________________________ #</font></i>
+
+</pre>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>hl_c.tcl</b></font></div></td></table>
+
+</section>
+<script>
+  writeFooter('Document generated by <a href="'+homeLINK()+'/en/tcl/alited/index.html">alited</a> &amp; <a href="'+homeLINK()+'/en/tcl/mulster/index.html">mulster</a></a>');
+</script>
+</div>
+</body>
+</html>

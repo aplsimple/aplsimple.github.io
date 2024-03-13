@@ -1,0 +1,180 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<meta name="author" content="aplsimple">
+<meta name="description" content="aplsimple's home page">
+<meta name="keywords" content="aplsimple,home">
+</head>
+<style>
+table{
+background-color: #f9f9f9;
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+box-shadow: none;
+filter: none;
+}
+pre{
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+}
+</style>
+<script>
+function homeLINK() {
+  homelink = document.baseURI;
+  ilen = 19
+  ibase = homelink.indexOf('aplsimple.github');
+  if (ibase<0) { ibase = homelink.indexOf('aplsimple_github'); ilen += 10 };
+  if (ibase>=0) { homelink = homelink.substring(0,ibase+ilen) };
+  return homelink;
+};
+document.write(' \
+<link rel="icon" type="image/jpg" href="'+homeLINK()+'/zoo/favicon.jpg">');
+document.write('<'+'script src="'+homeLINK()+'/zoo/funcs.js">'+'<'+'/script>');
+document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'+'/script>');
+</script>
+<body>
+<div id="wrapper">
+<div name="divd1" ALIGN="CENTER"> <FONT SIZE=5em color=#b01c20><B>
+<noscript>THIS PAGE IS NOT WORKING WITHOUT JAVASCRIPT!
+<BR>
+<BR>PLEASE, SWITCH ON JAVASCRIPT IN SETTINGS OF YOUR BROWSER AND RELOAD THE PAGE.
+</noscript>
+</B></FONT></div>
+<div id='doc3' class='yui-t2'>
+<section id=sec2>
+<div id='hd' class='banner'>
+<script>document.write(' \
+<link rel="stylesheet" href="'+homeLINK()+'/en/zoo/style.css">');
+</script>
+<link rel="stylesheet" href="../../../css/style.css">
+
+<title>hl_ini.tcl</title>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
+
+<div id="bodyContent" class="dokuwiki">
+<div id="dw__toc" class="dw__toc">
+<h3 class="toggle open" style="cursor: pointer;">hl_ini.tcl</h3>
+<div aria-expanded="true" style="">
+
+<ul class="toc">
+<li><b><a href="#hl_ini.tcl">hl_ini.tcl</a></b></li>
+<li><b><a href="#hl_ini">hl_ini</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#hl_ini::init">init</a><span class=tooltiptext> hl_ini::init : Initializes highlighting .ini text.
+w - the text
+font - font
+szfont - font's size
+args - highlighting colors</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#hl_ini::line">line</a><span class=tooltiptext> hl_ini::line : Highlights a line of .ini text.
+w - the text
+pos - position in the line
+prevQtd - mode of processing a current line (0, 1, -1)</span></div></li></ul>
+<li><b><a href="#EOF">EOF</a></b></li>
+
+</ul>
+
+</div>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1><font color=#ca14ca> alited's addons</font></h1>
+</p><p>
+The <a href="hl_alm.html">alited/lib/addon</a> directory's scripts highlight various types of files:
+</p><p>
+<li><a href="hl_alm.html">hl_alm.tcl</a> - .alm files (macros)</li>
+<li><a href="hl_em.html">hl_em.tcl</a> - .em files (e_menu's menus)</li>
+<li><a href="hl_html.html">hl_html.tcl</a> - .html files</li>
+<li><a href="hl_ini.html">hl_ini.tcl</a> - .ini files</li>
+<li><a href="hl_md.html">hl_md.tcl</a> - .md files</li>
+<li><a href="hl_trans.html">hl_trans.tcl</a> - procedures for translation</li>
+<li><a href="hl_wiki.html">hl_wiki.tcl</a> - .wiki files (for wiki.tcl-lang.org)</li>
+</p><p>
+The alited's main files are contained in <a href="../../src/about.html">alited/src</a> directory.
+</p><p>
+
+</p>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../../index.html"><font color=#1a1a1a size=6>  <b>hl_ini.tcl</b></font></div></td></table>
+
+<pre class="code"><i><font color=#ff0000>#! /usr/bin/env tclsh<a id=hl_ini.tcl></a></font></i>
+<i><font color=#4b5d50>###########################################################</font></i>
+<i><font color=#4b5d50># Name:    hl_ini.tcl</font></i>
+<i><font color=#4b5d50># Author:  Alex Plotnikov  (aplsimple@gmail.com)</font></i>
+<i><font color=#4b5d50># Date:    Mar 16, 2023</font></i>
+<i><font color=#4b5d50># Brief:   Handles highlighting .ini files (of e_menu).</font></i>
+<i><font color=#4b5d50># License: MIT.</font></i>
+<i><font color=#4b5d50>###########################################################</font></i>
+<a id=hl_ini></a>
+<i><font color=#4b5d50># _________________________ hl_ini ________________________ #</font></i>
+
+<b><font color=#ca14ca>namespace</font></b> eval hl_ini {
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=hl_ini::init></a>
+<b><font color=#ca14ca>proc</font></b> hl_ini::init {w font szfont args} {
+  <i><font color=#4b5d50># Initializes highlighting .ini text.</font></i>
+  <i><font color=#4b5d50>#   w - the text</font></i>
+  <i><font color=#4b5d50>#   font - font</font></i>
+  <i><font color=#4b5d50>#   szfont - font's size</font></i>
+  <i><font color=#4b5d50>#   args - highlighting colors</font></i>
+
+  <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$args</font> clrCOM clrCOMTK clrSTR clrVAR clrCMN clrPROC
+  <b><font color=#3a6797>dict</font></b> set font <font color=#653760>-weight</font> bold
+  <font color=#1b1baa>$w</font> tag config iniSECT <font color=#653760>-font</font> <font color=#1b1baa>$font</font> <font color=#653760>-foreground</font> <font color=#1b1baa>$clrPROC</font>
+  <b><font color=#3a6797>dict</font></b> set font <font color=#653760>-weight</font> normal
+  <font color=#1b1baa>$w</font> tag config iniOPT <font color=#653760>-font</font> <font color=#1b1baa>$font</font> <font color=#653760>-foreground</font> <font color=#1b1baa>$clrCOM</font>
+  <font color=#1b1baa>$w</font> tag config iniVAL <font color=#653760>-font</font> <font color=#1b1baa>$font</font> <font color=#653760>-foreground</font> <font color=#1b1baa>$clrSTR</font>
+  <b><font color=#3a6797>dict</font></b> set font <font color=#653760>-slant</font> italic
+  <font color=#1b1baa>$w</font> tag config iniCMNT <font color=#653760>-font</font> <font color=#1b1baa>$font</font> <font color=#653760>-foreground</font> <font color=#1b1baa>$clrCMN</font>
+  <b><font color=#3a6797>foreach</font></b> t {SECT CMNT} {<b><font color=#3a6797>after</font></b> idle <font color=#1b1baa>$w</font> tag raise ini<font color=#1b1baa>$t</font>}
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>namespace</font></b> current]::line
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=hl_ini::line></a>
+<b><font color=#ca14ca>proc</font></b> hl_ini::line {w {pos <font color=#8b2a0e>&quot;&quot;</font>} {prevQtd 0}} {
+  <i><font color=#4b5d50># Highlights a line of .ini text.</font></i>
+  <i><font color=#4b5d50>#   w - the text</font></i>
+  <i><font color=#4b5d50>#   pos - position in the line</font></i>
+  <i><font color=#4b5d50>#   prevQtd - mode of processing a current line (0, 1, -1)</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$pos</font> eq {}} {<b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$w</font> index insert]}
+  <b><font color=#3a6797>set</font></b> il [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$pos</font>)}]
+  <b><font color=#3a6797>set</font></b> line [<font color=#1b1baa>$w</font> get <font color=#1b1baa>$il</font>.0 <font color=#1b1baa>$il</font>.end]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$line</font>] eq {}} {<b><font color=#ca14ca>return</font></b> yes}
+  <b><font color=#3a6797>foreach</font></b> t {SECT OPT VAL CMNT} {<font color=#1b1baa>$w</font> tag remove ini<font color=#1b1baa>$t</font> <font color=#1b1baa>$il</font>.0 <font color=#1b1baa>$il</font>.end}
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> <font color=#8b2a0e>&quot;^\s*#&quot;</font> <font color=#1b1baa>$line</font>]} {
+    <font color=#1b1baa>$w</font> tag add iniCMNT <font color=#1b1baa>$il</font>.0 <font color=#1b1baa>$il</font>.end
+    <b><font color=#ca14ca>return</font></b> yes
+  }
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> {^\s*\[.+\]\s*$} <font color=#1b1baa>$line</font>] lre
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$lre</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> p1 [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$lre</font>]
+    <font color=#1b1baa>$w</font> tag add iniSECT <font color=#1b1baa>$il</font>.0 <font color=#1b1baa>$il</font>.<font color=#1b1baa>$p1</font>
+    <b><font color=#ca14ca>return</font></b> yes
+  }
+  <b><font color=#3a6797>set</font></b> opts [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> <font color=#653760>-all</font> <font color=#653760>-indices</font> {^\s*([^=]+)\s*(=)\s*(.*)$} <font color=#1b1baa>$line</font>]
+  <b><font color=#3a6797>foreach</font></b> {- l1 - l2} <font color=#1b1baa>$opts</font> {
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$l1</font> p1 p2
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$p1</font>&lt;<font color=#1b1baa>$p2</font>} {
+      <font color=#1b1baa>$w</font> tag add iniOPT <font color=#1b1baa>$il</font>.<font color=#1b1baa>$p1</font> <font color=#1b1baa>$il</font>.[<b><font color=#3a6797>incr</font></b> p2]
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$l2</font> p1 p2
+      <font color=#1b1baa>$w</font> tag add iniVAL <font color=#1b1baa>$il</font>.<font color=#1b1baa>$p1</font> <font color=#1b1baa>$il</font>.[<b><font color=#3a6797>incr</font></b> p2]
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> yes
+}
+<a id=EOF></a>
+<i><font color=#4b5d50># ________________________ EOF _________________________ #</font></i>
+
+</pre>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../../index.html"><font color=#1a1a1a size=6>  <b>hl_ini.tcl</b></font></div></td></table>
+
+</section>
+<script>
+  writeFooter('Document generated by <a href="'+homeLINK()+'/en/tcl/alited/index.html">alited</a> &amp; <a href="'+homeLINK()+'/en/tcl/mulster/index.html">mulster</a></a>');
+</script>
+</div>
+</body>
+</html>

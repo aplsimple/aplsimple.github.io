@@ -1,0 +1,2096 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<meta name="author" content="aplsimple">
+<meta name="description" content="aplsimple's home page">
+<meta name="keywords" content="aplsimple,home">
+</head>
+<style>
+table{
+background-color: #f9f9f9;
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+box-shadow: none;
+filter: none;
+}
+pre{
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+}
+</style>
+<script>
+function homeLINK() {
+  homelink = document.baseURI;
+  ilen = 19
+  ibase = homelink.indexOf('aplsimple.github');
+  if (ibase<0) { ibase = homelink.indexOf('aplsimple_github'); ilen += 10 };
+  if (ibase>=0) { homelink = homelink.substring(0,ibase+ilen) };
+  return homelink;
+};
+document.write(' \
+<link rel="icon" type="image/jpg" href="'+homeLINK()+'/zoo/favicon.jpg">');
+document.write('<'+'script src="'+homeLINK()+'/zoo/funcs.js">'+'<'+'/script>');
+document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'+'/script>');
+</script>
+<body>
+<div id="wrapper">
+<div name="divd1" ALIGN="CENTER"> <FONT SIZE=5em color=#b01c20><B>
+<noscript>THIS PAGE IS NOT WORKING WITHOUT JAVASCRIPT!
+<BR>
+<BR>PLEASE, SWITCH ON JAVASCRIPT IN SETTINGS OF YOUR BROWSER AND RELOAD THE PAGE.
+</noscript>
+</B></FONT></div>
+<div id='doc3' class='yui-t2'>
+<section id=sec2>
+<div id='hd' class='banner'>
+<script>document.write(' \
+<link rel="stylesheet" href="'+homeLINK()+'/en/zoo/style.css">');
+</script>
+<link rel="stylesheet" href="../../css/style.css">
+
+<title>pref.tcl</title>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
+
+<div id="bodyContent" class="dokuwiki">
+<div id="dw__toc" class="dw__toc">
+<h3 class="toggle open" style="cursor: pointer;">pref.tcl</h3>
+<div aria-expanded="true" style="">
+
+<ul class="toc">
+<li><b><a href="#pref.tcl">pref.tcl</a></b></li>
+<li><b><a href="#Variables">Variables</a></b></li>
+<li><b><a href="#Common_procedures">Common_procedures</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#pref::fetchVars">fetchVars</a><span class=tooltiptext> pref::fetchVars : Delivers namespace variables to a caller.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::SavedOptions">SavedOptions</a><span class=tooltiptext> pref::SavedOptions : Returns a list of names of main settings.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::SaveSettings">SaveSettings</a><span class=tooltiptext> pref::SaveSettings : Saves original settings.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::RestoreSettings">RestoreSettings</a><span class=tooltiptext> pref::RestoreSettings : Restores original settings.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::TextIcons">TextIcons</a><span class=tooltiptext> pref::TextIcons : Returns a list of letters to be toolbar "icons".</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::ReservedIcons">ReservedIcons</a><span class=tooltiptext> pref::ReservedIcons : Returns a list of icons already engaged by alited.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::Message">Message</a><span class=tooltiptext> pref::Message : Displays a message in statusbar of preferences dialogue.
+msg - message
+mode - mode of Message</span></div></li></ul>
+<li><b><a href="#Main_Frame">Main_Frame</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#pref::MainFrame">MainFrame</a><span class=tooltiptext> pref::MainFrame : Creates a main frame of the dialogue.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::CheckOk">CheckOk</a><span class=tooltiptext> pref::CheckOk : Checker for "OK" button.
+Returns yes if OK button may be handled, else no.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::Ok">Ok</a><span class=tooltiptext> pref::Ok : Handler of "OK" button.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::Cancel">Cancel</a><span class=tooltiptext> pref::Cancel : Closes Preferences.
+args - not empty, if called by Esc, Alt+F4 or "X" button</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::Tab">Tab</a><span class=tooltiptext> pref::Tab : Handles changing tabs of notebooks.
+tab - name of notebook
+nt - tab of notebook
+doit - if yes, forces changing tabs
+focus1st - if yes, focuses 1st widget of tab
+At changing the current notebook: we need to save the old selection
+in order to restore the selection at returning to the notebook.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::Help">Help</a><span class=tooltiptext> pref::Help : Shows a help on a current tab.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::fillCan">fillCan</a><span class=tooltiptext> pref::fillCan : Sets a bg color of tab canvas.
+w - canvas' path
+selected - yes for selected tab</span></div></li></ul>
+<li><b><a href="#Tabs_General">Tabs_General</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#pref::General_Tab1">General_Tab1</a><span class=tooltiptext> pref::General_Tab1 : Serves to layout "General" tab.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::General_Tab2">General_Tab2</a><span class=tooltiptext> pref::General_Tab2 : Serves to layout "General/Saving" tab.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::General_Tab3">General_Tab3</a><span class=tooltiptext> pref::General_Tab3 : Serves to layout "General/Projects" tab.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::opcToolPre">opcToolPre</a><span class=tooltiptext> pref::opcToolPre : Gets colors for "Color schemes" items.
+args - a color scheme's index and name, separated by ":"</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::CbxBackup">CbxBackup</a><span class=tooltiptext> pref::CbxBackup : Check for access to SpxMaxBak field.
+If CbxBackup is empty (no backup), SpxMaxBak should be disabled.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::CheckUseDef">CheckUseDef</a><span class=tooltiptext> pref::CheckUseDef : Enables/disables the project default fields.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::GetCS">GetCS</a><span class=tooltiptext> pref::GetCS : Gets a color scheme's index from *opcc* / *opcc2*  variable.
+ncc - {} for opcc, {2} for opcc2</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::CsDark">CsDark</a><span class=tooltiptext> pref::CsDark : Gets a lightness of a color scheme.
+cs - the color scheme's index (if omitted, the chosen one's)</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::GetLocaleImage">GetLocaleImage</a><span class=tooltiptext> pref::GetLocaleImage</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::InitLocales">InitLocales</a><span class=tooltiptext> pref::InitLocales : Creates flag images to display at "Preferable locale".</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::CheckIndent">CheckIndent</a><span class=tooltiptext> pref::CheckIndent : Sets "auto indentation", if indent is 1 (for indentation by Tabs)
+pre - prefix: if {}, refers to a project's settings, by default to preferences'</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::CheckCS">CheckCS</a><span class=tooltiptext> pref::CheckCS : Checks if the color scheme is changed and, if so, sets "Color of cursor" field.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::CheckTheming">CheckTheming</a><span class=tooltiptext> pref::CheckTheming : Checks periodically theming options and, if changed, shows their preview.
+doit - if no, deletes both a temporary file and the possible preview
+force - if yes, shows the preview by force
+The theming cannot be nice viewed "on fly", so we need to use a separate app.</span></div></li></ul>
+<li><b><a href="#Tab_Editor">Tab_Editor</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#pref::Edit_Tab1">Edit_Tab1</a><span class=tooltiptext> pref::Edit_Tab1 : Serves to layout "Editor" tab.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::Edit_Tab2">Edit_Tab2</a><span class=tooltiptext> pref::Edit_Tab2 : Serves to layout "Tcl syntax" tab.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::Edit_Tab3">Edit_Tab3</a><span class=tooltiptext> pref::Edit_Tab3 : Serves to layout "C/C++ syntax" tab.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::Edit_Tab4">Edit_Tab4</a><span class=tooltiptext> pref::Edit_Tab4 : Serves to layout "Plain texts" tab.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::Tcl_Default">Tcl_Default</a><span class=tooltiptext> pref::Tcl_Default : Sets default colors to highlight Tcl.
+isyn - index of syntax colors
+init - yes, if only variables should be initialized</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::C_Default">C_Default</a><span class=tooltiptext> pref::C_Default : Sets default colors to highlight C.
+isyn - index of syntax colors
+init - yes, if only variables should be initialized</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::Text_Default">Text_Default</a><span class=tooltiptext> pref::Text_Default : Sets defaults for plain text.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::InitSyntax">InitSyntax</a><span class=tooltiptext> pref::InitSyntax : Updates and initializes color fields.
+lng - {} for Tcl, {2} for C/C++</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::InitSyntaxTcl">InitSyntaxTcl</a><span class=tooltiptext> pref::InitSyntaxTcl : Initializes syntax stuff for Tcl.
+colors - highlighting colors</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::InitSyntaxC">InitSyntaxC</a><span class=tooltiptext> pref::InitSyntaxC : Initializes syntax stuff for C/C++.
+colors - highlighting colors</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::UpdateSyntaxTab">UpdateSyntaxTab</a><span class=tooltiptext> pref::UpdateSyntaxTab : Updates color labels at clicking "Default" button.
+lng - {} for Tcl, {2} for C/C++</span></div></li></ul>
+<li><b><a href="#Tab_Template">Tab_Template</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#pref::Template_Tab">Template_Tab</a><span class=tooltiptext> pref::Template_Tab : Serves to layout "Template" tab.</span></div></li></ul>
+<li><b><a href="#Tab_Keys">Tab_Keys</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#pref::Keys_Tab1">Keys_Tab1</a><span class=tooltiptext> pref::Keys_Tab1 : Serves to layout "Keys" tab.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::RegisterKeys">RegisterKeys</a><span class=tooltiptext> pref::RegisterKeys : Adds key bindings to keys array.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::GetKeyList">GetKeyList</a><span class=tooltiptext> pref::GetKeyList : Gets a list of available (not engaged) key combinations.
+nk - index of combobox that will get the list as -values option</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::SelectKey">SelectKey</a><span class=tooltiptext> pref::SelectKey : Handles <<ComboboxSelected>> event on a combobox of keys.
+nk - index of combobox</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::KeyAccelerator">KeyAccelerator</a><span class=tooltiptext> pref::KeyAccelerator : Gets a key accelerator for a combobox of keys, bound to an action.
+nk - index of combobox
+defk - default key combination</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::KeyAccelerators">KeyAccelerators</a><span class=tooltiptext> pref::KeyAccelerators : Gets a full list of key accelerators,</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::BindKey">BindKey</a><span class=tooltiptext> pref::BindKey : Binds a key event to a key combination.
+nk - index of combobox corresponding to the event
+key - key combination or "-" (for not engaged keys)
+defk - default key combination
+Returns a bound keys for not engaged keys or {} for others.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::IniKeys">IniKeys</a><span class=tooltiptext> pref::IniKeys : Gets key settings at opening "Preferences" dialogue.</span></div></li></ul>
+<li><b><a href="#Units">Units</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#pref::Units_Tab">Units_Tab</a><span class=tooltiptext> pref::Units_Tab : Serves to layout "Units" tab.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::Units_Default">Units_Default</a><span class=tooltiptext> pref::Units_Default : Sets the default settings of units.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::CheckUseLeaf">CheckUseLeaf</a><span class=tooltiptext> pref::CheckUseLeaf : Enables/disables the "Regexp of a leaf" field.</span></div></li></ul>
+<li><b><a href="#Tab_Tools">Tab_Tools</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#pref::Common_Tab">Common_Tab</a><span class=tooltiptext> pref::Common_Tab : Serves to layout "Tools/Common" tab.</span></div></li></ul>
+<li><b><a href="#e_menu">e_menu</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#pref::Emenu_Tab">Emenu_Tab</a><span class=tooltiptext> pref::Emenu_Tab : Serves to layout "Tools/e_menu" tab.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::Default_e_menu">Default_e_menu</a><span class=tooltiptext> pref::Default_e_menu : Set default a_menu settings.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::Test_e_menu">Test_e_menu</a><span class=tooltiptext> pref::Test_e_menu : Tests a_menu settings.</span></div></li></ul>
+<li><b><a href="#tkcon">tkcon</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#pref::Tkcon_Tab">Tkcon_Tab</a><span class=tooltiptext> pref::Tkcon_Tab : Serves to layout "Tools/Tkcon" tab.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::UpdateTkconTab">UpdateTkconTab</a><span class=tooltiptext> pref::UpdateTkconTab : Updates color labels for "Tools/Tkcon" tab.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::Tkcon_Default">Tkcon_Default</a><span class=tooltiptext> pref::Tkcon_Default : Sets defaults for "Tools/Tkcon" tab.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::Tkcon_Default1">Tkcon_Default1</a><span class=tooltiptext> pref::Tkcon_Default1 : Sets light theme colors for Tkcon.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::Tkcon_Default2">Tkcon_Default2</a><span class=tooltiptext> pref::Tkcon_Default2 : Sets dark theme colors for Tkcon.</span></div></li></ul>
+<li><b><a href="#bar-menu">bar-menu</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#pref::Runs_Tab">Runs_Tab</a><span class=tooltiptext> pref::Runs_Tab : Prepares and layouts "Tools/bar-menu" tab.
+tab - a tab to open (saved at previous session) or {}</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::DelRun">DelRun</a><span class=tooltiptext> pref::DelRun : Deletes a current "bar-menu" action.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::Em_ShowAll">Em_ShowAll</a><span class=tooltiptext> pref::Em_ShowAll : Handles separators of bar-menu.
+upd - if yes, displays the widgets of bar-menu settings.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::PickMenuItem">PickMenuItem</a><span class=tooltiptext> pref::PickMenuItem : Selects e_menu's action for a "bar-menu" item.
+it - index of "bar-menu" item</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::ScrollRuns">ScrollRuns</a><span class=tooltiptext> pref::ScrollRuns : Updates scrollbars of bar-menu tab because its contents may have various length.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::opcIcoPre">opcIcoPre</a><span class=tooltiptext> pref::opcIcoPre : Gets an item for icon list of a bar-menu action.
+args - contains a name of current icon</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::OwnCS">OwnCS</a><span class=tooltiptext> pref::OwnCS : Looks for ownCS option.</span></div></li></ul>
+<li><b><a href="#Up/Down_buttons">Up/Down_buttons</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#pref::FocusedRun">FocusedRun</a><span class=tooltiptext> pref::FocusedRun : Gets an index of current run.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::ExchangeRuns">ExchangeRuns</a><span class=tooltiptext> pref::ExchangeRuns : Exchanges two run items.
+f1 - 1st item
+f2 - 2nd item</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::UpRun">UpRun</a><span class=tooltiptext> pref::UpRun : Move a current run item up.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::DownRun">DownRun</a><span class=tooltiptext> pref::DownRun : Move a current run item down.</span></div></li></ul>
+<li><b><a href="#GUI_procs">GUI_procs</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#pref::_create">_create</a><span class=tooltiptext> pref::_create : Creates "Preferences" dialogue.
+tab - previous open tab</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::_init">_init</a><span class=tooltiptext> pref::_init : Initializes "Preferences" dialogue.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::_run">_run</a><span class=tooltiptext> pref::_run : Runs "Preferences" dialogue.
+tab - previous open tab
+Returns yes, if settings were saved.</span></div></li></ul>
+<li><b><a href="#EOF">EOF</a></b></li>
+
+</ul>
+
+</div>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1><font color=#ca14ca> alited's source</font></h1>
+</p><p>
+The <a href="about.html">alited/src</a> directory contains alited's own source files.
+</p><p>
+Some additional alited's files are also contained in <a href="../lib/addon/hl_alm.html">alited/lib/addon</a> directory.
+</p><p>
+The library files are contained in alited/lib** directory.
+</p><p>
+<li><a href="about.html">about.tcl</a> - "About alited" dialogue.</li>
+<li><a href="alited.html">alited.tcl</a> - The alited's main script to start.</li>
+<li><a href="bar.html">bar.tcl</a> - Handles the bar of tabs.</li>
+<li><a href="check.html">check.tcl</a> - "Check Tcl" dialogue and procedures.</li>
+<li><a href="complete.html">complete.tcl</a> - Handles auto-completion.</li>
+<li><a href="edit.html">edit.tcl</a> - "Edit" menu's procedures.</li>
+<li><a href="favor.html">favor.tcl</a> - Handles the favorite and last visited units.</li>
+<li><a href="favor_ls.html">favor_ls.tcl</a> - "Saved lists of favorites" dialogue and procedures.</li>
+<li><a href="file.html">file.tcl</a> - "File" menu's procedures.</li>
+<li><a href="find.html">find.tcl</a> - "Find / Replace" dialogue and procedures.</li>
+<li><a href="format.html">format.tcl</a> - "Edit / Formats" menu's procedures.</li>
+<li><a href="img.html">img.tcl</a> - List of images used by alited.</li>
+<li><a href="indent.html">indent.tcl</a> - Handles text indentation.</li>
+<li><a href="info.html">info.tcl</a> - Handles the info bar.</li>
+<li><a href="ini.html">ini.tcl</a> - Handles initializing alited.</li>
+<li><a href="keys.html">keys.tcl</a> - Handles keyboard (mapping etc.).</li>
+<li><a href="main.html">main.tcl</a> - Handles the main form of alited.</li>
+<li><a href="menu.html">menu.tcl</a> - Handles alited's menus.</li>
+<li><a href="msgs.html">msgs.tcl</a> - Localized messages used in several places.</li>
+<li><a href="paver.html">paver.tcl</a> - "Tools / Paver" tool.</li>
+<li><a href="pkgIndex.html">pkgIndex.tcl</a> - Includes README.md text (for Ruff doc generator).</li>
+<li><a href="pref.html">pref.tcl</a> - "Preferences" dialogue and procedures.</li>
+<li><a href="preview.html">preview.tcl</a> - "Preview (theme, CS)" dialogue called by "Preferences".</li>
+<li><a href="printer.html">printer.tcl</a> - "Tools / Project Printer" dialogue and procedures.</li>
+<li><a href="project.html">project.tcl</a> - "Projects" dialogue and procedures.</li>
+<li><a href="run.html">run.tcl</a> - "Tools / Run..." dialogue and procedures.</li>
+<li><a href="tool.html">tool.tcl</a> - "Tools" menu's procedures.</li>
+<li><a href="tree.html">tree.tcl</a> - Handles the tree of units and files.</li>
+<li><a href="unit.html">unit.tcl</a> - Handles the unit tree.</li>
+<li><a href="unit_tpl.html">unit_tpl.tcl</a> - "Templates" dialogue and procedures.</li>
+</p><p>
+
+</p>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>pref.tcl</b></font></div></td></table>
+
+<pre class="code"><i><font color=#4b5d50>###########################################################<a id=pref.tcl></a></font></i>
+<i><font color=#4b5d50># Name:    pref.tcl</font></i>
+<i><font color=#4b5d50># Author:  Alex Plotnikov  (aplsimple@gmail.com)</font></i>
+<i><font color=#4b5d50># Date:    05/25/2021</font></i>
+<i><font color=#4b5d50># Brief:   Handles &quot;Preferences&quot;.</font></i>
+<i><font color=#4b5d50># License: MIT.</font></i>
+<i><font color=#4b5d50>###########################################################</font></i>
+<a id=Variables></a>
+<i><font color=#4b5d50># ________________________ Variables _________________________ #</font></i>
+
+<b><font color=#ca14ca>namespace</font></b> eval pref {
+
+  <i><font color=#4b5d50># apave object of Preferences</font></i>
+  <b><font color=#3a6797>variable</font></b> obPrf pavedPrefs
+
+  <i><font color=#4b5d50># &quot;Preferences&quot; dialogue's path</font></i>
+  <b><font color=#3a6797>variable</font></b> win <font color=#1b1baa>$::alited::al(WIN)</font>.diaPref
+
+  <i><font color=#4b5d50># geometry for message boxes: to center in &quot;Preferences&quot; dialogue</font></i>
+  <b><font color=#3a6797>variable</font></b> geo root=<font color=#1b1baa>$::alited::al(WIN)</font>
+
+  <i><font color=#4b5d50># saved data of settings</font></i>
+  <b><font color=#3a6797>variable</font></b> data; <b><font color=#3a6797>array</font></b> set data [<b><font color=#3a6797>list</font></b>]
+
+  <i><font color=#4b5d50># data of keys</font></i>
+  <b><font color=#3a6797>variable</font></b> keys; <b><font color=#3a6797>array</font></b> set keys [<b><font color=#3a6797>list</font></b>]
+
+  <i><font color=#4b5d50># saved data of previous keys</font></i>
+  <b><font color=#3a6797>variable</font></b> prevkeys; <b><font color=#3a6797>array</font></b> set prevkeys [<b><font color=#3a6797>list</font></b>]
+
+  <i><font color=#4b5d50># saved data of keys</font></i>
+  <b><font color=#3a6797>variable</font></b> savekeys; <b><font color=#3a6797>array</font></b> set savekeys [<b><font color=#3a6797>list</font></b>]
+
+  <i><font color=#4b5d50># saved tabs</font></i>
+  <b><font color=#3a6797>variable</font></b> arrayTab; <b><font color=#3a6797>array</font></b> set arrayTab [<b><font color=#3a6797>list</font></b> nbk <font color=#1b1baa>$win</font>.fra.fraR.nbk.f1]
+
+  <i><font color=#4b5d50># current tab</font></i>
+  <b><font color=#3a6797>variable</font></b> curTab nbk
+
+  <i><font color=#4b5d50># saved tab</font></i>
+  <b><font color=#3a6797>variable</font></b> oldTab {}
+
+  <i><font color=#4b5d50># list of color themes</font></i>
+  <b><font color=#3a6797>variable</font></b> opcThemes [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>variable</font></b> opc1 {}
+
+  <i><font color=#4b5d50># list of color schemes</font></i>
+  <b><font color=#3a6797>variable</font></b> opcColors [<b><font color=#3a6797>list</font></b>]
+
+  <i><font color=#4b5d50># current CS of alited</font></i>
+  <b><font color=#3a6797>variable</font></b> opcc {}
+
+  <i><font color=#4b5d50># current CS of e_menu</font></i>
+  <b><font color=#3a6797>variable</font></b> opcc2 {}
+
+  <i><font color=#4b5d50># bar/e_menu data:</font></i>
+  <b><font color=#3a6797>variable</font></b> em_NumMax 32 ;<i><font color=#4b5d50># maximum of bar-menu items</font></i>
+  <b><font color=#3a6797>variable</font></b> em_Num 0 ;<i><font color=#4b5d50># number of bar-menu items</font></i>
+  <b><font color=#3a6797>variable</font></b> em_mnu; <b><font color=#3a6797>array</font></b> set em_mnu [<b><font color=#3a6797>list</font></b>] ;<i><font color=#4b5d50># actions</font></i>
+  <b><font color=#3a6797>variable</font></b> em_ico; <b><font color=#3a6797>array</font></b> set em_ico [<b><font color=#3a6797>list</font></b>] ;<i><font color=#4b5d50># icons</font></i>
+  <b><font color=#3a6797>variable</font></b> em_inf; <b><font color=#3a6797>array</font></b> set em_inf [<b><font color=#3a6797>list</font></b>] ;<i><font color=#4b5d50># full info</font></i>
+  <b><font color=#3a6797>variable</font></b> em_Icons [<b><font color=#3a6797>list</font></b>] ;<i><font color=#4b5d50># list of e_menu icons</font></i>
+
+  <i><font color=#4b5d50># list of alited icons</font></i>
+  <b><font color=#3a6797>variable</font></b> listIcons [<b><font color=#3a6797>list</font></b>]
+
+  <i><font color=#4b5d50># list of e_menu menus</font></i>
+  <b><font color=#3a6797>variable</font></b> listMenus [<b><font color=#3a6797>list</font></b>]
+
+  <i><font color=#4b5d50># standard keys' data</font></i>
+  <b><font color=#3a6797>variable</font></b> stdkeys [<b><font color=#3a6797>dict</font></b> create \
+     0 [<b><font color=#3a6797>list</font></b> {Save File} F2] \
+     1 [<b><font color=#3a6797>list</font></b> {Save File as} Control-S] \
+     2 [<b><font color=#3a6797>list</font></b> {Run e_menu} F4] \
+     3 [<b><font color=#3a6797>list</font></b> {Run File} F5] \
+     4 [<b><font color=#3a6797>list</font></b> {Double Selection} Control-D] \
+     5 [<b><font color=#3a6797>list</font></b> {Delete Line} Control-Y] \
+     6 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$::alited::al(MC,indent)</font> Control-I] \
+     7 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$::alited::al(MC,unindent)</font> Control-U] \
+     8 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$::alited::al(MC,comment)</font> Control-bracketleft] \
+     9 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$::alited::al(MC,uncomment)</font> Control-bracketright] \
+    10 [<b><font color=#3a6797>list</font></b> {Highlight First} Alt-Q] \
+    11 [<b><font color=#3a6797>list</font></b> {Highlight Last} Alt-W] \
+    12 [<b><font color=#3a6797>list</font></b> {Find Next Match} F3] \
+    13 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$::alited::al(MC,lookdecl)</font> Control-L] \
+    14 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$::alited::al(MC,lookword)</font> Control-Shift-L] \
+    15 [<b><font color=#3a6797>list</font></b> RESERVED F11] \
+    16 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$::alited::al(MC,playtkl)</font> F12] \
+    17 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$::alited::al(MC,toline)</font> Control-G] \
+    18 [<b><font color=#3a6797>list</font></b> {Put New Line} Control-P] \
+    19 [<b><font color=#3a6797>list</font></b> {Complete Commands} Tab] \
+    20 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$::alited::al(MC,tomatched)</font> Alt-B] \
+    21 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$::alited::al(MC,filelist)</font> F9] \
+    22 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$::alited::al(MC,runAsIs)</font> Shift-F5] \
+  ]
+
+  <i><font color=#4b5d50># size of standard keys' data</font></i>
+  <b><font color=#3a6797>variable</font></b> StdkeysSize [<b><font color=#3a6797>dict</font></b> size <font color=#1b1baa>$stdkeys</font>]
+
+  <i><font color=#4b5d50># locales</font></i>
+  <b><font color=#3a6797>variable</font></b> locales [<b><font color=#3a6797>list</font></b>]
+
+  <i><font color=#4b5d50># preview flag</font></i>
+  <b><font color=#3a6797>variable</font></b> preview 0
+}
+<a id=Common_procedures></a>
+<i><font color=#4b5d50># ________________________ Common procedures _________________________ #</font></i>
+<a id=pref::fetchVars></a>
+<b><font color=#ca14ca>proc</font></b> pref::fetchVars {} {
+  <i><font color=#4b5d50># Delivers namespace variables to a caller.</font></i>
+
+  <b><font color=#3a6797>uplevel</font></b> 1 {
+    <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+    <b><font color=#3a6797>variable</font></b> obPrf
+    <b><font color=#3a6797>variable</font></b> win
+    <b><font color=#3a6797>variable</font></b> geo
+    <b><font color=#3a6797>variable</font></b> data
+    <b><font color=#3a6797>variable</font></b> keys
+    <b><font color=#3a6797>variable</font></b> prevkeys
+    <b><font color=#3a6797>variable</font></b> savekeys
+    <b><font color=#3a6797>variable</font></b> arrayTab
+    <b><font color=#3a6797>variable</font></b> curTab
+    <b><font color=#3a6797>variable</font></b> oldTab
+    <b><font color=#3a6797>variable</font></b> opcThemes
+    <b><font color=#3a6797>variable</font></b> opc1
+    <b><font color=#3a6797>variable</font></b> opcColors
+    <b><font color=#3a6797>variable</font></b> opcc
+    <b><font color=#3a6797>variable</font></b> opcc2
+    <b><font color=#3a6797>variable</font></b> em_Num
+    <b><font color=#3a6797>variable</font></b> em_mnu
+    <b><font color=#3a6797>variable</font></b> em_ico
+    <b><font color=#3a6797>variable</font></b> em_inf
+    <b><font color=#3a6797>variable</font></b> em_Icons
+    <b><font color=#3a6797>variable</font></b> listIcons
+    <b><font color=#3a6797>variable</font></b> listMenus
+    <b><font color=#3a6797>variable</font></b> stdkeys
+    <b><font color=#3a6797>variable</font></b> StdkeysSize
+    <b><font color=#3a6797>variable</font></b> locales
+    <b><font color=#3a6797>variable</font></b> preview
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::SavedOptions></a>
+<b><font color=#ca14ca>proc</font></b> pref::SavedOptions {} {
+  <i><font color=#4b5d50># Returns a list of names of main settings.</font></i>
+
+  fetchVars
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>array</font></b> names al]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::SaveSettings></a>
+<b><font color=#ca14ca>proc</font></b> pref::SaveSettings {} {
+  <i><font color=#4b5d50># Saves original settings.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>foreach</font></b> o [SavedOptions] {
+    <b><font color=#3a6797>set</font></b> data(<font color=#1b1baa>$o</font>) <font color=#1b1baa>$al($o)</font>
+  }
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$em_Num</font>} {<b><font color=#3a6797>incr</font></b> i} {
+    <b><font color=#3a6797>catch</font></b> {
+      <b><font color=#3a6797>set</font></b> data(em_mnu,<font color=#1b1baa>$i</font>) <font color=#1b1baa>$em_mnu($i)</font>
+      <b><font color=#3a6797>set</font></b> data(em_ico,<font color=#1b1baa>$i</font>) <font color=#1b1baa>$em_ico($i)</font>
+      <b><font color=#3a6797>set</font></b> data(em_inf,<font color=#1b1baa>$i</font>) <font color=#1b1baa>$em_inf($i)</font>
+    }
+  }
+  <b><font color=#3a6797>set</font></b> data(INI,CSsaved) <font color=#1b1baa>$data(INI,CS)</font>
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists ::em::geometry]} {<b><font color=#3a6797>set</font></b> ::em::geometry <font color=#1b1baa>$al(EM,geometry)</font>}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::RestoreSettings></a>
+<b><font color=#ca14ca>proc</font></b> pref::RestoreSettings {} {
+  <i><font color=#4b5d50># Restores original settings.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>foreach</font></b> o [SavedOptions] {
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> al(<font color=#1b1baa>$o</font>) <font color=#1b1baa>$data($o)</font>}
+  }
+  <b><font color=#3a6797>dict</font></b> for {k info} <font color=#1b1baa>$stdkeys</font> {
+    <b><font color=#3a6797>set</font></b> keys(<font color=#1b1baa>$k</font>) <font color=#1b1baa>$savekeys($k)</font>
+    SelectKey <font color=#1b1baa>$k</font>
+  }
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$em_Num</font>} {<b><font color=#3a6797>incr</font></b> i} {
+    <b><font color=#3a6797>catch</font></b> {
+      <b><font color=#3a6797>set</font></b> em_mnu(<font color=#1b1baa>$i</font>) <font color=#1b1baa>$data(em_mnu,$i)</font>
+      <b><font color=#3a6797>set</font></b> em_ico(<font color=#1b1baa>$i</font>) <font color=#1b1baa>$data(em_ico,$i)</font>
+      <b><font color=#3a6797>set</font></b> em_inf(<font color=#1b1baa>$i</font>) <font color=#1b1baa>$data(em_inf,$i)</font>
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists ::em::geometry]} {<b><font color=#3a6797>set</font></b> ::em::geometry <font color=#1b1baa>$al(EM,geometry)</font>}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::TextIcons></a>
+<b><font color=#ca14ca>proc</font></b> pref::TextIcons {} {
+  <i><font color=#4b5d50># Returns a list of letters to be toolbar &quot;icons&quot;.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> &~=@$#%ABCDEFGHIJKLMNOPQRSTUVWXYZ
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::ReservedIcons></a>
+<b><font color=#ca14ca>proc</font></b> pref::ReservedIcons {} {
+  <i><font color=#4b5d50># Returns a list of icons already engaged by alited.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> file OpenFile box SaveFile saveall undo redo help replace run other ok color]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::Message></a>
+<b><font color=#ca14ca>proc</font></b> pref::Message {msg {mode 1}} {
+  <i><font color=#4b5d50># Displays a message in statusbar of preferences dialogue.</font></i>
+  <i><font color=#4b5d50>#   msg - message</font></i>
+  <i><font color=#4b5d50>#   mode - mode of Message</font></i>
+
+  fetchVars
+  alited::Message <font color=#1b1baa>$msg</font> <font color=#1b1baa>$mode</font> [<font color=#1b1baa>$obPrf</font> LabMess]
+}
+<a id=Main_Frame></a>
+<i><font color=#4b5d50># ________________________ Main Frame _________________________ #</font></i>
+<a id=pref::MainFrame></a>
+<b><font color=#ca14ca>proc</font></b> pref::MainFrame {} {
+  <i><font color=#4b5d50># Creates a main frame of the dialogue.</font></i>
+
+  fetchVars
+  <font color=#1b1baa>$obPrf</font> untouchWidgets *.cannbk*
+  <b><font color=#ca14ca>return</font></b> {
+    {fraL - - 1 1 {<font color=#653760>-st</font> nws <font color=#653760>-rw</font> 2}}
+    {.ButHome - - 1 1 {<font color=#653760>-st</font> we <font color=#653760>-pady</font> 0} \
+      {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;General&quot;</font> <font color=#653760>-com</font> <font color=#8b2a0e>&quot;alited::pref::Tab nbk&quot;</font> <font color=#653760>-style</font> TButtonWest}}
+    {.Cannbk + L 1 1 {<font color=#653760>-st</font> ns} {<font color=#653760>-w</font> 2 <font color=#653760>-h</font> 10 <font color=#653760>-highlightthickness</font> 1 \
+      <font color=#653760>-afteridle</font> {alited::pref::fillCan %w}}}
+    {.ButChange .butHome T 1 1 {<font color=#653760>-st</font> we <font color=#653760>-pady</font> 1} \
+      {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Editor&quot;</font> <font color=#653760>-com</font> <font color=#8b2a0e>&quot;alited::pref::Tab nbk2&quot;</font> <font color=#653760>-style</font> TButtonWest}}
+    {.Cannbk2 + L 1 1 {<font color=#653760>-st</font> ns} {<font color=#653760>-w</font> 2 <font color=#653760>-h</font> 10 <font color=#653760>-highlightthickness</font> 1 \
+      <font color=#653760>-afteridle</font> {alited::pref::fillCan %w}}}
+    {.ButCategories .butChange T 1 1 {<font color=#653760>-st</font> we <font color=#653760>-pady</font> 0} \
+      {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Units&quot;</font> <font color=#653760>-com</font> <font color=#8b2a0e>&quot;alited::pref::Tab nbk3&quot;</font> <font color=#653760>-style</font> TButtonWest}}
+    {.Cannbk3 + L 1 1 {<font color=#653760>-st</font> ns} {<font color=#653760>-w</font> 2 <font color=#653760>-h</font> 10 <font color=#653760>-highlightthickness</font> 1 \
+      <font color=#653760>-afteridle</font> {alited::pref::fillCan %w}}}
+    {.ButActions .butCategories T 1 1 {<font color=#653760>-st</font> we <font color=#653760>-pady</font> 1} \
+      {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Templates&quot;</font> <font color=#653760>-com</font> <font color=#8b2a0e>&quot;alited::pref::Tab nbk4&quot;</font> <font color=#653760>-style</font> TButtonWest}}
+    {.Cannbk4 + L 1 1 {<font color=#653760>-st</font> ns} {<font color=#653760>-w</font> 2 <font color=#653760>-h</font> 10 <font color=#653760>-highlightthickness</font> 1 \
+      <font color=#653760>-afteridle</font> {alited::pref::fillCan %w}}}
+    {.ButKeys .butActions T 1 1 {<font color=#653760>-st</font> we <font color=#653760>-pady</font> 0} \
+      {<font color=#653760>-image</font> alimg_kbd <font color=#653760>-compound</font> left <font color=#653760>-t</font> <font color=#8b2a0e>&quot;Keys&quot;</font> <font color=#653760>-com</font> <font color=#8b2a0e>&quot;alited::pref::Tab nbk5&quot;</font> \
+      <font color=#653760>-style</font> TButtonWest}}
+    {.Cannbk5 + L 1 1 {<font color=#653760>-st</font> ns} \
+      {<font color=#653760>-w</font> 2 <font color=#653760>-h</font> 10 <font color=#653760>-highlightthickness</font> 1 <font color=#653760>-afteridle</font> {alited::pref::fillCan %w}}}
+    {.ButTools .butKeys T 1 1 {<font color=#653760>-st</font> we <font color=#653760>-pady</font> 1} \
+      {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Tools&quot;</font> <font color=#653760>-com</font> <font color=#8b2a0e>&quot;alited::pref::Tab nbk6&quot;</font> <font color=#653760>-style</font> TButtonWest}}
+    {.Cannbk6 + L 1 1 {<font color=#653760>-st</font> ns} \
+      {<font color=#653760>-w</font> 2 <font color=#653760>-h</font> 10 <font color=#653760>-highlightthickness</font> 1 <font color=#653760>-afteridle</font> {alited::pref::fillCan %w}}}
+    {.v_  .butTools T 1 1 {<font color=#653760>-st</font> ns} {<font color=#653760>-h</font> 30}}
+    {fraR fraL L 1 1 {<font color=#653760>-st</font> nsew <font color=#653760>-cw</font> 1}}
+    {fraR.nbk - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> top <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both} {
+        f1 {<font color=#653760>-t</font> View}
+        f2 {<font color=#653760>-t</font> Saving}
+        f3 {<font color=#653760>-t</font> Projects}
+    }}
+    {fraR.nbk2 - - - - {<b><font color=#134070>pack</font></b> forget <font color=#653760>-side</font> top} {
+        f1 {<font color=#653760>-t</font> Editor}
+        f2 {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Tcl syntax&quot;</font>}
+        f3 {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;C/C++ syntax&quot;</font>}
+        f4 {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Plain text&quot;</font>}
+    }}
+    {fraR.nbk3 - - - - {<b><font color=#134070>pack</font></b> forget <font color=#653760>-side</font> top} {
+        f1 {<font color=#653760>-t</font> Units}
+    }}
+    {fraR.nbk4 - - - - {<b><font color=#134070>pack</font></b> forget <font color=#653760>-side</font> top} {
+        f1 {<font color=#653760>-t</font> Templates}
+    }}
+    {fraR.nbk5 - - - - {<b><font color=#134070>pack</font></b> forget <font color=#653760>-side</font> top} {
+        f1 {<font color=#653760>-t</font> Keys}
+    }}
+    {fraR.nbk6 - - - - {<b><font color=#134070>pack</font></b> forget <font color=#653760>-side</font> top} {
+        f1 {<font color=#653760>-t</font> Common}
+        f2 {<font color=#653760>-t</font> e_menu}
+        f3 {<font color=#653760>-t</font> bar-menu}
+        f4 {<font color=#653760>-t</font> Tkcon}
+    }}
+    {seh fraL T 1 2 {<font color=#653760>-st</font> nsew <font color=#653760>-pady</font> 2}}
+    {fraB + T 1 2 {<font color=#653760>-st</font> nsew} {<font color=#653760>-padding</font> {2 2}}}
+    {.ButHelp - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-t</font> {<font color=#1b1baa>$::alited::al(MC,help)</font>} \
+      <font color=#653760>-tip</font> F1 <font color=#653760>-com</font> ::alited::pref::Help}}
+    {.LabMess - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both <font color=#653760>-padx</font> 8}}
+    {.ButOK - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-anchor</font> s <font color=#653760>-padx</font> 2} {<font color=#653760>-t</font> Save <font color=#653760>-com</font> ::alited::pref::Ok}}
+    {.butCancel - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-anchor</font> s} {<font color=#653760>-t</font> Cancel <font color=#653760>-com</font> ::alited::pref::Cancel}}
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::CheckOk></a>
+<b><font color=#ca14ca>proc</font></b> pref::CheckOk {} {
+  <i><font color=#4b5d50># Checker for &quot;OK&quot; button.</font></i>
+  <i><font color=#4b5d50># Returns yes if OK button may be handled, else no.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(INI,LEAF)</font> && <font color=#1b1baa>$al(RE,leaf)</font> eq {}} {
+    <b><font color=#134070>bell</font></b>
+    ::alited::pref::Tab nbk3 <font color=#1b1baa>$win</font>.fra.fraR.nbk3.f1 yes no
+    <b><font color=#134070>focus</font></b> [<font color=#1b1baa>$obPrf</font> EntLf]
+    <b><font color=#ca14ca>return</font></b> no
+  }
+  <b><font color=#ca14ca>return</font></b> yes
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::Ok></a>
+<b><font color=#ca14ca>proc</font></b> pref::Ok {args} {
+  <i><font color=#4b5d50># Handler of &quot;OK&quot; button.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>if</font></b> {![CheckOk]} <b><font color=#ca14ca>return</font></b>
+  alited::CloseDlg
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(INI,confirmexit)</font>&gt;1} {
+    <b><font color=#3a6797>set</font></b> timo <font color=#8b2a0e>&quot;-timeout <font color=#1b1baa>{$</font>al(INI,confirmexit) ButOK<font color=#1b1baa>}</font>&quot;</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> timo {}
+  }
+  <b><font color=#3a6797>set</font></b> ans [alited::msg okcancel info <font color=#1b1baa>$al(MC,restart)</font> OK <font color=#653760>-centerme</font> <font color=#1b1baa>$win</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$timo</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ans</font>} {
+    <i><font color=#4b5d50># check options that can make alited unusable</font></i>
+    <b><font color=#3a6797>if</font></b> {![::apave::intInRange <font color=#1b1baa>$al(INI,HUE)</font> -50 50]} {<b><font color=#3a6797>set</font></b> al(INI,HUE) 0}
+    <b><font color=#3a6797>if</font></b> {![::apave::intInRange <font color=#1b1baa>$al(FONTSIZE,small)</font> 6 72]} {<b><font color=#3a6797>set</font></b> al(FONTSIZE,small) 9}
+    <b><font color=#3a6797>if</font></b> {![::apave::intInRange <font color=#1b1baa>$al(FONTSIZE,std)</font> 7 72]} {<b><font color=#3a6797>set</font></b> al(FONTSIZE,std) 10}
+    <b><font color=#3a6797>if</font></b> {![::apave::intInRange <font color=#1b1baa>$al(INI,RECENTFILES)</font> 10 50]} {<b><font color=#3a6797>set</font></b> al(INI,RECENTFILES) 16}
+    <b><font color=#3a6797>if</font></b> {![::apave::intInRange <font color=#1b1baa>$al(FAV,MAXLAST)</font> 10 100]} {<b><font color=#3a6797>set</font></b> al(FAV,MAXLAST) 100}
+    <b><font color=#3a6797>if</font></b> {![::apave::intInRange <font color=#1b1baa>$al(MAXFILES)</font> 1000 9999]} {<b><font color=#3a6797>set</font></b> al(MAXFILES) 5000}
+    <b><font color=#3a6797>if</font></b> {![::apave::intInRange <font color=#1b1baa>$al(INI,barlablen)</font> 10 100]} {<b><font color=#3a6797>set</font></b> al(INI,barlablen) 16}
+    <b><font color=#3a6797>if</font></b> {![::apave::intInRange <font color=#1b1baa>$al(INI,bartiplen)</font> 10 100]} {<b><font color=#3a6797>set</font></b> al(INI,bartiplen) 32}
+    <b><font color=#3a6797>if</font></b> {![::apave::intInRange <font color=#1b1baa>$al(CURSORWIDTH)</font> 1 8]} {<b><font color=#3a6797>set</font></b> al(CURSORWIDTH) 2}
+    <b><font color=#3a6797>set</font></b> al(THEME) <font color=#1b1baa>$opc1</font>
+    <b><font color=#3a6797>set</font></b> al(INI,CS) [GetCS]
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> is integer <font color=#653760>-strict</font> <font color=#1b1baa>$al(INI,CS)</font>]} {<b><font color=#3a6797>set</font></b> al(INI,CS) -1}
+    <b><font color=#3a6797>set</font></b> al(EM,CS)  [GetCS 2]
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> is integer <font color=#653760>-strict</font> <font color=#1b1baa>$al(EM,CS)</font>]} {<b><font color=#3a6797>set</font></b> al(EM,CS) -1}
+    <b><font color=#3a6797>set</font></b> al(ED,TclKeyWords) [[<font color=#1b1baa>$obPrf</font> TexTclKeys] get 1.0 {end -1c}]
+    <b><font color=#3a6797>set</font></b> al(ED,TclKeyWords) [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \n { }] <font color=#1b1baa>$al(ED,TclKeyWords)</font>]
+    <b><font color=#3a6797>set</font></b> al(ED,CKeyWords) [[<font color=#1b1baa>$obPrf</font> TexCKeys] get 1.0 {end -1c}]
+    <b><font color=#3a6797>set</font></b> al(ED,CKeyWords) [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \n { }] <font color=#1b1baa>$al(ED,CKeyWords)</font>]
+    <b><font color=#3a6797>set</font></b> al(BACKUP) [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$al(BACKUP)</font>]
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> al(TCLLIST) [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$al(TCLLIST)</font> 32 end]}
+    <b><font color=#3a6797>set</font></b> al(EM,TclList) <font color=#1b1baa>$al(EM,Tcl)</font>
+    <b><font color=#3a6797>foreach</font></b> tcl <font color=#1b1baa>$al(TCLLIST)</font> {
+      <b><font color=#3a6797>if</font></b> {[::apave::lsearchFile [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$al(EM,TclList)</font> \t] <font color=#1b1baa>$tcl</font>]&lt;0} {
+        <b><font color=#3a6797>append</font></b> al(EM,TclList) \t <font color=#1b1baa>$tcl</font>
+      }
+    }
+    <b><font color=#3a6797>set</font></b> al(EM,TclList) [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$al(EM,TclList)</font>]
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> al(TTLIST) [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$al(TTLIST)</font> 32 end]}
+    <b><font color=#3a6797>set</font></b> al(EM,tt=List) <font color=#1b1baa>$al(EM,tt=)</font>
+    <b><font color=#3a6797>foreach</font></b> tt <font color=#1b1baa>$al(TTLIST)</font> {
+      <b><font color=#3a6797>if</font></b> {[::apave::lsearchFile [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$al(EM,tt=List)</font> \t] <font color=#1b1baa>$tt</font>]&lt;0} {
+        <b><font color=#3a6797>append</font></b> al(EM,tt=List) \t <font color=#1b1baa>$tt</font>
+      }
+    }
+    <b><font color=#3a6797>set</font></b> al(EM,tt=List) [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$al(EM,tt=List)</font>]
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> al(WTLIST) [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$al(WTLIST)</font> 32 end]}
+    <b><font color=#3a6797>set</font></b> al(EM,wt=List) <font color=#1b1baa>$al(EM,wt=)</font>
+    <b><font color=#3a6797>foreach</font></b> wt <font color=#1b1baa>$al(WTLIST)</font> {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wt</font> ni [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$al(EM,wt=List)</font> \t]} {<b><font color=#3a6797>append</font></b> al(EM,wt=List) \t <font color=#1b1baa>$wt</font>}
+    }
+    <b><font color=#3a6797>set</font></b> al(EM,wt=List) [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$al(EM,wt=List)</font>]
+    <b><font color=#3a6797>set</font></b> plst [<b><font color=#3a6797>lsort</font></b> [<b><font color=#3a6797>list</font></b> {} <font color=#1b1baa>$al(comm_port)</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$al(comm_port_list)</font>]]
+    <b><font color=#3a6797>set</font></b> al(comm_port_list) [<b><font color=#3a6797>list</font></b>]
+    <b><font color=#3a6797>foreach</font></b> pt <font color=#1b1baa>$plst</font> {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$pt</font> ni <font color=#1b1baa>$al(comm_port_list)</font>} {<b><font color=#3a6797>lappend</font></b> al(comm_port_list) <font color=#1b1baa>$pt</font>}
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$al(comm_port_list)</font>]&gt;32} <b><font color=#ca14ca>break</font></b>
+    }
+    <b><font color=#3a6797>set</font></b> al(EM,DiffTool) [<b><font color=#3a6797>file</font></b> join {<b><font color=#3a6797>*</font></b>}[<b><font color=#3a6797>file</font></b> split <font color=#1b1baa>$al(EM,DiffTool)</font>]]
+    <b><font color=#3a6797>set</font></b> al(ED,trans) [[<font color=#1b1baa>$obPrf</font> CbxTrans] cget <font color=#653760>-values</font>]
+    ::apave::PushInList al(ED,trans) <font color=#1b1baa>$al(ED,tran)</font>
+    <b><font color=#3a6797>set</font></b> al(RE,proc) [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$al(RE,proc)</font>]
+    <font color=#1b1baa>$obPrf</font> res <font color=#1b1baa>$win</font> 1
+    alited::Exit - 1 no
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::Cancel></a>
+<b><font color=#ca14ca>proc</font></b> pref::Cancel {args} {
+  <i><font color=#4b5d50># Closes Preferences.</font></i>
+  <i><font color=#4b5d50>#   args - not empty, if called by Esc, Alt+F4 or &quot;X&quot; button</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$args</font>]} {
+    <b><font color=#3a6797>set</font></b> ischanged [<b><font color=#3a6797>expr</font></b> { \
+      <font color=#1b1baa>$al(THEME)</font> ne <font color=#1b1baa>$opc1</font> || <font color=#1b1baa>$al(INI,CS)</font> ne [GetCS] || <font color=#1b1baa>$al(EM,CS)</font> ne [GetCS 2]}]
+    <b><font color=#3a6797>foreach</font></b> o [SavedOptions] {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exist data(<font color=#1b1baa>$o</font>)] && <font color=#1b1baa>$al($o)</font> ne <font color=#1b1baa>$data($o)</font>} {
+        <b><font color=#3a6797>set</font></b> ischanged yes
+        <b><font color=#ca14ca>break</font></b>
+      }
+    }
+    <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$em_Num</font>} {<b><font color=#3a6797>incr</font></b> i} {
+      <b><font color=#3a6797>catch</font></b> {
+        <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$em_inf($i)</font> em1 idx1 item1
+        <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$data(em_inf,$i)</font> em2 idx2 item2
+        <b><font color=#3a6797>set</font></b> em1 [<b><font color=#3a6797>file</font></b> rootname <font color=#1b1baa>$em1</font>]  ;<i><font color=#4b5d50># for compatibility</font></i>
+        <b><font color=#3a6797>set</font></b> em2 [<b><font color=#3a6797>file</font></b> rootname <font color=#1b1baa>$em2</font>]  ;<i><font color=#4b5d50># with old &quot;.mnu&quot; extension</font></i>
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$em_mnu($i)</font> ne <font color=#1b1baa>$data(em_mnu,$i)</font> || \
+            <font color=#1b1baa>$em_ico($i)</font> ne <font color=#1b1baa>$data(em_ico,$i)</font> || \
+            <font color=#1b1baa>$em1</font> ne <font color=#1b1baa>$em2</font> || <font color=#1b1baa>$idx1</font> ne <font color=#1b1baa>$idx2</font> || <font color=#1b1baa>$item1</font> ne <font color=#1b1baa>$item2</font>} {
+          <b><font color=#3a6797>set</font></b> ischanged yes
+        }
+      }
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ischanged</font>} {
+      <b><font color=#3a6797>if</font></b> {![alited::msg okcancel warn {Changes will be lost!} CANCEL]} <b><font color=#ca14ca>return</font></b>
+    }
+  }
+  RestoreSettings
+  alited::CloseDlg
+  <font color=#1b1baa>$obPrf</font> res <font color=#1b1baa>$win</font> 0
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::Tab></a>
+<b><font color=#ca14ca>proc</font></b> pref::Tab {tab {nt <font color=#8b2a0e>&quot;&quot;</font>} {doit no} {focus1st yes}} {
+  <i><font color=#4b5d50># Handles changing tabs of notebooks.</font></i>
+  <i><font color=#4b5d50>#   tab - name of notebook</font></i>
+  <i><font color=#4b5d50>#   nt - tab of notebook</font></i>
+  <i><font color=#4b5d50>#   doit - if yes, forces changing tabs</font></i>
+  <i><font color=#4b5d50>#   focus1st - if yes, focuses 1st widget of tab</font></i>
+  <i><font color=#4b5d50># At changing the current notebook: we need to save the old selection</font></i>
+  <i><font color=#4b5d50># in order to restore the selection at returning to the notebook.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>foreach</font></b> nbk {nbk nbk2 nbk3 nbk4 nbk5 nbk6} {fillCan [<font color=#1b1baa>$obPrf</font> Can<font color=#1b1baa>$nbk</font>]}
+  <b><font color=#3a6797>foreach</font></b> but {Home Change Categories Actions Keys Tools} {
+    [<font color=#1b1baa>$obPrf</font> But<font color=#1b1baa>$but</font>] configure <font color=#653760>-style</font> TButtonWest
+  }
+  <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$tab</font> {
+    nbk  {<b><font color=#3a6797>set</font></b> but Home}
+    nbk2 {<b><font color=#3a6797>set</font></b> but Change}
+    nbk3 {<b><font color=#3a6797>set</font></b> but Categories}
+    nbk4 {<b><font color=#3a6797>set</font></b> but Actions}
+    nbk5 {<b><font color=#3a6797>set</font></b> but Keys}
+    nbk6 {<b><font color=#3a6797>set</font></b> but Tools}
+  }
+  [<font color=#1b1baa>$obPrf</font> But<font color=#1b1baa>$but</font>] configure <font color=#653760>-style</font> TButtonWestHL
+  fillCan [<font color=#1b1baa>$obPrf</font> Can<font color=#1b1baa>$tab</font>] yes
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tab</font> ne <font color=#1b1baa>$curTab</font> || <font color=#1b1baa>$doit</font>} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$curTab</font> ne {}} {
+      <b><font color=#3a6797>set</font></b> arrayTab(<font color=#1b1baa>$curTab</font>) [<font color=#1b1baa>$win</font>.fra.fraR.<font color=#1b1baa>$curTab</font> select]
+      <b><font color=#134070>pack</font></b> forget <font color=#1b1baa>$win</font>.fra.fraR.<font color=#1b1baa>$curTab</font>
+    }
+    <b><font color=#3a6797>set</font></b> curTab <font color=#1b1baa>$tab</font>
+    <b><font color=#134070>pack</font></b> <font color=#1b1baa>$win</font>.fra.fraR.<font color=#1b1baa>$curTab</font> <font color=#653760>-expand</font> yes <font color=#653760>-fill</font> both
+    <b><font color=#3a6797>catch</font></b> {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$nt</font> eq {}} {<b><font color=#3a6797>set</font></b> nt <font color=#1b1baa>$arrayTab($curTab)</font>}
+      <font color=#1b1baa>$win</font>.fra.fraR.<font color=#1b1baa>$curTab</font> select <font color=#1b1baa>$nt</font>
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tab</font> eq {nbk2}} {
+    <i><font color=#4b5d50># check if a color scheme is switched light/dark - if yes, disable colors</font></i>
+    <b><font color=#3a6797>set</font></b> cs [GetCS]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$data(INI,CSsaved)</font>!=<font color=#1b1baa>$cs</font>} {
+      Tcl_Default 0 yes
+      C_Default 0 yes
+      UpdateSyntaxTab
+      UpdateSyntaxTab 2
+    }
+    <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$obPrf</font> csGet <font color=#1b1baa>$cs</font>] fg - bg - - sbg sfg ibg
+    [<font color=#1b1baa>$obPrf</font> TexSample] configure <font color=#653760>-fg</font> <font color=#1b1baa>$fg</font> <font color=#653760>-bg</font> <font color=#1b1baa>$bg</font> \
+      <font color=#653760>-selectbackground</font> <font color=#1b1baa>$sbg</font> <font color=#653760>-selectforeground</font> <font color=#1b1baa>$sfg</font> <font color=#653760>-insertbackground</font> <font color=#1b1baa>$ibg</font>
+    [<font color=#1b1baa>$obPrf</font> TexCSample] configure <font color=#653760>-fg</font> <font color=#1b1baa>$fg</font> <font color=#653760>-bg</font> <font color=#1b1baa>$bg</font> \
+      <font color=#653760>-selectbackground</font> <font color=#1b1baa>$sbg</font> <font color=#653760>-selectforeground</font> <font color=#1b1baa>$sfg</font> <font color=#653760>-insertbackground</font> <font color=#1b1baa>$ibg</font>
+    <b><font color=#3a6797>set</font></b> data(INI,CSsaved) <font color=#1b1baa>$cs</font>
+  }
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match root* <font color=#1b1baa>$geo</font>]} {
+    <i><font color=#4b5d50># the geometry of the dialogue - its first setting</font></i>
+    <i><font color=#4b5d50># (makes sense at switching tabs, when open 1st time)</font></i>
+    <b><font color=#3a6797>after</font></b> 10 [<b><font color=#3a6797>list</font></b> after 10 [<b><font color=#3a6797>list</font></b> after 10 [<b><font color=#3a6797>list</font></b> after 10 \
+      <font color=#8b2a0e>&quot;wm geometry <font color=#1b1baa>$</font>win \[wm geometry <font color=#1b1baa>$</font>win\]&quot;</font>]]]
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$focus1st</font>} {
+    <b><font color=#3a6797>foreach</font></b> w [<font color=#1b1baa>$win</font>.fra.fraR.<font color=#1b1baa>$curTab</font> tabs] {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match *<font color=#1b1baa>$nt</font> <font color=#1b1baa>$w</font>]} {
+        <b><font color=#3a6797>after</font></b> 10 [<b><font color=#3a6797>list</font></b> after 10 [<b><font color=#3a6797>list</font></b> after 10 [<b><font color=#3a6797>list</font></b> after 10 <font color=#8b2a0e>&quot;::apave::focusFirst <font color=#1b1baa>$</font>w&quot;</font>]]]
+        <b><font color=#ca14ca>break</font></b>
+      }
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::Help></a>
+<b><font color=#ca14ca>proc</font></b> pref::Help {} {
+  <i><font color=#4b5d50># Shows a help on a current tab.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> sel [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> [<font color=#1b1baa>$win</font>.fra.fraR.<font color=#1b1baa>$curTab</font> select] .] end]
+  alited::Help <font color=#1b1baa>$win</font> <font color=#8b2a0e>&quot;-<font color=#1b1baa>${</font>curTab<font color=#1b1baa>}</font>-<font color=#1b1baa>$</font>sel&quot;</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::fillCan></a>
+<b><font color=#ca14ca>proc</font></b> pref::fillCan {w {selected no}} {
+  <i><font color=#4b5d50># Sets a bg color of tab canvas.</font></i>
+  <i><font color=#4b5d50>#   w - canvas' path</font></i>
+  <i><font color=#4b5d50>#   selected - yes for selected tab</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$w</font> delete <font color=#1b1baa>$data(CANVAS,$w)</font>}
+  <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$obPrf</font> csGet] - - - bg selbg - - - - hotbg
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$selected</font>} {
+    <b><font color=#3a6797>set</font></b> bg <font color=#1b1baa>$hotbg</font>
+    <font color=#1b1baa>$w</font> configure <font color=#653760>-highlightbackground</font> <font color=#1b1baa>$hotbg</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <font color=#1b1baa>$w</font> configure <font color=#653760>-highlightbackground</font> <font color=#1b1baa>$bg</font>
+  }
+  <b><font color=#3a6797>set</font></b> data(CANVAS,<font color=#1b1baa>$w</font>) [<font color=#1b1baa>$w</font> create rectangle {0 0 10 100} <font color=#653760>-fill</font> <font color=#1b1baa>$bg</font> <font color=#653760>-outline</font> <font color=#1b1baa>$selbg</font>]
+}<a id=Tabs_General></a>
+<i><font color=#4b5d50># ________________________ Tabs &quot;General&quot; _________________________ #</font></i>
+<a id=pref::General_Tab1></a>
+<b><font color=#ca14ca>proc</font></b> pref::General_Tab1 {} {
+  <i><font color=#4b5d50># Serves to layout &quot;General&quot; tab.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> opcc [<b><font color=#3a6797>set</font></b> opcc2 [msgcat::mc {-2: Default}]]
+  <b><font color=#3a6797>set</font></b> opcColors [<b><font color=#3a6797>list</font></b> <font color=#8b2a0e>&quot;<font color=#1b1baa>{$</font>opcc<font color=#1b1baa>}</font>&quot;</font>]
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i -1; <b><font color=#3a6797>set</font></b> n [apave::cs_MaxBasic]} {<font color=#1b1baa>$i</font>&lt;=<font color=#1b1baa>$n</font>} {<b><font color=#3a6797>incr</font></b> i} {
+    <b><font color=#3a6797>if</font></b> {((<font color=#1b1baa>$i</font>+2) % (<font color=#1b1baa>$n</font>/2+2)) == 0} {<b><font color=#3a6797>lappend</font></b> opcColors |}
+    <b><font color=#3a6797>set</font></b> csname [<font color=#1b1baa>$obPrf</font> csGetName <font color=#1b1baa>$i</font>]
+    <b><font color=#3a6797>lappend</font></b> opcColors [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$csname</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i</font> == <font color=#1b1baa>$al(INI,CS)</font>} {<b><font color=#3a6797>set</font></b> opcc <font color=#1b1baa>$csname</font>}
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i</font> == <font color=#1b1baa>$al(EM,CS)</font>} {<b><font color=#3a6797>set</font></b> opcc2 <font color=#1b1baa>$csname</font>}
+  }
+  <b><font color=#3a6797>set</font></b> lightdark [msgcat::mc {Light / Dark}]
+  <b><font color=#3a6797>set</font></b> opcThemes [<b><font color=#3a6797>list</font></b> default clam classic alt -- \
+    <font color=#8b2a0e>&quot;<font color=#1b1baa>{$</font>lightdark<font color=#1b1baa>}</font> awlight awdark -- \</font>
+<font color=#8b2a0e>    azure-light azure-dark -- forest-light forest-dark -- \</font>
+<font color=#8b2a0e>    sun-valley-light sun-valley-dark -- lightbrown darkbrown -- plastik&quot;</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(IsWindows)</font>} {
+    <b><font color=#3a6797>lappend</font></b> opcThemes -- <font color=#8b2a0e>&quot;<font color=#1b1baa>{[</font>msgcat::mc <font color=#1b1baa>{</font>Windows themes<font color=#1b1baa>}]}</font> vista xpnative winnative&quot;</font>
+  }
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first <font color=#1b1baa>$al(THEME)</font> <font color=#1b1baa>$opcThemes</font>]&lt;0} {
+    <b><font color=#3a6797>set</font></b> opc1 [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$opcThemes</font> 0]
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> opc1 <font color=#1b1baa>$al(THEME)</font>
+  }
+  <b><font color=#ca14ca>return</font></b> {
+    {v_ - - 1 1}
+    {fra1 v_ T 1 2 {<font color=#653760>-st</font> nsew <font color=#653760>-cw</font> 1}}
+    {.labTheme - - 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Ttk theme:}}}
+    {.opc1 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} \
+      {::alited::pref::opc1 ::alited::pref::opcThemes \
+      {<font color=#653760>-width</font> 21 <font color=#653760>-compound</font> left <font color=#653760>-image</font> alimg_gulls \
+      <font color=#653760>-tip</font> {<font color=#653760>-indexedtips</font> 5 <font color=#8b2a0e>&quot;-BALTIP <font color=#1b1baa>{$</font>al(MC,needcs)<font color=#1b1baa>}</font> -MAXEXP 1&quot;</font>}} {}}}
+    {.labCS .labTheme T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Color scheme:}}}
+    {.opc2 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {::alited::pref::opcc ::alited::pref::opcColors \
+    {<font color=#653760>-width</font> 21 <font color=#653760>-compound</font> left <font color=#653760>-image</font> alimg_color <font color=#653760>-com</font> alited::pref::CheckCS \
+    <font color=#653760>-tip</font> {<font color=#653760>-indexedtips</font> \
+      0 {<font color=#1b1baa>$al(MC,nocs)</font>} \
+      2 {<font color=#1b1baa>$al(MC,fitcs)</font>: awlight} \
+      3 {<font color=#1b1baa>$al(MC,fitcs)</font>: azure-light} \
+      4 {<font color=#1b1baa>$al(MC,fitcs)</font>: forest-light} \
+      5 {<font color=#1b1baa>$al(MC,fitcs)</font>: sun-valley-light} \
+      6 {<font color=#1b1baa>$al(MC,fitcs)</font>: lightbrown} \
+      26 {<font color=#1b1baa>$al(MC,fitcs)</font>: sun-valley-dark} \
+      27 {<font color=#1b1baa>$al(MC,fitcs)</font>: awdark} \
+      28 {<font color=#1b1baa>$al(MC,fitcs)</font>: azure-dark} \
+      29 {<font color=#1b1baa>$al(MC,fitcs)</font>: forest-dark} \
+      30 {<font color=#1b1baa>$al(MC,fitcs)</font>: sun-valley-dark} \
+      31 {<font color=#1b1baa>$al(MC,fitcs)</font>: darkbrown} \
+      }} {alited::pref::opcToolPre %a}}}
+    {.butOK + L 1 1 {<font color=#653760>-padx</font> 20} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(MC,test)&quot;</font> <font color=#653760>-com</font> {alited::pref::CheckTheming yes yes}}}
+    {.labHue .labCS T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> Tint:}}
+    {.spxHue + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} \
+      {<font color=#653760>-tvar</font> ::alited::al(INI,HUE) <font color=#653760>-from</font> -50 <font color=#653760>-to</font> 50 <font color=#653760>-increment</font> 5 <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,hue)</font>}}}
+    {.labCurw .labHue T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Cursor width:}}}
+    {.spxCurw + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-tvar</font> ::alited::al(CURSORWIDTH) <font color=#653760>-from</font> 1 <font color=#653760>-to</font> 8}}
+    {.labCC + L 1 1 {<font color=#653760>-st</font> we <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Color of cursor:}}}
+    {.clrCC + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(CURSORCOLOR) <font color=#653760>-w</font> 14}}
+    {seh_ fra1 T 1 2 {<font color=#653760>-pady</font> 4}}
+    {fra2 + T 1 2 {<font color=#653760>-st</font> nsew <font color=#653760>-cw</font> 1}}
+    {.labLocal - - 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Preferable locale:} <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,locale)</font>}}}
+    {.cbxLocal + L 1 1 {<font color=#653760>-st</font> sew <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} \
+      {<font color=#653760>-tvar</font> ::alited::al(LOCAL) <font color=#653760>-values</font> {<font color=#1b1baa>$::alited::pref::locales</font>} <font color=#653760>-w</font> 4 \
+      <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,locale)</font>} <font color=#653760>-state</font> readonly <font color=#653760>-selcombobox</font> alited::pref::GetLocaleImage \
+      <font color=#653760>-afteridle</font> alited::pref::GetLocaleImage}}
+    {.LabLocales + L 1 7}
+    {.labFon .labLocal T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> Font:}}
+    {.fonTxt1 + L 1 7 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-tvar</font> ::alited::al(FONT) <font color=#653760>-w</font> 50}}
+    {.labFsz1 .labFon T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Small font size:}}}
+    {.spxFsz1 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} \
+      {<font color=#653760>-tvar</font> ::alited::al(FONTSIZE,small) <font color=#653760>-from</font> 6 <font color=#653760>-to</font> 72}}
+    {.labFsz2 .labFsz1 T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Middle font size:}}}
+    {.spxFsz2 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-tvar</font> ::alited::al(FONTSIZE,std) <font color=#653760>-from</font> 7 <font color=#653760>-to</font> 72}}
+    {seh_2 fra2 T 1 2 {<font color=#653760>-pady</font> 4}}
+    {lab + T 1 2 {<font color=#653760>-st</font> w <font color=#653760>-pady</font> 4 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> Notes:}}
+    {fra3 + T 1 2 {<font color=#653760>-st</font> nsew <font color=#653760>-rw</font> 1 <font color=#653760>-cw</font> 1}}
+    {.TexNotes - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both <font color=#653760>-padx</font> 3} \
+      {<font color=#653760>-h</font> 20 <font color=#653760>-w</font> 70 <font color=#653760>-wrap</font> word <font color=#653760>-tabnext</font> {alited::Tnext *.spxCurw} \
+      <font color=#653760>-tip</font> {<font color=#653760>-BALTIP</font> {<font color=#1b1baa>$al(MC,notes)</font>} <font color=#653760>-MAXEXP</font> 1}}}
+    {.sbv + L - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left}}
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::General_Tab2></a>
+<b><font color=#ca14ca>proc</font></b> pref::General_Tab2 {} {
+  <i><font color=#4b5d50># Serves to layout &quot;General/Saving&quot; tab.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> {
+    {v_ - - 1 1}
+    {fra v_ T 1 1 {<font color=#653760>-st</font> nsew <font color=#653760>-cw</font> 1 <font color=#653760>-rw</font> 1}}
+    {fra.scf - - 1 1  {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} {<font color=#653760>-mode</font> y}}
+    {.labport - - 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Port to listen alited:&quot;</font>}}
+    {.cbxport + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5} \
+      {<font color=#653760>-tvar</font> ::alited::al(comm_port) <font color=#653760>-values</font> {<font color=#1b1baa>$al(comm_port_list)</font>} <font color=#653760>-w</font> 8 \
+      <font color=#653760>-tip</font> <font color=#8b2a0e>&quot;The empty value allows\nmultiple alited apps.&quot;</font>}}
+    {.labConf .labport T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Confirm exit:&quot;</font>}}
+    {.spxConf + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} \
+      {<font color=#653760>-tvar</font> ::alited::al(INI,confirmexit) <font color=#653760>-from</font> 0 <font color=#653760>-to</font> 60 <font color=#653760>-tip</font> {<font color=#8b2a0e>&quot;&gt; 1&quot;</font> : N sec.}}}
+    {.seh1 .labConf T 1 4 {<font color=#653760>-st</font> ew <font color=#653760>-pady</font> 5}}
+    {.labS + T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Save configuration on&quot;</font>}}
+    {.labSonadd + T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;opening a file:&quot;</font>}}
+    {.swiOnadd + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-var</font> ::alited::al(INI,save_onadd)}}
+    {.labSonclose .labSonadd T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;closing a file:&quot;</font>}}
+    {.swiOnclose + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-var</font> ::alited::al(INI,save_onclose)}}
+    {.labSonsave .labSonclose T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;saving a file:&quot;</font>}}
+    {.swiOnsave + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-var</font> ::alited::al(INI,save_onsave)}}
+    {.labSave .labSonsave T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Save before bar-menu runs:&quot;</font>}}
+    {.rad1 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-padx</font> 3} {<font color=#653760>-var</font> ::alited::al(EM,save) <font color=#653760>-value</font> 1 <font color=#653760>-t</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(MC,allfiles)&quot;</font>}}
+    {.rad2 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-padx</font> 3} {<font color=#653760>-var</font> ::alited::al(EM,save) <font color=#653760>-value</font> 2 <font color=#653760>-t</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(MC,currfile)&quot;</font>}}
+    {.rad3 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-padx</font> 3} {<font color=#653760>-var</font> ::alited::al(EM,save) <font color=#653760>-value</font> 3 <font color=#653760>-t</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(MC,none)&quot;</font>}}
+    {.seh3 .labSave T 1 4 {<font color=#653760>-st</font> ew <font color=#653760>-pady</font> 5}}
+    {.labRecnt + T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;'Recent Files' length:&quot;</font>}}
+    {.spxRecnt + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(INI,RECENTFILES) <font color=#653760>-from</font> 10 <font color=#653760>-to</font> 50}}
+    {.labMaxLast .labRecnt T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;'Last Visited' length:&quot;</font>}}
+    {.spxMaxLast + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(FAV,MAXLAST) <font color=#653760>-from</font> 10 <font color=#653760>-to</font> 100}}
+    {.labMaxFiles .labMaxLast T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Maximum of project files:&quot;</font>}}
+    {.spxMaxFiles + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(MAXFILES) <font color=#653760>-from</font> 1000 <font color=#653760>-to</font> 9999}}
+    {.seh4 .labMaxFiles T 1 4 {<font color=#653760>-st</font> ew <font color=#653760>-pady</font> 5}}
+    {.labBackup + T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Back up files to a project's subdirectory:&quot;</font>}}
+    {.cbxBackup + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} \
+      {<font color=#653760>-tvar</font> ::alited::al(BACKUP) <font color=#653760>-values</font> {{} .bak} <font color=#653760>-state</font> readonly <font color=#653760>-w</font> 6 \
+      <font color=#653760>-tip</font> <font color=#8b2a0e>&quot;A subdirectory of projects where backup copies of files will be saved to.\nSet the field blank to cancel the backup.&quot;</font> \
+      <font color=#653760>-afteridle</font> alited::pref::CbxBackup <font color=#653760>-selcombobox</font> alited::pref::CbxBackup}}
+    {.LabMaxBak + L 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 1} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;  Maximum:&quot;</font>}}
+    {.SpxMaxBak + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 1} \
+      {<font color=#653760>-tvar</font> ::alited::al(MAXBACKUP) <font color=#653760>-from</font> 1 <font color=#653760>-to</font> 99 <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,maxbak)</font>}}}
+    {.labBell .labBackup T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Bell at warnings:&quot;</font>}}
+    {.swiBell + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} \
+      {<font color=#653760>-var</font> ::alited::al(INI,belltoll) <font color=#653760>-tabnext</font> alited::Tnext}}
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::General_Tab3></a>
+<b><font color=#ca14ca>proc</font></b> pref::General_Tab3 {} {
+  <i><font color=#4b5d50># Serves to layout &quot;General/Projects&quot; tab.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> {
+    {v_ - - 1 10}
+    {fra2 v_ T 1 2 {<font color=#653760>-st</font> nsew <font color=#653760>-cw</font> 1}}
+    {.labDef - - 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Default values for new projects:}}}
+    {.swiDef + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} \
+      {<font color=#653760>-var</font> ::alited::al(PRJDEFAULT) <font color=#653760>-com</font> alited::pref::CheckUseDef \
+      <font color=#653760>-afteridle</font> alited::pref::CheckUseDef}}
+    {.seh .labDef T 1 10 {<font color=#653760>-st</font> ew <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3}}
+    {.labIgn + T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 8 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,Ign:)</font>}}}
+    {.EntIgn + L 1 9 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 3} {<font color=#653760>-tvar</font> ::alited::al(DEFAULT,prjdirign) <font color=#653760>-w</font> 50}}
+    {.labEOL .labIgn T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,EOL:)</font>}}}
+    {.CbxEOL + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} \
+      {<font color=#653760>-tvar</font> ::alited::al(DEFAULT,prjEOL) <font color=#653760>-values</font> {{} LF CR CRLF} <font color=#653760>-state</font> readonly <font color=#653760>-w</font> 9}}
+    {.labIndent .labEOL T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,indent:)</font>}}}
+    {.SpxIndent + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} \
+      {<font color=#653760>-tvar</font> ::alited::al(DEFAULT,prjindent) <font color=#653760>-from</font> 0 <font color=#653760>-to</font> 8 <font color=#653760>-com</font> ::alited::pref::CheckIndent}}
+    {.ChbIndAuto + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} \
+      {<font color=#653760>-var</font> ::alited::al(DEFAULT,prjindentAuto) <font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,indentAuto)</font>}}}
+    {.labRedunit .labIndent T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,redunit)</font>}}}
+    {.SpxRedunit + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} \
+      {<font color=#653760>-tvar</font> ::alited::al(DEFAULT,prjredunit) <font color=#653760>-from</font> <font color=#1b1baa>$al(minredunit)</font> <font color=#653760>-to</font> 100}}
+    {.labMult .labRedunit T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} \
+      {<font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,multiline)</font>} <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,notrecomm)</font>}}}
+    {.SwiMult + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} \
+      {<font color=#653760>-var</font> ::alited::al(DEFAULT,prjmultiline) <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,notrecomm)</font>}}}
+    {.labTrWs .labMult T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,trailwhite)</font>}}}
+    {.SwiTrWs + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} \
+      {<font color=#653760>-var</font> ::alited::al(DEFAULT,prjtrailwhite) <font color=#653760>-tabnext</font> alited::Tnext}}
+    {.labTrans .labTrWs T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Translation link:}}}
+    {.CbxTrans + L 1 9 {<font color=#653760>-st</font> ew <font color=#653760>-pady</font> 5} {<font color=#653760>-h</font> 12 <font color=#653760>-cbxsel</font> {<font color=#1b1baa>$al(ED,tran)</font>} \
+      <font color=#653760>-tvar</font> ::alited::al(ED,tran) <font color=#653760>-values</font> {<font color=#1b1baa>$al(ED,trans)</font>} \
+      <font color=#653760>-clearcom</font> {alited::main::ClearCbx %w ::alited::al(ED,tran)}}}
+    {#.labSwTrans .labTrans T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Adding translations:}}}
+    {#.SwiTrans + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-var</font> ::alited::al(ED,transadd) <font color=#653760>-tip</font> {If OFF, replaces the original text.}}}
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::opcToolPre></a>
+<b><font color=#ca14ca>proc</font></b> pref::opcToolPre {args} {
+  <i><font color=#4b5d50># Gets colors for &quot;Color schemes&quot; items.</font></i>
+  <i><font color=#4b5d50>#   args - a color scheme's index and name, separated by &quot;:&quot;</font></i>
+
+  <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$args</font> a
+  <b><font color=#3a6797>set</font></b> a [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$a</font> :]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is integer <font color=#1b1baa>$a</font>]} {
+    <b><font color=#3a6797>lassign</font></b> [::apave::obj csGet <font color=#1b1baa>$a</font>] - fg - bg
+    <b><font color=#ca14ca>return</font></b> <font color=#8b2a0e>&quot;-background <font color=#1b1baa>$</font>bg -foreground <font color=#1b1baa>$</font>fg&quot;</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#ca14ca>return</font></b> {}
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::CbxBackup></a>
+<b><font color=#ca14ca>proc</font></b> pref::CbxBackup {} {
+  <i><font color=#4b5d50># Check for access to SpxMaxBak field.</font></i>
+  <i><font color=#4b5d50># If CbxBackup is empty (no backup), SpxMaxBak should be disabled.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(BACKUP)</font> eq {}} {<b><font color=#3a6797>set</font></b> state disabled} {<b><font color=#3a6797>set</font></b> state normal}
+  [<font color=#1b1baa>$obPrf</font> SpxMaxBak] configure <font color=#653760>-state</font> <font color=#1b1baa>$state</font>
+  [<font color=#1b1baa>$obPrf</font> LabMaxBak] configure <font color=#653760>-state</font> <font color=#1b1baa>$state</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::CheckUseDef></a>
+<b><font color=#ca14ca>proc</font></b> pref::CheckUseDef {} {
+  <i><font color=#4b5d50># Enables/disables the project default fields.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(PRJDEFAULT)</font>} {
+    <b><font color=#3a6797>set</font></b> state normal
+    [<font color=#1b1baa>$obPrf</font> CbxEOL] configure <font color=#653760>-state</font> readonly
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> state disabled
+    [<font color=#1b1baa>$obPrf</font> CbxEOL] configure <font color=#653760>-state</font> <font color=#1b1baa>$state</font>
+  }
+  <i><font color=#4b5d50># SwiTrans obsolete</font></i>
+  <b><font color=#3a6797>foreach</font></b> w {EntIgn SpxIndent SpxRedunit SwiMult ChbIndAuto SwiTrWs CbxTrans} {
+    [<font color=#1b1baa>$obPrf</font> <font color=#1b1baa>$w</font>] configure <font color=#653760>-state</font> <font color=#1b1baa>$state</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::GetCS></a>
+<b><font color=#ca14ca>proc</font></b> pref::GetCS {{ncc {}}} {
+  <i><font color=#4b5d50># Gets a color scheme's index from *opcc* / *opcc2*  variable.</font></i>
+  <i><font color=#4b5d50>#   ncc - {} for opcc, {2} for opcc2</font></i>
+
+  fetchVars
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>scan</font></b> [<b><font color=#3a6797>set</font></b> opcc<font color=#1b1baa>$ncc</font>] %d:]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::CsDark></a>
+<b><font color=#ca14ca>proc</font></b> pref::CsDark {{cs <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Gets a lightness of a color scheme.</font></i>
+  <i><font color=#4b5d50>#   cs - the color scheme's index (if omitted, the chosen one's)</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$cs</font> eq {}} {<b><font color=#3a6797>set</font></b> cs [GetCS]}
+  <b><font color=#ca14ca>return</font></b> [::apave::obj csDark <font color=#1b1baa>$cs</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::GetLocaleImage></a>
+<b><font color=#ca14ca>proc</font></b> pref::GetLocaleImage {} {
+
+  fetchVars
+  [<font color=#1b1baa>$obPrf</font> LabLocales] configure <font color=#653760>-image</font> ::alited::pref::LOC<font color=#1b1baa>$al(LOCAL)</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::InitLocales></a>
+<b><font color=#ca14ca>proc</font></b> pref::InitLocales {} {
+  <i><font color=#4b5d50># Creates flag images to display at &quot;Preferable locale&quot;.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$locales</font>]} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>set</font></b> imd [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::DATADIR</font> img]
+  <b><font color=#3a6797>set</font></b> locales [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>foreach</font></b> lm [<b><font color=#3a6797>glob</font></b> <font color=#653760>-nocomplain</font> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$imd</font> ??.png]] {
+    <b><font color=#3a6797>set</font></b> loc [<b><font color=#3a6797>file</font></b> rootname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$lm</font>]]
+    <b><font color=#134070>image</font></b> create photo ::alited::pref::LOC<font color=#1b1baa>$loc</font> <font color=#653760>-file</font> <font color=#1b1baa>$lm</font>
+    <b><font color=#3a6797>lappend</font></b> locales <font color=#1b1baa>$loc</font>
+  }
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>file</font></b> exists [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::MSGSDIR</font> <font color=#1b1baa>$al(LOCAL)</font>.msg]]} {
+    <b><font color=#3a6797>set</font></b> al(LOCAL) en
+  }
+  <b><font color=#3a6797>set</font></b> locales [<b><font color=#3a6797>lsort</font></b> <font color=#1b1baa>$locales</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::CheckIndent></a>
+<b><font color=#ca14ca>proc</font></b> pref::CheckIndent {{pre <font color=#8b2a0e>&quot;DEFAULT,&quot;</font>}} {
+  <i><font color=#4b5d50># Sets &quot;auto indentation&quot;, if indent is 1 (for indentation by Tabs)</font></i>
+  <i><font color=#4b5d50>#   pre - prefix: if {}, refers to a project's settings, by default to preferences'</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(${pre}prjindent)</font>&lt;=1} {<b><font color=#3a6797>set</font></b> al(<font color=#1b1baa>${pre}</font>prjindentAuto) 1}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::CheckCS></a>
+<b><font color=#ca14ca>proc</font></b> pref::CheckCS {} {
+  <i><font color=#4b5d50># Checks if the color scheme is changed and, if so, sets &quot;Color of cursor&quot; field.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> cs [GetCS]
+  <b><font color=#3a6797>set</font></b> cclr [<b><font color=#3a6797>lindex</font></b> [::apave::obj csGet <font color=#1b1baa>$cs</font>] 7]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(CURSORCOLOR)</font> ne <font color=#1b1baa>$cclr</font>} {
+    <b><font color=#3a6797>catch</font></b> {
+      .alwin.diaPref.fra.fraR.nbk.f1.fra1.labclrCC configure <font color=#653760>-background</font> <font color=#1b1baa>$cclr</font>
+      <b><font color=#3a6797>set</font></b> al(CURSORCOLOR) <font color=#1b1baa>$cclr</font>
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$cs</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::CheckTheming></a>
+<b><font color=#ca14ca>proc</font></b> pref::CheckTheming {{doit yes} {force no}} {
+  <i><font color=#4b5d50># Checks periodically theming options and, if changed, shows their preview.</font></i>
+  <i><font color=#4b5d50>#   doit - if no, deletes both a temporary file and the possible preview</font></i>
+  <i><font color=#4b5d50>#   force - if yes, shows the preview by force</font></i>
+  <i><font color=#4b5d50># The theming cannot be nice viewed &quot;on fly&quot;, so we need to use a separate app.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited SRCDIR SRCDIR
+  fetchVars
+  <b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>file</font></b> join [alited::tool::EM_dir] preview~]
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$doit</font> || (!<font color=#1b1baa>$force</font> && ![<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fname</font>])} {
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>file</font></b> delete <font color=#1b1baa>$fname</font>}
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>unset</font></b> al(checkTheming)}
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <b><font color=#3a6797>set</font></b> cs [CheckCS]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(CURSORCOLOR)</font> ne {}} {<b><font color=#3a6797>set</font></b> cc <font color=#1b1baa>$al(CURSORCOLOR)</font>} {<b><font color=#3a6797>set</font></b> cc <font color=#8b2a0e>&quot;<font color=#1b1baa>{}</font>&quot;</font>}
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is double <font color=#653760>-strict</font> <font color=#1b1baa>$al(INI,HUE)</font>]} {<b><font color=#3a6797>set</font></b> hue <font color=#1b1baa>$al(INI,HUE)</font>} {<b><font color=#3a6797>set</font></b> hue 0}
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is double <font color=#653760>-strict</font> <font color=#1b1baa>$al(CURSORWIDTH)</font>]} {<b><font color=#3a6797>set</font></b> cw <font color=#1b1baa>$al(CURSORWIDTH)</font>} {<b><font color=#3a6797>set</font></b> cw 2}
+  <b><font color=#3a6797>set</font></b> thopts <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>opc1 <font color=#1b1baa>$</font>cs <font color=#1b1baa>$</font>hue <font color=#1b1baa>$</font>cw <font color=#1b1baa>$</font>al(ED,BlinkCurs) <font color=#1b1baa>$</font>cc&quot;</font>
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists al(checkTheming)] || <font color=#1b1baa>$al(checkTheming)</font> ne <font color=#1b1baa>$thopts</font> || <font color=#1b1baa>$force</font>} {
+    <b><font color=#3a6797>incr</font></b> al(prefCheckID)
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font>] x+] w h x y
+    <b><font color=#3a6797>set</font></b> ch [<b><font color=#3a6797>open</font></b> <font color=#1b1baa>$fname</font> w]
+    <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$ch</font> <font color=#8b2a0e>&quot;+<font color=#1b1baa>[</font>expr <font color=#1b1baa>{$</font>x+<font color=#1b1baa>$</font>w/6<font color=#1b1baa>}]</font>+<font color=#1b1baa>[</font>expr <font color=#1b1baa>{$</font>y+<font color=#1b1baa>$</font>h/3<font color=#1b1baa>}]</font> <font color=#1b1baa>$</font>thopts <font color=#1b1baa>{$</font>al(MC,test)<font color=#1b1baa>}</font> <font color=#1b1baa>$</font>al(prefCheckID)&quot;</font>
+    <b><font color=#3a6797>close</font></b> <font color=#1b1baa>$ch</font>
+    alited::Runtime [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$SRCDIR</font> preview.tcl] <font color=#1b1baa>$fname</font> <font color=#1b1baa>$al(prefCheckID)</font>
+    <b><font color=#3a6797>set</font></b> al(checkTheming) <font color=#1b1baa>$thopts</font>
+  }
+  <b><font color=#3a6797>after</font></b> 100 {alited::pref::CheckTheming yes}
+}
+<a id=Tab_Editor></a>
+<i><font color=#4b5d50># ________________________ Tab &quot;Editor&quot; _________________________ #</font></i>
+<a id=pref::Edit_Tab1></a>
+<b><font color=#ca14ca>proc</font></b> pref::Edit_Tab1 {} {
+  <i><font color=#4b5d50># Serves to layout &quot;Editor&quot; tab.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> {
+    {v_ - - 1 1}
+    {fra v_ T 1 1 {<font color=#653760>-st</font> nsew <font color=#653760>-cw</font> 1 <font color=#653760>-rw</font> 1}}
+    {fra.scf - - 1 1  {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} {<font color=#653760>-mode</font> y}}
+    {.labFon - - 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 8 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> Font:}}
+    {.fonTxt2 + L 1 9 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 3} {<font color=#653760>-tvar</font> ::alited::al(FONT,txt) <font color=#653760>-w</font> 50}}
+    {.labSp1 .labFon T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Space above lines:}}}
+    {.spxSp1 .labSp1 L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,sp1) <font color=#653760>-from</font> 0 <font color=#653760>-to</font> 16}}
+    {.labSp3 .labSp1 T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Space below lines:}}}
+    {.spxSp3 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,sp3) <font color=#653760>-from</font> 0 <font color=#653760>-to</font> 16}}
+    {.labSp2 .labSp3 T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Space between wraps:}}}
+    {.spxSp2 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,sp2) <font color=#653760>-from</font> 0 <font color=#653760>-to</font> 16}}
+    {.labBC .labSp2 T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Blinking cursor:}}}
+    {.swiBC + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 3} {<font color=#653760>-var</font> ::alited::al(ED,BlinkCurs)}}
+    {.seh .labBC T 1 10 {<font color=#653760>-pady</font> 3}}
+    {.labGW + T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Gutter's width:}}}
+    {.spxGW + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,gutterwidth) <font color=#653760>-from</font> 3 <font color=#653760>-to</font> 7}}
+    {.labGS .labGW T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Gutter's shift from text:}}}
+    {.spxGS + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,guttershift) <font color=#653760>-from</font> 0 <font color=#653760>-to</font> 10}}
+    {.seh2 .labGS T 1 10 {<font color=#653760>-pady</font> 3}}
+    {.labLl + T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Tab bar label's length:}}}
+    {.spxLl + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 3} {<font color=#653760>-tvar</font> ::alited::al(INI,barlablen) <font color=#653760>-from</font> 10 <font color=#653760>-to</font> 100}}
+    {.labTl .labLl T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Tab bar tip's length:}}}
+    {.spxTl + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 3} {<font color=#653760>-tvar</font> ::alited::al(INI,bartiplen) <font color=#653760>-from</font> 10 <font color=#653760>-to</font> 100}}
+    {.labBD .labTl T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Border for bar tabs:}}}
+    {.swiBD + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 3} {<font color=#653760>-var</font> ::alited::al(ED,btsbd) <font color=#653760>-tabnext</font> alited::Tnext}}
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::Edit_Tab2></a>
+<b><font color=#ca14ca>proc</font></b> pref::Edit_Tab2 {} {
+  <i><font color=#4b5d50># Serves to layout &quot;Tcl syntax&quot; tab.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> {
+    {v_ - - 1 1}
+    {FraTab2 v_ T 1 1 {<font color=#653760>-st</font> nsew <font color=#653760>-cw</font> 1 <font color=#653760>-rw</font> 1}}
+    {fraTab2.scf - - 1 1  {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} {<font color=#653760>-mode</font> y}}
+    {.labExt - - 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Tcl files' extensions:}}}
+    {.entExt + L 1 1 {<font color=#653760>-st</font> swe <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(TclExts) <font color=#653760>-w</font> 50}}
+    {.labCOM .labExt T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Color of Tcl commands:}}}
+    {.clrCOM + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,clrCOM) <font color=#653760>-w</font> 20}}
+    {.labCOMTK .labCOM T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Color of Tk commands:}}}
+    {.clrCOMTK + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,clrCOMTK) <font color=#653760>-w</font> 20}}
+    {.labSTR .labCOMTK T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Color of strings:}}}
+    {.clrSTR + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,clrSTR) <font color=#653760>-w</font> 20}}
+    {.labVAR .labSTR T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Color of variables:}}}
+    {.clrVAR + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,clrVAR) <font color=#653760>-w</font> 20}}
+    {.labCMN .labVAR T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Color of comments:}}}
+    {.clrCMN + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,clrCMN) <font color=#653760>-w</font> 20}}
+    {.labPROC .labCMN T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Color of proc/methods:}}}
+    {.clrPROC + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,clrPROC) <font color=#653760>-w</font> 20}}
+    {.labOPT .labPROC T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Color of options:}}}
+    {.clrOPT + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,clrOPT) <font color=#653760>-w</font> 20}}
+    {.labBRA .labOPT T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Color of brackets:}}}
+    {.clrBRA + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,clrBRA) <font color=#653760>-w</font> 20}}
+    {fraTab2.scf.FraDefClr1 .labBRA T 1 2 {<font color=#653760>-st</font> nsew <font color=#653760>-pady</font> 3}}
+    {.but - - 1 1 {<font color=#653760>-st</font> w <font color=#653760>-padx</font> 0} {<font color=#653760>-t</font> Standard <font color=#653760>-com</font> {alited::pref::Tcl_Default 0}}}
+    {.but1 + L 1 1 {<font color=#653760>-st</font> w <font color=#653760>-padx</font> 8} {<font color=#653760>-t</font> {Standard 2} <font color=#653760>-com</font> {alited::pref::Tcl_Default 1}}}
+    {.but2 + L 1 1 {<font color=#653760>-st</font> w <font color=#653760>-padx</font> 0} {<font color=#653760>-t</font> {Standard 3} <font color=#653760>-com</font> {alited::pref::Tcl_Default 2}}}
+    {.but3 + L 1 1 {<font color=#653760>-st</font> w <font color=#653760>-padx</font> 8} {<font color=#653760>-t</font> {Standard 4} <font color=#653760>-com</font> {alited::pref::Tcl_Default 3}}}
+    {fraTab2.scf.sehclr fraTab2.scf.FraDefClr1 T 1 2 {<font color=#653760>-pady</font> 3}}
+    {fraTab2.scf.fra2 + T 1 2 {<font color=#653760>-st</font> nsew <font color=#653760>-pady</font> 5}}
+    {.lab - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-anchor</font> ne <font color=#653760>-pady</font> 0 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Code snippet:}}}
+    {.TexSample - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} \
+      {<font color=#653760>-h</font> 7 <font color=#653760>-w</font> 48 <font color=#653760>-afteridle</font> alited::pref::UpdateSyntaxTab <font color=#653760>-tabnext</font> {<b><font color=#3a6797>*</font></b>.texTclKeys *.but3}}}
+    {.sbv + L - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> right}}
+    {fraTab2.scf.fra3 fraTab2.scf.fra2 T 1 2 {<font color=#653760>-st</font> nsew <font color=#653760>-pady</font> 3}}
+    {.labAddKeys - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-anchor</font> ne <font color=#653760>-pady</font> 0 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Your commands:}}}
+    {.TexTclKeys - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} \
+      {<font color=#653760>-h</font> 3 <font color=#653760>-w</font> 48 <font color=#653760>-wrap</font> word <font color=#653760>-tabnext</font> {alited::Tnext *.texSample}}}
+    {.sbv + L - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> right}}
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::Edit_Tab3></a>
+<b><font color=#ca14ca>proc</font></b> pref::Edit_Tab3 {} {
+  <i><font color=#4b5d50># Serves to layout &quot;C/C++ syntax&quot; tab.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> {
+    {v_ - - 1 1}
+    {FraTab3 + T 1 1 {<font color=#653760>-st</font> nsew <font color=#653760>-cw</font> 1 <font color=#653760>-rw</font> 1}}
+    {fraTab3.scf - - 1 1  {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} {<font color=#653760>-mode</font> y}}
+    {.labExt - - 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {C/C++ files' extensions:}}}
+    {.entExt + L 1 1 {<font color=#653760>-st</font> swe <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ClangExts) <font color=#653760>-w</font> 47}}
+    {.labCOM2 .labExt T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Color of C key words:}}}
+    {.clrCOM2 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,CclrCOM) <font color=#653760>-w</font> 20}}
+    {.labCOMTK2 .labCOM2 T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Color of C++ key words:}}}
+    {.clrCOMTK2 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,CclrCOMTK) <font color=#653760>-w</font> 20}}
+    {.labSTR2 .labCOMTK2 T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Color of strings:}}}
+    {.clrSTR2 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,CclrSTR) <font color=#653760>-w</font> 20}}
+    {.labVAR2 .labSTR2 T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Color of punctuation:}}}
+    {.clrVAR2 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,CclrVAR) <font color=#653760>-w</font> 20}}
+    {.labCMN2 .labVAR2 T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Color of comments:}}}
+    {.clrCMN2 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,CclrCMN) <font color=#653760>-w</font> 20}}
+    {.labPROC2 .labCMN2 T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Color of return/goto:}}}
+    {.clrPROC2 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,CclrPROC) <font color=#653760>-w</font> 20}}
+    {.labOPT2 .labPROC2 T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Color of your key words:}}}
+    {.clrOPT2 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,CclrOPT) <font color=#653760>-w</font> 20}}
+    {.labBRA2 .labOPT2 T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Color of brackets:}}}
+    {.clrBRA2 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(ED,CclrBRA) <font color=#653760>-w</font> 20}}
+    {fraTab3.scf.FraDefClr2 .labBRA2 T 1 2 {<font color=#653760>-st</font> nsew <font color=#653760>-pady</font> 3}}
+    {.but - - 1 1 {<font color=#653760>-st</font> w <font color=#653760>-padx</font> 0} {<font color=#653760>-t</font> Standard <font color=#653760>-com</font> {alited::pref::C_Default 0}}}
+    {.but1 + L 1 1 {<font color=#653760>-st</font> w <font color=#653760>-padx</font> 8} {<font color=#653760>-t</font> {Standard 2} <font color=#653760>-com</font> {alited::pref::C_Default 1}}}
+    {.but2 + L 1 1 {<font color=#653760>-st</font> w <font color=#653760>-padx</font> 0} {<font color=#653760>-t</font> {Standard 3} <font color=#653760>-com</font> {alited::pref::C_Default 2}}}
+    {.but3 + L 1 1 {<font color=#653760>-st</font> w <font color=#653760>-padx</font> 8} {<font color=#653760>-t</font> {Standard 4} <font color=#653760>-com</font> {alited::pref::C_Default 3}}}
+    {fraTab3.scf.sehclr fraTab3.scf.fraDefClr2 T 1 2 {<font color=#653760>-pady</font> 3}}
+    {fraTab3.scf.fra2 + T 1 2 {<font color=#653760>-st</font> nsew <font color=#653760>-pady</font> 5}}
+    {.lab - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-anchor</font> ne <font color=#653760>-pady</font> 0 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Code snippet:}}}
+    {.TexCSample - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} \
+      {<font color=#653760>-h</font> 8 <font color=#653760>-w</font> 48 <font color=#653760>-wrap</font> word <font color=#653760>-tabnext</font> {<b><font color=#3a6797>*</font></b>.texCKeys *.but3}}}
+    {.sbv + L - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> right}}
+    {fraTab3.scf.fra3 fraTab3.scf.fra2 T 1 2 {<font color=#653760>-st</font> nsew <font color=#653760>-pady</font> 3}}
+    {.lab - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-anchor</font> ne <font color=#653760>-pady</font> 0 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Your key words:}}}
+    {.TexCKeys - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} \
+      {<font color=#653760>-h</font> 3 <font color=#653760>-w</font> 48 <font color=#653760>-wrap</font> word <font color=#653760>-tabnext</font> {alited::Tnext *.texCSample}}}
+    {.sbv + L - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> right}}
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::Edit_Tab4></a>
+<b><font color=#ca14ca>proc</font></b> pref::Edit_Tab4 {} {
+  <i><font color=#4b5d50># Serves to layout &quot;Plain texts&quot; tab.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> {
+    {v_ - - 1 1}
+    {FraTab4 + T 1 1 {<font color=#653760>-st</font> nsew <font color=#653760>-cw</font> 1 <font color=#653760>-rw</font> 1}}
+    {fraTab4.scf - - 1 1  {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} {<font color=#653760>-mode</font> y}}
+    {.labExt - - 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Plain texts' extensions:}}}
+    {.entExt + L 1 1 {<font color=#653760>-st</font> swe <font color=#653760>-pady</font> 3} {<font color=#653760>-tvar</font> ::alited::al(TextExts) <font color=#653760>-w</font> 50}}
+    {.seh .labExt T 1 10 {<font color=#653760>-pady</font> 3}}
+    {.but + T 1 1 {<font color=#653760>-st</font> w} {<font color=#653760>-t</font> Standard <font color=#653760>-com</font> alited::pref::Text_Default <font color=#653760>-tabnext</font> alited::Tnext}}
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::Tcl_Default></a>
+<b><font color=#ca14ca>proc</font></b> pref::Tcl_Default {isyn {init no}} {
+  <i><font color=#4b5d50># Sets default colors to highlight Tcl.</font></i>
+  <i><font color=#4b5d50>#   isyn - index of syntax colors</font></i>
+  <i><font color=#4b5d50>#   init - yes, if only variables should be initialized</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> al(TclExts) <font color=#1b1baa>$al(TclExtsDef)</font>
+  <b><font color=#3a6797>set</font></b> Dark [CsDark]
+  <b><font color=#3a6797>set</font></b> clrnams [::hl_tcl::hl_colorNames]
+  <b><font color=#3a6797>set</font></b> clrvals [::hl_tcl::hl_colors <font color=#1b1baa>$isyn</font> <font color=#1b1baa>$Dark</font>]
+  <b><font color=#3a6797>foreach</font></b> nam <font color=#1b1baa>$clrnams</font> val <font color=#1b1baa>$clrvals</font> {
+    <b><font color=#3a6797>set</font></b> al(ED,<font color=#1b1baa>$nam</font>) <font color=#1b1baa>$val</font>
+  }
+  <b><font color=#3a6797>set</font></b> al(ED,Dark) <font color=#1b1baa>$Dark</font>
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$init</font>} UpdateSyntaxTab
+  <b><font color=#3a6797>set</font></b> al(syntaxidx) <font color=#1b1baa>$isyn</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::C_Default></a>
+<b><font color=#ca14ca>proc</font></b> pref::C_Default {isyn {init no}} {
+  <i><font color=#4b5d50># Sets default colors to highlight C.</font></i>
+  <i><font color=#4b5d50>#   isyn - index of syntax colors</font></i>
+  <i><font color=#4b5d50>#   init - yes, if only variables should be initialized</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> al(ClangExts) <font color=#1b1baa>$al(ClangExtsDef)</font>
+  <b><font color=#3a6797>set</font></b> Dark [CsDark]
+  <b><font color=#3a6797>set</font></b> clrnams [::hl_tcl::hl_colorNames]
+  <b><font color=#3a6797>set</font></b> clrvals [::hl_c::hl_colors <font color=#1b1baa>$isyn</font> <font color=#1b1baa>$Dark</font>]
+  <b><font color=#3a6797>foreach</font></b> nam <font color=#1b1baa>$clrnams</font> val <font color=#1b1baa>$clrvals</font> {
+    <b><font color=#3a6797>set</font></b> al(ED,C<font color=#1b1baa>$nam</font>) <font color=#1b1baa>$val</font>
+  }
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$init</font>} {UpdateSyntaxTab 2}
+  <b><font color=#3a6797>set</font></b> al(syntaxidx) <font color=#1b1baa>$isyn</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::Text_Default></a>
+<b><font color=#ca14ca>proc</font></b> pref::Text_Default {} {
+  <i><font color=#4b5d50># Sets defaults for plain text.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> al(TextExts) <font color=#1b1baa>$al(TextExtsDef)</font>
+  <b><font color=#3a6797>update</font></b>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::InitSyntax></a>
+<b><font color=#ca14ca>proc</font></b> pref::InitSyntax {lng} {
+  <i><font color=#4b5d50># Updates and initializes color fields.</font></i>
+  <i><font color=#4b5d50>#   lng - {} for Tcl, {2} for C/C++</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>foreach</font></b> nam {COM COMTK STR VAR CMN PROC OPT BRA} {
+    <b><font color=#3a6797>set</font></b> ent [<font color=#1b1baa>$obPrf</font> Entclr<font color=#1b1baa>$nam$lng</font>] ;<i><font color=#4b5d50># method's name, shown by -debug attribute</font></i>
+    <b><font color=#3a6797>set</font></b> lab [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> .entclr .labclr] <font color=#1b1baa>$ent</font>]  ;<i><font color=#4b5d50># colored label</font></i>
+    <font color=#1b1baa>$lab</font> configure <font color=#653760>-background</font> [<font color=#1b1baa>$ent</font> get]
+    ::apave::bindToEvent <font color=#1b1baa>$ent</font> &lt;FocusIn&gt; alited::pref::UpdateSyntaxTab <font color=#1b1baa>$lng</font>
+    ::apave::bindToEvent <font color=#1b1baa>$ent</font> &lt;FocusOut&gt; alited::pref::UpdateSyntaxTab <font color=#1b1baa>$lng</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::InitSyntaxTcl></a>
+<b><font color=#ca14ca>proc</font></b> pref::InitSyntaxTcl {<b><font color=#134070>colors</font></b>} {
+  <i><font color=#4b5d50># Initializes syntax stuff for Tcl.</font></i>
+  <i><font color=#4b5d50>#    colors - highlighting colors</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> tex [<font color=#1b1baa>$obPrf</font> TexSample]
+  <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$obPrf</font> csGet] - - - - - - - - tfgD bclr
+  <font color=#1b1baa>$tex</font> configure <font color=#653760>-highlightbackground</font> <font color=#1b1baa>$tfgD</font> <font color=#653760>-highlightcolor</font> <font color=#1b1baa>$bclr</font>
+  <b><font color=#3a6797>set</font></b> texC [<font color=#1b1baa>$obPrf</font> TexCSample]
+  <font color=#1b1baa>$texC</font> configure <font color=#653760>-highlightbackground</font> <font color=#1b1baa>$tfgD</font> <font color=#653760>-highlightcolor</font> <font color=#1b1baa>$bclr</font>
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$tex</font> get 1.0 end]] eq {}} {
+  <font color=#1b1baa>$obPrf</font> displayText <font color=#1b1baa>$tex</font> {<b><font color=#ca14ca>proc</font></b> foo {args} {
+  <i><font color=#4b5d50># Tcl code to test colors.</font></i>
+  <b><font color=#3a6797>set</font></b> var <font color=#8b2a0e>&quot;(Multiline string)</font>
+<font color=#8b2a0e>    Args=<font color=#1b1baa>$</font>args&quot;</font>
+  <b><font color=#134070>winfo</font></b> interps <font color=#653760>-displayof</font> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$args</font> 0]
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$var</font> ;<i><font color=#ff0000>#! text of TODO</font></i>
+}}}
+  <b><font color=#3a6797>set</font></b> wk [<font color=#1b1baa>$obPrf</font> TexTclKeys]
+  ::apave::bindToEvent <font color=#1b1baa>$wk</font> &lt;FocusOut&gt; alited::pref::UpdateSyntaxTab
+  <b><font color=#3a6797>set</font></b> keywords [<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$wk</font> get 1.0 end]]
+  alited::SyntaxHighlight tcl <font color=#1b1baa>$tex</font> <font color=#1b1baa>$colors</font> [GetCS] <font color=#653760>-keywords</font> <font color=#1b1baa>$keywords</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::InitSyntaxC></a>
+<b><font color=#ca14ca>proc</font></b> pref::InitSyntaxC {<b><font color=#134070>colors</font></b>} {
+  <i><font color=#4b5d50># Initializes syntax stuff for C/C++.</font></i>
+  <i><font color=#4b5d50>#    colors - highlighting colors</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> tex [<font color=#1b1baa>$obPrf</font> TexCSample]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$tex</font> get 1.0 end]] eq {}} {
+    <font color=#1b1baa>$obPrf</font> displayText <font color=#1b1baa>$tex</font> {static sample(const char *ptr) {
+  char *tx, *st;
+  tx = get_text();   // inline comment
+  st = get_string(); //! TODO
+  <b><font color=#3a6797>if</font></b> (strstr(tx,st)!=tx) return FALSE;
+  /* it's
+  okay */
+  tx += strlen(st);
+  ptr = strstr(tx+1,<font color=#8b2a0e>&quot;My string&quot;</font>);
+  <b><font color=#ca14ca>return</font></b> TRUE
+}}}
+  <b><font color=#3a6797>set</font></b> wk [<font color=#1b1baa>$obPrf</font> TexCKeys]
+  ::apave::bindToEvent <font color=#1b1baa>$wk</font> &lt;FocusOut&gt; alited::pref::UpdateSyntaxTab 2
+  <b><font color=#3a6797>set</font></b> keywords [<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$wk</font> get 1.0 end]]
+  alited::SyntaxHighlight c <font color=#1b1baa>$tex</font> <font color=#1b1baa>$colors</font> [GetCS] <font color=#653760>-keywords</font> <font color=#1b1baa>$keywords</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::UpdateSyntaxTab></a>
+<b><font color=#ca14ca>proc</font></b> pref::UpdateSyntaxTab {{lng <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Updates color labels at clicking &quot;Default&quot; button.</font></i>
+  <i><font color=#4b5d50>#   lng - {} for Tcl, {2} for C/C++</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>catch</font></b> {
+    InitSyntax <font color=#1b1baa>$lng</font>
+    <b><font color=#3a6797>foreach</font></b> nam [::hl_tcl::hl_colorNames] {
+      <b><font color=#3a6797>lappend</font></b> colors <font color=#1b1baa>$al(ED,$nam)</font>
+      <b><font color=#3a6797>lappend</font></b> Ccolors <font color=#1b1baa>$al(ED,C$nam)</font>
+    }
+    <b><font color=#3a6797>lassign</font></b> [::hl_tcl::addingColors [CsDark] {} [GetCS]] clrCURL clrCMN2
+    <b><font color=#3a6797>lappend</font></b> colors <font color=#1b1baa>$clrCURL</font> <font color=#1b1baa>$clrCMN2</font>
+    <b><font color=#3a6797>lappend</font></b> Ccolors <font color=#1b1baa>$clrCURL</font> <font color=#1b1baa>$clrCMN2</font>
+    InitSyntaxTcl <font color=#1b1baa>$colors</font>
+    InitSyntaxC <font color=#1b1baa>$Ccolors</font>
+  }
+}
+<a id=Tab_Template></a>
+<i><font color=#4b5d50># ________________________ Tab &quot;Template&quot; _________________________ #</font></i>
+<a id=pref::Template_Tab></a>
+<b><font color=#ca14ca>proc</font></b> pref::Template_Tab {} {
+  <i><font color=#4b5d50># Serves to layout &quot;Template&quot; tab.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> {
+    {v_ - - 1 1}
+    {fra v_ T 1 2 {<font color=#653760>-st</font> nsew <font color=#653760>-cw</font> 1}}
+    {.labH - - 1 2 {<font color=#653760>-st</font> w <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 3} \
+      {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Enter %U, %u, %m, %w, %d, %t wildcards of templates:&quot;</font>}}
+    {.labU + T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;User name:&quot;</font>}}
+    {.entU + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5} {<font color=#653760>-tvar</font> ::alited::al(TPL,%U) <font color=#653760>-w</font> 40}}
+    {.labu .labU T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-anc</font> e <font color=#653760>-t</font> <font color=#8b2a0e>&quot;Login:&quot;</font>}}
+    {.entu + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5} {<font color=#653760>-tvar</font> ::alited::al(TPL,%u) <font color=#653760>-w</font> 30}}
+    {.labm .labu T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;E-mail:&quot;</font>}}
+    {.entm + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5} {<font color=#653760>-tvar</font> ::alited::al(TPL,%m) <font color=#653760>-w</font> 40}}
+    {.labw .labm T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;WWW:&quot;</font>}}
+    {.entw + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5} {<font color=#653760>-tvar</font> ::alited::al(TPL,%w) <font color=#653760>-w</font> 40}}
+    {.labd .labw T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Date format:&quot;</font>}}
+    {.entd + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5} {<font color=#653760>-tvar</font> ::alited::al(TPL,%d) <font color=#653760>-w</font> 30}}
+    {.labt .labd T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Time format:&quot;</font>}}
+    {.entt + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5} {<font color=#653760>-tvar</font> ::alited::al(TPL,%t) <font color=#653760>-w</font> 30}}
+    {.seh .labt T 1 2 {<font color=#653760>-pady</font> 3}}
+    {.but + T 1 1 {<font color=#653760>-st</font> w} {<font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,tpl)</font>} \
+      <font color=#653760>-com</font> {alited::EnsureArray ::alited::al alited::unit::Run_unit_tpl no \
+      <font color=#8b2a0e>&quot;-centerme <font color=#1b1baa>$</font>::alited::pref::win&quot;</font>} <font color=#653760>-tabnext</font> alited::Tnext}}
+  }
+}
+<a id=Tab_Keys></a>
+<i><font color=#4b5d50># ________________________ Tab &quot;Keys&quot; _________________________ #</font></i>
+<a id=pref::Keys_Tab1></a>
+<b><font color=#ca14ca>proc</font></b> pref::Keys_Tab1 {} {
+  <i><font color=#4b5d50># Serves to layout &quot;Keys&quot; tab.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> {
+    {<b><font color=#3a6797>after</font></b> idle}
+    {v_ - - 1 1}
+    {fra + T 1 1 {<font color=#653760>-st</font> nsew <font color=#653760>-cw</font> 1 <font color=#653760>-rw</font> 1}}
+    {fra.scf - - 1 1  {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} {<font color=#653760>-mode</font> y}}
+    {tcl {
+        <b><font color=#3a6797>set</font></b> pr -
+        <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$::alited::pref::StdkeysSize</font>} {<b><font color=#3a6797>incr</font></b> i} {
+          <b><font color=#3a6797>set</font></b> lab <font color=#8b2a0e>&quot;lab<font color=#1b1baa>$</font>i&quot;</font>
+          <b><font color=#3a6797>set</font></b> cbx <font color=#8b2a0e>&quot;CbxKey<font color=#1b1baa>$</font>i&quot;</font>
+          <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$::alited::pref::stdkeys</font> <font color=#1b1baa>$i</font>] text key
+          <b><font color=#3a6797>set</font></b> lwid <font color=#8b2a0e>&quot;.<font color=#1b1baa>$</font>lab <font color=#1b1baa>$</font>pr T 1 1 <font color=#1b1baa>{</font>-st e -pady 1 -padx 3<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>-t \&quot;<font color=#1b1baa>$</font>text\&quot;<font color=#1b1baa>}</font>&quot;</font>
+          %C <font color=#1b1baa>$lwid</font>
+          <b><font color=#3a6797>if</font></b> {(<font color=#1b1baa>$i</font>+1)==<font color=#1b1baa>$::alited::pref::StdkeysSize</font>} {
+            <b><font color=#3a6797>set</font></b> pr {<font color=#653760>-tabnext</font> alited::Tnext}
+          } <b><font color=#3a6797>else</font></b> {
+            <b><font color=#3a6797>set</font></b> pr {}
+          }
+          <b><font color=#3a6797>set</font></b> lwid <font color=#8b2a0e>&quot;.<font color=#1b1baa>$</font>cbx + L 1 1 <font color=#1b1baa>{</font>-st we<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>-tvar ::alited::pref::keys(<font color=#1b1baa>$</font>i) \</font>
+<font color=#8b2a0e>            -postcommand <font color=#1b1baa>{</font>::alited::pref::GetKeyList <font color=#1b1baa>$</font>i<font color=#1b1baa>}</font> -selcombobox \</font>
+<font color=#8b2a0e>            <font color=#1b1baa>{</font>::alited::pref::SelectKey <font color=#1b1baa>$</font>i<font color=#1b1baa>}</font> -state readonly -h 16 -w 20 <font color=#1b1baa>$</font>pr<font color=#1b1baa>}</font>&quot;</font>
+          %C <font color=#1b1baa>$lwid</font>
+          <b><font color=#3a6797>set</font></b> pr .<font color=#1b1baa>$lab</font>
+        }
+    }}
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::RegisterKeys></a>
+<b><font color=#ca14ca>proc</font></b> pref::RegisterKeys {} {
+  <i><font color=#4b5d50># Adds key bindings to keys array.</font></i>
+
+  fetchVars
+  alited::keys::Delete preference
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> k 0} {<font color=#1b1baa>$k</font>&lt;<font color=#1b1baa>$StdkeysSize</font>} {<b><font color=#3a6797>incr</font></b> k} {
+    alited::keys::Add preference <font color=#1b1baa>$k</font> [<b><font color=#3a6797>set</font></b> keys(<font color=#1b1baa>$k</font>)] <font color=#8b2a0e>&quot;alited::pref::BindKey <font color=#1b1baa>$</font>k <font color=#1b1baa>{</font>%k<font color=#1b1baa>}</font>&quot;</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::GetKeyList></a>
+<b><font color=#ca14ca>proc</font></b> pref::GetKeyList {nk} {
+  <i><font color=#4b5d50># Gets a list of available (not engaged) key combinations.</font></i>
+  <i><font color=#4b5d50>#   nk - index of combobox that will get the list as -values option</font></i>
+
+  fetchVars
+  RegisterKeys
+  [<font color=#1b1baa>$obPrf</font> CbxKey<font color=#1b1baa>$nk</font>] configure <font color=#653760>-values</font> [alited::keys::VacantList]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::SelectKey></a>
+<b><font color=#ca14ca>proc</font></b> pref::SelectKey {nk} {
+  <i><font color=#4b5d50># Handles &lt;&lt;ComboboxSelected&gt;&gt; event on a combobox of keys.</font></i>
+  <i><font color=#4b5d50>#   nk - index of combobox</font></i>
+
+  fetchVars
+  alited::keys::Delete {} <font color=#1b1baa>$prevkeys($nk)</font>
+  <b><font color=#3a6797>set</font></b> prevkeys(<font color=#1b1baa>$nk</font>) <font color=#1b1baa>$keys($nk)</font>
+  GetKeyList <font color=#1b1baa>$nk</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::KeyAccelerator></a>
+<b><font color=#ca14ca>proc</font></b> pref::KeyAccelerator {nk defk} {
+  <i><font color=#4b5d50># Gets a key accelerator for a combobox of keys, bound to an action.</font></i>
+  <i><font color=#4b5d50>#   nk - index of combobox</font></i>
+  <i><font color=#4b5d50>#   defk - default key combination</font></i>
+
+  <b><font color=#3a6797>set</font></b> acc [BindKey <font color=#1b1baa>$nk</font> - <font color=#1b1baa>$defk</font>]
+  <b><font color=#ca14ca>return</font></b> [::apave::KeyAccelerator <font color=#1b1baa>$acc</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::KeyAccelerators></a>
+<b><font color=#ca14ca>proc</font></b> pref::KeyAccelerators {} {
+  <i><font color=#4b5d50># Gets a full list of key accelerators,</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>dict</font></b> for {k info} <font color=#1b1baa>$stdkeys</font> {
+    <b><font color=#3a6797>set</font></b> al(acc_<font color=#1b1baa>$k</font>) [KeyAccelerator <font color=#1b1baa>$k</font> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$info</font> 1]]
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::BindKey></a>
+<b><font color=#ca14ca>proc</font></b> pref::BindKey {nk {key <font color=#8b2a0e>&quot;&quot;</font>} {defk <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Binds a key event to a key combination.</font></i>
+  <i><font color=#4b5d50>#   nk - index of combobox corresponding to the event</font></i>
+  <i><font color=#4b5d50>#   key - key combination or &quot;-&quot; (for not engaged keys)</font></i>
+  <i><font color=#4b5d50>#   defk - default key combination</font></i>
+  <i><font color=#4b5d50># Returns a bound keys for not engaged keys or {} for others.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$key</font> eq {-}} {
+    <i><font color=#4b5d50># not engaged event: bind to a new combination if defined</font></i>
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists keys(<font color=#1b1baa>$nk</font>)]} {
+      <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$keys($nk)</font>
+    }
+    <i><font color=#4b5d50># otherwise bind to the default</font></i>
+    <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$defk</font>
+  }
+  <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$nk</font> {
+    4 { ;<i><font color=#4b5d50># &quot;Double Selection&quot;</font></i>
+      ::apave::setTextHotkeys CtrlD <font color=#1b1baa>$keys($nk)</font>
+    }
+    5 { ;<i><font color=#4b5d50># &quot;Delete Line&quot;</font></i>
+      ::apave::setTextHotkeys CtrlY <font color=#1b1baa>$keys($nk)</font>
+    }
+    10 { ;<i><font color=#4b5d50># &quot;Highlight First&quot;</font></i>
+      ::apave::setTextHotkeys AltQ <font color=#1b1baa>$keys($nk)</font>
+    }
+    11 { ;<i><font color=#4b5d50># &quot;Highlight Last&quot;</font></i>
+      ::apave::setTextHotkeys AltW <font color=#1b1baa>$keys($nk)</font>
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> {}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::IniKeys></a>
+<b><font color=#ca14ca>proc</font></b> pref::IniKeys {} {
+  <i><font color=#4b5d50># Gets key settings at opening &quot;Preferences&quot; dialogue.</font></i>
+
+  fetchVars
+  <i><font color=#4b5d50># default settings</font></i>
+  <b><font color=#3a6797>dict</font></b> for {k info} <font color=#1b1baa>$stdkeys</font> {
+    <b><font color=#3a6797>set</font></b> keys(<font color=#1b1baa>$k</font>) [<b><font color=#3a6797>set</font></b> prevkeys(<font color=#1b1baa>$k</font>) [<b><font color=#3a6797>set</font></b> savekeys(<font color=#1b1baa>$k</font>) [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$info</font> 1]]]
+  }
+  <i><font color=#4b5d50># new settings</font></i>
+  <b><font color=#3a6797>foreach</font></b> kitem [alited::keys::EngagedList preference] {
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$kitem</font> key comi
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$comi</font> com k
+    <b><font color=#3a6797>set</font></b> keys(<font color=#1b1baa>$k</font>) [<b><font color=#3a6797>set</font></b> prevkeys(<font color=#1b1baa>$k</font>) [<b><font color=#3a6797>set</font></b> savekeys(<font color=#1b1baa>$k</font>) <font color=#1b1baa>$key</font>]]
+  }
+}
+<a id=Units></a>
+<i><font color=#4b5d50># ________________________ Units _________________________ #</font></i>
+<a id=pref::Units_Tab></a>
+<b><font color=#ca14ca>proc</font></b> pref::Units_Tab {} {
+  <i><font color=#4b5d50># Serves to layout &quot;Units&quot; tab.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> {
+    {v_ - - 1 1}
+    {fra + T 1 1 {<font color=#653760>-st</font> nsew <font color=#653760>-cw</font> 1 <font color=#653760>-rw</font> 1}}
+    {fra.scf - - 1 1  {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} {<font color=#653760>-mode</font> x}}
+    {.labBr - - 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Branch's regexp:&quot;</font>}}
+    {.entBr + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(RE,branch) <font color=#653760>-w</font> 70}}
+    {.labPr .labBr T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Proc's regexp:&quot;</font>}}
+    {.EntPr + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(RE,proc) <font color=#653760>-w</font> 70}}
+    {.labUself .labPr T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,useleafRE)</font>}}}
+    {.swiUself + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-var</font> ::alited::al(INI,LEAF) \
+      <font color=#653760>-com</font> alited::pref::CheckUseLeaf <font color=#653760>-afteridle</font> alited::pref::CheckUseLeaf}}
+    {.labLf .labUself T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,leafRE)</font>}}}
+    {.EntLf + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(RE,leaf) <font color=#653760>-w</font> 70}}
+    {.labLf2 .labLf T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Check branch's regexp:&quot;</font>}}
+    {.entLf2 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(RE,leaf2) <font color=#653760>-w</font> 70}}
+    {.labPr2 .labLf2 T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Check proc's regexp:&quot;</font>}}
+    {.entPr2 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(RE,proc2) <font color=#653760>-w</font> 70}}
+    {.labUnt .labPr2 T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Unaffected top lines:&quot;</font>}}
+    {.spxUnt + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(INI,LINES1) <font color=#653760>-from</font> 2 <font color=#653760>-to</font> 200 <font color=#653760>-w</font> 9}}
+    {.but .labUnt T 1 1 {<font color=#653760>-st</font> w} {<font color=#653760>-t</font> Standard <font color=#653760>-com</font> alited::pref::Units_Default <font color=#653760>-tabnext</font> alited::Tnext}}
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::Units_Default></a>
+<b><font color=#ca14ca>proc</font></b> pref::Units_Default {} {
+  <i><font color=#4b5d50># Sets the default settings of units.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> al(INI,LINES1) 10
+  <b><font color=#3a6797>set</font></b> al(INI,LEAF) 0
+  <b><font color=#3a6797>set</font></b> al(RE,branch) <font color=#1b1baa>$al(RE,branchDEF)</font>
+  <b><font color=#3a6797>set</font></b> al(RE,leaf) <font color=#1b1baa>$al(RE,leafDEF)</font>
+  <b><font color=#3a6797>set</font></b> al(RE,proc) <font color=#1b1baa>$al(RE,procDEF)</font>
+  <b><font color=#3a6797>set</font></b> al(RE,leaf2) <font color=#1b1baa>$al(RE,leaf2DEF)</font>
+  <b><font color=#3a6797>set</font></b> al(RE,proc2) <font color=#1b1baa>$al(RE,proc2DEF)</font>
+  CheckUseLeaf
+
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::CheckUseLeaf></a>
+<b><font color=#ca14ca>proc</font></b> pref::CheckUseLeaf {} {
+  <i><font color=#4b5d50># Enables/disables the &quot;Regexp of a leaf&quot; field.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(INI,LEAF)</font>} {
+    <b><font color=#3a6797>set</font></b> state1 disabled
+    <b><font color=#3a6797>set</font></b> state2 normal
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> state1 normal
+    <b><font color=#3a6797>set</font></b> state2 disabled
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(RE,proc)</font>  eq {}} {<b><font color=#3a6797>set</font></b> al(RE,proc)  [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$al(RE,procDEF)</font>]}
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(RE,proc2)</font> eq {}} {<b><font color=#3a6797>set</font></b> al(RE,proc2) [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$al(RE,proc2DEF)</font>]}
+  [<font color=#1b1baa>$obPrf</font> EntPr] configure <font color=#653760>-state</font> <font color=#1b1baa>$state1</font>
+  [<font color=#1b1baa>$obPrf</font> EntLf] configure <font color=#653760>-state</font> <font color=#1b1baa>$state2</font>
+}
+<a id=Tab_Tools></a>
+<i><font color=#4b5d50># ________________________ Tab &quot;Tools&quot; _________________________ #</font></i>
+<a id=pref::Common_Tab></a>
+<b><font color=#ca14ca>proc</font></b> pref::Common_Tab {} {
+  <i><font color=#4b5d50># Serves to layout &quot;Tools/Common&quot; tab.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(EM,Tcl)</font> eq {}} {
+    <b><font color=#3a6797>set</font></b> al(TCLINIDIR) [<b><font color=#3a6797>info</font></b> nameofexecutable]
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> al(TCLINIDIR) <font color=#1b1baa>$al(EM,Tcl)</font>
+  }
+  <b><font color=#3a6797>set</font></b> al(TCLINIDIR) [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$al(TCLINIDIR)</font>]
+  <b><font color=#3a6797>set</font></b> al(TCLLIST) [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$al(EM,TclList)</font> \t]
+  <b><font color=#3a6797>set</font></b> al(TTLIST) [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$al(EM,tt=List)</font> \t]
+  <b><font color=#3a6797>set</font></b> al(WTLIST) [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$al(EM,wt=List)</font> \t]
+  <b><font color=#ca14ca>return</font></b> {
+    {v_ - - 1 1}
+    {fra + T 1 1 {<font color=#653760>-st</font> nsew <font color=#653760>-cw</font> 1 <font color=#653760>-rw</font> 1}}
+    {fra.scf - - 1 1  {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} {<font color=#653760>-mode</font> x}}
+    {.labTcl - - 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;tclsh, wish or tclkit:&quot;</font>}}
+    {.fiLTcl + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5} {<font color=#653760>-tvar</font> ::alited::al(EM,Tcl) \
+      <font color=#653760>-values</font> {<font color=#1b1baa>$al(TCLLIST)</font>} <font color=#653760>-w</font> 48 <font color=#653760>-initialdir</font> <font color=#1b1baa>$al(TCLINIDIR)</font> \
+      <font color=#653760>-clearcom</font> {alited::main::ClearCbx %w ::alited::al(TCLLIST)}}}
+    {.labDoc .labTcl T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Path to man/tcl:&quot;</font>}}
+    {.dirDoc + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5} {<font color=#653760>-tvar</font> ::alited::al(EM,h=) <font color=#653760>-w</font> 48}}
+    {.labTT .labDoc T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Linux terminal:&quot;</font>}}
+    {.cbxTT + L 1 1 {<font color=#653760>-st</font> swe <font color=#653760>-pady</font> 5} {<font color=#653760>-tvar</font> ::alited::al(EM,tt=) <font color=#653760>-w</font> 48 \
+      <font color=#653760>-values</font> {<font color=#1b1baa>$al(TTLIST)</font>} <font color=#653760>-clearcom</font> {alited::main::ClearCbx %w ::alited::al(TTLIST)}}}
+    {.labWT .labTT T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;MS Windows shell:&quot;</font>}}
+    {.cbxWT + L 1 1 {<font color=#653760>-st</font> swe <font color=#653760>-pady</font> 5} {<font color=#653760>-tvar</font> ::alited::al(EM,wt=) <font color=#653760>-w</font> 48 <font color=#653760>-values</font> {<font color=#1b1baa>$al(WTLIST)</font>}}}
+    {.labDF .labWT T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Diff tool:&quot;</font>}}
+    {.filDF + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(EM,DiffTool) \
+      <font color=#653760>-w</font> 48 <font color=#653760>-tabnext</font> alited::Tnext}}
+  }
+}
+<a id=e_menu></a>
+<i><font color=#4b5d50>## ________________________ e_menu _________________________ ##</font></i>
+<a id=pref::Emenu_Tab></a>
+<b><font color=#ca14ca>proc</font></b> pref::Emenu_Tab {} {
+  <i><font color=#4b5d50># Serves to layout &quot;Tools/e_menu&quot; tab.</font></i>
+
+  <b><font color=#3a6797>set</font></b> al(EM,exec) yes
+  <b><font color=#ca14ca>return</font></b> {
+    {v_ - - 1 1}
+    {fra + T 1 1 {<font color=#653760>-st</font> nsew <font color=#653760>-cw</font> 1 <font color=#653760>-rw</font> 1}}
+    {fra.scf - - 1 1  {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} {<font color=#653760>-mode</font> x}}
+    {.labCS - - 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Color scheme:&quot;</font>}}
+    {.SwiCS + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5} {<font color=#653760>-t</font> {e_menu's own} \
+      <font color=#653760>-var</font> ::alited::al(EM,ownCS) <font color=#653760>-com</font> alited::pref::OwnCS <font color=#653760>-afteridle</font> alited::pref::OwnCS}}
+    {.OpcCS + L 1 1 {<font color=#653760>-st</font> sew <font color=#653760>-pady</font> 5} {::alited::pref::opcc2 ::alited::pref::opcColors \
+      {<font color=#653760>-width</font> 21 <font color=#653760>-compound</font> left <font color=#653760>-image</font> alimg_color} {alited::pref::opcToolPre %a}}}
+    {.labGeo .labCS T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> Geometry:}}
+    {.entGeo + L 1 2 {<font color=#653760>-st</font> sew <font color=#653760>-pady</font> 5} {<font color=#653760>-tvar</font> ::alited::al(EM,geometry)}}
+    {.labDir .labGeo T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Directory of menus:&quot;</font>}}
+    {.dirEM + L 1 2 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5} {<font color=#653760>-tvar</font> ::alited::al(EM,mnudir) <font color=#653760>-w</font> 48}}
+    {.labMenu .labDir T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Main menu:&quot;</font>}}
+    {.filMenu + L 1 2 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5} {<font color=#653760>-tvar</font> ::alited::al(EM,mnu) <font color=#653760>-w</font> 48 <font color=#653760>-filetypes</font> {{{Menus} .em} {{All files} .* }}}}
+    {.labPD .labMenu T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Projects (%PD wildcard):&quot;</font>}}
+    {.filPD + L 1 2 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5} {<font color=#653760>-tvar</font> ::alited::al(EM,PD=) <font color=#653760>-w</font> 48}}
+    {.but1 .filPD T 1 1 {<font color=#653760>-st</font> w <font color=#653760>-pady</font> 5} {<font color=#653760>-t</font> Standard <font color=#653760>-com</font> alited::pref::Default_e_menu}}
+    {.butok + L 1 1 {<font color=#653760>-st</font> w} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(MC,test)&quot;</font> <font color=#653760>-com</font> alited::pref::Test_e_menu <font color=#653760>-tabnext</font> alited::Tnext}}
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::Default_e_menu></a>
+<b><font color=#ca14ca>proc</font></b> pref::Default_e_menu {} {
+  <i><font color=#4b5d50># Set default a_menu settings.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> al(EM,exec) yes
+  <b><font color=#3a6797>set</font></b> al(EM,ownCS) no
+  <b><font color=#3a6797>set</font></b> al(EM,geometry) {}
+  <b><font color=#3a6797>set</font></b> emdir [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::USERDIR</font> e_menu]
+  <b><font color=#3a6797>set</font></b> al(EM,mnudir) [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$emdir</font> menus]
+  <b><font color=#3a6797>set</font></b> al(EM,mnu) [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$al(EM,mnudir)</font> menu.em]
+  <b><font color=#3a6797>set</font></b> al(EM,PD=) [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$emdir</font> em_projects]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::Test_e_menu></a>
+<b><font color=#ca14ca>proc</font></b> pref::Test_e_menu {} {
+  <i><font color=#4b5d50># Tests a_menu settings.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> cs <font color=#1b1baa>$al(EM,CS)</font>
+  <b><font color=#3a6797>set</font></b> al(EM,CS) [GetCS 2]
+  alited::tool::e_menu o=0 TEST_ALITED
+  <b><font color=#3a6797>set</font></b> al(EM,CS) <font color=#1b1baa>$cs</font>
+}
+<a id=tkcon></a>
+<i><font color=#4b5d50>## ________________________ tkcon _________________________ ##</font></i>
+<a id=pref::Tkcon_Tab></a>
+<b><font color=#ca14ca>proc</font></b> pref::Tkcon_Tab {} {
+  <i><font color=#4b5d50># Serves to layout &quot;Tools/Tkcon&quot; tab.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> {
+    {v_ - - 1 1}
+    {fra + T 1 1 {<font color=#653760>-st</font> nsew <font color=#653760>-cw</font> 1 <font color=#653760>-rw</font> 1}}
+    {fra.scf - - 1 1  {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} {<font color=#653760>-mode</font> y}}
+    {fra.scf.lfr - - 1 1  {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> x} {<font color=#653760>-t</font> Colors}}
+    {.Labbg - - 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;bg:&quot;</font>}}
+    {.clrbg + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(tkcon,clrbg) <font color=#653760>-w</font> 20}}
+    {.labblink .labbg T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;blink:&quot;</font>}}
+    {.clrblink + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(tkcon,clrblink) <font color=#653760>-w</font> 20}}
+    {.labcursor .labblink T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;cursor:&quot;</font>}}
+    {.clrcursor + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(tkcon,clrcursor) <font color=#653760>-w</font> 20}}
+    {.labdisabled .labcursor T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;disabled:&quot;</font>}}
+    {.clrdisabled + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(tkcon,clrdisabled) <font color=#653760>-w</font> 20}}
+    {.labproc .labdisabled T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;proc:&quot;</font>}}
+    {.clrproc + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(tkcon,clrproc) <font color=#653760>-w</font> 20}}
+    {.labvar .labproc T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;var:&quot;</font>}}
+    {.clrvar + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(tkcon,clrvar) <font color=#653760>-w</font> 20}}
+    {.labprompt .labvar T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;prompt:&quot;</font>}}
+    {.clrprompt + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(tkcon,clrprompt) <font color=#653760>-w</font> 20}}
+    {.labstdin .labprompt T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;stdin:&quot;</font>}}
+    {.clrstdin + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(tkcon,clrstdin) <font color=#653760>-w</font> 20}}
+    {.labstdout .labstdin T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;stdout:&quot;</font>}}
+    {.clrstdout + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(tkcon,clrstdout) <font color=#653760>-w</font> 20}}
+    {.labstderr .labstdout T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;stderr:&quot;</font>}}
+    {.clrstderr + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(tkcon,clrstderr) <font color=#653760>-w</font> 20}}
+    {fra.scf.v_ fra.scf.lfr T 1 1  {<b><font color=#134070>pack</font></b>} {<font color=#653760>-h</font> 10}}
+    {fra.scf.lfr2 - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> x} {<font color=#653760>-t</font> Options}}
+    {.entopts - - 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1} {<font color=#653760>-tvar</font> ::alited::al(tkcon,options) <font color=#653760>-w</font> 80}}
+    {fra.scf.frabuts - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> x}}
+    {.but1 - - - - {<font color=#653760>-pady</font> 8} {<font color=#653760>-t</font> Standard <font color=#653760>-com</font> {alited::pref::Tkcon_Default1; alited::pref::UpdateTkconTab}}}
+    {.but2 + L 1 1 {<font color=#653760>-padx</font> 8} {<font color=#653760>-t</font> {Standard 2} <font color=#653760>-com</font> {alited::pref::Tkcon_Default2; alited::pref::UpdateTkconTab}}}
+    {.butok + L 1 1 {} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(MC,test)&quot;</font> <font color=#653760>-com</font> alited::tool::tkcon <font color=#653760>-tabnext</font> alited::Tnext}}
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::UpdateTkconTab></a>
+<b><font color=#ca14ca>proc</font></b> pref::UpdateTkconTab {} {
+  <i><font color=#4b5d50># Updates color labels for &quot;Tools/Tkcon&quot; tab.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> lab1 [<font color=#1b1baa>$obPrf</font> Labbg]
+  <b><font color=#3a6797>foreach</font></b> nam {bg blink cursor disabled proc var prompt stdin stdout stderr} {
+    <b><font color=#3a6797>set</font></b> lab [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> labbg labclr<font color=#1b1baa>$nam</font>] <font color=#1b1baa>$lab1</font>]
+    <b><font color=#3a6797>set</font></b> ent [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> labbg entclr<font color=#1b1baa>$nam</font>] <font color=#1b1baa>$lab1</font>]
+    <font color=#1b1baa>$lab</font> configure <font color=#653760>-background</font> [<font color=#1b1baa>$ent</font> get]
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::Tkcon_Default></a>
+<b><font color=#ca14ca>proc</font></b> pref::Tkcon_Default {} {
+  <i><font color=#4b5d50># Sets defaults for &quot;Tools/Tkcon&quot; tab.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> al(tkcon,options) {<font color=#653760>-rows</font> 24 <font color=#653760>-cols</font> 80 <font color=#653760>-fontsize</font> 13 <font color=#653760>-geometry</font> {} <font color=#653760>-showmenu</font> 1 <font color=#653760>-topmost</font> 0}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::Tkcon_Default1></a>
+<b><font color=#ca14ca>proc</font></b> pref::Tkcon_Default1 {} {
+  <i><font color=#4b5d50># Sets light theme colors for Tkcon.</font></i>
+
+  fetchVars
+  Tkcon_Default
+  <b><font color=#3a6797>foreach</font></b> {clr val} { \
+  bg #FFFFFF blink #FFFF00 cursor #000000 disabled #4D4D4D proc #008800 \
+  var #FFC0D0 prompt #8F4433 stdin #000000 stdout #0000FF stderr #FF0000} {
+    <b><font color=#3a6797>set</font></b> al(tkcon,clr<font color=#1b1baa>$clr</font>) <font color=#1b1baa>$val</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::Tkcon_Default2></a>
+<b><font color=#ca14ca>proc</font></b> pref::Tkcon_Default2 {} {
+  <i><font color=#4b5d50># Sets dark theme colors for Tkcon.</font></i>
+
+  fetchVars
+  Tkcon_Default
+  <b><font color=#3a6797>foreach</font></b> {clr val} { \
+  bg #25292b blink #929281 cursor #FFFFFF disabled #999797 proc #66FF10 \
+  var #565608 prompt #ffff00 stdin #FFFFFF stdout #aeaeae stderr #ff7272} {
+    <b><font color=#3a6797>set</font></b> al(tkcon,clr<font color=#1b1baa>$clr</font>) <font color=#1b1baa>$val</font>
+  }
+}
+<a id=bar-menu></a>
+<i><font color=#4b5d50>## ________________________ bar-menu _________________________ ##</font></i>
+<a id=pref::Runs_Tab></a>
+<b><font color=#ca14ca>proc</font></b> pref::Runs_Tab {tab} {
+  <i><font color=#4b5d50># Prepares and layouts &quot;Tools/bar-menu&quot; tab.</font></i>
+  <i><font color=#4b5d50>#   tab - a tab to open (saved at previous session) or {}</font></i>
+
+  fetchVars
+  <i><font color=#4b5d50># get a list of all available icons for &quot;bar-menu&quot; actions</font></i>
+  <b><font color=#3a6797>set</font></b> listIcons [::apave::iconImage]
+  <b><font color=#3a6797>set</font></b> em_Icons [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>set</font></b> n [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$listIcons</font>]
+  <b><font color=#3a6797>set</font></b> icr 0
+  <b><font color=#3a6797>set</font></b> ncr 0
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;(<font color=#1b1baa>$n</font>+43)} {<b><font color=#3a6797>incr</font></b> i} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$icr</font> && (<font color=#1b1baa>$icr</font> % 13) == 0} {<b><font color=#3a6797>lappend</font></b> em_Icons |}
+    <b><font color=#3a6797>set</font></b> ii [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$icr</font>-<font color=#1b1baa>$ncr</font>}]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$n</font>} {
+      <b><font color=#3a6797>set</font></b> ico [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$listIcons</font> <font color=#1b1baa>$i</font>]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ico</font> in [ReservedIcons]} <b><font color=#ca14ca>continue</font></b>
+      <b><font color=#3a6797>lappend</font></b> em_Icons <font color=#1b1baa>$ico</font>
+      <b><font color=#3a6797>incr</font></b> ncr
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$ii</font>&lt;10} {
+      <b><font color=#3a6797>lappend</font></b> em_Icons <font color=#1b1baa>$ii</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> ico [<b><font color=#3a6797>string</font></b> index [TextIcons] [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$ii</font> -10}]]
+      <b><font color=#3a6797>lappend</font></b> em_Icons [alited::TextIcon <font color=#1b1baa>$ico</font>]
+    }
+    <b><font color=#3a6797>incr</font></b> icr
+  }
+  Em_ShowAll no
+  <i><font color=#4b5d50># get a layout of &quot;bar-menu&quot; tab</font></i>
+  <b><font color=#3a6797>set</font></b> res {
+    {v_ - - 1 1}
+    {fra + T 1 1 {<font color=#653760>-st</font> nsew <font color=#653760>-cw</font> 1 <font color=#653760>-rw</font> 1 <font color=#653760>-padx</font> 8} {<font color=#653760>-afteridle</font> ::alited::pref::Em_ShowAll}}
+    {fra.fraButs - - 1 1  {<b><font color=#134070>pack</font></b> <font color=#653760>-anchor</font> w <font color=#653760>-pady</font> 4}}
+    {.btTUp - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-image</font> alimg_up <font color=#653760>-com</font> ::alited::pref::UpRun <font color=#653760>-tip</font> {Move an item up}}}
+    {.btTDown - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-image</font> alimg_down <font color=#653760>-com</font> ::alited::pref::DownRun <font color=#653760>-tip</font> {Move an item down}}}
+    {.btTDelRun - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-image</font> alimg_delete <font color=#653760>-com</font> ::alited::pref::DelRun <font color=#653760>-tip</font> {Delete an item}}}
+    {fra.ScfRuns - - 1 1  {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1}}
+    {tcl {
+        <b><font color=#3a6797>set</font></b> prt <font color=#8b2a0e>&quot;- -&quot;</font>
+        <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$::alited::pref::em_Num</font>} {<b><font color=#3a6797>incr</font></b> i} {
+          <b><font color=#3a6797>set</font></b> nit [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$i</font>+1}]
+          <b><font color=#3a6797>set</font></b> lwid <font color=#8b2a0e>&quot;.OpcIco<font color=#1b1baa>$</font>i <font color=#1b1baa>$</font>prt 1 1 <font color=#1b1baa>{</font>-st nsw<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>::alited::pref::em_ico(<font color=#1b1baa>$</font>i) \</font>
+<font color=#8b2a0e>          ::alited::pref::em_Icons <font color=#1b1baa>{</font>-width 9 -com alited::pref::Em_ShowAll \</font>
+<font color=#8b2a0e>          -tip <font color=#1b1baa>{{</font>An icon puts the run into the toolbar.\nBlank or 'none' excludes it from the toolbar.<font color=#1b1baa>}}}</font> \</font>
+<font color=#8b2a0e>          <font color=#1b1baa>{</font>alited::pref::opcIcoPre %a<font color=#1b1baa>}}</font>&quot;</font>
+          %C <font color=#1b1baa>$lwid</font>
+          <b><font color=#3a6797>set</font></b> lwid <font color=#8b2a0e>&quot;.ButMnu<font color=#1b1baa>$</font>i + L 1 1 <font color=#1b1baa>{</font>-st sw -pady 1 -padx 8<font color=#1b1baa>}</font> \</font>
+<font color=#8b2a0e>          <font color=#1b1baa>{</font>-t <font color=#1b1baa>{$</font>::alited::pref::em_mnu(<font color=#1b1baa>$</font>i)<font color=#1b1baa>}</font> -com <font color=#1b1baa>{</font>alited::pref::PickMenuItem <font color=#1b1baa>$</font>i<font color=#1b1baa>}</font> \</font>
+<font color=#8b2a0e>          -style TButtonWest -tip \</font>
+<font color=#8b2a0e>          <font color=#1b1baa>{{</font>The run item for the menu and/or the toolbar.\nSelect it from the e_menu items.<font color=#1b1baa>}}}</font>&quot;</font>
+          %C <font color=#1b1baa>$lwid</font>
+          <b><font color=#3a6797>set</font></b> prt <font color=#8b2a0e>&quot;.OpcIco<font color=#1b1baa>$</font>i T&quot;</font>
+      }}
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tab</font> eq {Emenu_Tab} || \
+  (<font color=#1b1baa>$oldTab</font> ne {} && [<b><font color=#3a6797>string</font></b> match *nbk6.f3 <font color=#1b1baa>$arrayTab($oldTab)</font>])} {
+    <i><font color=#4b5d50># &quot;Run&quot; items should be displayed immediately</font></i>
+    <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+  }
+  <i><font color=#4b5d50># &quot;Run&quot; items can be created with a little delay</font></i>
+  <i><font color=#4b5d50># imperceptible for a user, saving his/her time</font></i>
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>linsert</font></b> <font color=#1b1baa>$res</font> 0 {<b><font color=#3a6797>after</font></b> 500}]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::DelRun></a>
+<b><font color=#ca14ca>proc</font></b> pref::DelRun {} {
+  <i><font color=#4b5d50># Deletes a current &quot;bar-menu&quot; action.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> idx [FocusedRun]]&lt;0} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i <font color=#1b1baa>$idx</font>} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$em_Num</font>} {<b><font color=#3a6797>incr</font></b> i} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i</font>==(<font color=#1b1baa>$em_Num</font>-1)} {
+      <b><font color=#3a6797>lassign</font></b> {} em_mnu(<font color=#1b1baa>$i</font>) em_ico(<font color=#1b1baa>$i</font>) em_inf(<font color=#1b1baa>$i</font>)
+    } <b><font color=#3a6797>else</font></b> {
+      <i><font color=#4b5d50># make upper all the rest actions</font></i>
+      <b><font color=#3a6797>set</font></b> ip [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$i</font>+1}]
+      <b><font color=#3a6797>set</font></b> em_ico(<font color=#1b1baa>$i</font>) <font color=#1b1baa>$em_ico($ip)</font>
+      <b><font color=#3a6797>set</font></b> em_mnu(<font color=#1b1baa>$i</font>) <font color=#1b1baa>$em_mnu($ip)</font>
+      <b><font color=#3a6797>set</font></b> em_inf(<font color=#1b1baa>$i</font>) <font color=#1b1baa>$em_inf($ip)</font>
+    }
+  }
+  Em_ShowAll
+  ScrollRuns
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::Em_ShowAll></a>
+<b><font color=#ca14ca>proc</font></b> pref::Em_ShowAll {{upd yes}} {
+  <i><font color=#4b5d50># Handles separators of bar-menu.</font></i>
+  <i><font color=#4b5d50>#   upd - if yes, displays the widgets of bar-menu settings.</font></i>
+  fetchVars
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$em_Num</font>} {<b><font color=#3a6797>incr</font></b> i} {
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists em_inf(<font color=#1b1baa>$i</font>)]} {
+      <b><font color=#3a6797>lassign</font></b> {} em_inf(<font color=#1b1baa>$i</font>) em_mnu(<font color=#1b1baa>$i</font>) em_ico(<font color=#1b1baa>$i</font>)
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$em_ico($i)</font> eq {none}} {<b><font color=#3a6797>set</font></b> em_ico(<font color=#1b1baa>$i</font>) {}}
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$upd</font>} {
+      [<font color=#1b1baa>$obPrf</font> ButMnu<font color=#1b1baa>$i</font>] configure <font color=#653760>-text</font> <font color=#1b1baa>$em_mnu($i)</font>
+      <b><font color=#3a6797>set</font></b> ico [<font color=#1b1baa>$obPrf</font> OpcIco<font color=#1b1baa>$i</font>]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> k [<b><font color=#3a6797>lsearch</font></b> <font color=#1b1baa>$listIcons</font> [<font color=#1b1baa>$ico</font> cget <font color=#653760>-text</font>]]]&gt;-1} {
+        <b><font color=#3a6797>set</font></b> img [::apave::iconImage [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$listIcons</font> <font color=#1b1baa>$k</font>]]
+        <b><font color=#3a6797>set</font></b> cmpd left
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> img alimg_none
+        <b><font color=#3a6797>set</font></b> cmpd right
+      }
+      <font color=#1b1baa>$ico</font> configure <font color=#653760>-image</font> <font color=#1b1baa>$img</font> <font color=#653760>-compound</font> <font color=#1b1baa>$cmpd</font>
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$upd</font>} ScrollRuns
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::PickMenuItem></a>
+<b><font color=#ca14ca>proc</font></b> pref::PickMenuItem {it} {
+  <i><font color=#4b5d50># Selects e_menu's action for a &quot;bar-menu&quot; item.</font></i>
+  <i><font color=#4b5d50>#   it - index of &quot;bar-menu&quot; item</font></i>
+
+  fetchVars
+  ::alited::Source_e_menu
+  <b><font color=#3a6797>set</font></b> w [<font color=#1b1baa>$obPrf</font> ButMnu<font color=#1b1baa>$it</font>]
+  <b><font color=#3a6797>set</font></b> X [<b><font color=#134070>winfo</font></b> rootx <font color=#1b1baa>$w</font>]
+  <b><font color=#3a6797>set</font></b> Y [<b><font color=#134070>winfo</font></b> rooty <font color=#1b1baa>$w</font>]
+  <b><font color=#3a6797>set</font></b> res [::em::main <font color=#653760>-prior</font> 1 <font color=#653760>-modal</font> 1 <font color=#653760>-remain</font> 0 <font color=#653760>-noCS</font> 1 \
+    {<b><font color=#3a6797>*</font></b>}[alited::tool::EM_Options \
+    <font color=#8b2a0e>&quot;pk=yes dk=dock o=-1 t=1 g=+<font color=#1b1baa>[</font>incr X 5<font color=#1b1baa>]</font>+<font color=#1b1baa>[</font>incr Y 25<font color=#1b1baa>]</font> mp=1&quot;</font>]]
+  <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$res</font> menu idx item
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$item</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> item1 [<b><font color=#3a6797>lindex</font></b> [alited::tool::EM_Structure <font color=#1b1baa>$menu</font>] <font color=#1b1baa>$idx</font>-1 1]
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$item1</font> -\n] -&gt; item2 item3
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$item2</font> ne <font color=#1b1baa>$item3</font> && [<b><font color=#3a6797>string</font></b> match *.em <font color=#1b1baa>$item2</font>]} {
+      <b><font color=#3a6797>append</font></b> item2 <font color=#8b2a0e>&quot;: <font color=#1b1baa>$</font>item3&quot;</font>  ;<i><font color=#4b5d50># it's a menu call title</font></i>
+      <b><font color=#3a6797>set</font></b> idx - ;<i><font color=#4b5d50># to open the whole menu</font></i>
+    }
+    <font color=#1b1baa>$w</font> configure <font color=#653760>-text</font> <font color=#1b1baa>$item2</font>
+    <b><font color=#3a6797>set</font></b> em_mnu(<font color=#1b1baa>$it</font>) [::apave::NormalizeName <font color=#1b1baa>$item2</font>]
+    <b><font color=#3a6797>set</font></b> em_inf(<font color=#1b1baa>$it</font>) [<b><font color=#3a6797>list</font></b> [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$menu</font>] <font color=#1b1baa>$idx</font> <font color=#1b1baa>$item2</font>]
+    ScrollRuns
+  }
+  <b><font color=#134070>focus</font></b> <font color=#653760>-force</font> <font color=#1b1baa>$w</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::ScrollRuns></a>
+<b><font color=#ca14ca>proc</font></b> pref::ScrollRuns {} {
+  <i><font color=#4b5d50># Updates scrollbars of bar-menu tab because its contents may have various length.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>update</font></b>
+  ::apave::sframe resize [<font color=#1b1baa>$obPrf</font> ScfRuns]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::opcIcoPre></a>
+<b><font color=#ca14ca>proc</font></b> pref::opcIcoPre {args} {
+  <i><font color=#4b5d50># Gets an item for icon list of a bar-menu action.</font></i>
+  <i><font color=#4b5d50>#   args - contains a name of current icon</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$args</font> a
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#1b1baa>$listIcons</font> <font color=#1b1baa>$a</font>]]&gt;-1} {
+    <b><font color=#3a6797>set</font></b> img [::apave::iconImage [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$listIcons</font> <font color=#1b1baa>$i</font>]]
+    <b><font color=#3a6797>set</font></b> res <font color=#8b2a0e>&quot;-image <font color=#1b1baa>$</font>img -compound left &quot;</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> res {}
+  }
+  <b><font color=#3a6797>append</font></b> res <font color=#8b2a0e>&quot;-label &quot;</font> [alited::TextIcon <font color=#1b1baa>$a</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::OwnCS></a>
+<b><font color=#ca14ca>proc</font></b> pref::OwnCS {} {
+  <i><font color=#4b5d50># Looks for ownCS option.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(EM,exec)</font>} {<b><font color=#3a6797>set</font></b> st normal} {<b><font color=#3a6797>set</font></b> st disabled; <b><font color=#3a6797>set</font></b> al(EM,ownCS) no}
+  [<font color=#1b1baa>$obPrf</font> SwiCS] configure <font color=#653760>-state</font> <font color=#1b1baa>$st</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(EM,ownCS)</font>} {<b><font color=#3a6797>set</font></b> st normal} {<b><font color=#3a6797>set</font></b> st disabled}
+  [<font color=#1b1baa>$obPrf</font> OpcCS] configure <font color=#653760>-state</font> <font color=#1b1baa>$st</font>
+}
+<a id=Up/Down_buttons></a>
+<i><font color=#4b5d50>### ________________________ Up/Down buttons _________________________ ###</font></i>
+<a id=pref::FocusedRun></a>
+<b><font color=#ca14ca>proc</font></b> pref::FocusedRun {} {
+  <i><font color=#4b5d50># Gets an index of current run.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> foc [<b><font color=#134070>focus</font></b>]
+  <b><font color=#3a6797>set</font></b> fr -1
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$::alited::pref::em_Num</font>} {<b><font color=#3a6797>incr</font></b> i} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$foc</font> in [<b><font color=#3a6797>list</font></b> [<font color=#1b1baa>$obPrf</font> OpcIco<font color=#1b1baa>$i</font>] [<font color=#1b1baa>$obPrf</font> ButMnu<font color=#1b1baa>$i</font>]]} {
+      <b><font color=#3a6797>set</font></b> fr <font color=#1b1baa>$i</font>
+      <b><font color=#ca14ca>break</font></b>
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fr</font>&lt;0} {Message [msgcat::mc {Select any of run item}] 3}
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$fr</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::ExchangeRuns></a>
+<b><font color=#ca14ca>proc</font></b> pref::ExchangeRuns {f1 f2} {
+  <i><font color=#4b5d50># Exchanges two run items.</font></i>
+  <i><font color=#4b5d50>#   f1 - 1st item</font></i>
+  <i><font color=#4b5d50>#   f2 - 2nd item</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> ico1 <font color=#1b1baa>$em_ico($f2)</font>
+  <b><font color=#3a6797>set</font></b> mnu1 <font color=#1b1baa>$em_mnu($f2)</font>
+  <b><font color=#3a6797>set</font></b> inf1 <font color=#1b1baa>$em_inf($f2)</font>
+  <b><font color=#3a6797>set</font></b> em_ico(<font color=#1b1baa>$f2</font>) <font color=#1b1baa>$em_ico($f1)</font>
+  <b><font color=#3a6797>set</font></b> em_mnu(<font color=#1b1baa>$f2</font>) <font color=#1b1baa>$em_mnu($f1)</font>
+  <b><font color=#3a6797>set</font></b> em_inf(<font color=#1b1baa>$f2</font>) <font color=#1b1baa>$em_inf($f1)</font>
+  <b><font color=#3a6797>set</font></b> em_ico(<font color=#1b1baa>$f1</font>) <font color=#1b1baa>$ico1</font>
+  <b><font color=#3a6797>set</font></b> em_mnu(<font color=#1b1baa>$f1</font>) <font color=#1b1baa>$mnu1</font>
+  <b><font color=#3a6797>set</font></b> em_inf(<font color=#1b1baa>$f1</font>) <font color=#1b1baa>$inf1</font>
+  Em_ShowAll
+  <b><font color=#3a6797>set</font></b> foc [<b><font color=#134070>focus</font></b>]
+  <b><font color=#3a6797>if</font></b>       {<font color=#1b1baa>$foc</font> eq [<font color=#1b1baa>$obPrf</font> OpcIco<font color=#1b1baa>$f1</font>]} {<b><font color=#134070>focus</font></b> [<font color=#1b1baa>$obPrf</font> OpcIco<font color=#1b1baa>$f2</font>]
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$foc</font> eq [<font color=#1b1baa>$obPrf</font> ButMnu<font color=#1b1baa>$f1</font>]} {<b><font color=#134070>focus</font></b> [<font color=#1b1baa>$obPrf</font> ButMnu<font color=#1b1baa>$f2</font>]
+  } <b><font color=#3a6797>else</font></b>                                {<b><font color=#134070>focus</font></b> [<font color=#1b1baa>$obPrf</font> ChbMT<font color=#1b1baa>$f2</font>]}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::UpRun></a>
+<b><font color=#ca14ca>proc</font></b> pref::UpRun {} {
+  <i><font color=#4b5d50># Move a current run item up.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> fr [FocusedRun]]&lt;0} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fr</font>==0} {
+    <b><font color=#134070>bell</font></b>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> f2 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$fr</font> - 1}]
+    ExchangeRuns <font color=#1b1baa>$fr</font> <font color=#1b1baa>$f2</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::DownRun></a>
+<b><font color=#ca14ca>proc</font></b> pref::DownRun {} {
+  <i><font color=#4b5d50># Move a current run item down.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> fr [FocusedRun]]&lt;0} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>set</font></b> f2 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$fr</font> + 1}]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$f2</font>&gt;=<font color=#1b1baa>$::alited::pref::em_Num</font>} {
+    <b><font color=#134070>bell</font></b>
+  } <b><font color=#3a6797>else</font></b> {
+    ExchangeRuns <font color=#1b1baa>$fr</font> <font color=#1b1baa>$f2</font>
+  }
+}
+<a id=GUI_procs></a>
+<i><font color=#4b5d50># ________________________ GUI procs _________________________ #</font></i>
+<a id=pref::_create></a>
+<b><font color=#ca14ca>proc</font></b> pref::_create {tab} {
+  <i><font color=#4b5d50># Creates &quot;Preferences&quot; dialogue.</font></i>
+  <i><font color=#4b5d50>#   tab - previous open tab</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> tipson [baltip::cget <font color=#653760>-on</font>]
+  <b><font color=#3a6797>set</font></b> preview 0
+  baltip::configure <font color=#653760>-on</font> <font color=#1b1baa>$al(TIPS,Preferences)</font>
+  ::apave::APave create <font color=#1b1baa>$obPrf</font> <font color=#1b1baa>$win</font>
+  <font color=#1b1baa>$obPrf</font> makeWindow <font color=#1b1baa>$win</font>.fra <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(MC,pref) :: <font color=#1b1baa>$</font>::alited::USERDIR&quot;</font>
+  <font color=#1b1baa>$obPrf</font> paveWindow \
+    <font color=#1b1baa>$win</font>.fra [MainFrame] \
+    <font color=#1b1baa>$win</font>.fra.fraR.nbk.f1 [General_Tab1] \
+    <font color=#1b1baa>$win</font>.fra.fraR.nbk.f2 [General_Tab2] \
+    <font color=#1b1baa>$win</font>.fra.fraR.nbk.f3 [General_Tab3] \
+    <font color=#1b1baa>$win</font>.fra.fraR.nbk2.f1 [Edit_Tab1] \
+    <font color=#1b1baa>$win</font>.fra.fraR.nbk2.f2 [Edit_Tab2] \
+    <font color=#1b1baa>$win</font>.fra.fraR.nbk2.f3 [Edit_Tab3] \
+    <font color=#1b1baa>$win</font>.fra.fraR.nbk2.f4 [Edit_Tab4] \
+    <font color=#1b1baa>$win</font>.fra.fraR.nbk3.f1 [Units_Tab] \
+    <font color=#1b1baa>$win</font>.fra.fraR.nbk4.f1 [Template_Tab] \
+    <font color=#1b1baa>$win</font>.fra.fraR.nbk5.f1 [Keys_Tab1] \
+    <font color=#1b1baa>$win</font>.fra.fraR.nbk6.f1 [Common_Tab] \
+    <font color=#1b1baa>$win</font>.fra.fraR.nbk6.f2 [Emenu_Tab] \
+    <font color=#1b1baa>$win</font>.fra.fraR.nbk6.f3 [Runs_Tab <font color=#1b1baa>$tab</font>] \
+    <font color=#1b1baa>$win</font>.fra.fraR.nbk6.f4 [Tkcon_Tab]
+  <b><font color=#3a6797>set</font></b> wtxt [<font color=#1b1baa>$obPrf</font> TexNotes]
+  <b><font color=#3a6797>set</font></b> fnotes [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::USERDIR</font> notes.txt]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fnotes</font>]} {
+    <font color=#1b1baa>$wtxt</font> insert end [::apave::readTextFile <font color=#1b1baa>$fnotes</font>]
+  }
+  <font color=#1b1baa>$wtxt</font> edit reset; <font color=#1b1baa>$wtxt</font> edit modified no
+  [<font color=#1b1baa>$obPrf</font> TexTclKeys] insert end <font color=#1b1baa>$al(ED,TclKeyWords)</font>
+  [<font color=#1b1baa>$obPrf</font> TexCKeys] insert end <font color=#1b1baa>$al(ED,CKeyWords)</font>
+  <b><font color=#3a6797>set</font></b> 1st <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>win.fra.fraR.nbk select <font color=#1b1baa>$</font>arrayTab(nbk)&quot;</font> ;<i><font color=#4b5d50># to restore 1st nbk's tab</font></i>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tab</font> ne {}} {
+    <b><font color=#3a6797>switch</font></b> <font color=#653760>-exact</font> <font color=#1b1baa>$tab</font> {
+      Emenu_Tab {
+        <b><font color=#3a6797>set</font></b> nbk nbk6
+        <b><font color=#3a6797>set</font></b> nt <font color=#1b1baa>$win</font>.fra.fraR.nbk6.f3
+      }
+    }
+    <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>1st ; ::alited::pref::Tab <font color=#1b1baa>$</font>nbk <font color=#1b1baa>$</font>nt yes&quot;</font>
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$oldTab</font> ne {}} {
+    <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>1st ; ::alited::pref::Tab <font color=#1b1baa>$</font>oldTab&quot;</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;::alited::pref::Tab nbk&quot;</font> ;<i><font color=#4b5d50># first entering</font></i>
+  }
+  <b><font color=#3a6797>foreach</font></b> o {o O} {<b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;Control-<font color=#1b1baa>$o</font>&gt; alited::ini::EditSettings}
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;F1&gt; <font color=#8b2a0e>&quot;<font color=#1b1baa>[$</font>obPrf ButHelp<font color=#1b1baa>]</font> invoke&quot;</font>
+  <font color=#1b1baa>$obPrf</font> untouchWidgets *.texSample *.texCSample
+  <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$obPrf</font> showModal <font color=#1b1baa>$win</font> <font color=#653760>-geometry</font> <font color=#1b1baa>$geo</font> <font color=#653760>-minsize</font> {800 600} <font color=#653760>-resizable</font> 1 \
+    <font color=#653760>-onclose</font> ::alited::pref::Cancel]
+  <b><font color=#3a6797>set</font></b> fcont [<font color=#1b1baa>$wtxt</font> get 1.0 {end -1c}]
+  ::apave::writeTextFile <font color=#1b1baa>$fnotes</font> fcont
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$res</font>] &lt; 2} {<b><font color=#3a6797>set</font></b> res <font color=#8b2a0e>&quot;&quot;</font>}
+  <b><font color=#3a6797>set</font></b> geo [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font>] ;<i><font color=#4b5d50># save the new geometry of the dialogue</font></i>
+  <b><font color=#3a6797>set</font></b> oldTab <font color=#1b1baa>$curTab</font>
+  <b><font color=#3a6797>set</font></b> arrayTab(<font color=#1b1baa>$curTab</font>) [<font color=#1b1baa>$win</font>.fra.fraR.<font color=#1b1baa>$curTab</font> select]
+  CheckTheming no
+  baltip::configure {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$tipson</font>
+  <b><font color=#3a6797>foreach</font></b> arr {data keys prevkeys savekeys} {<b><font color=#3a6797>array</font></b> unset <font color=#1b1baa>$arr</font> *}
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$win</font>}
+  <font color=#1b1baa>$obPrf</font> destroy
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::_init></a>
+<b><font color=#ca14ca>proc</font></b> pref::_init {} {
+  <i><font color=#4b5d50># Initializes &quot;Preferences&quot; dialogue.</font></i>
+
+  fetchVars
+  InitLocales
+  SaveSettings
+  <b><font color=#3a6797>set</font></b> curTab <font color=#8b2a0e>&quot;nbk&quot;</font>
+  IniKeys
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::_run></a>
+<b><font color=#ca14ca>proc</font></b> pref::_run {{tab {}}} {
+  <i><font color=#4b5d50># Runs &quot;Preferences&quot; dialogue.</font></i>
+  <i><font color=#4b5d50>#   tab - previous open tab</font></i>
+  <i><font color=#4b5d50># Returns yes, if settings were saved.</font></i>
+
+  <b><font color=#3a6797>update</font></b>  ;<i><font color=#4b5d50># if run from menu: there may be unupdated space under it (in some DE)</font></i>
+  _init
+  <b><font color=#3a6797>set</font></b> res [_create <font color=#1b1baa>$tab</font>]
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<a id=EOF></a>
+<i><font color=#4b5d50># _________________________________ EOF _________________________________ #</font></i>
+
+</pre>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>pref.tcl</b></font></div></td></table>
+
+</section>
+<script>
+  writeFooter('Document generated by <a href="'+homeLINK()+'/en/tcl/alited/index.html">alited</a> &amp; <a href="'+homeLINK()+'/en/tcl/mulster/index.html">mulster</a></a>');
+</script>
+</div>
+</body>
+</html>

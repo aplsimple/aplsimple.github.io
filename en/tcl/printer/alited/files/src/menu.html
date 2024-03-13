@@ -1,0 +1,858 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<meta name="author" content="aplsimple">
+<meta name="description" content="aplsimple's home page">
+<meta name="keywords" content="aplsimple,home">
+</head>
+<style>
+table{
+background-color: #f9f9f9;
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+box-shadow: none;
+filter: none;
+}
+pre{
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+}
+</style>
+<script>
+function homeLINK() {
+  homelink = document.baseURI;
+  ilen = 19
+  ibase = homelink.indexOf('aplsimple.github');
+  if (ibase<0) { ibase = homelink.indexOf('aplsimple_github'); ilen += 10 };
+  if (ibase>=0) { homelink = homelink.substring(0,ibase+ilen) };
+  return homelink;
+};
+document.write(' \
+<link rel="icon" type="image/jpg" href="'+homeLINK()+'/zoo/favicon.jpg">');
+document.write('<'+'script src="'+homeLINK()+'/zoo/funcs.js">'+'<'+'/script>');
+document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'+'/script>');
+</script>
+<body>
+<div id="wrapper">
+<div name="divd1" ALIGN="CENTER"> <FONT SIZE=5em color=#b01c20><B>
+<noscript>THIS PAGE IS NOT WORKING WITHOUT JAVASCRIPT!
+<BR>
+<BR>PLEASE, SWITCH ON JAVASCRIPT IN SETTINGS OF YOUR BROWSER AND RELOAD THE PAGE.
+</noscript>
+</B></FONT></div>
+<div id='doc3' class='yui-t2'>
+<section id=sec2>
+<div id='hd' class='banner'>
+<script>document.write(' \
+<link rel="stylesheet" href="'+homeLINK()+'/en/zoo/style.css">');
+</script>
+<link rel="stylesheet" href="../../css/style.css">
+
+<title>menu.tcl</title>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
+
+<div id="bodyContent" class="dokuwiki">
+<div id="dw__toc" class="dw__toc">
+<h3 class="toggle open" style="cursor: pointer;">menu.tcl</h3>
+<div aria-expanded="true" style="">
+
+<ul class="toc">
+<li><b><a href="#menu.tcl">menu.tcl</a></b></li>
+<li><b><a href="#procs">procs</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#menu::Configurations">Configurations</a><span class=tooltiptext> menu::Configurations</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#menu::CheckMenuItems">CheckMenuItems</a><span class=tooltiptext> menu::CheckMenuItems : Disables/enables "File/Close All..." menu items.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#menu::TintRange">TintRange</a><span class=tooltiptext> menu::TintRange : Gets the range for tints, counting the current one as the middle point.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#menu::CheckTint">CheckTint</a><span class=tooltiptext> menu::CheckTint : Sets a check in menu "Tint" according to the current tint.
+doit - "yes" at restarting this procedure after a pause</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#menu::SetTint">SetTint</a><span class=tooltiptext> menu::SetTint : Sets a tint of a current color scheme.
+tint - value of the tint</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#menu::MapRunItems">MapRunItems</a><span class=tooltiptext> menu::MapRunItems : Gets a map list to map %f & %D wildcards to the current file & directory names.
+fname - the current file name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#menu::FillRunItems">FillRunItems</a><span class=tooltiptext> menu::FillRunItems : Fills Tools/e_menu items, depending on a currently edited file.
+fname - the current file name
+Maps %f & %D wildcards to the current file & directory names.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#menu::MacroOptions">MacroOptions</a><span class=tooltiptext> menu::MacroOptions : Gets play macro item's options.
+ca - argument of command
+am - label of macro</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#menu::CompareFnames">CompareFnames</a><span class=tooltiptext> menu::CompareFnames : Comapares two names of files, by their rootnames.
+n1 - 1st name
+n2 - 2nd name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#menu::FillMacroItems">FillMacroItems</a><span class=tooltiptext> menu::FillMacroItems : Fills play macro items.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#menu::Paver">Paver</a><span class=tooltiptext> menu::Paver : Loads and calls Paver tool.
+mode - 0 run paver; 1 auto update flag; 2 view code; 3 help</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#menu::FillFormatItems">FillFormatItems</a><span class=tooltiptext> menu::FillFormatItems : Fills Edit/Format submenu with items taken from "alited/data/format" directory.
+mnu - submenu's path
+dir - directory name
+lev - current level of subdirectory
+mnuID - menu's ID</span></div></li></ul>
+<li><b><a href="#Tear-off_menus">Tear-off_menus</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#menu::MenuCascade">MenuCascade</a><span class=tooltiptext> menu::MenuCascade : Creates a cascade submenu, saving its title (for saved/restored submenus).
+mnu - parent menu's path
+mnuName - submenu name
+mnuTitle - parent's title
+subTitle - submenu's title
+See also: SaveCascadeMenuGeo</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#menu::SaveCascadeMenuGeo">SaveCascadeMenuGeo</a><span class=tooltiptext> menu::SaveCascadeMenuGeo : Saves the geometry of tear-off menus.
+See also: MenuCascade, RestoreCascadeMenu</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#menu::RestoreCascadeMenu">RestoreCascadeMenu</a><span class=tooltiptext> menu::RestoreCascadeMenu : Restores cascade menus at starting alited.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#menu::TearoffCascadeMenu">TearoffCascadeMenu</a><span class=tooltiptext> menu::TearoffCascadeMenu : Tear off a cascade menus at starting alited.
+mnu - menu's path
+mtearoff - tearoff menu's path
+mnugeo - geometry of menu</span></div></li></ul>
+<li><b><a href="#Fill_Menu">Fill_Menu</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#menu::FillMenu">FillMenu</a><span class=tooltiptext> menu::FillMenu : Populates alited's main menu.</span></div></li></ul>
+<li><b><a href="#File">File</a></b></li>
+<li><b><a href="#Save">Save</a></b></li>
+<li><b><a href="#Close">Close</a></b></li>
+<li><b><a href="#Reload">Reload</a></b></li>
+<li><b><a href="#Edit">Edit</a></b></li>
+<li><b><a href="#Comments">Comments</a></b></li>
+<li><b><a href="#Formats">Formats</a></b></li>
+<li><b><a href="#Rectangular_Selection">Rectangular_Selection</a></b></li>
+<li><b><a href="#Color_Values">Color_Values</a></b></li>
+<li><b><a href="#Macro">Macro</a></b></li>
+<li><b><a href="#Search">Search</a></b></li>
+<li><b><a href="#Tools">Tools</a></b></li>
+<li><b><a href="#bar-menu">bar-menu</a></b></li>
+<li><b><a href="#Check,_File_list">Check,_File_list</a></b></li>
+<li><b><a href="#Paver">Paver</a></b></li>
+<li><b><a href="#Pickers">Pickers</a></b></li>
+<li><b><a href="#Setup">Setup</a></b></li>
+<li><b><a href="#Help">Help</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#menu::HelpFiles">HelpFiles</a><span class=tooltiptext> menu::HelpFiles : Gets a list of Help/Context (file names and labels).</span></div></li></ul>
+<li><b><a href="#EOF">EOF</a></b></li>
+
+</ul>
+
+</div>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1><font color=#ca14ca> alited's source</font></h1>
+</p><p>
+The <a href="about.html">alited/src</a> directory contains alited's own source files.
+</p><p>
+Some additional alited's files are also contained in <a href="../lib/addon/hl_alm.html">alited/lib/addon</a> directory.
+</p><p>
+The library files are contained in alited/lib** directory.
+</p><p>
+<li><a href="about.html">about.tcl</a> - "About alited" dialogue.</li>
+<li><a href="alited.html">alited.tcl</a> - The alited's main script to start.</li>
+<li><a href="bar.html">bar.tcl</a> - Handles the bar of tabs.</li>
+<li><a href="check.html">check.tcl</a> - "Check Tcl" dialogue and procedures.</li>
+<li><a href="complete.html">complete.tcl</a> - Handles auto-completion.</li>
+<li><a href="edit.html">edit.tcl</a> - "Edit" menu's procedures.</li>
+<li><a href="favor.html">favor.tcl</a> - Handles the favorite and last visited units.</li>
+<li><a href="favor_ls.html">favor_ls.tcl</a> - "Saved lists of favorites" dialogue and procedures.</li>
+<li><a href="file.html">file.tcl</a> - "File" menu's procedures.</li>
+<li><a href="find.html">find.tcl</a> - "Find / Replace" dialogue and procedures.</li>
+<li><a href="format.html">format.tcl</a> - "Edit / Formats" menu's procedures.</li>
+<li><a href="img.html">img.tcl</a> - List of images used by alited.</li>
+<li><a href="indent.html">indent.tcl</a> - Handles text indentation.</li>
+<li><a href="info.html">info.tcl</a> - Handles the info bar.</li>
+<li><a href="ini.html">ini.tcl</a> - Handles initializing alited.</li>
+<li><a href="keys.html">keys.tcl</a> - Handles keyboard (mapping etc.).</li>
+<li><a href="main.html">main.tcl</a> - Handles the main form of alited.</li>
+<li><a href="menu.html">menu.tcl</a> - Handles alited's menus.</li>
+<li><a href="msgs.html">msgs.tcl</a> - Localized messages used in several places.</li>
+<li><a href="paver.html">paver.tcl</a> - "Tools / Paver" tool.</li>
+<li><a href="pkgIndex.html">pkgIndex.tcl</a> - Includes README.md text (for Ruff doc generator).</li>
+<li><a href="pref.html">pref.tcl</a> - "Preferences" dialogue and procedures.</li>
+<li><a href="preview.html">preview.tcl</a> - "Preview (theme, CS)" dialogue called by "Preferences".</li>
+<li><a href="printer.html">printer.tcl</a> - "Tools / Project Printer" dialogue and procedures.</li>
+<li><a href="project.html">project.tcl</a> - "Projects" dialogue and procedures.</li>
+<li><a href="run.html">run.tcl</a> - "Tools / Run..." dialogue and procedures.</li>
+<li><a href="tool.html">tool.tcl</a> - "Tools" menu's procedures.</li>
+<li><a href="tree.html">tree.tcl</a> - Handles the tree of units and files.</li>
+<li><a href="unit.html">unit.tcl</a> - Handles the unit tree.</li>
+<li><a href="unit_tpl.html">unit_tpl.tcl</a> - "Templates" dialogue and procedures.</li>
+</p><p>
+
+</p>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>menu.tcl</b></font></div></td></table>
+
+<pre class="code"><i><font color=#4b5d50>###########################################################<a id=menu.tcl></a></font></i>
+<i><font color=#4b5d50># Name:    menu.tcl</font></i>
+<i><font color=#4b5d50># Author:  Alex Plotnikov  (aplsimple@gmail.com)</font></i>
+<i><font color=#4b5d50># Date:    06/20/2021</font></i>
+<i><font color=#4b5d50># Brief:   Handles menus.</font></i>
+<i><font color=#4b5d50># License: MIT.</font></i>
+<i><font color=#4b5d50>###########################################################</font></i>
+
+<b><font color=#ca14ca>namespace</font></b> eval menu {
+  <b><font color=#3a6797>variable</font></b> tint; <b><font color=#3a6797>array</font></b> set tint [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>variable</font></b> inctint 5
+}
+<a id=procs></a>
+<i><font color=#4b5d50># ________________________ procs _________________________ #</font></i>
+<a id=menu::Configurations></a>
+<b><font color=#ca14ca>proc</font></b> menu::Configurations {} {
+  <i><font color=#4b5d50>#</font></i>
+
+  <b><font color=#3a6797>if</font></b> {![alited::ini::GetConfiguration]} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>set</font></b> ::alited::ARGV <font color=#1b1baa>$::alited::CONFIGDIR</font>
+  alited::Exit - 1 no
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=menu::CheckMenuItems></a>
+<b><font color=#ca14ca>proc</font></b> menu::CheckMenuItems {} {
+  <i><font color=#4b5d50># Disables/enables &quot;File/Close All...&quot; menu items.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> TID [alited::bar::CurrentTabID]
+  <b><font color=#3a6797>foreach</font></b> idx {11 12 13} {
+    <b><font color=#3a6797>if</font></b> {[alited::bar::BAR isTab <font color=#1b1baa>$TID</font>]} {
+      <b><font color=#3a6797>set</font></b> dsbl [alited::bar::BAR checkDisabledMenu <font color=#1b1baa>$al(BID)</font> <font color=#1b1baa>$TID</font> [<b><font color=#3a6797>incr</font></b> item]]
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> dsbl yes
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dsbl</font>} {
+      <b><font color=#3a6797>set</font></b> state {<font color=#653760>-state</font> disabled}
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> state {<font color=#653760>-state</font> normal}
+    }
+    <font color=#1b1baa>$al(MENUFILE)</font> entryconfigure <font color=#1b1baa>$idx</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$state</font>
+  }
+  <b><font color=#3a6797>if</font></b> {[alited::file::IsNoName [alited::bar::FileName]]} {
+    <b><font color=#3a6797>set</font></b> state {<font color=#653760>-state</font> disabled}
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> state {<font color=#653760>-state</font> normal}
+  }
+  <font color=#1b1baa>$al(MENUFILE)</font> entryconfigure 2 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$state</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=menu::TintRange></a>
+<b><font color=#ca14ca>proc</font></b> menu::TintRange {} {
+  <i><font color=#4b5d50># Gets the range for tints, counting the current one as the middle point.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> inctint
+  <b><font color=#3a6797>set</font></b> MT 50
+  <b><font color=#3a6797>set</font></b> mt 30
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i <font color=#1b1baa>$MT</font>} {<font color=#1b1baa>$i</font>&gt;=-<font color=#1b1baa>$MT</font>} {<b><font color=#3a6797>incr</font></b> i -<font color=#1b1baa>$inctint</font>} {
+    <b><font color=#3a6797>set</font></b> tint(<font color=#1b1baa>$i</font>) [::apave::IsRoundInt <font color=#1b1baa>$::apave::_CS_(HUE)</font> <font color=#1b1baa>$i</font>]
+    <b><font color=#3a6797>if</font></b> {[::apave::IsRoundInt <font color=#1b1baa>$al(INI,HUE)</font> <font color=#1b1baa>$i</font>]} {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i</font>&gt;0} {
+        <b><font color=#3a6797>set</font></b> max [<b><font color=#3a6797>expr</font></b> {min(<font color=#1b1baa>$i</font>+<font color=#1b1baa>$mt</font>,<font color=#1b1baa>$MT</font>)}]
+        <b><font color=#3a6797>set</font></b> min [<b><font color=#3a6797>expr</font></b> {max(min(<font color=#1b1baa>$max</font>-2*<font color=#1b1baa>$mt</font>,0),-<font color=#1b1baa>$MT</font>)}]
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> min [<b><font color=#3a6797>expr</font></b> {max(<font color=#1b1baa>$i</font>-<font color=#1b1baa>$mt</font>,-<font color=#1b1baa>$MT</font>)}]
+        <b><font color=#3a6797>set</font></b> max [<b><font color=#3a6797>expr</font></b> {min(max(<font color=#1b1baa>$min</font>+2*<font color=#1b1baa>$mt</font>,0),<font color=#1b1baa>$MT</font>)}]
+      }
+      <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$max</font> <font color=#1b1baa>$min</font>]
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$mt</font> -<font color=#1b1baa>$mt</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=menu::CheckTint></a>
+<b><font color=#ca14ca>proc</font></b> menu::CheckTint {{doit no}} {
+  <i><font color=#4b5d50># Sets a check in menu &quot;Tint&quot; according to the current tint.</font></i>
+  <i><font color=#4b5d50>#   doit - &quot;yes&quot; at restarting this procedure after a pause</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> tint
+  <b><font color=#3a6797>variable</font></b> inctint
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$doit</font>} {
+    <i><font color=#4b5d50># we can postpone updating the Tint menu</font></i>
+    <b><font color=#3a6797>after</font></b> idle {<b><font color=#3a6797>after</font></b> 500 {alited::menu::CheckTint yes}}
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <b><font color=#3a6797>set</font></b> fg1 [<b><font color=#3a6797>lindex</font></b> [alited::FgFgBold] 1]
+  <b><font color=#3a6797>set</font></b> fg2 [<font color=#1b1baa>$al(SETUP)</font> entrycget 0 <font color=#653760>-foreground</font>]
+  <b><font color=#3a6797>set</font></b> ti 0
+  <b><font color=#3a6797>lassign</font></b> [TintRange] max min
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i <font color=#1b1baa>$max</font>} {<font color=#1b1baa>$i</font>&gt;=<font color=#1b1baa>$min</font>} {<b><font color=#3a6797>incr</font></b> i -<font color=#1b1baa>$inctint</font>} {
+    <b><font color=#3a6797>set</font></b> tint(<font color=#1b1baa>$i</font>) [::apave::IsRoundInt <font color=#1b1baa>$::apave::_CS_(HUE)</font> <font color=#1b1baa>$i</font>]
+    <b><font color=#3a6797>if</font></b> {[::apave::IsRoundInt <font color=#1b1baa>$al(INI,HUE)</font> <font color=#1b1baa>$i</font>]} {
+      <b><font color=#3a6797>set</font></b> fg <font color=#1b1baa>$fg1</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> fg <font color=#1b1baa>$fg2</font>
+    }
+    <b><font color=#3a6797>incr</font></b> ti
+    <font color=#1b1baa>$al(SETUP)</font>.tint entryconfigure <font color=#1b1baa>$ti</font> <font color=#653760>-variable</font> alited::menu::tint(<font color=#1b1baa>$i</font>) <font color=#653760>-foreground</font> <font color=#1b1baa>$fg</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=menu::SetTint></a>
+<b><font color=#ca14ca>proc</font></b> menu::SetTint {tint} {
+  <i><font color=#4b5d50># Sets a tint of a current color scheme.</font></i>
+  <i><font color=#4b5d50>#   tint - value of the tint</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <font color=#1b1baa>$obPav</font> csToned <font color=#1b1baa>$al(INI,CS)</font> <font color=#1b1baa>$tint</font> yes
+  alited::file::MakeThemHighlighted
+  alited::main::ShowText
+  alited::bar::BAR update
+  CheckTint
+  alited::ini::initStyles
+  <i><font color=#4b5d50># the infobar listbox needs colorizing by force</font></i>
+  <b><font color=#3a6797>set</font></b> fg [<b><font color=#134070>ttk::style</font></b> configure TLabel <font color=#653760>-foreground</font>]
+  <b><font color=#3a6797>set</font></b> bg [<b><font color=#134070>ttk::style</font></b> configure TLabel <font color=#653760>-background</font>]
+  <b><font color=#3a6797>set</font></b> bs [<b><font color=#3a6797>lindex</font></b> [<font color=#1b1baa>$obPav</font> csGet] 5]
+  [<font color=#1b1baa>$obPav</font> LbxInfo] configure <font color=#653760>-foreground</font> <font color=#1b1baa>$fg</font> <font color=#653760>-background</font> <font color=#1b1baa>$bg</font> <font color=#653760>-selectbackground</font> <font color=#1b1baa>$bs</font>
+  <i><font color=#4b5d50># Find/Replace dialogue may be open at start (and presently) - update it too</font></i>
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$::alited::find::win</font>]} {
+    alited::find::CloseFind
+    alited::find::_run
+  }
+  <b><font color=#3a6797>set</font></b> TID [alited::bar::CurrentTabID]
+  <b><font color=#3a6797>after</font></b> 500 <font color=#8b2a0e>&quot;alited::bar::OnTabSelection <font color=#1b1baa>$</font>TID&quot;</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=menu::MapRunItems></a>
+<b><font color=#ca14ca>proc</font></b> menu::MapRunItems {fname} {
+  <i><font color=#4b5d50># Gets a map list to map %f & %D wildcards to the current file & directory names.</font></i>
+  <i><font color=#4b5d50>#  fname - the current file name</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> ftail [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> %PD <font color=#1b1baa>$al(prjroot)</font> %D [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname</font>] %f <font color=#1b1baa>$fname</font> %F <font color=#1b1baa>$ftail</font> \$::FILETAIL <font color=#1b1baa>$ftail</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=menu::FillRunItems></a>
+<b><font color=#ca14ca>proc</font></b> menu::FillRunItems {fname} {
+  <i><font color=#4b5d50># Fills Tools/e_menu items, depending on a currently edited file.</font></i>
+  <i><font color=#4b5d50>#   fname - the current file name</font></i>
+  <i><font color=#4b5d50># Maps %f & %D wildcards to the current file & directory names.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited::pref em_Num em_Num em_mnu em_mnu
+  <b><font color=#3a6797>set</font></b> m <font color=#1b1baa>$al(TOOLS)</font>
+  <b><font color=#3a6797>set</font></b> maplist [MapRunItems <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>set</font></b> em_N [alited::ini::Em_Number <font color=#1b1baa>$em_Num</font>]
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$em_N</font>} {<b><font color=#3a6797>incr</font></b> i} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists em_ico(<font color=#1b1baa>$i</font>)] && <font color=#1b1baa>$em_mnu($i)</font> ne {}} {
+      <b><font color=#3a6797>set</font></b> txt [<b><font color=#3a6797>string</font></b> map <font color=#1b1baa>$maplist</font> <font color=#1b1baa>$em_mnu($i)</font>]
+      <font color=#1b1baa>$m</font>.runs entryconfigure [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$i</font>+1}] <font color=#653760>-label</font> <font color=#1b1baa>$txt</font>
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=menu::MacroOptions></a>
+<b><font color=#ca14ca>proc</font></b> menu::MacroOptions {ca am} {
+  <i><font color=#4b5d50># Gets play macro item's options.</font></i>
+  <i><font color=#4b5d50>#   ca - argument of command</font></i>
+  <i><font color=#4b5d50>#   am - label of macro</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$am</font> eq <font color=#1b1baa>$al(activemacro)</font>} {
+    <b><font color=#3a6797>set</font></b> fg [<b><font color=#3a6797>lindex</font></b> [alited::FgFgBold] 1]
+    <b><font color=#3a6797>set</font></b> opts <font color=#8b2a0e>&quot;-accelerator <font color=#1b1baa>$</font>al(acc_16) -foreground <font color=#1b1baa>$</font>fg&quot;</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> opts {}
+  }
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#653760>-label</font> <font color=#1b1baa>$am</font> <font color=#653760>-command</font> [<b><font color=#3a6797>list</font></b> alited::edit::DispatchMacro <font color=#1b1baa>$ca</font>] {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=menu::CompareFnames></a>
+<b><font color=#ca14ca>proc</font></b> menu::CompareFnames {n1 n2} {
+  <i><font color=#4b5d50># Comapares two names of files, by their rootnames.</font></i>
+  <i><font color=#4b5d50>#   n1 - 1st name</font></i>
+  <i><font color=#4b5d50>#   n2 - 2nd name</font></i>
+
+  <b><font color=#3a6797>set</font></b> n1 [<b><font color=#3a6797>file</font></b> rootname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$n1</font>]]
+  <b><font color=#3a6797>set</font></b> n2 [<b><font color=#3a6797>file</font></b> rootname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$n2</font>]]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$n1</font> eq <font color=#1b1baa>$n2</font>} {<b><font color=#ca14ca>return</font></b> 0}
+  <b><font color=#3a6797>set</font></b> ls [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-dictionary</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$n1</font> <font color=#1b1baa>$n2</font>]]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$n1</font> eq [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$ls</font> 0]} {<b><font color=#ca14ca>return</font></b> -1}
+  <b><font color=#ca14ca>return</font></b> 1
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=menu::FillMacroItems></a>
+<b><font color=#ca14ca>proc</font></b> menu::FillMacroItems {} {
+  <i><font color=#4b5d50># Fills play macro items.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> m <font color=#1b1baa>$al(MENUEDIT)</font>.playtkl
+  <b><font color=#3a6797>set</font></b> imax 99
+  <b><font color=#3a6797>set</font></b> pmax 34
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;[<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$imax</font>+<font color=#1b1baa>$pmax</font>}]} {<b><font color=#3a6797>incr</font></b> i} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$m</font> delete 1}]} <b><font color=#ca14ca>break</font></b>
+  }
+  <b><font color=#3a6797>set</font></b> isaccel 0
+  <b><font color=#3a6797>set</font></b> pattern [alited::edit::MacroFileName *<font color=#1b1baa>$al(macroext)</font>]
+  <b><font color=#3a6797>set</font></b> lmacro [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-command</font> alited::menu::CompareFnames [<b><font color=#3a6797>glob</font></b> <font color=#653760>-nocomplain</font> <font color=#1b1baa>$pattern</font>]]
+  <b><font color=#3a6797>set</font></b> imax [<b><font color=#3a6797>expr</font></b> {min([<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$lmacro</font>],<font color=#1b1baa>$imax</font>-2)}]
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>set</font></b> idx 0]} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$imax</font>} {<b><font color=#3a6797>incr</font></b> i} {
+    <b><font color=#3a6797>set</font></b> am [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$lmacro</font> <font color=#1b1baa>$i</font>]
+    <b><font color=#3a6797>if</font></b> {[alited::edit::MacroFileName <font color=#1b1baa>$am</font>] ne [alited::edit::MacroFileName <font color=#1b1baa>$al(MC,quickmacro)</font>]} {
+      <b><font color=#3a6797>set</font></b> am [<b><font color=#3a6797>file</font></b> rootname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$am</font>]]
+      <b><font color=#3a6797>set</font></b> opts [MacroOptions item<font color=#1b1baa>$idx</font> <font color=#1b1baa>$am</font>]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> idx]%<font color=#1b1baa>$pmax</font>} {<b><font color=#3a6797>set</font></b> cbr {}} {<b><font color=#3a6797>set</font></b> cbr {<font color=#653760>-columnbreak</font> 1}}
+      <font color=#1b1baa>$m</font> add command {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$cbr</font>
+      <b><font color=#3a6797>if</font></b> {{<font color=#653760>-accelerator</font>} in <font color=#1b1baa>$opts</font>} {<b><font color=#3a6797>set</font></b> isaccel 1}
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$idx</font>} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> _ [<font color=#1b1baa>$m</font> entrycget 1 <font color=#653760>-label</font>]}]} {
+      <b><font color=#3a6797>after</font></b> idle {
+        alited::ini::CreateMacrosDir  ;<i><font color=#4b5d50># initialize macros</font></i>
+        alited::menu::FillMacroItems  ;<i><font color=#4b5d50># and refill this menu</font></i>
+      }
+    }
+    <font color=#1b1baa>$m</font> add command {<b><font color=#3a6797>*</font></b>}[MacroOptions item0 <font color=#1b1baa>$al(MC,new)</font>]
+  }
+  <font color=#1b1baa>$m</font> add separator
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$isaccel</font>} {<b><font color=#3a6797>set</font></b> al(activemacro) <font color=#1b1baa>$al(MC,quickmacro)</font>}
+  <font color=#1b1baa>$m</font> add command {<b><font color=#3a6797>*</font></b>}[MacroOptions quickrec <font color=#1b1baa>$al(MC,quickmacro)</font>]
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,open...)</font> <font color=#653760>-command</font> alited::edit::OpenMacroFile
+  <font color=#1b1baa>$m</font> add separator
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,help)</font> <font color=#653760>-command</font> {alited::edit::HelpOnMacro no}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=menu::Paver></a>
+<b><font color=#ca14ca>proc</font></b> menu::Paver {mode} {
+  <i><font color=#4b5d50># Loads and calls Paver tool.</font></i>
+  <i><font color=#4b5d50>#   mode - 0 run paver; 1 auto update flag; 2 view code; 3 help</font></i>
+
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>namespace</font></b> exists ::alited::paver]} {
+    <b><font color=#ca14ca>namespace</font></b> eval ::alited {
+      <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::SRCDIR</font> paver.tcl]
+    }
+  }
+  <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$mode</font> {
+    0 ::alited::paver::_run
+    1 ::alited::paver::AutoUpdate
+    2 ::alited::paver::Viewer
+    3 ::alited::paver::Help
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=menu::FillFormatItems></a>
+<b><font color=#ca14ca>proc</font></b> menu::FillFormatItems {mnu {dir <font color=#8b2a0e>&quot;&quot;</font>} {lev 0} {mnuID 0}} {
+  <i><font color=#4b5d50># Fills Edit/Format submenu with items taken from &quot;alited/data/format&quot; directory.</font></i>
+  <i><font color=#4b5d50>#   mnu - submenu's path</font></i>
+  <i><font color=#4b5d50>#   dir - directory name</font></i>
+  <i><font color=#4b5d50>#   lev - current level of subdirectory</font></i>
+  <i><font color=#4b5d50>#   mnuID - menu's ID</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dir</font> eq {}} {
+    <b><font color=#3a6797>set</font></b> dir [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::DATADIR</font> format]
+  }
+  <b><font color=#3a6797>set</font></b> fnames [<b><font color=#3a6797>glob</font></b> <font color=#653760>-nocomplain</font> <font color=#653760>-directory</font> <font color=#1b1baa>$dir</font> *]
+  <b><font color=#3a6797>foreach</font></b> fn [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-dictionary</font> <font color=#1b1baa>$fnames</font>] {
+    <b><font color=#3a6797>set</font></b> it [<b><font color=#3a6797>string</font></b> range [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fn</font>] 4 end] ;<i><font color=#4b5d50># first 4 chars for sorting</font></i>
+    <b><font color=#3a6797>set</font></b> it [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> _ { }] <font color=#1b1baa>$it</font>]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> isdirectory <font color=#1b1baa>$fn</font>]} {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$lev</font>&lt;3} {  ;<i><font color=#4b5d50># prohibit too deep diving</font></i>
+        <b><font color=#3a6797>set</font></b> subm [MenuCascade <font color=#1b1baa>$mnu</font> m[<b><font color=#3a6797>incr</font></b> mnuID] <font color=#1b1baa>$it</font>]
+        alited::menu::FillFormatItems <font color=#1b1baa>$subm</font> <font color=#1b1baa>$fn</font> [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$lev</font>+1}] <font color=#1b1baa>$mnuID</font>
+      }
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$it</font> eq {}} {
+      <font color=#1b1baa>$mnu</font> add separator
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> idx] % 25} {<b><font color=#3a6797>set</font></b> cbr {}} {<b><font color=#3a6797>set</font></b> cbr {<font color=#653760>-columnbreak</font> 1}}
+      <font color=#1b1baa>$mnu</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$it</font> <font color=#653760>-command</font> [<b><font color=#3a6797>list</font></b> alited::edit::RunFormat <font color=#1b1baa>$fn</font>] {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$cbr</font>
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$lev</font>} {
+    <font color=#1b1baa>$mnu</font> add separator
+    <font color=#1b1baa>$mnu</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,open...)</font> <font color=#653760>-command</font> [<b><font color=#3a6797>list</font></b> alited::edit::OpenFormatFile <font color=#1b1baa>$dir</font>]
+  }
+}
+<a id=Tear-off_menus></a>
+<i><font color=#4b5d50>## ________________________ Tear-off menus _________________________ ##</font></i>
+<a id=menu::MenuCascade></a>
+<b><font color=#ca14ca>proc</font></b> menu::MenuCascade {mnu mnuName mnuTitle {subTitle <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Creates a cascade submenu, saving its title (for saved/restored submenus).</font></i>
+  <i><font color=#4b5d50>#   mnu - parent menu's path</font></i>
+  <i><font color=#4b5d50>#   mnuName - submenu name</font></i>
+  <i><font color=#4b5d50>#   mnuTitle - parent's title</font></i>
+  <i><font color=#4b5d50>#   subTitle - submenu's title</font></i>
+  <i><font color=#4b5d50># See also: SaveCascadeMenuGeo</font></i>
+
+  <b><font color=#3a6797>set</font></b> mnuPath <font color=#1b1baa>$mnu</font>.<font color=#1b1baa>$mnuName</font>
+  <b><font color=#3a6797>set</font></b> mnuTitle [msgcat::mc <font color=#1b1baa>$mnuTitle</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$subTitle</font> eq {}} {
+    <b><font color=#3a6797>set</font></b> subTitle <font color=#1b1baa>$mnuTitle</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> subTitle [msgcat::mc <font color=#1b1baa>$subTitle</font>]
+  }
+  <b><font color=#3a6797>set</font></b> submnu [<b><font color=#134070>menu</font></b> <font color=#1b1baa>$mnuPath</font> <font color=#653760>-tearoff</font> 1 <font color=#653760>-title</font> <font color=#1b1baa>$subTitle</font>]
+  <font color=#1b1baa>$mnu</font> add cascade <font color=#653760>-label</font> <font color=#1b1baa>$mnuTitle</font> <font color=#653760>-menu</font> <font color=#1b1baa>$submnu</font>
+  <b><font color=#3a6797>set</font></b> ::alited::al(MNUMEM,<font color=#1b1baa>$mnuName</font>) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$submnu</font> <font color=#1b1baa>$subTitle</font>]
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$mnuPath</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=menu::SaveCascadeMenuGeo></a>
+<b><font color=#ca14ca>proc</font></b> menu::SaveCascadeMenuGeo {} {
+  <i><font color=#4b5d50># Saves the geometry of tear-off menus.</font></i>
+  <i><font color=#4b5d50># See also: MenuCascade, RestoreCascadeMenu</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <i><font color=#4b5d50># clear all geometry data of menus</font></i>
+  <b><font color=#3a6797>foreach</font></b> n [<b><font color=#3a6797>array</font></b> names al <font color=#653760>-glob</font> MNUGEO,*] {<b><font color=#3a6797>unset</font></b> al(<font color=#1b1baa>$n</font>)}
+  <i><font color=#4b5d50># set the currently existing tearoff menus' geometry data</font></i>
+  <b><font color=#3a6797>foreach</font></b> w [<b><font color=#134070>winfo</font></b> children <font color=#1b1baa>$al(WIN)</font>] {
+    <i><font color=#4b5d50># only tearoff menus counted:</font></i>
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> {\.tearoff\d+$} <font color=#1b1baa>$w</font>]} {
+      <b><font color=#3a6797>set</font></b> mtitle [<b><font color=#134070>wm</font></b> title <font color=#1b1baa>$w</font>]
+      <i><font color=#4b5d50># find the tearoff menu among those registered by MenuCascade</font></i>
+      <b><font color=#3a6797>foreach</font></b> mMem [<b><font color=#3a6797>array</font></b> names al <font color=#653760>-glob</font> MNUMEM,*] {
+        <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$al($mMem)</font> mnuPath mnuTitle
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mtitle</font> eq <font color=#1b1baa>$mnuTitle</font>} {
+          <b><font color=#3a6797>set</font></b> mgeo MNUGEO,<font color=#1b1baa>$mnuPath</font>
+          <b><font color=#3a6797>set</font></b> al(<font color=#1b1baa>$mgeo</font>) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$mnuPath</font> [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$w</font>]]
+          <b><font color=#ca14ca>break</font></b>
+        }
+      }
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=menu::RestoreCascadeMenu></a>
+<b><font color=#ca14ca>proc</font></b> menu::RestoreCascadeMenu {} {
+  <i><font color=#4b5d50># Restores cascade menus at starting alited.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>foreach</font></b> mn [<b><font color=#3a6797>array</font></b> names al <font color=#653760>-glob</font> MNUGEO,*] {
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$al($mn)</font> mnu mnugeo
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$mnu</font>]} {
+      <b><font color=#3a6797>incr</font></b> itearoff
+      <b><font color=#3a6797>set</font></b> mtearoff <font color=#1b1baa>$al(WIN)</font>.tearoff<font color=#1b1baa>$itearoff</font>
+      <b><font color=#3a6797>after</font></b> 1000 [<b><font color=#3a6797>list</font></b> alited::menu::TearoffCascadeMenu <font color=#1b1baa>$mnu</font> <font color=#1b1baa>$mtearoff</font> <font color=#1b1baa>$mnugeo</font>]
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=menu::TearoffCascadeMenu></a>
+<b><font color=#ca14ca>proc</font></b> menu::TearoffCascadeMenu {mnu mtearoff mnugeo} {
+  <i><font color=#4b5d50># Tear off a cascade menus at starting alited.</font></i>
+  <i><font color=#4b5d50>#   mnu - menu's path</font></i>
+  <i><font color=#4b5d50>#   mtearoff - tearoff menu's path</font></i>
+  <i><font color=#4b5d50>#   mnugeo - geometry of menu</font></i>
+
+  <font color=#1b1baa>$mnu</font> invoke 0
+  <b><font color=#3a6797>catch</font></b> {
+    <b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$mtearoff</font> <font color=#1b1baa>$mnugeo</font>
+    <b><font color=#3a6797>if</font></b> {[::isunix]} {<b><font color=#134070>wm</font></b> iconphoto <font color=#1b1baa>$mtearoff</font> <font color=#653760>-default</font> alimg_none}
+  }
+}
+<a id=Fill_Menu></a>
+<i><font color=#4b5d50># ________________________ Fill Menu _________________________ #</font></i>
+<a id=menu::FillMenu></a>
+<b><font color=#ca14ca>proc</font></b> menu::FillMenu {} {
+  <i><font color=#4b5d50># Populates alited's main menu.</font></i>
+
+  <b><font color=#3a6797>variable</font></b> inctint
+  <i><font color=#4b5d50># alited_checked</font></i>
+  ::apave::msgcatDialogs
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al DATADIR DATADIR DIR DIR
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited::pref em_Num em_Num em_ico em_ico em_inf em_inf em_mnu em_mnu
+<a id=File></a>
+  <i><font color=#4b5d50>## ________________________ File _________________________ ##</font></i>
+
+  <b><font color=#3a6797>set</font></b> m [<b><font color=#3a6797>set</font></b> al(MENUFILE) <font color=#1b1baa>$al(WIN)</font>.menu.file]
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,new)</font> <font color=#653760>-command</font> alited::file::NewFile <font color=#653760>-accelerator</font> Ctrl+N
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,open...)</font> <font color=#653760>-command</font> alited::file::OpenFile <font color=#653760>-accelerator</font> Ctrl+O
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc Clone...] <font color=#653760>-command</font> {alited::file::CloneFile no no}
+  <b><font color=#134070>menu</font></b> <font color=#1b1baa>$m</font>.recentfiles <font color=#653760>-tearoff</font> 1
+  <font color=#1b1baa>$m</font> add cascade <font color=#653760>-label</font> [msgcat::mc {Recent Files}] <font color=#653760>-menu</font> <font color=#1b1baa>$m</font>.recentfiles
+  <font color=#1b1baa>$m</font> add separator
+<a id=Save></a>
+  <i><font color=#4b5d50>### ________________________ Save _________________________ ###</font></i>
+
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,save)</font> <font color=#653760>-command</font> alited::file::SaveFile <font color=#653760>-accelerator</font> <font color=#1b1baa>$al(acc_0)</font>
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,saveas...)</font> <font color=#653760>-command</font> alited::file::SaveFileAs <font color=#653760>-accelerator</font> <font color=#1b1baa>$al(acc_1)</font>
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,saveall)</font> <font color=#653760>-command</font> alited::file::SaveAll <font color=#653760>-accelerator</font> Ctrl+Shift+S
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc {Save and Close}] <font color=#653760>-command</font> alited::file::SaveAndClose <font color=#653760>-accelerator</font> Ctrl+W
+  <font color=#1b1baa>$m</font> add separator
+<a id=Close></a>
+  <i><font color=#4b5d50>### ________________________ Close _________________________ ###</font></i>
+
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,close)</font> <font color=#653760>-command</font> alited::file::CloseFileMenu
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,clall)</font> <font color=#653760>-command</font> {alited::file::CloseAll 1}
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,clallleft)</font> <font color=#653760>-command</font> {alited::file::CloseAll 2}
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,clallright)</font> <font color=#653760>-command</font> {alited::file::CloseAll 3}
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc {Close and Delete}] <font color=#653760>-command</font> alited::file::CloseAndDelete <font color=#653760>-accelerator</font> Ctrl+Alt+W
+  <font color=#1b1baa>$m</font> add separator
+<a id=Reload></a>
+  <i><font color=#4b5d50>### ________________________ Reload _________________________ ###</font></i>
+
+  <b><font color=#134070>menu</font></b> <font color=#1b1baa>$m</font>.eol <font color=#653760>-tearoff</font> 1 <font color=#653760>-title</font> EOL
+  <font color=#1b1baa>$m</font> add cascade <font color=#653760>-label</font> [msgcat::mc {Reload with EOL}] <font color=#653760>-menu</font> <font color=#1b1baa>$m</font>.eol
+  <b><font color=#3a6797>foreach</font></b> eol {LF CR CRLF - auto} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$eol</font> eq {-}} {
+      <font color=#1b1baa>$m</font>.eol add separator
+    } <b><font color=#3a6797>else</font></b> {
+      <font color=#1b1baa>$m</font>.eol add command <font color=#653760>-label</font> <font color=#8b2a0e>&quot;    <font color=#1b1baa>$</font>eol        &quot;</font> \
+        <font color=#653760>-command</font> [<b><font color=#3a6797>list</font></b> alited::file::Reload1 <font color=#1b1baa>$eol</font>]
+    }
+  }
+  <b><font color=#134070>menu</font></b> <font color=#1b1baa>$m</font>.encods <font color=#653760>-tearoff</font> 1
+  <font color=#1b1baa>$m</font> add cascade <font color=#653760>-label</font> [msgcat::mc {Reload with Encoding}] <font color=#653760>-menu</font> <font color=#1b1baa>$m</font>.encods
+  <b><font color=#3a6797>foreach</font></b> enc [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-dictionary</font> [<b><font color=#3a6797>encoding</font></b> names]] {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> icbr]%25} {<b><font color=#3a6797>set</font></b> cbr {}} {<b><font color=#3a6797>set</font></b> cbr {<font color=#653760>-columnbreak</font> 1}}
+    <font color=#1b1baa>$m</font>.encods add command <font color=#653760>-label</font> <font color=#1b1baa>$enc</font> <font color=#653760>-command</font> [<b><font color=#3a6797>list</font></b> alited::file::Reload2 <font color=#1b1baa>$enc</font>] {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$cbr</font>
+  }
+  <font color=#1b1baa>$m</font> add separator
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,quit)</font> <font color=#653760>-command</font> {alited::Exit - 0 no}
+<a id=Edit></a>
+  <i><font color=#4b5d50>## ________________________ Edit _________________________ ##</font></i>
+
+  <b><font color=#3a6797>set</font></b> m [<b><font color=#3a6797>set</font></b> al(MENUEDIT) <font color=#1b1baa>$al(WIN)</font>.menu.edit]
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,indent)</font> <font color=#653760>-command</font> alited::edit::Indent <font color=#653760>-accelerator</font> <font color=#1b1baa>$al(acc_6)</font>
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,unindent)</font> <font color=#653760>-command</font> alited::edit::UnIndent <font color=#653760>-accelerator</font> <font color=#1b1baa>$al(acc_7)</font>
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,corrindent)</font> <font color=#653760>-command</font> alited::edit::NormIndent
+  <font color=#1b1baa>$m</font> add separator
+<a id=Comments></a>
+  <i><font color=#4b5d50>### ________________________ Comments _________________________ ###</font></i>
+
+  <b><font color=#3a6797>set</font></b> ttl [msgcat::mc Comments]
+  <b><font color=#134070>menu</font></b> <font color=#1b1baa>$m</font>.comment <font color=#653760>-tearoff</font> 1 <font color=#653760>-title</font> <font color=#1b1baa>$ttl</font>
+  <font color=#1b1baa>$m</font> add cascade <font color=#653760>-label</font> <font color=#1b1baa>$ttl</font> <font color=#653760>-menu</font> <font color=#1b1baa>$m</font>.comment
+  <font color=#1b1baa>$m</font>.comment add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,comment)</font> <font color=#653760>-command</font> alited::edit::Comment <font color=#653760>-accelerator</font> <font color=#1b1baa>$al(acc_8)</font>
+  <font color=#1b1baa>$m</font>.comment add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,uncomment)</font> <font color=#653760>-command</font> alited::edit::UnComment <font color=#653760>-accelerator</font> <font color=#1b1baa>$al(acc_9)</font>
+  <font color=#1b1baa>$m</font>.comment add separator
+  <font color=#1b1baa>$m</font>.comment add radiobutton <font color=#653760>-variable</font> ::alited::al(commentmode) <font color=#653760>-value</font> 0 <font color=#653760>-label</font> TODO
+  <font color=#1b1baa>$m</font>.comment add radiobutton <font color=#653760>-variable</font> ::alited::al(commentmode) <font color=#653760>-value</font> 1 <font color=#653760>-label</font> Classic
+  <font color=#1b1baa>$m</font>.comment add radiobutton <font color=#653760>-variable</font> ::alited::al(commentmode) <font color=#653760>-value</font> 2 <font color=#653760>-label</font> Sticky
+<a id=Formats></a>
+  <i><font color=#4b5d50>### ________________________ Formats _________________________ ###</font></i>
+
+  MenuCascade <font color=#1b1baa>$m</font> format [msgcat::mc Formats]
+  FillFormatItems <font color=#1b1baa>$m</font>.format
+  <font color=#1b1baa>$m</font> add separator
+
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc {Put New Line}] <font color=#653760>-command</font> alited::main::InsertLine <font color=#653760>-accelerator</font> <font color=#1b1baa>$al(acc_18)</font>
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc {Remove Trailing Whitespaces}] <font color=#653760>-command</font> alited::edit::RemoveTrailWhites
+  <font color=#1b1baa>$m</font> add separator
+<a id=Rectangular_Selection></a>
+  <i><font color=#4b5d50>### ________________________ Rectangular Selection _________________________ ###</font></i>
+
+  MenuCascade <font color=#1b1baa>$m</font> rectsel [msgcat::mc {Rectangular Selection}]
+  <font color=#1b1baa>$m</font>.rectsel add checkbutton <font color=#653760>-label</font> [msgcat::mc Start] <font color=#653760>-command</font> {alited::edit::RectSelection 0} <font color=#653760>-variable</font> ::alited::al(rectSel) <font color=#653760>-compound</font> left <font color=#653760>-image</font> alimg_run
+  <font color=#1b1baa>$m</font>.rectsel add separator
+  <font color=#1b1baa>$m</font>.rectsel add command <font color=#653760>-label</font> [msgcat::mc Cut] <font color=#653760>-command</font> {alited::edit::RectSelection 2}
+  <font color=#1b1baa>$m</font>.rectsel add command <font color=#653760>-label</font> [msgcat::mc Copy] <font color=#653760>-command</font> {alited::edit::RectSelection 3}
+  <font color=#1b1baa>$m</font>.rectsel add command <font color=#653760>-label</font> [msgcat::mc Paste] <font color=#653760>-command</font> {alited::edit::RectSelection 4}
+<a id=Color_Values></a>
+  <i><font color=#4b5d50>### ________________________ Color Values _________________________ ###</font></i>
+
+  MenuCascade <font color=#1b1baa>$m</font> hlcolors [msgcat::mc {Color Values #hhhhhh}] [msgcat::mc Colors]
+  <font color=#1b1baa>$m</font>.hlcolors add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,hlcolors)</font> <font color=#653760>-command</font> alited::edit::ShowColorValues
+  <font color=#1b1baa>$m</font>.hlcolors add command <font color=#653760>-label</font> [msgcat::mc {Hide Colors}] <font color=#653760>-command</font> alited::edit::HideColorValues
+<a id=Macro></a>
+  <i><font color=#4b5d50>### ________________________ Macro _________________________ ###</font></i>
+
+  MenuCascade <font color=#1b1baa>$m</font> playtkl <font color=#1b1baa>$::alited::al(MC,playtkl)</font>
+  FillMacroItems
+<a id=Search></a>
+  <i><font color=#4b5d50>## ________________________ Search _________________________ ##</font></i>
+
+  <b><font color=#3a6797>set</font></b> m [<b><font color=#3a6797>set</font></b> al(SEARCH) <font color=#1b1baa>$al(WIN)</font>.menu.search]
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,findreplace)</font> <font color=#653760>-command</font> alited::find::_run <font color=#653760>-accelerator</font> Ctrl+F
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,findnext)</font> <font color=#653760>-command</font> {alited::find::Next ; <b><font color=#3a6797>after</font></b> idle alited::main::SaveVisitInfo} <font color=#653760>-accelerator</font> <font color=#1b1baa>$al(acc_12)</font>
+  <font color=#1b1baa>$m</font> add separator
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,lookdecl)</font> <font color=#653760>-command</font> alited::find::LookDecl <font color=#653760>-accelerator</font> <font color=#1b1baa>$al(acc_13)</font>
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,lookword)</font> <font color=#653760>-command</font> alited::find::SearchWordInSession <font color=#653760>-accelerator</font> <font color=#1b1baa>$al(acc_14)</font>
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc {Find Unit}] <font color=#653760>-command</font> alited::find::FindUnit <font color=#653760>-accelerator</font> Ctrl+Shift+F
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc {Find by List}] <font color=#653760>-command</font> alited::find::SearchByList
+  <font color=#1b1baa>$m</font> add separator
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc {To Last Visited}] <font color=#653760>-command</font> alited::unit::SwitchUnits <font color=#653760>-accelerator</font> Alt+BackSpace
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,tomatched)</font> <font color=#653760>-command</font> {alited::main::GotoBracket yes} <font color=#653760>-accelerator</font> <font color=#1b1baa>$al(acc_20)</font>
+  <font color=#1b1baa>$m</font> add separator
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,toline)</font> <font color=#653760>-command</font> alited::main::GotoLine <font color=#653760>-accelerator</font> <font color=#1b1baa>$al(acc_17)</font>
+<a id=Tools></a>
+  <i><font color=#4b5d50>## ________________________ Tools _________________________ ##</font></i>
+
+  <b><font color=#3a6797>set</font></b> m [<b><font color=#3a6797>set</font></b> al(TOOLS) <font color=#1b1baa>$al(WIN)</font>.menu.tool]
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc Run...] <font color=#653760>-command</font> alited::tool::RunMode
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,run)</font> <font color=#653760>-command</font> alited::tool::_run <font color=#653760>-accelerator</font> <font color=#1b1baa>$al(acc_3)</font>
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,runAsIs)</font> <font color=#653760>-command</font> alited::tool::RunFile <font color=#653760>-accelerator</font> <font color=#1b1baa>$al(acc_22)</font>
+  <font color=#1b1baa>$m</font> add separator
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> e_menu <font color=#653760>-command</font> {alited::tool::e_menu o=0} <font color=#653760>-accelerator</font> <font color=#1b1baa>$al(acc_2)</font>
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> Tkcon <font color=#653760>-command</font> alited::tool::tkcon
+<a id=bar-menu></a>
+  <i><font color=#4b5d50>### ________________________ bar-menu _________________________ ###</font></i>
+
+  <b><font color=#3a6797>set</font></b> em_N [alited::ini::Em_Number <font color=#1b1baa>$em_Num</font>]
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>set</font></b> emwas 0]} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$em_N</font>} {<b><font color=#3a6797>incr</font></b> i} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists em_inf(<font color=#1b1baa>$i</font>)]} {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> emwas]==1} {
+        <b><font color=#134070>menu</font></b> <font color=#1b1baa>$m</font>.runs <font color=#653760>-tearoff</font> 1
+        <font color=#1b1baa>$m</font> add cascade <font color=#653760>-label</font> bar-menu <font color=#653760>-menu</font> <font color=#1b1baa>$m</font>.runs
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$em_inf($i)</font> eq {}} {
+        <font color=#1b1baa>$m</font>.runs add separator
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> com [alited::tool::EM_command <font color=#1b1baa>$i</font>]
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$com</font> ne {}} {
+          <b><font color=#3a6797>set</font></b> txt <font color=#1b1baa>$em_mnu($i)</font>
+          <font color=#1b1baa>$m</font>.runs add command <font color=#653760>-label</font> <font color=#1b1baa>$txt</font> <font color=#653760>-command</font> <font color=#1b1baa>$com</font>
+        }
+      }
+    }
+  }
+<a id=Check,_File_list></a>
+  <i><font color=#4b5d50>### ___________________ Check, File list __________________ ###</font></i>
+
+  <font color=#1b1baa>$m</font> add separator
+  <b><font color=#134070>menu</font></b> <font color=#1b1baa>$m</font>.filelist <font color=#653760>-tearoff</font> 0
+  <font color=#1b1baa>$m</font> add cascade <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,filelist)</font> <font color=#653760>-menu</font> <font color=#1b1baa>$m</font>.filelist
+  <font color=#1b1baa>$m</font>.filelist add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,filelist)</font> <font color=#653760>-command</font> {alited::bar::BAR popList} <font color=#653760>-accelerator</font> <font color=#1b1baa>$al(acc_21)</font>
+  <font color=#1b1baa>$m</font>.filelist add checkbutton <font color=#653760>-label</font> [msgcat::mc {Sorted}] <font color=#653760>-variable</font> ::alited::al(sortList)
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,checktcl...)</font> <font color=#653760>-command</font> alited::CheckRun
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc {Project Printer...}] <font color=#653760>-command</font> alited::PrinterRun
+<a id=Paver></a>
+  <i><font color=#4b5d50>### ________________________ Paver _________________________ ###</font></i>
+
+  <font color=#1b1baa>$m</font> add separator
+  MenuCascade <font color=#1b1baa>$m</font> paver Paver
+
+  <font color=#1b1baa>$m</font>.paver add command <font color=#653760>-label</font> {Paver} <font color=#653760>-command</font> {alited::menu::Paver 0}
+  <font color=#1b1baa>$m</font>.paver add separator
+  <font color=#1b1baa>$m</font>.paver add checkbutton <font color=#653760>-label</font> [msgcat::mc {Auto Update}] \
+    <font color=#653760>-variable</font> ::alited::al(paverauto) <font color=#653760>-command</font> {alited::menu::Paver 1}
+  <font color=#1b1baa>$m</font>.paver add command <font color=#653760>-label</font> [msgcat::mc {Widget List}] <font color=#653760>-command</font> {alited::menu::Paver 2}
+  <font color=#1b1baa>$m</font>.paver add separator
+  <font color=#1b1baa>$m</font>.paver add command <font color=#653760>-label</font> [msgcat::mc {Help}] <font color=#653760>-command</font> {alited::menu::Paver 3}
+<a id=Pickers></a>
+  <i><font color=#4b5d50>### ________________________ Pickers _________________________ ###</font></i>
+
+  <font color=#1b1baa>$m</font> add separator
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,datepicker)</font> <font color=#653760>-command</font> alited::tool::DatePicker
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,colorpicker)</font> <font color=#653760>-command</font> alited::tool::ColorPicker
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc {Screen Loupe}] <font color=#653760>-command</font> alited::tool::Loupe
+<a id=Setup></a>
+  <i><font color=#4b5d50>## ________________________ Setup _________________________ ##</font></i>
+
+  <b><font color=#3a6797>set</font></b> m [<b><font color=#3a6797>set</font></b> al(SETUP) <font color=#1b1baa>$al(WIN)</font>.menu.setup]
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc Projects...] <font color=#653760>-command</font> alited::project::_run
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc Templates...] <font color=#653760>-command</font> alited::unit::Add
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc {Favorites Lists...}] <font color=#653760>-command</font> alited::favor::Lists
+  <font color=#1b1baa>$m</font> add separator
+
+  <font color=#1b1baa>$m</font> add checkbutton <font color=#653760>-label</font> [msgcat::mc {Wrap Lines}] \
+    <font color=#653760>-variable</font> ::alited::al(wrapwords) <font color=#653760>-command</font> alited::file::WrapLines
+  <font color=#1b1baa>$m</font> add checkbutton <font color=#653760>-label</font> [msgcat::mc {Tip File Info}] \
+    <font color=#653760>-variable</font> ::alited::al(TREE,showinfo) <font color=#653760>-command</font> alited::file::UpdateFileStat
+
+  <b><font color=#134070>menu</font></b> <font color=#1b1baa>$m</font>.tipson <font color=#653760>-tearoff</font> 1
+  <font color=#1b1baa>$m</font> add cascade <font color=#653760>-label</font> [msgcat::mc {Tips on / off}] <font color=#653760>-menu</font> <font color=#1b1baa>$m</font>.tipson
+  <font color=#1b1baa>$m</font>.tipson add checkbutton <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,projects)</font> <font color=#653760>-variable</font> ::alited::al(TIPS,Projects) <font color=#653760>-command</font> alited::ini::SaveIni
+  <font color=#1b1baa>$m</font>.tipson add checkbutton <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,tpl)</font> <font color=#653760>-variable</font> ::alited::al(TIPS,Templates) <font color=#653760>-command</font> alited::ini::SaveIni
+  <font color=#1b1baa>$m</font>.tipson add checkbutton <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,pref)</font> <font color=#653760>-variable</font> ::alited::al(TIPS,Preferences) <font color=#653760>-command</font> alited::ini::SaveIni
+  <font color=#1b1baa>$m</font>.tipson add checkbutton <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,FavLists)</font> <font color=#653760>-variable</font> ::alited::al(TIPS,SavedFavorites) <font color=#653760>-command</font> alited::ini::SaveIni
+  <font color=#1b1baa>$m</font>.tipson add separator
+  <font color=#1b1baa>$m</font>.tipson add checkbutton <font color=#653760>-label</font> [msgcat::mc Units] <font color=#653760>-variable</font> ::alited::al(TIPS,Tree) <font color=#653760>-command</font> alited::ini::SaveIni
+  <font color=#1b1baa>$m</font>.tipson add checkbutton <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,favorites)</font> <font color=#653760>-variable</font> ::alited::al(TIPS,TreeFavor) <font color=#653760>-command</font> alited::ini::SaveIni
+
+  MenuCascade <font color=#1b1baa>$m</font> tint [msgcat::mc Tint]
+  <b><font color=#3a6797>lassign</font></b> [TintRange] max min
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> ti <font color=#1b1baa>$max</font>} {<font color=#1b1baa>$ti</font>&gt;=<font color=#1b1baa>$min</font>} {<b><font color=#3a6797>incr</font></b> ti -<font color=#1b1baa>$inctint</font>} {
+    <b><font color=#3a6797>set</font></b> ti1 [<b><font color=#3a6797>string</font></b> range <font color=#8b2a0e>&quot;   <font color=#1b1baa>$</font>ti&quot;</font> end-2 end]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ti</font>&lt;0} {
+      <b><font color=#3a6797>set</font></b> ti2 <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>msgcat::mc Darker:<font color=#1b1baa>]</font> <font color=#1b1baa>$</font>ti1&quot;</font>
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$ti</font>&gt;0} {
+      <b><font color=#3a6797>set</font></b> ti2 <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>msgcat::mc Lighter:<font color=#1b1baa>]$</font>ti1&quot;</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> ti2 CS\ #<font color=#1b1baa>$al(INI,CS)</font>
+    }
+    <font color=#1b1baa>$m</font>.tint add checkbutton <font color=#653760>-label</font> <font color=#1b1baa>$ti2</font> <font color=#653760>-command</font> <font color=#8b2a0e>&quot;alited::menu::SetTint <font color=#1b1baa>$</font>ti&quot;</font> <font color=#653760>-variable</font> alited::menu::tint(<font color=#1b1baa>$ti</font>)
+  }
+  CheckTint
+  <font color=#1b1baa>$m</font> add separator
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,formatdesc...)</font> <font color=#653760>-command</font> alited::edit::FormatUnitDesc
+  <font color=#1b1baa>$m</font> add separator
+
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc {For Start...}] <font color=#653760>-command</font> alited::tool::AfterStartDlg
+  <font color=#1b1baa>$m</font> add separator
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc Configurations...] <font color=#653760>-command</font> alited::menu::Configurations
+  <font color=#1b1baa>$m</font> add separator
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,pref...)</font> <font color=#653760>-command</font> alited::pref::_run
+<a id=Help></a>
+  <i><font color=#4b5d50>## ________________________ Help _________________________ ##</font></i>
+
+  <b><font color=#3a6797>set</font></b> m <font color=#1b1baa>$al(WIN)</font>.menu.help
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> Tcl/Tk <font color=#653760>-command</font> alited::tool::Help <font color=#653760>-accelerator</font> F1
+  <font color=#1b1baa>$m</font> add separator
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> alited <font color=#653760>-command</font> alited::HelpAlited
+  <b><font color=#134070>menu</font></b> <font color=#1b1baa>$m</font>.helps <font color=#653760>-tearoff</font> 1
+  <font color=#1b1baa>$m</font> add cascade <font color=#653760>-label</font> [msgcat::mc Context] <font color=#653760>-menu</font> <font color=#1b1baa>$m</font>.helps
+  <b><font color=#3a6797>foreach</font></b> {hlp lab} [HelpFiles] {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$hlp</font> eq {-}} {
+      <font color=#1b1baa>$m</font>.helps add separator
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>string</font></b> first \\ <font color=#1b1baa>$lab</font>]]&lt;0} {
+        <b><font color=#3a6797>set</font></b> lab [msgcat::mc <font color=#1b1baa>$lab</font>]
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> lab1 [msgcat::mc [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$lab</font> 0 <font color=#1b1baa>$i</font>-1]]
+        <b><font color=#3a6797>set</font></b> lab2 [msgcat::mc [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$lab</font> <font color=#1b1baa>$i</font>+1 end]]
+        <b><font color=#3a6797>set</font></b> lab <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>lab1 / <font color=#1b1baa>$</font>lab2&quot;</font>
+      }
+      <font color=#1b1baa>$m</font>.helps add command <font color=#653760>-label</font> <font color=#1b1baa>$lab</font> <font color=#653760>-command</font> [<b><font color=#3a6797>list</font></b> alited::HelpFile <font color=#1b1baa>$al(WIN)</font> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$DATADIR</font> help <font color=#1b1baa>$hlp</font>] <font color=#653760>-head</font> <font color=#1b1baa>$lab</font> <font color=#653760>-weight</font> bold <font color=#653760>-ale1Help</font> yes]
+    }
+  }
+  <font color=#1b1baa>$m</font> add separator
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> Changelog <font color=#653760>-command</font> \
+    [<b><font color=#3a6797>list</font></b> alited::file::OpenFile [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$DIR</font> CHANGELOG.md]]
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,updateALE)</font> <font color=#653760>-command</font> {alited::ini::CheckUpdates yes}
+  <font color=#1b1baa>$m</font> add separator
+  <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc <font color=#8b2a0e>&quot;About...&quot;</font>] <font color=#653760>-command</font> alited::HelpAbout
+  alited::file::FillRecent
+  RestoreCascadeMenu
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=menu::HelpFiles></a>
+<b><font color=#ca14ca>proc</font></b> menu::HelpFiles {} {
+  <i><font color=#4b5d50># Gets a list of Help/Context (file names and labels).</font></i>
+
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> \
+    pref-nbk-f1.txt {Preferences\General} \
+    pref-nbk-f2.txt {Preferences\Saving} \
+    pref-nbk-f3.txt {Preferences\Projects} \
+    pref-nbk2-f1.txt {Preferences\Editor} \
+    pref-nbk2-f2.txt {Preferences\Tcl syntax} \
+    pref-nbk2-f3.txt {Preferences\C/C++ syntax} \
+    pref-nbk2-f4.txt {Preferences\Plain text} \
+    pref-nbk3-f1.txt {Preferences\Units} \
+    pref-nbk4-f1.txt {Preferences\Templates} \
+    pref-nbk5-f1.txt {Preferences\Keys} \
+    pref-nbk6-f1.txt {Preferences\Tools} \
+    pref-nbk6-f2.txt {Preferences\e_menu} \
+    pref-nbk6-f3.txt {Preferences\bar-menu} \
+    pref-nbk6-f4.txt {Preferences\Tkcon} \
+    - - \
+    project.txt {Projects\Information} \
+    project2.txt {Projects\Options} \
+    project3.txt {Projects\Templates} \
+    project4.txt {Projects\Commands} \
+    project5.txt {Projects\Files} \
+    - - \
+    find2.txt {Search\Find by List} \
+    - - \
+    tool2.txt {Tools\Run...} \
+    check.txt {Tools\Check Tcl...} \
+    paver.txt {Tools\Paver} \
+    - - \
+    unit_tpl.txt {Setup\Templates...} \
+    favor_ls.txt {Setup\Favorites Lists...} \
+    tool1.txt {Setup\For Start...} \
+    ini.txt {Setup\Configurations...} \
+    format1.txt {Setup\Moving Unit Descriptions...} \
+    - - \
+    alited-trans.txt Translation \
+  ]
+
+}
+<a id=EOF></a>
+<i><font color=#4b5d50># _________________________________ EOF _________________________________ #</font></i>
+
+</pre>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>menu.tcl</b></font></div></td></table>
+
+</section>
+<script>
+  writeFooter('Document generated by <a href="'+homeLINK()+'/en/tcl/alited/index.html">alited</a> &amp; <a href="'+homeLINK()+'/en/tcl/mulster/index.html">mulster</a></a>');
+</script>
+</div>
+</body>
+</html>

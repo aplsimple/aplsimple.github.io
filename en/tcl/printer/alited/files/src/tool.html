@@ -1,0 +1,1187 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<meta name="author" content="aplsimple">
+<meta name="description" content="aplsimple's home page">
+<meta name="keywords" content="aplsimple,home">
+</head>
+<style>
+table{
+background-color: #f9f9f9;
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+box-shadow: none;
+filter: none;
+}
+pre{
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+}
+</style>
+<script>
+function homeLINK() {
+  homelink = document.baseURI;
+  ilen = 19
+  ibase = homelink.indexOf('aplsimple.github');
+  if (ibase<0) { ibase = homelink.indexOf('aplsimple_github'); ilen += 10 };
+  if (ibase>=0) { homelink = homelink.substring(0,ibase+ilen) };
+  return homelink;
+};
+document.write(' \
+<link rel="icon" type="image/jpg" href="'+homeLINK()+'/zoo/favicon.jpg">');
+document.write('<'+'script src="'+homeLINK()+'/zoo/funcs.js">'+'<'+'/script>');
+document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'+'/script>');
+</script>
+<body>
+<div id="wrapper">
+<div name="divd1" ALIGN="CENTER"> <FONT SIZE=5em color=#b01c20><B>
+<noscript>THIS PAGE IS NOT WORKING WITHOUT JAVASCRIPT!
+<BR>
+<BR>PLEASE, SWITCH ON JAVASCRIPT IN SETTINGS OF YOUR BROWSER AND RELOAD THE PAGE.
+</noscript>
+</B></FONT></div>
+<div id='doc3' class='yui-t2'>
+<section id=sec2>
+<div id='hd' class='banner'>
+<script>document.write(' \
+<link rel="stylesheet" href="'+homeLINK()+'/en/zoo/style.css">');
+</script>
+<link rel="stylesheet" href="../../css/style.css">
+
+<title>tool.tcl</title>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
+
+<div id="bodyContent" class="dokuwiki">
+<div id="dw__toc" class="dw__toc">
+<h3 class="toggle open" style="cursor: pointer;">tool.tcl</h3>
+<div aria-expanded="true" style="">
+
+<ul class="toc">
+<li><b><a href="#tool.tcl">tool.tcl</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#tool::ToolButName">ToolButName</a><span class=tooltiptext> tool::ToolButName : Helper procedure to get a name of toolbar button.
+img - name of icon</span></div></li></ul>
+<li><b><a href="#Edit_functions">Edit_functions</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#tool::Undo">Undo</a><span class=tooltiptext> tool::Undo : Undoes a change.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::Redo">Redo</a><span class=tooltiptext> tool::Redo : Redoes a change.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::undoAll">undoAll</a><span class=tooltiptext> tool::undoAll : Undoes all changes.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::redoAll">redoAll</a><span class=tooltiptext> tool::redoAll : Redoes all changes.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::InsertInText">InsertInText</a><span class=tooltiptext> tool::InsertInText : Insert a string into a text possibly instead of its selection.
+str - the string
+pos1 - starting position in a current line
+pos2 - ending position in a current line</span></div></li></ul>
+<li><b><a href="#Various_tools">Various_tools</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#tool::ColorPicker">ColorPicker</a><span class=tooltiptext> tool::ColorPicker : Calls a color picker passing to it and getting from it a color.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::FormatDate">FormatDate</a><span class=tooltiptext> tool::FormatDate : Formats a date.
+date - date to be formatted (a current date if omitted)</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::DatePicker">DatePicker</a><span class=tooltiptext> tool::DatePicker : Calls a calendar to pick a date.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::SrcPath">SrcPath</a><span class=tooltiptext> tool::SrcPath : Gets a path to an external tool.
+This may be useful at calling alited by tclkit:
+tkcon, aloupe etc. may be located in "src" subdirectory of alited.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::aloupePath">aloupePath</a><span class=tooltiptext> tool::aloupePath : Gets aloupe ini file's path.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::Loupe">Loupe</a><span class=tooltiptext> tool::Loupe : Calls a screen loupe.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::tkconPath">tkconPath</a><span class=tooltiptext> tool::tkconPath : Gets the path to tkcon.tcl.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::tkconOptions">tkconOptions</a><span class=tooltiptext> tool::tkconOptions : Gets options of tkcon.tcl.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::tkcon">tkcon</a><span class=tooltiptext> tool::tkcon : Calls Tkcon application.
+args - additional arguments for tkcon</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::Help">Help</a><span class=tooltiptext> tool::Help : Calls a help on alited.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::HelpTool">HelpTool</a><span class=tooltiptext> tool::HelpTool : Handles hitting "Help" button in dialogues.
+win - dialogue's window name
+hidx - help's index
+args - options of Help</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::AddTooltipRun">AddTooltipRun</a><span class=tooltiptext> tool::AddTooltipRun : Addition to Run's tooltip.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::TooltipRun">TooltipRun</a><span class=tooltiptext> tool::TooltipRun : Gets a tip for "Run" tool.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::Translate">Translate</a><span class=tooltiptext> tool::Translate : Translates 'what' from a language to a language.
+from - source language code
+to - destination language code
+what - what to translate</span></div></li></ul>
+<li><b><a href="#emenu_support">emenu_support</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#tool::EM_Options">EM_Options</a><span class=tooltiptext> tool::EM_Options : Returns e_menu's general options.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::EM_dir">EM_dir</a><span class=tooltiptext> tool::EM_dir : Returns a directory of e_menu's menus.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::EM_Structure">EM_Structure</a><span class=tooltiptext> tool::EM_Structure : Gets a menu's items.
+mnu - the menu's file name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::EM_HotKey">EM_HotKey</a><span class=tooltiptext> tool::EM_HotKey : Returns e_menu's hotkeys which numerate menu items.
+idx - item's index</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::EM_AllStructure1">EM_AllStructure1</a><span class=tooltiptext> tool::EM_AllStructure1 : Gets recursively all items of all menus.
+mnu - a current menu's file name
+lev - a current level of menu</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::EM_AllStructure">EM_AllStructure</a><span class=tooltiptext> tool::EM_AllStructure : Gets all items of all menus.
+mnu - a root menu's file name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::EM_SaveFiles">EM_SaveFiles</a><span class=tooltiptext> tool::EM_SaveFiles : Saves all files before running e_menu, if this mode is set in "Preferences".</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::PopupBar">PopupBar</a><span class=tooltiptext> tool::PopupBar : Opens a popup menu in the tool bar, to enter e_menu's preferences.
+X - x-coordinate of clicking on the tool bar
+Y - y-coordinate of clicking on the tool bar</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::EM_menuhere">EM_menuhere</a><span class=tooltiptext> tool::EM_menuhere : Checks if m=$mnu is present in e_menu's arguments.
+mnu - menu name
+menuargs - e_menu's arguments</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::EM_command">EM_command</a><span class=tooltiptext> tool::EM_command : Gets e_menu command.
+im - index of the command in em_inf array</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::EM_optionTF">EM_optionTF</a><span class=tooltiptext> tool::EM_optionTF : Prepares TF= option for e_menu.
+args - options of e_menu
+TF= is a name of file that contains a current text's selection.
+If there is no selection, TF= option is a current file's name.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::SHarg">SHarg</a><span class=tooltiptext> tool::SHarg : Gets SH= argument of e_menu (main window's geometry).</span></div></li></ul>
+<li><b><a href="#run_Tcl/ext_commands">run_Tcl/ext_commands</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#tool::Runs">Runs</a><span class=tooltiptext> tool::Runs : Runs a list of Tcl/ext commands.
+mc - message for infobar
+runs - list of commands</span></div></li></ul>
+<li><b><a href="#after_start">after_start</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#tool::AfterStartDlg">AfterStartDlg</a><span class=tooltiptext> tool::AfterStartDlg : Dialogue "Setup/For Start".</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::AfterStartSyntax">AfterStartSyntax</a><span class=tooltiptext> tool::AfterStartSyntax : Highlight "Setup/For Start" text's syntax, at least Tcl part of it.
+w - the text's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::AfterStart">AfterStart</a><span class=tooltiptext> tool::AfterStart : Runs commands after starting alited.</span></div></li></ul>
+<li><b><a href="#run_tcl_source">run_tcl_source</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#tool::RunArgs">RunArgs</a><span class=tooltiptext> tool::RunArgs : Gets ARGS/RUNF arguments (similar to ::em::get_AR of e_menu.tcl).
+Returns a list of ARGS and RUNF arguments found in the current file.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::CheckTcl">CheckTcl</a><span class=tooltiptext> tool::CheckTcl : Check a current unit for errors, before running Tcl file.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::RunTcl">RunTcl</a><span class=tooltiptext> tool::RunTcl : Try to run tcl source file by means of tkcon utility.
+runmode - mode of running (in console or in tkcon)
+Returns yes if a tcl file was started.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::RunMode">RunMode</a><span class=tooltiptext> tool::RunMode : Runs Tcl source file with choosing the mode - in console or in tkcon.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::ComForced">ComForced</a><span class=tooltiptext> tool::ComForced : Checks whether a forced command is set.</span></div></li></ul>
+<li><b><a href="#run/close">run/close</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#tool::is_mainmenu">is_mainmenu</a><span class=tooltiptext> tool::is_mainmenu : Checks if e_menu's arguments are for the main menu (run by F4).
+menuargs - e_menu's arguments
+withTF - yes, if checking together with TF= argument
+The e_menu's arguments contain ex= or EX= for bar-menu tools only.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::is_emenu">is_emenu</a><span class=tooltiptext> tool::is_emenu : Check for e_menu's existence.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::e_menu">e_menu</a><span class=tooltiptext> tool::e_menu : Runs e_menu.
+args - arguments of e_menu
+The e_menu is run as an external application or an internal procedure,
+depending on e_menu's preferences.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::e_menu1">e_menu1</a><span class=tooltiptext> tool::e_menu1 : Runs e_menu.
+opts - options of e_menu
+The e_menu is run as an external application.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::e_menu2">e_menu2</a><span class=tooltiptext> tool::e_menu2 : Runs e_menu.
+opts - options of e_menu
+The e_menu is run as an internal procedure.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::e_menu3">e_menu3</a><span class=tooltiptext> tool::e_menu3 : Prepares TF= argument for e_menu and runs e_menu's main menu.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::PrepareRunCommand">PrepareRunCommand</a><span class=tooltiptext> tool::PrepareRunCommand : prepares a command to run. The command can include wildcards.
+com - command
+fname - current file name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::_run">_run</a><span class=tooltiptext> tool::_run : Runs e_menu's item of menu.em.
+what - the item (by default, "Run me")
+runmode - mode of running (in console or in tkcon)</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::Run_in_e_menu">Run_in_e_menu</a><span class=tooltiptext> tool::Run_in_e_menu : Runs a command with e_menu application
+com - the command
+fnameCur - currently edited file</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::RunFile">RunFile</a><span class=tooltiptext> tool::RunFile : Runs a current file as is (by associated app).</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::_close">_close</a><span class=tooltiptext> tool::_close : Closes e_menu (being an internal procedure) by force.</span></div></li></ul>
+<li><b><a href="#EOF">EOF</a></b></li>
+
+</ul>
+
+</div>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1><font color=#ca14ca> alited's source</font></h1>
+</p><p>
+The <a href="about.html">alited/src</a> directory contains alited's own source files.
+</p><p>
+Some additional alited's files are also contained in <a href="../lib/addon/hl_alm.html">alited/lib/addon</a> directory.
+</p><p>
+The library files are contained in alited/lib** directory.
+</p><p>
+<li><a href="about.html">about.tcl</a> - "About alited" dialogue.</li>
+<li><a href="alited.html">alited.tcl</a> - The alited's main script to start.</li>
+<li><a href="bar.html">bar.tcl</a> - Handles the bar of tabs.</li>
+<li><a href="check.html">check.tcl</a> - "Check Tcl" dialogue and procedures.</li>
+<li><a href="complete.html">complete.tcl</a> - Handles auto-completion.</li>
+<li><a href="edit.html">edit.tcl</a> - "Edit" menu's procedures.</li>
+<li><a href="favor.html">favor.tcl</a> - Handles the favorite and last visited units.</li>
+<li><a href="favor_ls.html">favor_ls.tcl</a> - "Saved lists of favorites" dialogue and procedures.</li>
+<li><a href="file.html">file.tcl</a> - "File" menu's procedures.</li>
+<li><a href="find.html">find.tcl</a> - "Find / Replace" dialogue and procedures.</li>
+<li><a href="format.html">format.tcl</a> - "Edit / Formats" menu's procedures.</li>
+<li><a href="img.html">img.tcl</a> - List of images used by alited.</li>
+<li><a href="indent.html">indent.tcl</a> - Handles text indentation.</li>
+<li><a href="info.html">info.tcl</a> - Handles the info bar.</li>
+<li><a href="ini.html">ini.tcl</a> - Handles initializing alited.</li>
+<li><a href="keys.html">keys.tcl</a> - Handles keyboard (mapping etc.).</li>
+<li><a href="main.html">main.tcl</a> - Handles the main form of alited.</li>
+<li><a href="menu.html">menu.tcl</a> - Handles alited's menus.</li>
+<li><a href="msgs.html">msgs.tcl</a> - Localized messages used in several places.</li>
+<li><a href="paver.html">paver.tcl</a> - "Tools / Paver" tool.</li>
+<li><a href="pkgIndex.html">pkgIndex.tcl</a> - Includes README.md text (for Ruff doc generator).</li>
+<li><a href="pref.html">pref.tcl</a> - "Preferences" dialogue and procedures.</li>
+<li><a href="preview.html">preview.tcl</a> - "Preview (theme, CS)" dialogue called by "Preferences".</li>
+<li><a href="printer.html">printer.tcl</a> - "Tools / Project Printer" dialogue and procedures.</li>
+<li><a href="project.html">project.tcl</a> - "Projects" dialogue and procedures.</li>
+<li><a href="run.html">run.tcl</a> - "Tools / Run..." dialogue and procedures.</li>
+<li><a href="tool.html">tool.tcl</a> - "Tools" menu's procedures.</li>
+<li><a href="tree.html">tree.tcl</a> - Handles the tree of units and files.</li>
+<li><a href="unit.html">unit.tcl</a> - Handles the unit tree.</li>
+<li><a href="unit_tpl.html">unit_tpl.tcl</a> - "Templates" dialogue and procedures.</li>
+</p><p>
+
+</p>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>tool.tcl</b></font></div></td></table>
+
+<pre class="code"><i><font color=#4b5d50>###########################################################<a id=tool.tcl></a></font></i>
+<i><font color=#4b5d50># Name:    tool.tcl</font></i>
+<i><font color=#4b5d50># Author:  Alex Plotnikov  (aplsimple@gmail.com)</font></i>
+<i><font color=#4b5d50># Date:    07/13/2021</font></i>
+<i><font color=#4b5d50># Brief:   Handles tools of alited.</font></i>
+<i><font color=#4b5d50># License: MIT.</font></i>
+<i><font color=#4b5d50>###########################################################</font></i>
+
+<b><font color=#ca14ca>namespace</font></b> eval tool {
+}
+
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::ToolButName></a>
+<b><font color=#ca14ca>proc</font></b> tool::ToolButName {img} {
+  <i><font color=#4b5d50># Helper procedure to get a name of toolbar button.</font></i>
+  <i><font color=#4b5d50>#   img - name of icon</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited obPav obPav
+  <b><font color=#ca14ca>return</font></b> [<font color=#1b1baa>$obPav</font> ToolTop].buT_alimg_<font color=#1b1baa>$img</font>-big
+}
+<a id=Edit_functions></a>
+<i><font color=#4b5d50># ________________________ Edit functions _________________________ #</font></i>
+<a id=tool::Undo></a>
+<b><font color=#ca14ca>proc</font></b> tool::Undo {} {
+  <i><font color=#4b5d50># Undoes a change.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>catch</font></b> {<b><font color=#134070>event</font></b> generate [alited::main::CurrentWTXT] &lt;&lt;Undo&gt;&gt;}]
+}
+<a id=tool::Redo></a>
+<b><font color=#ca14ca>proc</font></b> tool::Redo {} {
+  <i><font color=#4b5d50># Redoes a change.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>catch</font></b> {<b><font color=#134070>event</font></b> generate [alited::main::CurrentWTXT] &lt;&lt;Redo&gt;&gt;}]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::undoAll></a>
+<b><font color=#ca14ca>proc</font></b> tool::undoAll {} {
+  <i><font color=#4b5d50># Undoes all changes.</font></i>
+  
+  <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+  <b><font color=#3a6797>while</font></b> {[<font color=#1b1baa>$wtxt</font> edit canundo]} {
+    <b><font color=#3a6797>if</font></b> {[Undo]} <b><font color=#ca14ca>break</font></b>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::redoAll></a>
+<b><font color=#ca14ca>proc</font></b> tool::redoAll {} {
+  <i><font color=#4b5d50># Redoes all changes.</font></i>
+  
+  <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+  <b><font color=#3a6797>while</font></b> {[<font color=#1b1baa>$wtxt</font> edit canredo]} {
+    <b><font color=#3a6797>if</font></b> {[Redo]} <b><font color=#ca14ca>break</font></b>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::InsertInText></a>
+<b><font color=#ca14ca>proc</font></b> tool::InsertInText {str {pos1 {}} {pos2 {}} } {
+  <i><font color=#4b5d50># Insert a string into a text possibly instead of its selection.</font></i>
+  <i><font color=#4b5d50>#   str - the string</font></i>
+  <i><font color=#4b5d50>#   pos1 - starting position in a current line</font></i>
+  <i><font color=#4b5d50>#   pos2 - ending position in a current line</font></i>
+
+  <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$pos1</font> eq {}} {
+    <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$wtxt</font> tag ranges sel] pos1 pos2
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$wtxt</font> index insert])}]
+    <b><font color=#3a6797>set</font></b> prevch [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$line</font>.[<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$pos1</font>-1}] <font color=#1b1baa>$line</font>.<font color=#1b1baa>$pos1</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$prevch</font> eq [<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$str</font> 0]} {
+      <b><font color=#3a6797>incr</font></b> pos1 -1
+    }
+    <b><font color=#3a6797>set</font></b> pos1 <font color=#1b1baa>$line</font>.<font color=#1b1baa>$pos1</font>
+    <b><font color=#3a6797>set</font></b> pos2 <font color=#1b1baa>$line</font>.[<b><font color=#3a6797>incr</font></b> pos2]
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$pos1</font> ne {}} {
+    <font color=#1b1baa>$wtxt</font> delete <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font>
+  }
+  <font color=#1b1baa>$wtxt</font> insert [<font color=#1b1baa>$wtxt</font> index insert] <font color=#1b1baa>$str</font>
+}
+<a id=Various_tools></a>
+<i><font color=#4b5d50># ________________________ Various tools _________________________ #</font></i>
+<a id=tool::ColorPicker></a>
+<b><font color=#ca14ca>proc</font></b> tool::ColorPicker {} {
+  <i><font color=#4b5d50># Calls a color picker passing to it and getting from it a color.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al PAVEDIR PAVEDIR
+  <b><font color=#3a6797>lassign</font></b> [alited::find::GetWordOfText 2] color pos1 pos2
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$color</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> al(chosencolor) <font color=#1b1baa>$color</font>
+  }
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> commands ::aloupe::run] eq {}} {
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>source</font></b> [SrcPath [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$PAVEDIR</font> pickers color aloupe aloupe.tcl]]}
+  }
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> is boolean <font color=#653760>-strict</font> <font color=#1b1baa>$al(moveall)</font>]} {<b><font color=#3a6797>set</font></b> al(moveall) 0}
+  <b><font color=#3a6797>lassign</font></b> [alited::complete::TextCursorCoordinates] X Y
+  <b><font color=#3a6797>incr</font></b> Y 10
+  <b><font color=#3a6797>set</font></b> res [::apave::obj chooser colorChooser ::alited::al(chosencolor) \
+    <font color=#653760>-moveall</font> <font color=#1b1baa>$al(moveall)</font> <font color=#653760>-parent</font> <font color=#1b1baa>$al(WIN)</font> <font color=#653760>-geometry</font> +<font color=#1b1baa>$X</font>+<font color=#1b1baa>$Y</font> <font color=#653760>-inifile</font> [aloupePath]]
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>lassign</font></b> [::tk::dialog::color::GetOptions] al(moveall)}
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> al(chosencolor) <font color=#1b1baa>$res</font>
+    InsertInText <font color=#1b1baa>$res</font> <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::FormatDate></a>
+<b><font color=#ca14ca>proc</font></b> tool::FormatDate {{date {}}} {
+  <i><font color=#4b5d50># Formats a date.</font></i>
+  <i><font color=#4b5d50>#   date - date to be formatted (a current date if omitted)</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$date</font> eq {}} {<b><font color=#3a6797>set</font></b> date [<b><font color=#3a6797>clock</font></b> seconds]}
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>clock</font></b> format <font color=#1b1baa>$date</font> <font color=#653760>-format</font> <font color=#1b1baa>$al(TPL,%d)</font> <font color=#653760>-locale</font> <font color=#1b1baa>$::alited::al(LOCAL)</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::DatePicker></a>
+<b><font color=#ca14ca>proc</font></b> tool::DatePicker {} {
+  <i><font color=#4b5d50># Calls a calendar to pick a date.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>lassign</font></b> [alited::find::GetWordOfText 2] date pos1 pos2
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$date</font> ne {} \
+  && ![<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>clock</font></b> scan <font color=#1b1baa>$date</font> <font color=#653760>-format</font> <font color=#1b1baa>$al(TPL,%d)</font>}]} {
+    <b><font color=#3a6797>set</font></b> al(klnddate) <font color=#1b1baa>$date</font>
+  } <b><font color=#3a6797>elseif</font></b> {![<b><font color=#3a6797>info</font></b> exists al(klnddate)]} {
+    <b><font color=#3a6797>set</font></b> al(klnddate) [FormatDate]
+  }
+  <b><font color=#3a6797>lassign</font></b> [alited::complete::TextCursorCoordinates] X Y
+  <b><font color=#3a6797>incr</font></b> Y 10
+  <b><font color=#3a6797>set</font></b> res [::apave::obj chooser dateChooser ::alited::al(klnddate) \
+    <font color=#653760>-parent</font> <font color=#1b1baa>$al(WIN)</font> <font color=#653760>-geometry</font> +<font color=#1b1baa>$X</font>+<font color=#1b1baa>$Y</font> <font color=#653760>-dateformat</font> <font color=#1b1baa>$al(TPL,%d)</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> al(klnddate) <font color=#1b1baa>$res</font>
+    InsertInText <font color=#1b1baa>$res</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::SrcPath></a>
+<b><font color=#ca14ca>proc</font></b> tool::SrcPath {toolpath} {
+  <i><font color=#4b5d50># Gets a path to an external tool.</font></i>
+  <i><font color=#4b5d50># This may be useful at calling alited by tclkit:</font></i>
+  <i><font color=#4b5d50># tkcon, aloupe etc. may be located in &quot;src&quot; subdirectory of alited.</font></i>
+
+  <b><font color=#3a6797>set</font></b> srcpath [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::FILEDIR</font> src [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$toolpath</font>]]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$srcpath</font>]} {<b><font color=#3a6797>set</font></b> toolpath <font color=#1b1baa>$srcpath</font>}
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>cd</font></b> [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$toolpath</font>]}
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$toolpath</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::aloupePath></a>
+<b><font color=#ca14ca>proc</font></b> tool::aloupePath {} {
+  <i><font color=#4b5d50># Gets aloupe ini file's path.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited USERDIR USERDIR
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$USERDIR</font> aloupe.conf]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::Loupe></a>
+<b><font color=#ca14ca>proc</font></b> tool::Loupe {} {
+  <i><font color=#4b5d50># Calls a screen loupe.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al LIBDIR LIBDIR PAVEDIR PAVEDIR
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(IsWindows)</font>} {<b><font color=#3a6797>set</font></b> le aloupe.exe} {<b><font color=#3a6797>set</font></b> le aloupe}
+  <b><font color=#3a6797>set</font></b> loupe [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$LIBDIR</font> util <font color=#1b1baa>$le</font>]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$loupe</font>]} {
+    <i><font color=#4b5d50># try to run the loupe executable from lib/util</font></i>
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>exec</font></b> <font color=#1b1baa>$loupe</font>}]} <b><font color=#ca14ca>return</font></b>
+  }
+  <b><font color=#3a6797>set</font></b> loupe [SrcPath [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$PAVEDIR</font> pickers color aloupe aloupe.tcl]]
+  alited::Runtime <font color=#1b1baa>$loupe</font> <font color=#653760>-locale</font> <font color=#1b1baa>$::alited::al(LOCAL)</font> <font color=#653760>-apavedir</font> <font color=#1b1baa>$PAVEDIR</font> <font color=#653760>-cs</font> <font color=#1b1baa>$al(INI,CS)</font> \
+  <font color=#653760>-fcgeom</font> <font color=#1b1baa>$::alited::FilGeometry</font> <font color=#653760>-inifile</font> [aloupePath]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::tkconPath></a>
+<b><font color=#ca14ca>proc</font></b> tool::tkconPath {} {
+  <i><font color=#4b5d50># Gets the path to tkcon.tcl.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> [SrcPath [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::LIBDIR</font> util tkcon.tcl]]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::tkconOptions></a>
+<b><font color=#ca14ca>proc</font></b> tool::tkconOptions {} {
+  <i><font color=#4b5d50># Gets options of tkcon.tcl.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>foreach</font></b> opt [<b><font color=#3a6797>array</font></b> names al tkcon,clr*] {
+    <b><font color=#3a6797>lappend</font></b> opts <font color=#653760>-color-</font>[<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$opt</font> 9 end] <font color=#1b1baa>$al($opt)</font>
+  }
+  <b><font color=#3a6797>foreach</font></b> {opt val} <font color=#1b1baa>$al(tkcon,options)</font> {
+    <b><font color=#3a6797>lappend</font></b> opts <font color=#653760>-apl</font><font color=#1b1baa>$opt</font> <font color=#1b1baa>$val</font>
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$opts</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::tkcon></a>
+<b><font color=#ca14ca>proc</font></b> tool::tkcon {args} {
+  <i><font color=#4b5d50># Calls Tkcon application.</font></i>
+  <i><font color=#4b5d50>#   args - additional arguments for tkcon</font></i>
+
+  <b><font color=#3a6797>set</font></b> pid [alited::Run [tkconPath] {<b><font color=#3a6797>*</font></b>}[tkconOptions] {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$args</font>]} {<b><font color=#3a6797>set</font></b> ::alited::pID <font color=#1b1baa>$pid</font>}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::Help></a>
+<b><font color=#ca14ca>proc</font></b> tool::Help {} {
+  <i><font color=#4b5d50># Calls a help on alited.</font></i>
+
+  _run Help
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::HelpTool></a>
+<b><font color=#ca14ca>proc</font></b> tool::HelpTool {win hidx args} {
+  <i><font color=#4b5d50># Handles hitting &quot;Help&quot; button in dialogues.</font></i>
+  <i><font color=#4b5d50>#   win - dialogue's window name</font></i>
+  <i><font color=#4b5d50>#   hidx - help's index</font></i>
+  <i><font color=#4b5d50>#   args - options of Help</font></i>
+
+  alited::Help <font color=#1b1baa>$win</font> <font color=#1b1baa>$hidx</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::AddTooltipRun></a>
+<b><font color=#ca14ca>proc</font></b> tool::AddTooltipRun {} {
+  <i><font color=#4b5d50># Addition to Run's tooltip.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> <font color=#8b2a0e>&quot;\n\nCtrl+click = <font color=#1b1baa>$</font>::alited::al(acc_22) = <font color=#1b1baa>$</font>::alited::al(acc_2) + F4&quot;</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::TooltipRun></a>
+<b><font color=#ca14ca>proc</font></b> tool::TooltipRun {} {
+  <i><font color=#4b5d50># Gets a tip for &quot;Run&quot; tool.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> res <font color=#1b1baa>$al(MC,icorun)</font>
+  <b><font color=#3a6797>if</font></b> {[ComForced]} {
+    <b><font color=#3a6797>set</font></b> res <font color=#1b1baa>$al(comForce)</font>\n[<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$res</font> \n] 1]
+  }
+  <b><font color=#3a6797>append</font></b> res [AddTooltipRun]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::Translate></a>
+<b><font color=#ca14ca>proc</font></b> tool::Translate {from to what} {
+  <i><font color=#4b5d50># Translates 'what' from a language to a language.</font></i>
+  <i><font color=#4b5d50>#   from - source language code</font></i>
+  <i><font color=#4b5d50>#   to - destination language code</font></i>
+  <i><font color=#4b5d50>#   what - what to translate</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al LIBDIR LIBDIR
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> command ::alited::hl_trans::translateLine] eq {}} {
+    <b><font color=#ca14ca>namespace</font></b> eval ::alited {
+      <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$LIBDIR</font> addon hl_trans.tcl]
+    }
+  }
+  alited::MessageNotDisturb
+  <b><font color=#3a6797>lassign</font></b> [alited::hl_trans::TranslateText <font color=#1b1baa>$what</font> <font color=#1b1baa>$from</font> <font color=#1b1baa>$to</font>] ok translation
+  ::baltip hide
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ok</font>} {
+    <b><font color=#3a6797>set</font></b> what <font color=#1b1baa>$translation</font>
+  } <b><font color=#3a6797>else</font></b> {
+    alited::Message <font color=#1b1baa>$translation</font> 4
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$what</font>
+}
+<a id=emenu_support></a>
+<i><font color=#4b5d50># ________________________ emenu support _________________________ #</font></i>
+<a id=tool::EM_Options></a>
+<b><font color=#ca14ca>proc</font></b> tool::EM_Options {opts} {
+  <i><font color=#4b5d50># Returns e_menu's general options.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al SCRIPTNORMAL SCRIPTNORMAL CONFIGDIR CONFIGDIR
+  <b><font color=#3a6797>set</font></b> sel [<b><font color=#3a6797>string</font></b> trim [alited::find::GetWordOfText]]
+  <b><font color=#3a6797>set</font></b> sel [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$sel</font> \n] 0] ;<i><font color=#4b5d50># only 1st line for &quot;selection&quot;</font></i>
+  <b><font color=#3a6797>set</font></b> sel [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \&quot; {} \{ {} \} {} \[ {} \] {} \\ {} \$ {}] <font color=#1b1baa>$sel</font>]
+  <b><font color=#3a6797>set</font></b> f [alited::bar::FileName]
+  <b><font color=#3a6797>set</font></b> d [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$f</font>]
+  <i><font color=#4b5d50># get a list of selected tabs (i.e. their file names):</font></i>
+  <i><font color=#4b5d50># it's used as %ls wildcard in grep.em (&quot;SEARCH EXACT LS=&quot;)</font></i>
+  <b><font color=#3a6797>set</font></b> tabs [alited::bar::BAR listFlag s]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$tabs</font>]&gt;1} {
+    <b><font color=#3a6797>foreach</font></b> tab <font color=#1b1baa>$tabs</font> {
+      <b><font color=#3a6797>append</font></b> ls [alited::bar::FileName <font color=#1b1baa>$tab</font>] { }
+    }
+    <b><font color=#3a6797>set</font></b> ls <font color=#8b2a0e>&quot;\&quot;ls=<font color=#1b1baa>$</font>ls\&quot;&quot;</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> ls <font color=#8b2a0e>&quot;ls=&quot;</font>
+  }
+  <i><font color=#4b5d50># get file names of left & right tabs (used in utils.em by diff items)</font></i>
+  <b><font color=#3a6797>set</font></b> z6 {}
+  <b><font color=#3a6797>set</font></b> z7 {}
+  <b><font color=#3a6797>set</font></b> tabs [alited::bar::BAR listTab]
+  <b><font color=#3a6797>set</font></b> TID [alited::bar::CurrentTabID]
+  <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-index</font> 0 <font color=#1b1baa>$tabs</font> <font color=#1b1baa>$TID</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i</font>&gt;=0} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i</font>} {
+      <b><font color=#3a6797>append</font></b> z6 z6=[alited::bar::FileName [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tabs</font> <font color=#1b1baa>$i</font>-1 0]]
+    }
+    <b><font color=#3a6797>append</font></b> z7 z7=[alited::bar::FileName [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tabs</font> <font color=#1b1baa>$i</font>+1 0]]
+  }
+  <b><font color=#3a6797>set</font></b> srcdir [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::FILEDIR</font> src]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> exists [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$srcdir</font> e_menu.png]]} {
+    <b><font color=#3a6797>set</font></b> srcdir <font color=#8b2a0e>&quot;\&quot;SD=<font color=#1b1baa>$</font>srcdir\&quot;&quot;</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> srcdir {}
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(EM,DiffTool)</font> ne {}} {<b><font color=#3a6797>set</font></b> df DF=<font color=#1b1baa>$al(EM,DiffTool)</font>} {<b><font color=#3a6797>set</font></b> df {}}
+  <b><font color=#3a6797>set</font></b> l [[alited::main::CurrentWTXT] index insert]
+  <b><font color=#3a6797>set</font></b> l [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$l</font>)}]
+  <b><font color=#3a6797>set</font></b> dirvar [<b><font color=#3a6797>set</font></b> filvar [<b><font color=#3a6797>set</font></b> tdir {}]]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(EM,exec)</font>} {
+    <b><font color=#3a6797>lassign</font></b> [::apave::getProperty DirFilGeoVars] dirvar filvar
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dirvar</font> ne {} && [<b><font color=#3a6797>set</font></b> dirvar [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$dirvar</font>]] ne {}} {
+      <b><font color=#3a6797>set</font></b> dirvar <font color=#8b2a0e>&quot;\&quot;g1=<font color=#1b1baa>$</font>dirvar\&quot;&quot;</font>
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$filvar</font> ne {} && [<b><font color=#3a6797>set</font></b> filvar [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$filvar</font>]] ne {}} {
+      <b><font color=#3a6797>set</font></b> filvar <font color=#8b2a0e>&quot;\&quot;g2=<font color=#1b1baa>$</font>filvar\&quot;&quot;</font>
+    }
+    <b><font color=#3a6797>set</font></b> tdir <font color=#1b1baa>$::alited::LIBDIR</font>
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(EM,geometry)</font> eq {}} {
+    <i><font color=#4b5d50># at 1st exposition, center e_menu approximately</font></i>
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$al(WIN)</font>] x+] w h x y
+    <b><font color=#3a6797>set</font></b> al(EM,geometry) [apave::obj EXPORT CenteredXY <font color=#1b1baa>$w</font> <font color=#1b1baa>$h</font> <font color=#1b1baa>$x</font> <font color=#1b1baa>$y</font> 300 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$h</font>/2}]]
+  }
+  <b><font color=#3a6797>set</font></b> ed [<b><font color=#3a6797>info</font></b> nameofexecutable]\ <font color=#1b1baa>$SCRIPTNORMAL</font>\ <font color=#1b1baa>$CONFIGDIR</font>
+
+  <b><font color=#3a6797>set</font></b> R [<b><font color=#3a6797>list</font></b> md=<font color=#1b1baa>$al(EM,mnudir)</font> m=<font color=#1b1baa>$al(EM,mnu)</font> f=<font color=#1b1baa>$f</font> d=<font color=#1b1baa>$d</font> l=<font color=#1b1baa>$l</font> \
+    PD=<font color=#1b1baa>$al(EM,PD=)</font> pd=<font color=#1b1baa>$al(prjroot)</font> h=<font color=#1b1baa>$al(EM,h=)</font> tt=<font color=#1b1baa>$al(EM,tt=)</font> s=<font color=#1b1baa>$sel</font> \
+    o=-1 om=0 {<b><font color=#3a6797>*</font></b>}g=<font color=#1b1baa>$al(EM,geometry)</font> <font color=#1b1baa>$z6</font> <font color=#1b1baa>$z7</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$ls</font> <font color=#1b1baa>$df</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$srcdir</font> \
+    {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$dirvar</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$filvar</font> td=<font color=#1b1baa>$tdir</font> ed=<font color=#1b1baa>$ed</font> wt=<font color=#1b1baa>$al(EM,wt=)</font> mp=1]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-glob</font> <font color=#1b1baa>$R</font> th=*]&lt;0} {<b><font color=#3a6797>lappend</font></b> R th=<font color=#1b1baa>$al(THEME)</font>}
+  <b><font color=#3a6797>set</font></b> res {}
+  <b><font color=#3a6797>foreach</font></b> r <font color=#1b1baa>$R</font> {<b><font color=#3a6797>append</font></b> res \&quot;<font color=#1b1baa>$r</font>\&quot; { }}
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$res</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::EM_dir></a>
+<b><font color=#ca14ca>proc</font></b> tool::EM_dir {} {
+  <i><font color=#4b5d50># Returns a directory of e_menu's menus.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(EM,mnudir)</font> eq {}} {
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::e_menu_dir</font> menus]
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$al(EM,mnudir)</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::EM_Structure></a>
+<b><font color=#ca14ca>proc</font></b> tool::EM_Structure {mnu} {
+  <i><font color=#4b5d50># Gets a menu's items.</font></i>
+  <i><font color=#4b5d50>#   mnu - the menu's file name</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> mnu [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$mnu</font> <font color=#8b2a0e>&quot;\&quot; &quot;</font>]
+  <b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>file</font></b> join [EM_dir] [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$mnu</font>]]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> fcont [::apave::readTextFile <font color=#1b1baa>$fname</font> {} 1]}]} {
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b>]
+  }
+  <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>set</font></b> prname {}
+  <b><font color=#3a6797>set</font></b> mmarks [<b><font color=#3a6797>list</font></b> S: R: M: S/ R/ M/ SE: RE: ME: SE/ RE/ ME/ SW: RW: MW: SW/ RW/ MW/ I:]
+  <b><font color=#3a6797>set</font></b> ismenu yes
+  <b><font color=#3a6797>set</font></b> isitem no
+  <b><font color=#3a6797>foreach</font></b> line [::apave::textsplit <font color=#1b1baa>$fcont</font>] {
+    <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>string</font></b> trimleft <font color=#1b1baa>$line</font>]
+    <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$line</font> {
+      {[MENU]} {
+        <b><font color=#3a6797>set</font></b> ismenu yes
+        <b><font color=#3a6797>set</font></b> isitem no
+        <b><font color=#ca14ca>continue</font></b>
+      }
+      {[HIDDEN]} - {[OPTIONS]} - {[DATA]} {
+        <b><font color=#3a6797>set</font></b> ismenu [<b><font color=#3a6797>set</font></b> isitem no]
+        <b><font color=#ca14ca>continue</font></b>
+      }
+    }
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$ismenu</font>} <b><font color=#ca14ca>continue</font></b>
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> {^\s*SEP\s*=\s*} <font color=#1b1baa>$line</font>]} {
+      <b><font color=#3a6797>set</font></b> isitem no
+      <b><font color=#ca14ca>continue</font></b>
+    }
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> {^\s*ITEM\s*=\s*} <font color=#1b1baa>$line</font>]} {
+      <b><font color=#3a6797>set</font></b> isitem yes
+      <b><font color=#3a6797>set</font></b> itemname [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> [<b><font color=#3a6797>string</font></b> first = <font color=#1b1baa>$line</font>] end]
+      <b><font color=#3a6797>set</font></b> itemname [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$itemname</font> { =}]
+      <b><font color=#ca14ca>continue</font></b>
+    }
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$isitem</font>} <b><font color=#ca14ca>continue</font></b>
+    <b><font color=#3a6797>set</font></b> origname <font color=#1b1baa>$itemname</font>
+    <b><font color=#3a6797>foreach</font></b> mark <font color=#1b1baa>$mmarks</font> {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> <font color=#8b2a0e>&quot;^\s*<font color=#1b1baa>$</font>mark&quot;</font> <font color=#1b1baa>$line</font>]} {
+        <b><font color=#3a6797>set</font></b> typ [<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$mark</font> 0]
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$typ</font> eq {M}} {
+          <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> {.+m=([^[:blank:]]+)} <font color=#1b1baa>$line</font>] -&gt; itemname
+          <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$itemname</font> ne {} && [<b><font color=#3a6797>file</font></b> extension <font color=#1b1baa>$itemname</font>] ne {.em}} {
+            <b><font color=#3a6797>set</font></b> itemname [<b><font color=#3a6797>file</font></b> rootname <font color=#1b1baa>$itemname</font>].em  ;<i><font color=#4b5d50># normalized menu filename</font></i>
+          }
+        }
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$itemname</font> ni {{} -} && <font color=#1b1baa>$itemname</font> ne <font color=#1b1baa>$prname</font>} {
+          <b><font color=#3a6797>set</font></b> prname <font color=#1b1baa>$itemname</font>
+          <b><font color=#3a6797>lappend</font></b> res [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$mnu</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>typ-<font color=#1b1baa>$</font>itemname\n<font color=#1b1baa>$</font>origname&quot;</font>]
+        }
+        <b><font color=#ca14ca>break</font></b>
+      }
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::EM_HotKey></a>
+<b><font color=#ca14ca>proc</font></b> tool::EM_HotKey {idx} {
+  <i><font color=#4b5d50># Returns e_menu's hotkeys which numerate menu items.</font></i>
+  <i><font color=#4b5d50>#   idx - item's index</font></i>
+
+  <b><font color=#3a6797>set</font></b> hk {0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,./}
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$hk</font> <font color=#1b1baa>$idx</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::EM_AllStructure1></a>
+<b><font color=#ca14ca>proc</font></b> tool::EM_AllStructure1 {mnu lev} {
+  <i><font color=#4b5d50># Gets recursively all items of all menus.</font></i>
+  <i><font color=#4b5d50>#   mnu - a current menu's file name</font></i>
+  <i><font color=#4b5d50>#   lev - a current level of menu</font></i>
+
+  <b><font color=#3a6797>foreach</font></b> mit [EM_Structure <font color=#1b1baa>$mnu</font>] {
+    <b><font color=#3a6797>incr</font></b> i
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$mit</font> mnu item
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match {M-*} <font color=#1b1baa>$item</font>]} {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-exact</font> <font color=#653760>-index</font> end <font color=#1b1baa>$::alited::al(EM_STRUCTURE)</font> <font color=#1b1baa>$item</font>]&gt;-1} {
+        <b><font color=#ca14ca>continue</font></b> ;<i><font color=#4b5d50># to avoid infinite cycle</font></i>
+      }
+      <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$item</font> \n] item
+      <b><font color=#3a6797>set</font></b> lev [EM_AllStructure1 [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$item</font> 2 end] [<b><font color=#3a6797>incr</font></b> lev]]
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>lappend</font></b> ::alited::al(EM_STRUCTURE) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$lev</font> <font color=#1b1baa>$mnu</font> [EM_HotKey <font color=#1b1baa>$i</font>] <font color=#1b1baa>$item</font>]
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>incr</font></b> lev -1]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::EM_AllStructure></a>
+<b><font color=#ca14ca>proc</font></b> tool::EM_AllStructure {mnu} {
+  <i><font color=#4b5d50># Gets all items of all menus.</font></i>
+  <i><font color=#4b5d50>#   mnu - a root menu's file name</font></i>
+
+  <b><font color=#3a6797>set</font></b> ::alited::al(EM_STRUCTURE) [<b><font color=#3a6797>list</font></b>]
+  EM_AllStructure1 <font color=#1b1baa>$mnu</font> 0
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$::alited::al(EM_STRUCTURE)</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::EM_SaveFiles></a>
+<b><font color=#ca14ca>proc</font></b> tool::EM_SaveFiles {} {
+  <i><font color=#4b5d50># Saves all files before running e_menu, if this mode is set in &quot;Preferences&quot;.</font></i>
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(EM,save)</font>==1} {
+    alited::file::SaveAll
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$al(EM,save)</font>==2} {
+    <b><font color=#3a6797>if</font></b> {[alited::file::IsModified]} {
+      alited::file::SaveFile
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::PopupBar></a>
+<b><font color=#ca14ca>proc</font></b> tool::PopupBar {X Y} {
+  <i><font color=#4b5d50># Opens a popup menu in the tool bar, to enter e_menu's preferences.</font></i>
+  <i><font color=#4b5d50>#   X - x-coordinate of clicking on the tool bar</font></i>
+  <i><font color=#4b5d50>#   Y - y-coordinate of clicking on the tool bar</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>set</font></b> popm <font color=#1b1baa>$al(WIN)</font>.popupBar
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$popm</font>}
+  <b><font color=#134070>menu</font></b> <font color=#1b1baa>$popm</font> <font color=#653760>-tearoff</font> 0
+  <font color=#1b1baa>$popm</font> add command <font color=#653760>-label</font> [msgcat::mc {Open bar-menu settings}] \
+    <font color=#653760>-command</font> {alited::pref::_run Emenu_Tab}
+  <font color=#1b1baa>$obPav</font> themePopup <font color=#1b1baa>$popm</font>
+  <b><font color=#134070>tk_popup</font></b> <font color=#1b1baa>$popm</font> <font color=#1b1baa>$X</font> <font color=#1b1baa>$Y</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::EM_menuhere></a>
+<b><font color=#ca14ca>proc</font></b> tool::EM_menuhere {mnu menuargs} {
+  <i><font color=#4b5d50># Checks if m=$mnu is present in e_menu's arguments.</font></i>
+  <i><font color=#4b5d50>#   mnu - menu name</font></i>
+  <i><font color=#4b5d50>#   menuargs - e_menu's arguments</font></i>
+
+  <b><font color=#3a6797>foreach</font></b> m [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$mnu</font>.em <font color=#1b1baa>$mnu</font>.mnu <font color=#1b1baa>$mnu</font>] {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-exact</font> <font color=#1b1baa>$menuargs</font> m=<font color=#1b1baa>$m</font>]&gt;-1} {
+      <b><font color=#ca14ca>return</font></b> yes
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> no
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::EM_command></a>
+<b><font color=#ca14ca>proc</font></b> tool::EM_command {im} {
+  <i><font color=#4b5d50># Gets e_menu command.</font></i>
+  <i><font color=#4b5d50>#   im - index of the command in em_inf array</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited::pref em_inf em_inf
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$em_inf($im)</font> mnu idx item
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$idx</font> eq {-} || [<b><font color=#3a6797>regexp</font></b> {^[^[:blank:].]+[.](mnu|em): } <font color=#1b1baa>$item</font>]} {
+      <i><font color=#4b5d50># open a menu</font></i>
+      <b><font color=#3a6797>set</font></b> mnu [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$item</font> 0 [<b><font color=#3a6797>string</font></b> first : <font color=#1b1baa>$item</font>]-1]
+      <b><font color=#3a6797>set</font></b> ex {ex= o=-1}
+    } <b><font color=#3a6797>else</font></b> {
+      <i><font color=#4b5d50># call a command</font></i>
+      <b><font color=#3a6797>set</font></b> ex <font color=#8b2a0e>&quot;ex=<font color=#1b1baa>[</font>alited::tool::EM_HotKey <font color=#1b1baa>$</font>idx<font color=#1b1baa>]</font> SH=1&quot;</font>
+    }
+    <b><font color=#3a6797>set</font></b> res <font color=#8b2a0e>&quot;alited::tool::e_menu \&quot;m=<font color=#1b1baa>$</font>mnu\&quot; <font color=#1b1baa>$</font>ex&quot;</font>
+  } err]} <b><font color=#3a6797>then</font></b> {
+    <b><font color=#3a6797>puts</font></b> stderr <font color=#8b2a0e>&quot;\nalited error: <font color=#1b1baa>$</font>err&quot;</font>
+    <b><font color=#3a6797>set</font></b> res {}
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::EM_optionTF></a>
+<b><font color=#ca14ca>proc</font></b> tool::EM_optionTF {args} {
+  <i><font color=#4b5d50># Prepares TF= option for e_menu.</font></i>
+  <i><font color=#4b5d50>#   args - options of e_menu</font></i>
+  <i><font color=#4b5d50># TF= is a name of file that contains a current text's selection.</font></i>
+  <i><font color=#4b5d50># If there is no selection, TF= option is a current file's name.</font></i>
+
+  <b><font color=#3a6797>set</font></b> sels [alited::edit::SelectedLines {} yes]
+  <b><font color=#3a6797>set</font></b> wtxt [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$sels</font> 0]
+  <b><font color=#3a6797>set</font></b> sel {}
+  <b><font color=#3a6797>foreach</font></b> {l1 l2} [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$sels</font> 1 end] {
+    <b><font color=#3a6797>append</font></b> sel [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$l1</font>.0 <font color=#1b1baa>$l2</font>.end] \n
+  }
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> length [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$sel</font>]]&lt;2 || \
+  (![is_mainmenu <font color=#1b1baa>$args</font> yes] && ![EM_menuhere tests <font color=#1b1baa>$args</font>])} {
+    <b><font color=#3a6797>set</font></b> tmpname [alited::bar::FileName]
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> tmpname [alited::TmpFile SELECTION~]
+    ::apave::writeTextFile <font color=#1b1baa>$tmpname</font> sel
+  }
+  <b><font color=#ca14ca>return</font></b> TF=<font color=#1b1baa>$tmpname</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::SHarg></a>
+<b><font color=#ca14ca>proc</font></b> tool::SHarg {} {
+  <i><font color=#4b5d50># Gets SH= argument of e_menu (main window's geometry).</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$al(WIN)</font>] && [<b><font color=#134070>winfo</font></b> ismapped <font color=#1b1baa>$al(WIN)</font>]} {
+    <b><font color=#ca14ca>return</font></b> SH=[<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$al(WIN)</font>]
+  }
+  <b><font color=#ca14ca>return</font></b> {}
+}
+<a id=run_Tcl/ext_commands></a>
+<i><font color=#4b5d50>## _____________________ run Tcl/ext commands ___________________ ##</font></i>
+<a id=tool::Runs></a>
+<b><font color=#ca14ca>proc</font></b> tool::Runs {mc runs} {
+  <i><font color=#4b5d50># Runs a list of Tcl/ext commands.</font></i>
+  <i><font color=#4b5d50>#   mc - message for infobar</font></i>
+  <i><font color=#4b5d50>#   runs - list of commands</font></i>
+
+  <b><font color=#3a6797>set</font></b> runs [::alited::ProcEOL <font color=#1b1baa>$runs</font> in]
+  <b><font color=#3a6797>foreach</font></b> run [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$runs</font> \n] {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> run [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$run</font>]] ne {} && [<b><font color=#3a6797>string</font></b> first # <font color=#1b1baa>$run</font>]!=0} {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>eval</font></b> <font color=#1b1baa>$run</font>} e]} {
+        <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>exec</font></b> -- {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$run</font>} e2
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$e2</font> ne {}} {<b><font color=#3a6797>set</font></b> e <font color=#1b1baa>$e2</font>} {<b><font color=#3a6797>append</font></b> e <font color=#8b2a0e>&quot; / OS ?&quot;</font>}
+      }
+      alited::info::Put <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>mc\&quot;<font color=#1b1baa>$</font>run\&quot; -&gt; <font color=#1b1baa>$</font>e&quot;</font>
+      <b><font color=#3a6797>update</font></b>
+    }
+  }
+}
+<a id=after_start></a>
+<i><font color=#4b5d50>## ________________________ after start _________________________ ##</font></i>
+<a id=tool::AfterStartDlg></a>
+<b><font color=#ca14ca>proc</font></b> tool::AfterStartDlg {} {
+  <i><font color=#4b5d50># Dialogue &quot;Setup/For Start&quot;.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obDl2 obDl2
+  <b><font color=#3a6797>set</font></b> lab [msgcat::mc <font color=#8b2a0e>&quot; Enter commands to be run after starting alited.\n They can be Tcl or executables:&quot;</font>]
+  <b><font color=#3a6797>set</font></b> run [::alited::ProcEOL <font color=#1b1baa>$al(afterstart)</font> in]
+  <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$obDl2</font> input {} <font color=#1b1baa>$al(MC,afterstart)</font> [<b><font color=#3a6797>list</font></b> \
+    lab [<b><font color=#3a6797>list</font></b> {} {<font color=#653760>-pady</font> 8} [<b><font color=#3a6797>list</font></b> <font color=#653760>-t</font> <font color=#1b1baa>$lab</font>]] {} \
+    tex <font color=#8b2a0e>&quot;<font color=#1b1baa>{}</font> <font color=#1b1baa>{}</font> <font color=#1b1baa>{</font>-w 80 -h 16 -tabnext <font color=#1b1baa>{</font>butOK butCANCEL<font color=#1b1baa>}</font> -afteridle <font color=#1b1baa>{</font>alited::tool::AfterStartSyntax %w<font color=#1b1baa>}}</font>&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>run&quot;</font> ] \
+    <font color=#653760>-help</font> {alited::tool::HelpTool %w 1}] res run
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font>} {
+    <b><font color=#3a6797>set</font></b> al(afterstart) [::alited::ProcEOL [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$run</font>] out]
+    alited::ini::SaveIni
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::AfterStartSyntax></a>
+<b><font color=#ca14ca>proc</font></b> tool::AfterStartSyntax {w} {
+  <i><font color=#4b5d50># Highlight &quot;Setup/For Start&quot; text's syntax, at least Tcl part of it.</font></i>
+  <i><font color=#4b5d50>#   w - the text's path</font></i>
+
+  alited::SyntaxHighlight tcl <font color=#1b1baa>$w</font> [alited::SyntaxColors]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::AfterStart></a>
+<b><font color=#ca14ca>proc</font></b> tool::AfterStart {} {
+  <i><font color=#4b5d50># Runs commands after starting alited.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  Runs <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(MC,afterstart) :&quot;</font> <font color=#1b1baa>$al(afterstart)</font>
+}
+<a id=run_tcl_source></a>
+<i><font color=#4b5d50>## ________________________ run tcl source _________________________ ##</font></i>
+<a id=tool::RunArgs></a>
+<b><font color=#ca14ca>proc</font></b> tool::RunArgs {} {
+  <i><font color=#4b5d50># Gets ARGS/RUNF arguments (similar to ::em::get_AR of e_menu.tcl).</font></i>
+  <i><font color=#4b5d50># Returns a list of ARGS and RUNF arguments found in the current file.</font></i>
+
+  <b><font color=#3a6797>set</font></b> res {}
+  <b><font color=#3a6797>set</font></b> ar {^[[:space:]#/*]*#[ ]?ARGS[0-9]?:[ ]*(.*)}
+  <b><font color=#3a6797>set</font></b> rf {^[[:space:]#/*]*#[ ]?RUNF[0-9]?:[ ]*(.*)}
+  <b><font color=#3a6797>set</font></b> AR [<b><font color=#3a6797>set</font></b> RF {}]
+  <b><font color=#3a6797>set</font></b> filecontent [<b><font color=#3a6797>split</font></b> [[alited::main::CurrentWTXT] get 1.0 end] \n]
+  <b><font color=#3a6797>foreach</font></b> st <font color=#1b1baa>$filecontent</font> {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> <font color=#1b1baa>$ar</font> <font color=#1b1baa>$st</font>] && <font color=#1b1baa>$AR</font> eq {}} {
+      <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> <font color=#1b1baa>$ar</font> <font color=#1b1baa>$st</font>] =&gt; AR
+    } <b><font color=#3a6797>elseif</font></b> {[<b><font color=#3a6797>regexp</font></b> <font color=#1b1baa>$rf</font> <font color=#1b1baa>$st</font>] && <font color=#1b1baa>$RF</font> eq {}} {
+      <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> <font color=#1b1baa>$rf</font> <font color=#1b1baa>$st</font>] =&gt; RF
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$AR</font> ne {} || <font color=#1b1baa>$RF</font> ne {}} {
+      <b><font color=#3a6797>if</font></b> {<font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>AR<font color=#1b1baa>$</font>RF&quot;</font> ne {OFF}} {
+        <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$AR</font> <font color=#1b1baa>$RF</font>]
+      }
+      <b><font color=#ca14ca>break</font></b>
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::CheckTcl></a>
+<b><font color=#ca14ca>proc</font></b> tool::CheckTcl {} {
+  <i><font color=#4b5d50># Check a current unit for errors, before running Tcl file.</font></i>
+
+  <b><font color=#3a6797>lassign</font></b> [alited::tree::CurrentItemByLine {} 1] - - leaf - name l1 l2
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is true <font color=#653760>-strict</font> <font color=#1b1baa>$leaf</font>] && <font color=#1b1baa>$name</font> ne {}} {
+    alited::CheckSource
+    alited::info::ClearRed
+    <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+    <b><font color=#3a6797>set</font></b> TID [alited::bar::CurrentTabID]
+    <b><font color=#3a6797>set</font></b> err [alited::check::CheckUnit <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$l1</font>.0 <font color=#1b1baa>$l2</font>.end <font color=#1b1baa>$TID</font> <font color=#1b1baa>$name</font> yes yes]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$err</font>} {
+      <b><font color=#3a6797>set</font></b> msg [msgcat::mc {Errors found in unit:}]\ <font color=#1b1baa>$name</font>
+      alited::Message <font color=#1b1baa>$msg</font> 4
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::RunTcl></a>
+<b><font color=#ca14ca>proc</font></b> tool::RunTcl {{runmode <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Try to run tcl source file by means of tkcon utility.</font></i>
+  <i><font color=#4b5d50>#   runmode - mode of running (in console or in tkcon)</font></i>
+  <i><font color=#4b5d50># Returns yes if a tcl file was started.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {(<font color=#1b1baa>$runmode</font> eq {} && !<font color=#1b1baa>$::alited::al(prjincons)</font>) || <font color=#1b1baa>$runmode</font> eq {tkcon}} {
+    <b><font color=#3a6797>lassign</font></b> [RunArgs] ar rf
+    <b><font color=#3a6797>set</font></b> tclfile {}
+    <b><font color=#3a6797>catch</font></b> {  ;<i><font color=#4b5d50># ar & rf can be badly formed =&gt; catch</font></i>
+      <b><font color=#3a6797>set</font></b> fname [alited::bar::FileName]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$ar</font>] || (![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$rf</font>] && [alited::file::IsTcl <font color=#1b1baa>$fname</font>])} {
+        <b><font color=#3a6797>set</font></b> rf <font color=#1b1baa>$fname</font>
+        <b><font color=#3a6797>append</font></b> rf { } <font color=#1b1baa>$ar</font>
+      }
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> tclfile [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$rf</font> 0]] ne {}} {
+        <b><font color=#3a6797>cd</font></b> [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname</font>]
+        <b><font color=#3a6797>set</font></b> tclfile [<b><font color=#3a6797>file</font></b> normalize <font color=#1b1baa>$tclfile</font>]
+        <b><font color=#3a6797>set</font></b> rf [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$rf</font> 0 0]
+      }
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tclfile</font> ne {} && [<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$tclfile</font>]} {
+      <i><font color=#4b5d50># run tkcon with file.tcl & argv</font></i>
+      EM_SaveFiles
+      tkcon <font color=#1b1baa>$tclfile</font> <font color=#653760>-apl-topmost</font> 0 <font color=#653760>-argv</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$rf</font>
+      <b><font color=#ca14ca>return</font></b> yes
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> no
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::RunMode></a>
+<b><font color=#ca14ca>proc</font></b> tool::RunMode {} {
+  <i><font color=#4b5d50># Runs Tcl source file with choosing the mode - in console or in tkcon.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>namespace</font></b> exists ::alited::run]} {
+    <b><font color=#ca14ca>namespace</font></b> eval ::alited {
+      <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::SRCDIR</font> run.tcl]
+    }
+  }
+  alited::run::RunDlg
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::ComForced></a>
+<b><font color=#ca14ca>proc</font></b> tool::ComForced {} {
+  <i><font color=#4b5d50># Checks whether a forced command is set.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$::alited::al(comForceCh)</font> && \
+    [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$::alited::al(comForce)</font>] ni {- {}}}]
+}
+<a id=run/close></a>
+<i><font color=#4b5d50>## ________________________ run/close _________________________ ##</font></i>
+<a id=tool::is_mainmenu></a>
+<b><font color=#ca14ca>proc</font></b> tool::is_mainmenu {menuargs {withTF no}} {
+  <i><font color=#4b5d50># Checks if e_menu's arguments are for the main menu (run by F4).</font></i>
+  <i><font color=#4b5d50>#   menuargs - e_menu's arguments</font></i>
+  <i><font color=#4b5d50>#   withTF - yes, if checking together with TF= argument</font></i>
+  <i><font color=#4b5d50># The e_menu's arguments contain ex= or EX= for bar-menu tools only.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$withTF</font> && [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-exact</font> <font color=#653760>-nocase</font> <font color=#1b1baa>$menuargs</font> m=menu.em] &gt;= 0} {
+    <b><font color=#ca14ca>return</font></b> 1
+  }
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-glob</font> <font color=#653760>-nocase</font> <font color=#1b1baa>$menuargs</font> EX=*] &lt; 0}]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::is_emenu></a>
+<b><font color=#ca14ca>proc</font></b> tool::is_emenu {} {
+  <i><font color=#4b5d50># Check for e_menu's existence.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists .em] && [<b><font color=#134070>winfo</font></b> ismapped .em]} {
+    <b><font color=#134070>wm</font></b> withdraw .em
+    <b><font color=#134070>wm</font></b> deiconify .em
+    <b><font color=#134070>bell</font></b>
+    <b><font color=#ca14ca>return</font></b> yes
+  }
+  <b><font color=#ca14ca>return</font></b> no
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::e_menu></a>
+<b><font color=#ca14ca>proc</font></b> tool::e_menu {args} {
+  <i><font color=#4b5d50># Runs e_menu.</font></i>
+  <i><font color=#4b5d50>#   args - arguments of e_menu</font></i>
+  <i><font color=#4b5d50># The e_menu is run as an external application or an internal procedure,</font></i>
+  <i><font color=#4b5d50># depending on e_menu's preferences.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>lappend</font></b> args [EM_optionTF {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
+  <b><font color=#3a6797>if</font></b> {{EX=Help} ni <font color=#1b1baa>$args</font>} {
+    EM_SaveFiles
+    <b><font color=#3a6797>if</font></b> {![is_mainmenu <font color=#1b1baa>$args</font>]} {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> p [<b><font color=#3a6797>string</font></b> first + <font color=#1b1baa>$al(EM,geometry)</font>]]&gt;-1} {
+        <b><font color=#3a6797>set</font></b> g [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$al(EM,geometry)</font> <font color=#1b1baa>$p</font> end]
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> g {}
+      }
+      <b><font color=#3a6797>append</font></b> args <font color=#8b2a0e>&quot; g=<font color=#1b1baa>$</font>g&quot;</font>  ;<i><font color=#4b5d50># should be last, to override previous settings</font></i>
+    }
+    <b><font color=#3a6797>if</font></b> {[EM_menuhere grep <font color=#1b1baa>$args</font>]} {
+      <b><font color=#3a6797>append</font></b> args { NE=1}  ;<i><font color=#4b5d50># let him search till closing the search dialogue</font></i>
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {[EM_menuhere menu <font color=#1b1baa>$args</font>] && {ex=d} in <font color=#1b1baa>$args</font> && <font color=#1b1baa>$al(BACKUP)</font> ne {}} {
+    <i><font color=#4b5d50># Differences of a file & its backup: get the backup's name</font></i>
+    <b><font color=#3a6797>set</font></b> TID [alited::bar::CurrentTabID]
+    <b><font color=#3a6797>lassign</font></b> [alited::edit::BackupDirFileNames <font color=#1b1baa>$TID</font>] dir fname fname2
+    <i><font color=#4b5d50>#set fname2 [alited::edit::BackupFileName $fname2 0]</font></i>
+    <b><font color=#3a6797>append</font></b> args <font color=#8b2a0e>&quot; \&quot;BF=<font color=#1b1baa>$</font>fname2\&quot;&quot;</font>  ;<i><font color=#4b5d50># version before 1st change</font></i>
+  }
+  <b><font color=#3a6797>if</font></b> {{EX=1} ni <font color=#1b1baa>$args</font>} {
+    <b><font color=#3a6797>append</font></b> args { AL=1}  ;<i><font color=#4b5d50># to read a current file only at &quot;Run me&quot;</font></i>
+  }
+  <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+  <b><font color=#3a6797>lassign</font></b> [::hl_tcl::hl_colors .] - - clrSTR clrVAR clrCMN clrPROC
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$clrSTR</font> eq {lightgreen}} {<b><font color=#3a6797>set</font></b> clrSTR #90ee90}
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> match #* <font color=#1b1baa>$clrSTR</font>]} {<b><font color=#3a6797>set</font></b> clrSTR <font color=#1b1baa>$clrVAR</font>}
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match #* <font color=#1b1baa>$clrSTR</font>]} {
+    <b><font color=#3a6797>lassign</font></b> [alited::edit::InvertBg <font color=#1b1baa>$clrSTR</font>] fg2
+    <b><font color=#3a6797>append</font></b> args <font color=#8b2a0e>&quot; HC=<font color=#1b1baa>$</font>clrPROC,<font color=#1b1baa>$</font>fg2,<font color=#1b1baa>$</font>clrSTR,<font color=#1b1baa>$</font>clrCMN&quot;</font>
+  }
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#1b1baa>$args</font> {SH=1}]]&gt;-1} {
+    <b><font color=#3a6797>set</font></b> args [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$args</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font> [SHarg]]
+  }
+  <i><font color=#4b5d50># check options for compatibility</font></i>
+  <b><font color=#3a6797>set</font></b> itc [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-glob</font> <font color=#1b1baa>$args</font> tc=*]
+  <b><font color=#3a6797>set</font></b> iee [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-glob</font> <font color=#1b1baa>$args</font> ee=*]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$itc</font>&gt;-1 && <font color=#1b1baa>$iee</font>&gt;-1 && <font color=#1b1baa>$al(prjincons)</font>} {
+    <b><font color=#3a6797>set</font></b> ee [<b><font color=#3a6797>string</font></b> range [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$args</font> <font color=#1b1baa>$iee</font>] 3 end]
+    <b><font color=#3a6797>if</font></b> {![alited::file::IsTcl <font color=#1b1baa>$ee</font>]} {
+      <b><font color=#3a6797>set</font></b> args [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$args</font> <font color=#1b1baa>$itc</font> <font color=#1b1baa>$itc</font>] ;<i><font color=#4b5d50># not a Tcl file - can't be run with tclsh</font></i>
+    }
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$itc</font>==-1 && <font color=#1b1baa>$iee</font>==-1 && <font color=#1b1baa>$al(prjincons)</font>} {
+    <b><font color=#3a6797>lappend</font></b> args tc=[alited::Tclexe]  ;<i><font color=#4b5d50># for console - set &quot;path to tclsh&quot; argument</font></i>
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::alited::al(EM,exec)</font>} {
+    e_menu1 <font color=#1b1baa>$args</font>
+  } <b><font color=#3a6797>else</font></b> {
+    e_menu2 <font color=#1b1baa>$args</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::e_menu1></a>
+<b><font color=#ca14ca>proc</font></b> tool::e_menu1 {opts} {
+  <i><font color=#4b5d50># Runs e_menu.</font></i>
+  <i><font color=#4b5d50>#   opts - options of e_menu</font></i>
+  <i><font color=#4b5d50># The e_menu is run as an external application.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(EM,ownCS)</font>} {
+    <b><font color=#3a6797>set</font></b> cs <font color=#1b1baa>$al(EM,CS)</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> cs <font color=#1b1baa>$al(INI,CS)</font>  ;<i><font color=#4b5d50># without tinting: e_menu hasn't the tint option</font></i>
+  }
+  <b><font color=#3a6797>set</font></b> opts [EM_Options <font color=#1b1baa>$opts</font>]
+  <b><font color=#3a6797>set</font></b> opts <font color=#8b2a0e>&quot;c=<font color=#1b1baa>$</font>cs fs=<font color=#1b1baa>$</font>al(FONTSIZE,std) <font color=#1b1baa>$</font>opts&quot;</font>
+  <b><font color=#3a6797>set</font></b> th <font color=#1b1baa>$al(THEME)</font>
+  <i><font color=#4b5d50># cs= and fs= can be reset in EM_Options</font></i>
+  <b><font color=#3a6797>foreach</font></b> o [<b><font color=#3a6797>list</font></b> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font>] {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match c=* <font color=#1b1baa>$o</font>]}  {<b><font color=#3a6797>set</font></b> cs [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$o</font> 2 end]}
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match th=* <font color=#1b1baa>$o</font>]} {<b><font color=#3a6797>set</font></b> th [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$o</font> 3 end]}
+  }
+  <b><font color=#3a6797>set</font></b> thdark [<font color=#1b1baa>$obPav</font> thDark <font color=#1b1baa>$th</font>]
+  <b><font color=#3a6797>set</font></b> csdark [<font color=#1b1baa>$obPav</font> csDark <font color=#1b1baa>$cs</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$thdark</font>==1 && !<font color=#1b1baa>$csdark</font> || <font color=#1b1baa>$thdark</font>==0 && <font color=#1b1baa>$csdark</font>} {
+    <b><font color=#3a6797>set</font></b> opts <font color=#8b2a0e>&quot;th=default <font color=#1b1baa>$</font>opts th=default&quot;</font> ;<i><font color=#4b5d50># default theme fits any CS</font></i>
+  }
+  <b><font color=#3a6797>set</font></b> e_menu [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::e_menu_dir</font> e_menu.tcl]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {alited::Run <font color=#1b1baa>$e_menu</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font>} err]} {
+    <b><font color=#3a6797>set</font></b> msg [msgcat::mc <font color=#8b2a0e>&quot;Incorrect \&quot;Preferences/Tools/tclsh...\&quot;\nresults in the error:&quot;</font>]
+    alited::Msg <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>msg\n\n<font color=#1b1baa>$</font>e_menu <font color=#1b1baa>$</font>opts\n\n==&gt;\n<font color=#1b1baa>$</font>err&quot;</font> err <font color=#653760>-w</font> {50 80} <font color=#653760>-h</font> {9 24}
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::e_menu2></a>
+<b><font color=#ca14ca>proc</font></b> tool::e_menu2 {opts} {
+  <i><font color=#4b5d50># Runs e_menu.</font></i>
+  <i><font color=#4b5d50>#   opts - options of e_menu</font></i>
+  <i><font color=#4b5d50># The e_menu is run as an internal procedure.</font></i>
+
+  ::alited::Source_e_menu
+  ::apave::cs_Active no ;<i><font color=#4b5d50># no CS changes by e_menu</font></i>
+  <b><font color=#3a6797>if</font></b> {[is_emenu]} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>set</font></b> options [EM_Options <font color=#1b1baa>$opts</font>]
+  ::em::main <font color=#653760>-prior</font> 1 <font color=#653760>-modal</font> 0 <font color=#653760>-remain</font> 0 <font color=#653760>-noCS</font> 1 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$options</font>
+  <b><font color=#3a6797>set</font></b> maingeo [::em::menuOption <font color=#1b1baa>$::alited::al(EM,mnu)</font> geometry]
+  <b><font color=#3a6797>if</font></b> {[is_mainmenu <font color=#1b1baa>$options</font>] && <font color=#1b1baa>$maingeo</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> ::alited::al(EM,geometry) <font color=#1b1baa>$maingeo</font>
+  }
+  ::apave::cs_Active yes
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::e_menu3></a>
+<b><font color=#ca14ca>proc</font></b> tool::e_menu3 {} {
+  <i><font color=#4b5d50># Prepares TF= argument for e_menu and runs e_menu's main menu.</font></i>
+
+  e_menu o=0 [EM_optionTF]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::PrepareRunCommand></a>
+<b><font color=#ca14ca>proc</font></b> tool::PrepareRunCommand {com fname} {
+  <i><font color=#4b5d50># prepares a command to run. The command can include wildcards.</font></i>
+  <i><font color=#4b5d50>#   com - command</font></i>
+  <i><font color=#4b5d50>#   fname - current file name</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> idi Ns7!-=
+  <b><font color=#3a6797>set</font></b> sel [alited::find::GetWordOfText select]
+  <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %% <font color=#1b1baa>$idi</font>] <font color=#1b1baa>$com</font>]
+  <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$::alited::EOL</font> \n %s <font color=#1b1baa>$sel</font> \
+    %f <font color=#1b1baa>$fname</font> %d [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname</font>] %pd <font color=#1b1baa>$al(prjroot)</font> %H [::apave::HomeDir]] <font color=#1b1baa>$com</font>]
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$idi</font> %] <font color=#1b1baa>$com</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::_run></a>
+<b><font color=#ca14ca>proc</font></b> tool::_run {{what <font color=#8b2a0e>&quot;&quot;</font>} {runmode <font color=#8b2a0e>&quot;&quot;</font>} args} {
+  <i><font color=#4b5d50># Runs e_menu's item of menu.em.</font></i>
+  <i><font color=#4b5d50>#   what - the item (by default, &quot;Run me&quot;)</font></i>
+  <i><font color=#4b5d50>#   runmode - mode of running (in console or in tkcon)</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {[is_emenu]} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>set</font></b> opts <font color=#8b2a0e>&quot;EX=<font color=#1b1baa>$</font>what&quot;</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$what</font> eq {}} {
+    <b><font color=#3a6797>set</font></b> doit [::apave::extractOptions args <font color=#653760>-doit</font> 0]
+<i><font color=#ff0000>#!    lassign [alited::ExtTrans] ext istrans from to</font></i>
+<i><font color=#ff0000>#!    if #\{!$doit && $istrans#\} #\{</font></i>
+<i><font color=#ff0000>#!      alited::hl_trans::translateLine $from $to</font></i>
+<i><font color=#ff0000>#!      return</font></i>
+<i><font color=#ff0000>#!    #\}</font></i>
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$::alited::DEBUG</font>} {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(EM,exec)</font>} {
+        <b><font color=#3a6797>set</font></b> fpid [alited::TmpFile .pid~]
+        <b><font color=#3a6797>set</font></b> pid [::apave::readTextFile <font color=#1b1baa>$fpid</font>]
+      } <b><font color=#3a6797>else</font></b> {
+        ::alited::Source_e_menu ;<i><font color=#4b5d50># e_menu is &quot;internal&quot;</font></i>
+        <b><font color=#3a6797>set</font></b> pid [::em::pID]
+        ::em::pID 0
+      }
+      <b><font color=#3a6797>catch</font></b> {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$pid</font>&gt;0} {<b><font color=#3a6797>exec</font></b> kill <font color=#653760>-s</font> SIGINT <font color=#1b1baa>$pid</font>}
+      }
+      <b><font color=#3a6797>catch</font></b> {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::alited::pID</font>&gt;0} {<b><font color=#3a6797>exec</font></b> kill <font color=#653760>-s</font> SIGINT <font color=#1b1baa>$::alited::pID</font>}
+      }
+      <b><font color=#3a6797>set</font></b> ::alited::pID 0
+    }
+    <b><font color=#3a6797>set</font></b> fnameCur [alited::bar::FileName]
+    <b><font color=#3a6797>set</font></b> com [PrepareRunCommand <font color=#1b1baa>$al(prjbeforerun)</font> <font color=#1b1baa>$fnameCur</font>]
+    Runs {} <font color=#1b1baa>$com</font>
+    <b><font color=#3a6797>if</font></b> {[alited::file::IsTcl <font color=#1b1baa>$fnameCur</font>]} CheckTcl
+    <b><font color=#3a6797>if</font></b> {[ComForced]} {
+      <b><font color=#3a6797>set</font></b> com [PrepareRunCommand <font color=#1b1baa>$al(comForce)</font> <font color=#1b1baa>$fnameCur</font>]
+      Run_in_e_menu <font color=#1b1baa>$com</font> <font color=#1b1baa>$fnameCur</font>
+      <b><font color=#ca14ca>return</font></b>
+    }
+    <b><font color=#3a6797>if</font></b> {[RunTcl <font color=#1b1baa>$runmode</font>]} <b><font color=#ca14ca>return</font></b>
+    <b><font color=#3a6797>set</font></b> opts <font color=#8b2a0e>&quot;EX=1 PI=1 <font color=#1b1baa>[</font>SHarg<font color=#1b1baa>]</font>&quot;</font>
+  }
+  e_menu {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font> tc=[alited::Tclexe]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::Run_in_e_menu></a>
+<b><font color=#ca14ca>proc</font></b> tool::Run_in_e_menu {com {fnameCur <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Runs a command with e_menu application</font></i>
+  <i><font color=#4b5d50>#   com - the command</font></i>
+  <i><font color=#4b5d50>#   fnameCur - currently edited file</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  ::alited::Message <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(MC,run): <font color=#1b1baa>$</font>com&quot;</font> 3
+  <b><font color=#3a6797>set</font></b> tc {}
+  <b><font color=#3a6797>set</font></b> tw %t
+  <b><font color=#3a6797>catch</font></b> {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$com</font> 0]] eq {%f}} {
+      <b><font color=#3a6797>set</font></b> fname <font color=#1b1baa>$fnameCur</font>
+    }
+    <b><font color=#3a6797>if</font></b> {[alited::file::IsTcl <font color=#1b1baa>$fname</font>]} {
+      <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(prjincons)</font>} {
+        <b><font color=#3a6797>set</font></b> tc \
+          <font color=#8b2a0e>&quot;tc=<font color=#1b1baa>[</font>alited::Tclexe<font color=#1b1baa>]</font> <font color=#1b1baa>[</font>alited::tool::tkconPath<font color=#1b1baa>]</font> <font color=#1b1baa>[</font>alited::tool::tkconOptions<font color=#1b1baa>]</font>&quot;</font>
+        <b><font color=#3a6797>set</font></b> tw {}
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> tw <font color=#8b2a0e>&quot;%t <font color=#1b1baa>[</font>alited::Tclexe<font color=#1b1baa>]</font> &quot;</font>
+      }
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fnameCur</font> ne {}} {<b><font color=#3a6797>set</font></b> fnameCur f=[<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \\ \\\\] <font color=#1b1baa>$fnameCur</font>]}
+  e_menu ee=<font color=#1b1baa>$tw</font>[<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \&quot; \\\&quot; \\ \\\\] <font color=#1b1baa>$com</font>] \
+    pd=[<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \\ \\\\] <font color=#1b1baa>$al(prjroot)</font>] <font color=#1b1baa>$tc</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$fnameCur</font> [SHarg]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::RunFile></a>
+<b><font color=#ca14ca>proc</font></b> tool::RunFile {} {
+  <i><font color=#4b5d50># Runs a current file as is (by associated app).</font></i>
+
+  alited::Message <font color=#1b1baa>$::alited::al(MC,run)</font>:\ [alited::bar::FileName] 3
+  alited::tool::_run 1 {} <font color=#653760>-doit</font> yes
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::_close></a>
+<b><font color=#ca14ca>proc</font></b> tool::_close {{fname <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Closes e_menu (being an internal procedure) by force.</font></i>
+
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> .em}
+}
+<a id=EOF></a>
+<i><font color=#4b5d50># _________________________________ EOF _________________________________ #</font></i>
+
+</pre>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>tool.tcl</b></font></div></td></table>
+
+</section>
+<script>
+  writeFooter('Document generated by <a href="'+homeLINK()+'/en/tcl/alited/index.html">alited</a> &amp; <a href="'+homeLINK()+'/en/tcl/mulster/index.html">mulster</a></a>');
+</script>
+</div>
+</body>
+</html>

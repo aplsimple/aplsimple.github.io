@@ -1,0 +1,913 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<meta name="author" content="aplsimple">
+<meta name="description" content="aplsimple's home page">
+<meta name="keywords" content="aplsimple,home">
+</head>
+<style>
+table{
+background-color: #f9f9f9;
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+box-shadow: none;
+filter: none;
+}
+pre{
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+}
+</style>
+<script>
+function homeLINK() {
+  homelink = document.baseURI;
+  ilen = 19
+  ibase = homelink.indexOf('aplsimple.github');
+  if (ibase<0) { ibase = homelink.indexOf('aplsimple_github'); ilen += 10 };
+  if (ibase>=0) { homelink = homelink.substring(0,ibase+ilen) };
+  return homelink;
+};
+document.write(' \
+<link rel="icon" type="image/jpg" href="'+homeLINK()+'/zoo/favicon.jpg">');
+document.write('<'+'script src="'+homeLINK()+'/zoo/funcs.js">'+'<'+'/script>');
+document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'+'/script>');
+</script>
+<body>
+<div id="wrapper">
+<div name="divd1" ALIGN="CENTER"> <FONT SIZE=5em color=#b01c20><B>
+<noscript>THIS PAGE IS NOT WORKING WITHOUT JAVASCRIPT!
+<BR>
+<BR>PLEASE, SWITCH ON JAVASCRIPT IN SETTINGS OF YOUR BROWSER AND RELOAD THE PAGE.
+</noscript>
+</B></FONT></div>
+<div id='doc3' class='yui-t2'>
+<section id=sec2>
+<div id='hd' class='banner'>
+<script>document.write(' \
+<link rel="stylesheet" href="'+homeLINK()+'/en/zoo/style.css">');
+</script>
+<link rel="stylesheet" href="../../css/style.css">
+
+<title>favor.tcl</title>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
+
+<div id="bodyContent" class="dokuwiki">
+<div id="dw__toc" class="dw__toc">
+<h3 class="toggle open" style="cursor: pointer;">favor.tcl</h3>
+<div aria-expanded="true" style="">
+
+<ul class="toc">
+<li><b><a href="#favor.tcl">favor.tcl</a></b></li>
+<li><b><a href="#Variables">Variables</a></b></li>
+<li><b><a href="#Common">Common</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#favor::SkipVisited">SkipVisited</a><span class=tooltiptext> favor::SkipVisited : Sets/gets a flag to skip remembering a last visit.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::LastVisited">LastVisited</a><span class=tooltiptext> favor::LastVisited : Puts an item to "Last visited" list.
+item - list of tree's item data (first two: -text {label})
+header - header of item
+l1 - starting line of a last visited unit, if any</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::OpenSelectedFile">OpenSelectedFile</a><span class=tooltiptext> favor::OpenSelectedFile : Opens a file from a selected item of favorites/last visited.
+fname - file name
+Returns tab's ID, if the file is open successfully.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::GoToUnit">GoToUnit</a><span class=tooltiptext> favor::GoToUnit : Enters a unit.
+TID - tab's ID
+name - name of the unit
+header - header of the unit
+forfavor - yes, if Favorites list is clicked and must be updated
+it1 - item selected in Favorites (for forfavor=yes)
+values - values of item selected in Favorites (for forfavor=yes)
+Returns yes, if the unit is open successfully.
+See also: tree::SaveCursorPos</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::Select">Select</a><span class=tooltiptext> favor::Select : Handles selecting an item of "Favorites / Last visited" treeview.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::IsSelected">IsSelected</a><span class=tooltiptext> favor::IsSelected : Gets data of currently selected item of favorites.
+IDN - variable name of item's ID
+nameN - variable name of item's name
+fnameN - variable name of item's file name
+snameN - variable name of item's tail file name
+headerN - variable name of item's header
+lineN - variable name of item's 1st line</span></div></li></ul>
+<li><b><a href="#Set_favorites">Set_favorites</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#favor::SetAndClose">SetAndClose</a><span class=tooltiptext> favor::SetAndClose : Sets favorites list, opens files from favorites list, closes other files.
+cont - list of favorites</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::SetFavorites">SetFavorites</a><span class=tooltiptext> favor::SetFavorites : Sets favorites/last visited list in the treeview.
+cont - list of favorites/last visited</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::IsFavoritesFiles">IsFavoritesFiles</a><span class=tooltiptext> favor::IsFavoritesFiles : Checks if the selected favorites list is a list of file names
+cont - content of the list</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::OpenFiles">OpenFiles</a><span class=tooltiptext> favor::OpenFiles : Opens files with current favorites.
+pla - if 5, current files remain; if 6, current files close
+cont - list of favorites</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::InitFavorites">InitFavorites</a><span class=tooltiptext> favor::InitFavorites : Initializes favorites list for possible "Back" of "Favorites' Lists".
+favs - initial list of project's favorites
+See also: ini::ReadIniPrj</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::Lists">Lists</a><span class=tooltiptext> favor::Lists : Runs "Lists of Favorites" dialogue, sets a list of favorites at a choice.</span></div></li></ul>
+<li><b><a href="#Display">Display</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#favor::Show">Show</a><span class=tooltiptext> favor::Show : Shows a list of favorites / last visited units.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::ShowFavVisit">ShowFavVisit</a><span class=tooltiptext> favor::ShowFavVisit : Show favorites/last visits, depending on the mode.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::SwitchFavVisit">SwitchFavVisit</a><span class=tooltiptext> favor::SwitchFavVisit : Switches favorites / last visited units' view.</span></div></li></ul>
+<li><b><a href="#Changing_lists">Changing_lists</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#favor::GeoForQuery">GeoForQuery</a><span class=tooltiptext> favor::GeoForQuery : Gets geometry for a query.
+undermouse - if yes, run by mouse click</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::Add">Add</a><span class=tooltiptext> favor::Add : Adds a unit to favorites.
+undermouse - if yes, run by mouse click
+idnames - list of unit's ID and names to add</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::AddFromTree">AddFromTree</a><span class=tooltiptext> favor::AddFromTree : Adds a list of selected items of the tree to Favorites.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::Delete">Delete</a><span class=tooltiptext> favor::Delete : Deletes an item from favorites.
+undermouse - if yes, run by mouse click</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::DeleteAll">DeleteAll</a><span class=tooltiptext> favor::DeleteAll : Deletes all items from favorites.
+undermouse - if yes, run by mouse click</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::DeleteLastVisited">DeleteLastVisited</a><span class=tooltiptext> favor::DeleteLastVisited : Deletes last visited item.
+id - ID of the item</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::Rename">Rename</a><span class=tooltiptext> favor::Rename : Renames a current favorite.
+undermouse - if yes, run by mouse click</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::CurrentName">CurrentName</a><span class=tooltiptext> favor::CurrentName : Gets data of a current favorite.
+dobell - if yes, bells at empty unit tree
+Returns a list of the favorite's data: ID, title, 1st line, last line.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::CurrentID">CurrentID</a><span class=tooltiptext> favor::CurrentID : Gets ID of a currently selected favorite.
+undermouse - if yes, run by mouse click
+Returns favorite's ID & name & file name & tree list & header or {} if a favorite not selected.</span></div></li></ul>
+<li><b><a href="#Popup_menus">Popup_menus</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#favor::ShowPopupMenu">ShowPopupMenu</a><span class=tooltiptext> favor::ShowPopupMenu : Displays a popup menu at clicking Favorites / last visited list.
+ID - tree item's ID
+X - x-coordinate of the mouse pointer
+Y - y-coordinate of the mouse pointer</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::PopupMenu">PopupMenu</a><span class=tooltiptext> favor::PopupMenu : Prepares and runs a popup menu at clicking Favorites / last visited list.
+x - x-coordinate to identify tree item
+y - y-coordinate to identify tree item
+X - x-coordinate of the mouse pointer
+Y - y-coordinate of the mouse pointer</span></div></li></ul>
+<li><b><a href="#Tips">Tips</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#favor::CopyDeclaration">CopyDeclaration</a><span class=tooltiptext> favor::CopyDeclaration : Copies a current unit's declaration to the clipboard.
+wtree - tree widget's path
+ID - tree item's ID</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#favor::GetTooltip">GetTooltip</a><span class=tooltiptext> favor::GetTooltip : Gets a tip of favorite / last visited unit's declaration.
+ID - ID of treeview item</span></div></li></ul>
+<li><b><a href="#Initialization">Initialization</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#favor::_init">_init</a><span class=tooltiptext> favor::_init : Initializes and shows favorite / last visited units' view.</span></div></li></ul>
+<li><b><a href="#EOF">EOF</a></b></li>
+
+</ul>
+
+</div>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1><font color=#ca14ca> alited's source</font></h1>
+</p><p>
+The <a href="about.html">alited/src</a> directory contains alited's own source files.
+</p><p>
+Some additional alited's files are also contained in <a href="../lib/addon/hl_alm.html">alited/lib/addon</a> directory.
+</p><p>
+The library files are contained in alited/lib** directory.
+</p><p>
+<li><a href="about.html">about.tcl</a> - "About alited" dialogue.</li>
+<li><a href="alited.html">alited.tcl</a> - The alited's main script to start.</li>
+<li><a href="bar.html">bar.tcl</a> - Handles the bar of tabs.</li>
+<li><a href="check.html">check.tcl</a> - "Check Tcl" dialogue and procedures.</li>
+<li><a href="complete.html">complete.tcl</a> - Handles auto-completion.</li>
+<li><a href="edit.html">edit.tcl</a> - "Edit" menu's procedures.</li>
+<li><a href="favor.html">favor.tcl</a> - Handles the favorite and last visited units.</li>
+<li><a href="favor_ls.html">favor_ls.tcl</a> - "Saved lists of favorites" dialogue and procedures.</li>
+<li><a href="file.html">file.tcl</a> - "File" menu's procedures.</li>
+<li><a href="find.html">find.tcl</a> - "Find / Replace" dialogue and procedures.</li>
+<li><a href="format.html">format.tcl</a> - "Edit / Formats" menu's procedures.</li>
+<li><a href="img.html">img.tcl</a> - List of images used by alited.</li>
+<li><a href="indent.html">indent.tcl</a> - Handles text indentation.</li>
+<li><a href="info.html">info.tcl</a> - Handles the info bar.</li>
+<li><a href="ini.html">ini.tcl</a> - Handles initializing alited.</li>
+<li><a href="keys.html">keys.tcl</a> - Handles keyboard (mapping etc.).</li>
+<li><a href="main.html">main.tcl</a> - Handles the main form of alited.</li>
+<li><a href="menu.html">menu.tcl</a> - Handles alited's menus.</li>
+<li><a href="msgs.html">msgs.tcl</a> - Localized messages used in several places.</li>
+<li><a href="paver.html">paver.tcl</a> - "Tools / Paver" tool.</li>
+<li><a href="pkgIndex.html">pkgIndex.tcl</a> - Includes README.md text (for Ruff doc generator).</li>
+<li><a href="pref.html">pref.tcl</a> - "Preferences" dialogue and procedures.</li>
+<li><a href="preview.html">preview.tcl</a> - "Preview (theme, CS)" dialogue called by "Preferences".</li>
+<li><a href="printer.html">printer.tcl</a> - "Tools / Project Printer" dialogue and procedures.</li>
+<li><a href="project.html">project.tcl</a> - "Projects" dialogue and procedures.</li>
+<li><a href="run.html">run.tcl</a> - "Tools / Run..." dialogue and procedures.</li>
+<li><a href="tool.html">tool.tcl</a> - "Tools" menu's procedures.</li>
+<li><a href="tree.html">tree.tcl</a> - Handles the tree of units and files.</li>
+<li><a href="unit.html">unit.tcl</a> - Handles the unit tree.</li>
+<li><a href="unit_tpl.html">unit_tpl.tcl</a> - "Templates" dialogue and procedures.</li>
+</p><p>
+
+</p>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>favor.tcl</b></font></div></td></table>
+
+<pre class="code"><i><font color=#4b5d50>###########################################################<a id=favor.tcl></a></font></i>
+<i><font color=#4b5d50># Name:    favor.tcl</font></i>
+<i><font color=#4b5d50># Author:  Alex Plotnikov  (aplsimple@gmail.com)</font></i>
+<i><font color=#4b5d50># Date:    07/01/2021</font></i>
+<i><font color=#4b5d50># Brief:   Handles favorites/last visited lists.</font></i>
+<i><font color=#4b5d50># License: MIT.</font></i>
+<i><font color=#4b5d50>###########################################################</font></i>
+<a id=Variables></a>
+<i><font color=#4b5d50># _________________________ Variables ________________________ #</font></i>
+
+<b><font color=#ca14ca>namespace</font></b> eval favor {
+  <b><font color=#3a6797>variable</font></b> tipID {}            ;<i><font color=#4b5d50># ID of item a tip is shown for</font></i>
+  <b><font color=#3a6797>variable</font></b> initialFavs [<b><font color=#3a6797>list</font></b>]  ;<i><font color=#4b5d50># favorites that exist at starting &quot;Favorites' list&quot;</font></i>
+  <b><font color=#3a6797>variable</font></b> ansOpenFiles 0      ;<i><font color=#4b5d50># response at &quot;Open files&quot;</font></i>
+}
+<a id=Common></a>
+<i><font color=#4b5d50># ________________________ Common _________________________ #</font></i>
+<a id=favor::SkipVisited></a>
+<b><font color=#ca14ca>proc</font></b> favor::SkipVisited {{flag <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Sets/gets a flag to skip remembering a last visit.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> fln _FLAGSKIPLV
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$flag</font> eq {}} {
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>info</font></b> exists al(<font color=#1b1baa>$fln</font>)] && <font color=#1b1baa>$al($fln)</font>}]
+  }
+  <b><font color=#3a6797>set</font></b> al(<font color=#1b1baa>$fln</font>) <font color=#1b1baa>$flag</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::LastVisited></a>
+<b><font color=#ca14ca>proc</font></b> favor::LastVisited {item header {l1 -1}} {
+  <i><font color=#4b5d50># Puts an item to &quot;Last visited&quot; list.</font></i>
+  <i><font color=#4b5d50>#   item - list of tree's item data (first two: -text {label})</font></i>
+  <i><font color=#4b5d50>#   header - header of item</font></i>
+  <i><font color=#4b5d50>#   l1 - starting line of a last visited unit, if any</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>if</font></b> {[SkipVisited]} {
+    <i><font color=#4b5d50># avoid a false run at switching to a file from infobar/favorites</font></i>
+    SkipVisited no
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <i><font color=#4b5d50># check for &quot;All of...&quot; - don't save it</font></i>
+  <b><font color=#3a6797>set</font></b> allof [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$al(MC,alloffile)</font> 0 [<b><font color=#3a6797>string</font></b> first \&quot; <font color=#1b1baa>$al(MC,alloffile)</font>]]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first <font color=#1b1baa>$allof</font> <font color=#1b1baa>$header</font>]==0} <b><font color=#ca14ca>return</font></b>
+  <i><font color=#4b5d50># check for &quot;Lines...&quot; - don't save it</font></i>
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> <font color=#8b2a0e>&quot;^<font color=#1b1baa>$</font>al(MC,lines) \\d+-\\d+\$&quot;</font> <font color=#1b1baa>$header</font>]} <b><font color=#ca14ca>return</font></b>
+  <i><font color=#4b5d50># check for an empty item - don't save it</font></i>
+  <b><font color=#3a6797>set</font></b> name [<b><font color=#3a6797>string</font></b> trim [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$item</font> 1]]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$name</font>] eq {} || [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$name</font> end-1 end] eq {::}} {
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <i><font color=#4b5d50># checks done, save this last visit</font></i>
+  <b><font color=#3a6797>set</font></b> fname [alited::bar::FileName]
+  <b><font color=#3a6797>set</font></b> lvisit [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$name</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$header</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$lvisit</font> eq [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$al(FAV,visited)</font> 0 4]} {
+    <b><font color=#ca14ca>return</font></b> ;<i><font color=#4b5d50># already 1st: no need to put it</font></i>
+  }
+  <i><font color=#4b5d50># search an old item</font></i>
+  <b><font color=#3a6797>set</font></b> found no
+  <b><font color=#3a6797>set</font></b> i 0
+  <b><font color=#3a6797>set</font></b> ln <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>expr <font color=#1b1baa>{</font>int(<font color=#1b1baa>[[</font>alited::main::CurrentWTXT<font color=#1b1baa>]</font> index insert<font color=#1b1baa>]</font>)<font color=#1b1baa>}]</font>&quot;</font>
+  <b><font color=#3a6797>foreach</font></b> it <font color=#1b1baa>$al(FAV,visited)</font> {
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$it</font> - - ID - values
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$values</font> name2 fname2 header2
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> eq <font color=#1b1baa>$fname2</font> && <font color=#1b1baa>$header</font> eq <font color=#1b1baa>$header2</font>} {
+      <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$i</font>} <b><font color=#ca14ca>return</font></b> ;<i><font color=#4b5d50># already 1st: no need to put it</font></i>
+      <b><font color=#3a6797>set</font></b> found yes
+      <i><font color=#4b5d50># if found, move it to 0th position</font></i>
+      <b><font color=#3a6797>set</font></b> al(FAV,visited) [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$al(FAV,visited)</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
+      <b><font color=#ca14ca>break</font></b>
+    }
+    <b><font color=#3a6797>incr</font></b> i
+  }
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$found</font> && <font color=#1b1baa>$ln</font> eq <font color=#1b1baa>$l1</font>} {
+    <i><font color=#4b5d50># already 1st in last visits, maybe with a changed name</font></i>
+    <b><font color=#3a6797>set</font></b> al(FAV,visited) [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$al(FAV,visited)</font> 0 0]
+  }
+  <b><font color=#3a6797>set</font></b> al(FAV,visited) [<b><font color=#3a6797>linsert</font></b> <font color=#1b1baa>$al(FAV,visited)</font> 0 [<b><font color=#3a6797>list</font></b> - - - - <font color=#1b1baa>$lvisit</font>]]
+  <i><font color=#4b5d50># delete last items if the list's limit is exceeded</font></i>
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> al(FAV,visited) [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$al(FAV,visited)</font> <font color=#1b1baa>$al(FAV,MAXLAST)</font> end]}
+  <i><font color=#4b5d50># update the tree widget</font></i>
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(FAV,IsFavor)</font>} {
+    SetFavorites <font color=#1b1baa>$al(FAV,visited)</font>
+    <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> TreeFavor]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> id0 [<b><font color=#3a6797>lindex</font></b> [<font color=#1b1baa>$wtree</font> children {}] 0]] ne {}} {
+      <font color=#1b1baa>$wtree</font> see <font color=#1b1baa>$id0</font>
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::OpenSelectedFile></a>
+<b><font color=#ca14ca>proc</font></b> favor::OpenSelectedFile {fname} {
+  <i><font color=#4b5d50># Opens a file from a selected item of favorites/last visited.</font></i>
+  <i><font color=#4b5d50>#   fname - file name</font></i>
+  <i><font color=#4b5d50># Returns tab's ID, if the file is open successfully.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> al(dolastvisited) no
+  <b><font color=#3a6797>set</font></b> TID [alited::file::OpenFile <font color=#1b1baa>$fname</font> yes]
+  <b><font color=#3a6797>set</font></b> al(dolastvisited) yes
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> eq {}} {
+    <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %f <font color=#1b1baa>$fname</font>] [msgcat::mc {File not found: %f}]]
+    alited::Message <font color=#1b1baa>$msg</font> 4
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$TID</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::GoToUnit></a>
+<b><font color=#ca14ca>proc</font></b> favor::GoToUnit {TID name header {forfavor no} {it1 {}} {values {}}} {
+  <i><font color=#4b5d50># Enters a unit.</font></i>
+  <i><font color=#4b5d50>#   TID - tab's ID</font></i>
+  <i><font color=#4b5d50>#   name - name of the unit</font></i>
+  <i><font color=#4b5d50>#   header - header of the unit</font></i>
+  <i><font color=#4b5d50>#   forfavor - yes, if Favorites list is clicked and must be updated</font></i>
+  <i><font color=#4b5d50>#   it1 - item selected in Favorites (for forfavor=yes)</font></i>
+  <i><font color=#4b5d50>#   values - values of item selected in Favorites (for forfavor=yes)</font></i>
+  <i><font color=#4b5d50># Returns yes, if the unit is open successfully.</font></i>
+  <i><font color=#4b5d50># See also: tree::SaveCursorPos</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$header</font> - nameorig}]} {<b><font color=#3a6797>set</font></b> nameorig <font color=#1b1baa>$header</font>}
+  <b><font color=#3a6797>foreach</font></b> it <font color=#1b1baa>$al(_unittree,$TID)</font> {
+    <b><font color=#3a6797>set</font></b> treeID [alited::tree::NewItemID [<b><font color=#3a6797>incr</font></b> iit]]
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$it</font> lev leaf fl1 title l1 l2
+    <b><font color=#3a6797>set</font></b> name2 [alited::tree::UnitTitle <font color=#1b1baa>$title</font> <font color=#1b1baa>$l1</font> <font color=#1b1baa>$l2</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$nameorig</font> eq <font color=#1b1baa>$name2</font> || <font color=#1b1baa>$name</font> eq <font color=#1b1baa>$name2</font>} {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$forfavor</font>} {
+        <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> TreeFavor]
+        <font color=#1b1baa>$wtree</font> delete <font color=#1b1baa>$it1</font>
+        <b><font color=#3a6797>set</font></b> favID [<font color=#1b1baa>$wtree</font> insert {} 0 <font color=#653760>-values</font> <font color=#1b1baa>$values</font>]
+        <font color=#1b1baa>$wtree</font> tag add tagNorm <font color=#1b1baa>$favID</font>
+      }
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> <font color=#1b1baa>$al(RE,proc)</font> <font color=#1b1baa>$header</font>]} {<b><font color=#3a6797>set</font></b> name <font color=#1b1baa>$nameorig</font>}
+      LastVisited [<b><font color=#3a6797>list</font></b> <font color=#653760>-text</font> <font color=#1b1baa>$name</font>] <font color=#1b1baa>$header</font>
+      <b><font color=#3a6797>set</font></b> pos [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$it</font> 7]  ;<i><font color=#4b5d50># saved cursor position</font></i>
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$pos</font> ne {}} {<b><font color=#3a6797>set</font></b> pos <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos yes&quot;</font>}
+      <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;alited::tree::NewSelection <font color=#1b1baa>$</font>treeID <font color=#1b1baa>$</font>pos; alited::main::HighlightLine&quot;</font>
+      <b><font color=#ca14ca>return</font></b> yes
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> no
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::Select></a>
+<b><font color=#ca14ca>proc</font></b> favor::Select {} {
+  <i><font color=#4b5d50># Handles selecting an item of &quot;Favorites / Last visited&quot; treeview.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>set</font></b> msec [<b><font color=#3a6797>clock</font></b> milliseconds]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists al(_MSEC)] && [<b><font color=#3a6797>expr</font></b> {(<font color=#1b1baa>$msec</font>-<font color=#1b1baa>$al(_MSEC)</font>)&lt;800}]} {
+    <b><font color=#ca14ca>return</font></b> ;<i><font color=#4b5d50># disables double click</font></i>
+  }
+  <b><font color=#3a6797>set</font></b> al(_MSEC) <font color=#1b1baa>$msec</font>
+  <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> TreeFavor]
+  <b><font color=#3a6797>if</font></b> {![IsSelected favID name fname sname header line]} {
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <b><font color=#3a6797>set</font></b> values [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$favID</font> <font color=#653760>-values</font>]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> TID [OpenSelectedFile <font color=#1b1baa>$fname</font>]] eq {}} {
+    DeleteLastVisited <font color=#1b1baa>$favID</font>
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <i><font color=#4b5d50># scan Favorites/last-visited tree, to find the selected item</font></i>
+  <i><font color=#4b5d50># and remake favorites and last visits; then go to the selected unit</font></i>
+  <b><font color=#3a6797>foreach</font></b> it1 [<font color=#1b1baa>$wtree</font> children {}] {
+    <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$it1</font> <font color=#653760>-values</font>] name2 - header2
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$header</font> eq <font color=#1b1baa>$header2</font>} {
+      <b><font color=#3a6797>if</font></b> {[GoToUnit <font color=#1b1baa>$TID</font> <font color=#1b1baa>$name2</font> <font color=#1b1baa>$header2</font> <font color=#1b1baa>$al(FAV,IsFavor)</font> <font color=#1b1baa>$it1</font> <font color=#1b1baa>$values</font>]} <b><font color=#ca14ca>return</font></b>
+      <b><font color=#ca14ca>break</font></b>
+    }
+  }
+  <b><font color=#3a6797>foreach</font></b> it1 [<font color=#1b1baa>$wtree</font> children {}] {
+    <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$it1</font> <font color=#653760>-values</font>] name2 - header2
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$name</font> eq <font color=#1b1baa>$name2</font>} {
+      <b><font color=#3a6797>if</font></b> {[GoToUnit <font color=#1b1baa>$TID</font> <font color=#1b1baa>$name2</font> <font color=#1b1baa>$header2</font> <font color=#1b1baa>$al(FAV,IsFavor)</font> <font color=#1b1baa>$it1</font> <font color=#1b1baa>$values</font>]} <b><font color=#ca14ca>return</font></b>
+      DeleteLastVisited <font color=#1b1baa>$it1</font>
+      <b><font color=#ca14ca>break</font></b>
+    }
+  }
+  <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %u <font color=#1b1baa>$name</font>] <font color=#1b1baa>$al(MC,notfndunit)</font>]
+  alited::Message <font color=#1b1baa>$msg</font> 3
+  alited::main::FocusText
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::IsSelected></a>
+<b><font color=#ca14ca>proc</font></b> favor::IsSelected {IDN nameN fnameN snameN headerN lineN} {
+  <i><font color=#4b5d50># Gets data of currently selected item of favorites.</font></i>
+  <i><font color=#4b5d50>#   IDN - variable name of item's ID</font></i>
+  <i><font color=#4b5d50>#   nameN - variable name of item's name</font></i>
+  <i><font color=#4b5d50>#   fnameN - variable name of item's file name</font></i>
+  <i><font color=#4b5d50>#   snameN - variable name of item's tail file name</font></i>
+  <i><font color=#4b5d50>#   headerN - variable name of item's header</font></i>
+  <i><font color=#4b5d50>#   lineN - variable name of item's 1st line</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>upvar</font></b> 1 <font color=#1b1baa>$IDN</font> ID <font color=#1b1baa>$nameN</font> name <font color=#1b1baa>$fnameN</font> fname <font color=#1b1baa>$snameN</font> sname <font color=#1b1baa>$headerN</font> header <font color=#1b1baa>$lineN</font> line
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> ID [alited::tree::CurrentItem TreeFavor]] eq {}} {<b><font color=#ca14ca>return</font></b> no}
+  <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> TreeFavor]
+  <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$ID</font> <font color=#653760>-values</font>] name fname header line
+  <b><font color=#3a6797>set</font></b> sname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]
+  <b><font color=#ca14ca>return</font></b> yes
+}<a id=Set_favorites></a>
+<i><font color=#4b5d50># ________________________ Set favorites _________________________ #</font></i>
+<a id=favor::SetAndClose></a>
+<b><font color=#ca14ca>proc</font></b> favor::SetAndClose {cont} {
+  <i><font color=#4b5d50># Sets favorites list, opens files from favorites list, closes other files.</font></i>
+  <i><font color=#4b5d50>#   cont - list of favorites</font></i>
+
+  SetFavorites <font color=#1b1baa>$cont</font>
+  <b><font color=#3a6797>set</font></b> fnamecont {}
+  <b><font color=#3a6797>set</font></b> fnamecurr [alited::bar::FileName]
+  <b><font color=#3a6797>set</font></b> iscurr yes
+  <b><font color=#3a6797>foreach</font></b> tab [alited::bar::BAR listTab] {
+    <b><font color=#3a6797>set</font></b> TID [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tab</font> 0]
+    <b><font color=#3a6797>set</font></b> fname [alited::bar::FileName <font color=#1b1baa>$TID</font>]
+    <b><font color=#3a6797>set</font></b> found no
+    <b><font color=#3a6797>foreach</font></b> fit <font color=#1b1baa>$cont</font> {
+      <b><font color=#3a6797>set</font></b> fnamecont [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$fit</font> 4 1]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> eq <font color=#1b1baa>$fnamecont</font>} {
+        <b><font color=#3a6797>set</font></b> found yes
+        <b><font color=#ca14ca>break</font></b>
+      }
+    }
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$found</font>} {
+      <b><font color=#3a6797>if</font></b> {![alited::file::CloseFile <font color=#1b1baa>$TID</font> no]} <b><font color=#ca14ca>break</font></b>
+      alited::bar::BAR <font color=#1b1baa>$TID</font> close no
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> eq <font color=#1b1baa>$fnamecurr</font>} {<b><font color=#3a6797>set</font></b> iscurr no}
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> [alited::bar::BAR listTab]]} {
+    <i><font color=#4b5d50># no tabs open</font></i>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fnamecont</font> ne {}} {
+      alited::file::OpenFile <font color=#1b1baa>$fnamecont</font> yes ;<i><font color=#4b5d50>#  open a file from favorites</font></i>
+    } <b><font color=#3a6797>else</font></b> {
+      alited::file::CheckForNew  ;<i><font color=#4b5d50># ... or create &quot;no name&quot; tab</font></i>
+    }
+  }
+  alited::bar::BAR update
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$iscurr</font>} {
+    <i><font color=#4b5d50># if a current file was closed, open 1st of the open</font></i>
+    <b><font color=#3a6797>catch</font></b> {alited::bar::BAR [<b><font color=#3a6797>lindex</font></b> [alited::bar::BAR listTab] 0 0] show}
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::SetFavorites></a>
+<b><font color=#ca14ca>proc</font></b> favor::SetFavorites {cont} {
+  <i><font color=#4b5d50># Sets favorites/last visited list in the treeview.</font></i>
+  <i><font color=#4b5d50>#   cont - list of favorites/last visited</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> TreeFavor]
+  <b><font color=#3a6797>foreach</font></b> it [alited::tree::GetTree {} TreeFavor] {
+    <font color=#1b1baa>$wtree</font> delete [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$it</font> 2]
+  }
+  <b><font color=#3a6797>foreach</font></b> curfav <font color=#1b1baa>$cont</font> {
+    <b><font color=#3a6797>catch</font></b> {
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$curfav</font> - - - - values
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$values</font> ne {}} {
+        <b><font color=#3a6797>set</font></b> itemID [<font color=#1b1baa>$wtree</font> insert {} end <font color=#653760>-values</font> <font color=#1b1baa>$values</font>]
+        <font color=#1b1baa>$wtree</font> tag add tagNorm <font color=#1b1baa>$itemID</font>
+      }
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::IsFavoritesFiles></a>
+<b><font color=#ca14ca>proc</font></b> favor::IsFavoritesFiles {cont} {
+  <i><font color=#4b5d50># Checks if the selected favorites list is a list of file names</font></i>
+  <i><font color=#4b5d50>#   cont - content of the list</font></i>
+
+  <b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$cont</font> 0 0] eq {FILE}}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::OpenFiles></a>
+<b><font color=#ca14ca>proc</font></b> favor::OpenFiles {pla cont} {
+  <i><font color=#4b5d50># Opens files with current favorites.</font></i>
+  <i><font color=#4b5d50>#   pla - if 5, current files remain; if 6, current files close</font></i>
+  <i><font color=#4b5d50>#   cont - list of favorites</font></i>
+
+  <b><font color=#3a6797>variable</font></b> ansOpenFiles
+  <b><font color=#3a6797>set</font></b> fnames [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>foreach</font></b> fname <font color=#1b1baa>$cont</font> {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> ne {}} {<b><font color=#3a6797>lappend</font></b> fnames <font color=#1b1baa>$fname</font>}
+  }
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> llen [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$fnames</font>]]} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ansOpenFiles</font>&lt;10} {
+      <b><font color=#3a6797>set</font></b> msg [msgcat::mc {Number of files to open: %n}]
+      <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$llen</font>] <font color=#1b1baa>$msg</font>]
+      <b><font color=#3a6797>set</font></b> ansOpenFiles [alited::msg okcancel warn <font color=#1b1baa>$msg</font> OK <font color=#653760>-ch</font> <font color=#1b1baa>$::alited::al(MC,noask)</font>]
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ansOpenFiles</font>} {
+      <i><font color=#4b5d50># try to show them all on the 1st page of tabbar</font></i>
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$pla</font>==6} {alited::file::CloseAll 1}
+      <b><font color=#3a6797>foreach</font></b> fname [<b><font color=#3a6797>lreverse</font></b> <font color=#1b1baa>$fnames</font>] {
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> TID [alited::file::OpenFile <font color=#1b1baa>$fname</font>]] ne {}} {
+          alited::bar::BAR moveTab <font color=#1b1baa>$TID</font> 0
+        }
+      }
+      alited::bar::BAR update
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::InitFavorites></a>
+<b><font color=#ca14ca>proc</font></b> favor::InitFavorites {favs} {
+  <i><font color=#4b5d50># Initializes favorites list for possible &quot;Back&quot; of &quot;Favorites' Lists&quot;.</font></i>
+  <i><font color=#4b5d50>#   favs - initial list of project's favorites</font></i>
+  <i><font color=#4b5d50># See also: ini::ReadIniPrj</font></i>
+
+  <b><font color=#3a6797>variable</font></b> initialFavs
+  <b><font color=#3a6797>set</font></b> initialFavs <font color=#1b1baa>$favs</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::Lists></a>
+<b><font color=#ca14ca>proc</font></b> favor::Lists {} {
+  <i><font color=#4b5d50># Runs &quot;Lists of Favorites&quot; dialogue, sets a list of favorites at a choice.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> initialFavs
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$initialFavs</font>]} {
+    <b><font color=#3a6797>set</font></b> initialFavs [alited::tree::GetTree {} TreeFavor]
+  }
+  <b><font color=#3a6797>lassign</font></b> [::alited::favor_ls::_run] pla cont
+  <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$pla</font> {
+    1 {SetFavorites <font color=#1b1baa>$cont</font>}
+    2 {SetAndClose <font color=#1b1baa>$cont</font>}
+    3 {SetFavorites <font color=#1b1baa>$initialFavs</font>}
+    5 - 6 {OpenFiles <font color=#1b1baa>$pla</font> <font color=#1b1baa>$cont</font>}
+  }
+}
+<a id=Display></a>
+<i><font color=#4b5d50># ________________________ Display _________________________ #</font></i>
+<a id=favor::Show></a>
+<b><font color=#ca14ca>proc</font></b> favor::Show {} {
+  <i><font color=#4b5d50># Shows a list of favorites / last visited units.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> TreeFavor]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(FAV,IsFavor)</font>} {
+    <b><font color=#134070>pack</font></b> [<font color=#1b1baa>$obPav</font> BtTAddF] <font color=#653760>-side</font> left <font color=#653760>-after</font> [<font color=#1b1baa>$obPav</font> SevF]
+    <b><font color=#134070>pack</font></b> [<font color=#1b1baa>$obPav</font> BtTRenF] <font color=#653760>-side</font> left <font color=#653760>-after</font> [<font color=#1b1baa>$obPav</font> BtTAddF]
+    [<font color=#1b1baa>$obPav</font> BtTVisitF] configure <font color=#653760>-image</font> alimg_misc
+    <b><font color=#3a6797>set</font></b> tip <font color=#1b1baa>$::alited::al(MC,lastvisit)</font>
+    <b><font color=#3a6797>set</font></b> state normal
+    SetFavorites <font color=#1b1baa>$al(FAV,current)</font>
+    <font color=#1b1baa>$wtree</font> heading #1 <font color=#653760>-text</font> [msgcat::mc <font color=#1b1baa>$al(MC,favorites)</font>]
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#134070>pack</font></b> forget [<font color=#1b1baa>$obPav</font> BtTAddF]
+    <b><font color=#134070>pack</font></b> forget [<font color=#1b1baa>$obPav</font> BtTRenF]
+    <b><font color=#3a6797>set</font></b> al(FAV,current) [<b><font color=#3a6797>list</font></b>]
+    <b><font color=#3a6797>foreach</font></b> it [alited::tree::GetTree {} TreeFavor] {
+      <b><font color=#3a6797>lappend</font></b> al(FAV,current) <font color=#1b1baa>$it</font>
+    }
+    [<font color=#1b1baa>$obPav</font> BtTVisitF] configure <font color=#653760>-image</font> alimg_heart
+    <b><font color=#3a6797>set</font></b> tip <font color=#1b1baa>$al(MC,favorites)</font>
+    <b><font color=#3a6797>set</font></b> state disable
+    SetFavorites <font color=#1b1baa>$al(FAV,visited)</font>
+    <font color=#1b1baa>$wtree</font> heading #1 <font color=#653760>-text</font> [msgcat::mc <font color=#1b1baa>$al(MC,lastvisit)</font>]
+  }
+  baltip::tip [<font color=#1b1baa>$obPav</font> BtTVisitF] <font color=#1b1baa>$tip</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::ShowFavVisit></a>
+<b><font color=#ca14ca>proc</font></b> favor::ShowFavVisit {} {
+  <i><font color=#4b5d50># Show favorites/last visits, depending on the mode.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  SetFavorites <font color=#1b1baa>$al(FAV,current)</font>
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(FAV,IsFavor)</font>} Show
+}
+<a id=favor::SwitchFavVisit></a>
+<b><font color=#ca14ca>proc</font></b> favor::SwitchFavVisit {} {
+  <i><font color=#4b5d50># Switches favorites / last visited units' view.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> al(FAV,IsFavor) [<b><font color=#3a6797>expr</font></b> {!<font color=#1b1baa>$al(FAV,IsFavor)</font>}]
+  Show
+}
+<a id=Changing_lists></a>
+<i><font color=#4b5d50># ________________________ Changing lists ________________________ #</font></i>
+<a id=favor::GeoForQuery></a>
+<b><font color=#ca14ca>proc</font></b> favor::GeoForQuery {undermouse} {
+  <i><font color=#4b5d50># Gets geometry for a query.</font></i>
+  <i><font color=#4b5d50>#   undermouse - if yes, run by mouse click</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$undermouse</font>} {<b><font color=#3a6797>set</font></b> y -100} {<b><font color=#3a6797>set</font></b> y -150}  ;<i><font color=#4b5d50># y is a shift for Y axis</font></i>
+  <b><font color=#ca14ca>return</font></b> <font color=#8b2a0e>&quot;-geometry pointer+10+<font color=#1b1baa>$</font>y&quot;</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::Add></a>
+<b><font color=#ca14ca>proc</font></b> favor::Add {{undermouse yes} {idnames {}}} {
+  <i><font color=#4b5d50># Adds a unit to favorites.</font></i>
+  <i><font color=#4b5d50>#   undermouse - if yes, run by mouse click</font></i>
+  <i><font color=#4b5d50>#   idnames - list of unit's ID and names to add</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>set</font></b> fname [alited::bar::FileName]
+  <b><font color=#3a6797>set</font></b> sname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> idnlen [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$idnames</font>]]&gt;2} {
+    <b><font color=#3a6797>set</font></b> geo {} ;<i><font color=#4b5d50># for a list (of popup menu: id1 name1 id2 name2...) - no 'under mouse'</font></i>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> geo [GeoForQuery <font color=#1b1baa>$undermouse</font>]
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$idnlen</font>==0} {
+    <b><font color=#3a6797>lassign</font></b> [CurrentName] itemID name l1 l2
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$name</font> eq {}} <b><font color=#ca14ca>return</font></b>
+    <b><font color=#3a6797>set</font></b> idnames [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$itemID</font> <font color=#1b1baa>$name</font>]
+  }
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists al(ANSWER,favor::Add)]} {
+    <b><font color=#3a6797>set</font></b> al(ANSWER,favor::Add) 0
+  }
+  <b><font color=#3a6797>foreach</font></b> {itemID name} <font color=#1b1baa>$idnames</font> {
+    <b><font color=#3a6797>set</font></b> err no
+    <b><font color=#3a6797>foreach</font></b> it [alited::tree::GetTree {} TreeFavor] {
+      <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$it</font> 4] name2 fname2
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$name</font> eq <font color=#1b1baa>$name2</font> && <font color=#1b1baa>$fname</font> eq <font color=#1b1baa>$fname2</font>} {
+        <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$name</font> %f <font color=#1b1baa>$sname</font>] <font color=#1b1baa>$al(MC,addexist)</font>]
+        alited::Message <font color=#1b1baa>$msg</font> 4
+        <b><font color=#3a6797>set</font></b> err yes
+        <b><font color=#ca14ca>break</font></b>
+      }
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$err</font>} <b><font color=#ca14ca>continue</font></b>
+    <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$name</font> %f <font color=#1b1baa>$sname</font>] <font color=#1b1baa>$al(MC,addfavor)</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(ANSWER,favor::Add)</font>==11 || [<b><font color=#3a6797>set</font></b> al(ANSWER,favor::Add) \
+    [alited::msg yesnocancel ques <font color=#1b1baa>$msg</font> YES <font color=#653760>-ch</font> <font color=#1b1baa>$al(MC,noask)</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$geo</font>]] \
+    in {1 11}} {
+      <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> Tree]
+      <b><font color=#3a6797>set</font></b> header [alited::unit::GetHeader [<font color=#1b1baa>$obPav</font> Tree] <font color=#1b1baa>$itemID</font>]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$idnlen</font>==0} {
+        <b><font color=#3a6797>set</font></b> pos [[alited::main::CurrentWTXT] index insert]
+        <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>expr</font></b> {(<font color=#1b1baa>$l1</font> eq {} || <font color=#1b1baa>$l2</font> eq {} || <font color=#1b1baa>$l1</font>&gt;<font color=#1b1baa>$pos</font> || <font color=#1b1baa>$l2</font>&lt;<font color=#1b1baa>$pos</font>) ? 0 : \
+          [::apave::p+ <font color=#1b1baa>$pos</font> -<font color=#1b1baa>$l1</font>]}]
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> line 0 ;<i><font color=#4b5d50># favorites added from the tree</font></i>
+      }
+      <b><font color=#3a6797>set</font></b> wt2 [<font color=#1b1baa>$obPav</font> TreeFavor]
+      <b><font color=#3a6797>set</font></b> ID2 [<font color=#1b1baa>$wt2</font> insert {} 0 <font color=#653760>-values</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$name</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$header</font> <font color=#1b1baa>$line</font>]]
+      <font color=#1b1baa>$wt2</font> tag add tagNorm <font color=#1b1baa>$ID2</font>
+    }
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(ANSWER,favor::Add)</font>} <b><font color=#ca14ca>break</font></b>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::AddFromTree></a>
+<b><font color=#ca14ca>proc</font></b> favor::AddFromTree {} {
+  <i><font color=#4b5d50># Adds a list of selected items of the tree to Favorites.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> Tree]
+  <b><font color=#3a6797>set</font></b> IDs [<font color=#1b1baa>$wtree</font> selection]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$IDs</font> eq {}} {<b><font color=#134070>bell</font></b>; <b><font color=#ca14ca>return</font></b>}
+  <b><font color=#3a6797>foreach</font></b> ID <font color=#1b1baa>$IDs</font> {
+    <b><font color=#3a6797>lappend</font></b> idnames <font color=#1b1baa>$ID</font> [<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$ID</font> <font color=#653760>-text</font>]]
+  }
+  Add no <font color=#1b1baa>$idnames</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::Delete></a>
+<b><font color=#ca14ca>proc</font></b> favor::Delete {{undermouse yes}} {
+  <i><font color=#4b5d50># Deletes an item from favorites.</font></i>
+  <i><font color=#4b5d50>#   undermouse - if yes, run by mouse click</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>lassign</font></b> [CurrentID <font color=#1b1baa>$undermouse</font>] favID name fname
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$favID</font> eq {} || ![<b><font color=#3a6797>info</font></b> exists fname] || <font color=#1b1baa>$fname</font> eq {}} {
+    <b><font color=#134070>bell</font></b>
+    <b><font color=#ca14ca>return</font></b>  ;<i><font color=#4b5d50># for empty list</font></i>
+  }
+  <b><font color=#3a6797>set</font></b> sname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$favID</font> eq {}} {
+    <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$name</font> %f <font color=#1b1baa>$sname</font>] <font color=#1b1baa>$al(MC,notfavor)</font>]
+    alited::Message <font color=#1b1baa>$msg</font> 4
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$name</font> %f <font color=#1b1baa>$sname</font>] <font color=#1b1baa>$al(MC,delfavor)</font>]
+  <b><font color=#3a6797>set</font></b> geo [GeoForQuery <font color=#1b1baa>$undermouse</font>]
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(FAV,IsFavor)</font> || [alited::msg yesno warn <font color=#1b1baa>$msg</font> NO {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$geo</font>]} {
+    DeleteLastVisited <font color=#1b1baa>$favID</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::DeleteAll></a>
+<b><font color=#ca14ca>proc</font></b> favor::DeleteAll {{undermouse yes}} {
+  <i><font color=#4b5d50># Deletes all items from favorites.</font></i>
+  <i><font color=#4b5d50>#   undermouse - if yes, run by mouse click</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>set</font></b> geo [GeoForQuery <font color=#1b1baa>$undermouse</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(FAV,IsFavor)</font>} {
+    <b><font color=#3a6797>set</font></b> msg {Delete all of Favorites?}
+    <b><font color=#3a6797>set</font></b> listvar al(FAV,current)
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> msg {Delete all of the last visited?}
+    <b><font color=#3a6797>set</font></b> listvar al(FAV,visited)
+  }
+  <b><font color=#3a6797>set</font></b> favlist [alited::tree::GetTree {} TreeFavor]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$favlist</font> eq {}} {<b><font color=#134070>bell</font></b>; <b><font color=#ca14ca>return</font></b>}
+  <b><font color=#3a6797>if</font></b> {[alited::msg yesno warn [msgcat::mc <font color=#1b1baa>$msg</font>] NO {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$geo</font> <font color=#653760>-title</font> <font color=#1b1baa>$al(MC,favordelall)</font>]} {
+    <b><font color=#3a6797>foreach</font></b> curfav <font color=#1b1baa>$favlist</font> {
+      [<font color=#1b1baa>$obPav</font> TreeFavor] delete [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$curfav</font> 2]
+    }
+    <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$listvar</font> [<b><font color=#3a6797>list</font></b>]
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::DeleteLastVisited></a>
+<b><font color=#ca14ca>proc</font></b> favor::DeleteLastVisited {id} {
+  <i><font color=#4b5d50># Deletes last visited item.</font></i>
+  <i><font color=#4b5d50>#   id - ID of the item</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(FAV,IsFavor)</font>} {
+    <b><font color=#3a6797>catch</font></b> {
+      <b><font color=#3a6797>set</font></b> treelist [alited::tree::GetTree {} TreeFavor]
+      <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-exact</font> <font color=#653760>-index</font> 2 <font color=#1b1baa>$treelist</font> <font color=#1b1baa>$id</font>]
+      <b><font color=#3a6797>set</font></b> al(FAV,visited) [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$al(FAV,visited)</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
+    }
+  }
+  [<font color=#1b1baa>$obPav</font> TreeFavor] delete <font color=#1b1baa>$id</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::Rename></a>
+<b><font color=#ca14ca>proc</font></b> favor::Rename {{undermouse yes}} {
+  <i><font color=#4b5d50># Renames a current favorite.</font></i>
+  <i><font color=#4b5d50>#   undermouse - if yes, run by mouse click</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav obDl2 obDl2
+  <b><font color=#3a6797>lassign</font></b> [CurrentID <font color=#1b1baa>$undermouse</font>] favID name - - header
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$favID</font> eq {}} {
+    <b><font color=#134070>bell</font></b>
+    <b><font color=#ca14ca>return</font></b>  ;<i><font color=#4b5d50># for empty list</font></i>
+  }
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>regexp</font></b> <font color=#1b1baa>$al(RE,proc)</font> <font color=#1b1baa>$header</font>]} {
+    alited::Message [msgcat::mc {For leaf units only!}] 4
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <b><font color=#3a6797>set</font></b> geo [GeoForQuery <font color=#1b1baa>$undermouse</font>]
+  <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$obDl2</font> input {} <font color=#1b1baa>$al(MC,favorren)</font> [<b><font color=#3a6797>list</font></b> \
+    ent <font color=#8b2a0e>&quot;<font color=#1b1baa>{}</font> <font color=#1b1baa>{}</font> <font color=#1b1baa>{</font>-w 32<font color=#1b1baa>}</font>&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>{$</font>name<font color=#1b1baa>}</font>&quot;</font>] \
+    <font color=#653760>-head</font> [msgcat::mc {Favorite name:}] {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$geo</font>] res name2
+  <b><font color=#3a6797>set</font></b> name2 [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$name2</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> && <font color=#1b1baa>$name2</font> ne {} && <font color=#1b1baa>$name2</font> ne <font color=#1b1baa>$name</font>} {
+    <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> TreeFavor]
+    <b><font color=#3a6797>set</font></b> values [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$favID</font> <font color=#653760>-values</font>]
+    <b><font color=#3a6797>set</font></b> values [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$values</font> 0 0 <font color=#1b1baa>$name2</font>]
+    <font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$favID</font> <font color=#653760>-values</font> <font color=#1b1baa>$values</font>
+    <b><font color=#3a6797>after</font></b> 200 alited::main::FocusText
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::CurrentName></a>
+<b><font color=#ca14ca>proc</font></b> favor::CurrentName {{dobell no}} {
+  <i><font color=#4b5d50># Gets data of a current favorite.</font></i>
+  <i><font color=#4b5d50>#   dobell - if yes, bells at empty unit tree</font></i>
+  <i><font color=#4b5d50># Returns a list of the favorite's data: ID, title, 1st line, last line.</font></i>
+
+  <b><font color=#3a6797>lassign</font></b> [alited::tree::CurrentItemByLine {} 1] itemID - - - name l1 l2
+  <b><font color=#3a6797>set</font></b> name [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$name</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$name</font> eq {} && <font color=#1b1baa>$dobell</font>} <b><font color=#134070>bell</font></b>
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$itemID</font> <font color=#1b1baa>$name</font> <font color=#1b1baa>$l1</font> <font color=#1b1baa>$l2</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::CurrentID></a>
+<b><font color=#ca14ca>proc</font></b> favor::CurrentID {undermouse} {
+  <i><font color=#4b5d50># Gets ID of a currently selected favorite.</font></i>
+  <i><font color=#4b5d50>#   undermouse - if yes, run by mouse click</font></i>
+  <i><font color=#4b5d50># Returns favorite's ID & name & file name & tree list & header or {} if a favorite not selected.</font></i>
+
+  <b><font color=#3a6797>set</font></b> favID [<b><font color=#3a6797>set</font></b> fname {}]
+  <b><font color=#3a6797>set</font></b> treelist [alited::tree::GetTree {} TreeFavor]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$undermouse</font>} {
+    <b><font color=#3a6797>set</font></b> name [<b><font color=#3a6797>lindex</font></b> [CurrentName yes] 1]
+    <b><font color=#3a6797>foreach</font></b> it <font color=#1b1baa>$treelist</font> {
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$it</font> - - ID2 - values
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$values</font> name2 fname header
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$name2</font> eq <font color=#1b1baa>$name</font>} {
+        <b><font color=#3a6797>set</font></b> favID <font color=#1b1baa>$ID2</font>
+        <b><font color=#ca14ca>break</font></b>
+      }
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$favID</font> eq {}} {
+    <b><font color=#3a6797>if</font></b> {![IsSelected favID name2 fname sname header line]} {
+      <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$treelist</font> 0] - - favID - values
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$values</font> name2 fname header
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$favID</font> eq {}} {<b><font color=#ca14ca>return</font></b> {}}
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$favID</font> <font color=#1b1baa>$name2</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$treelist</font> <font color=#1b1baa>$header</font>]
+}
+<a id=Popup_menus></a>
+<i><font color=#4b5d50># ________________________ Popup menus _________________________ #</font></i>
+<a id=favor::ShowPopupMenu></a>
+<b><font color=#ca14ca>proc</font></b> favor::ShowPopupMenu {ID X Y} {
+  <i><font color=#4b5d50># Displays a popup menu at clicking Favorites / last visited list.</font></i>
+  <i><font color=#4b5d50>#   ID - tree item's ID</font></i>
+  <i><font color=#4b5d50>#   X - x-coordinate of the mouse pointer</font></i>
+  <i><font color=#4b5d50>#   Y - y-coordinate of the mouse pointer</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  ::baltip sleep 1000
+  <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> TreeFavor]
+  <b><font color=#3a6797>set</font></b> popm <font color=#1b1baa>$wtree</font>.popup
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$popm</font>}
+  <b><font color=#134070>menu</font></b> <font color=#1b1baa>$popm</font> <font color=#653760>-tearoff</font> 0
+  <b><font color=#3a6797>set</font></b> sname [<b><font color=#3a6797>lindex</font></b> [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$ID</font> <font color=#653760>-values</font>] 0]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$sname</font>]&gt;25} {<b><font color=#3a6797>set</font></b> sname <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>string range <font color=#1b1baa>$</font>sname 0 21<font color=#1b1baa>]</font>...&quot;</font>}
+  <b><font color=#3a6797>set</font></b> msgsel [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %t <font color=#1b1baa>$sname</font>] <font color=#1b1baa>$al(MC,selfavor)</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(FAV,IsFavor)</font>} {
+    <b><font color=#3a6797>set</font></b> img alimg_misc
+    <b><font color=#3a6797>set</font></b> lab <font color=#1b1baa>$al(MC,lastvisit)</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> img alimg_heart
+    <b><font color=#3a6797>set</font></b> lab <font color=#1b1baa>$al(MC,favorites)</font>
+  }
+  <font color=#1b1baa>$popm</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$lab</font> {<b><font color=#3a6797>*</font></b>}[<font color=#1b1baa>$obPav</font> iconA none] \
+    <font color=#653760>-command</font> alited::favor::SwitchFavVisit <font color=#653760>-image</font> <font color=#1b1baa>$img</font>
+  <font color=#1b1baa>$popm</font> add separator
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(FAV,IsFavor)</font>} {
+    <font color=#1b1baa>$popm</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,FavLists)</font> {<b><font color=#3a6797>*</font></b>}[<font color=#1b1baa>$obPav</font> iconA none] \
+      <font color=#653760>-command</font> ::alited::favor::Lists <font color=#653760>-image</font> alimg_SaveFile
+    <font color=#1b1baa>$popm</font> add separator
+    <font color=#1b1baa>$popm</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,favoradd)</font> {<b><font color=#3a6797>*</font></b>}[<font color=#1b1baa>$obPav</font> iconA none] \
+      <font color=#653760>-command</font> ::alited::favor::Add <font color=#653760>-image</font> alimg_add
+    <font color=#1b1baa>$popm</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,favorren)</font> {<b><font color=#3a6797>*</font></b>}[<font color=#1b1baa>$obPav</font> iconA change] \
+      <font color=#653760>-command</font> {::alited::favor::Rename no}
+  }
+  <font color=#1b1baa>$popm</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,favordel)</font> {<b><font color=#3a6797>*</font></b>}[<font color=#1b1baa>$obPav</font> iconA none] \
+    <font color=#653760>-command</font> {::alited::favor::Delete no} <font color=#653760>-image</font> alimg_delete
+  <font color=#1b1baa>$popm</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,favordelall)</font> {<b><font color=#3a6797>*</font></b>}[<font color=#1b1baa>$obPav</font> iconA none] \
+    <font color=#653760>-command</font> {::alited::favor::DeleteAll no} <font color=#653760>-image</font> alimg_trash
+  <font color=#1b1baa>$popm</font> add separator
+  <font color=#1b1baa>$popm</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,copydecl)</font> {<b><font color=#3a6797>*</font></b>}[<font color=#1b1baa>$obPav</font> iconA none] \
+    <font color=#653760>-command</font> <font color=#8b2a0e>&quot;::alited::favor::CopyDeclaration <font color=#1b1baa>$</font>wtree <font color=#1b1baa>$</font>ID&quot;</font>
+  <font color=#1b1baa>$obPav</font> themePopup <font color=#1b1baa>$popm</font>
+  <b><font color=#134070>tk_popup</font></b> <font color=#1b1baa>$popm</font> <font color=#1b1baa>$X</font> <font color=#1b1baa>$Y</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::PopupMenu></a>
+<b><font color=#ca14ca>proc</font></b> favor::PopupMenu {x y X Y} {
+  <i><font color=#4b5d50># Prepares and runs a popup menu at clicking Favorites / last visited list.</font></i>
+  <i><font color=#4b5d50>#   x - x-coordinate to identify tree item</font></i>
+  <i><font color=#4b5d50>#   y - y-coordinate to identify tree item</font></i>
+  <i><font color=#4b5d50>#   X - x-coordinate of the mouse pointer</font></i>
+  <i><font color=#4b5d50>#   Y - y-coordinate of the mouse pointer</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> TreeFavor]
+  <b><font color=#3a6797>set</font></b> ID [<font color=#1b1baa>$wtree</font> identify item <font color=#1b1baa>$x</font> <font color=#1b1baa>$y</font>]
+  <b><font color=#3a6797>if</font></b> {![<font color=#1b1baa>$wtree</font> exists <font color=#1b1baa>$ID</font>]} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> sel [<font color=#1b1baa>$wtree</font> selection]] ne {}} {
+    <font color=#1b1baa>$wtree</font> selection remove <font color=#1b1baa>$sel</font>
+  }
+  <font color=#1b1baa>$wtree</font> selection add <font color=#1b1baa>$ID</font>
+  ShowPopupMenu <font color=#1b1baa>$ID</font> <font color=#1b1baa>$X</font> <font color=#1b1baa>$Y</font>
+}
+<a id=Tips></a>
+<i><font color=#4b5d50># ________________________ Tips _________________________ #</font></i>
+<a id=favor::CopyDeclaration></a>
+<b><font color=#ca14ca>proc</font></b> favor::CopyDeclaration {wtree ID} {
+  <i><font color=#4b5d50># Copies a current unit's declaration to the clipboard.</font></i>
+  <i><font color=#4b5d50>#   wtree - tree widget's path</font></i>
+  <i><font color=#4b5d50>#   ID - tree item's ID</font></i>
+
+  <b><font color=#134070>clipboard</font></b> clear
+  <b><font color=#134070>clipboard</font></b> append [<b><font color=#3a6797>lindex</font></b> [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$ID</font> <font color=#653760>-values</font>] 2]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=favor::GetTooltip></a>
+<b><font color=#ca14ca>proc</font></b> favor::GetTooltip {ID} {
+  <i><font color=#4b5d50># Gets a tip of favorite / last visited unit's declaration.</font></i>
+  <i><font color=#4b5d50>#   ID - ID of treeview item</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(TIPS,TreeFavor)</font> && <font color=#1b1baa>$al(FAV,IsFavor)</font> || ![::alited::IsTipable]} {
+    <i><font color=#4b5d50># no tips while switched off</font></i>
+    <b><font color=#ca14ca>return</font></b> {}
+  }
+  <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> TreeFavor]
+  <b><font color=#3a6797>set</font></b> decl [<b><font color=#3a6797>lindex</font></b> [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$ID</font> <font color=#653760>-values</font>] 2]
+  <b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>lindex</font></b> [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$ID</font> <font color=#653760>-values</font>] 1]
+  <b><font color=#3a6797>append</font></b> tip <font color=#1b1baa>$decl</font> \n <font color=#1b1baa>$fname</font>
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$tip</font>
+}
+<a id=Initialization></a>
+<i><font color=#4b5d50># ________________________ Initialization _________________________ #</font></i>
+<a id=favor::_init></a>
+<b><font color=#ca14ca>proc</font></b> favor::_init {} {
+  <i><font color=#4b5d50># Initializes and shows favorite / last visited units' view.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> TreeFavor]
+  alited::tree::AddTags <font color=#1b1baa>$wtree</font>
+  <font color=#1b1baa>$wtree</font> tag bind tagNorm &lt;Return&gt; {::alited::favor::Select}
+  <font color=#1b1baa>$wtree</font> tag bind tagNorm &lt;ButtonRelease-1&gt; {::alited::favor::Select}
+  <font color=#1b1baa>$wtree</font> tag bind tagNorm &lt;ButtonPress-3&gt; {<b><font color=#3a6797>after</font></b> idle {alited::favor::PopupMenu %x %y %X %Y}}
+  <font color=#1b1baa>$wtree</font> heading #1 <font color=#653760>-text</font> [msgcat::mc <font color=#1b1baa>$al(MC,favorites)</font>]
+  ShowFavVisit
+}
+<a id=EOF></a>
+<i><font color=#4b5d50># _________________________________ EOF _________________________________ #</font></i>
+
+</pre>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>favor.tcl</b></font></div></td></table>
+
+</section>
+<script>
+  writeFooter('Document generated by <a href="'+homeLINK()+'/en/tcl/alited/index.html">alited</a> &amp; <a href="'+homeLINK()+'/en/tcl/mulster/index.html">mulster</a></a>');
+</script>
+</div>
+</body>
+</html>
