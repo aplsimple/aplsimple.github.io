@@ -788,14 +788,18 @@ playtkl::replay
   } <b><font color=#3a6797>else</font></b> {
     GenerateEvent <font color=#1b1baa>$win</font> <font color=#1b1baa>$ev</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font>
   }
-  <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$dd(fcont)</font> <font color=#1b1baa>$dd(idx)</font>+1]
-  <b><font color=#3a6797>set</font></b> time1 [Data %t [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$line</font> 2 end]]
-  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$time</font> || ![<b><font color=#3a6797>string</font></b> is integer <font color=#6c3e67>-strict</font> <font color=#1b1baa>$time1</font>] || <font color=#1b1baa>$dd(ismacro)</font>} {
-    <b><font color=#3a6797>set</font></b> aft idle
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dd(ismacro)</font>} {
+    <b><font color=#3a6797>after</font></b> idle ::playtkl::Playing
   } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>set</font></b> aft [<b><font color=#3a6797>expr</font></b> {max(0,<font color=#1b1baa>$time1</font>-<font color=#1b1baa>$time</font>)}]
+    <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$dd(fcont)</font> <font color=#1b1baa>$dd(idx)</font>+1]
+    <b><font color=#3a6797>set</font></b> time1 [Data %t [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$line</font> 2 end]]
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$time</font> || ![<b><font color=#3a6797>string</font></b> is integer <font color=#6c3e67>-strict</font> <font color=#1b1baa>$time1</font>]} {
+      <b><font color=#3a6797>set</font></b> aft idle
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> aft [<b><font color=#3a6797>expr</font></b> {max(0,<font color=#1b1baa>$time1</font>-<font color=#1b1baa>$time</font>)}]
+    }
+    <b><font color=#3a6797>after</font></b> <font color=#1b1baa>$aft</font> ::playtkl::Playing
   }
-  <b><font color=#3a6797>after</font></b> <font color=#1b1baa>$aft</font> ::playtkl::Playing
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::playtkl::readcontents'>readcontents</a><span class='ns_scope'> [<a href="playtkl.html#::playtkl" title="::playtkl" class='ruff_cmd'>::playtkl</a>]</span><span class='tinylink'><a href='playtkl.html#::playtkl'>playtkl</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -878,11 +882,12 @@ playtkl::replay
       <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is integer <font color=#6c3e67>-strict</font> <font color=#1b1baa>$t</font>] && <font color=#1b1baa>$t</font>&gt;0} {
         <b><font color=#3a6797>set</font></b> t %t=[<b><font color=#3a6797>expr</font></b> {[Data %t <font color=#1b1baa>$args</font>]-1}]
         <b><font color=#3a6797>set</font></b> ifound -1
+        <b><font color=#3a6797>set</font></b> s [Data %s <font color=#1b1baa>$args</font>]
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$key</font> in {Tab Return}} {
           <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ev</font> eq {KeyRelease} && <font color=#1b1baa>$dd(prevev)</font> ne {KeyPress}} {
             <b><font color=#3a6797>lappend</font></b> dd(fcont) <font color=#8b2a0e>&quot;KeyPress <font color=#1b1baa>$</font>win <font color=#1b1baa>$</font>args <font color=#1b1baa>$</font>t&quot;</font>
           }
-        } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$ev</font> eq {KeyRelease} && ([<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$key</font>]==1 ||  <font color=#1b1baa>$key</font> in {Left Right Up Down Home End Next Prior  F1 F2 F3 F4 F5 F6 F7 F8 F9 F10 F11 F12})} {
+        } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$ev</font> eq {KeyRelease} && <font color=#1b1baa>$s</font>%16 ni {0 2} &&  ([<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$key</font>]==1 || <font color=#1b1baa>$key</font> in {Left Right Up Down Home End Next Prior  F1 F2 F3 F4 F5 F6 F7 F8 F9 F10 F11 F12})} {
           <i><font color=#4b5d50># KeyRelease of &quot;Ctrl/Alt/Shift + char/navigating/function key&quot; sets the problem:</font></i>
           <i><font color=#4b5d50>#   the previous KeyPress can be not registered by Tk (only Control's etc.)</font></i>
           <i><font color=#4b5d50>#   =&gt; no response from KeyPress bindings</font></i>
@@ -927,7 +932,7 @@ playtkl::replay
   <b><font color=#3a6797>set</font></b> dd(wfocus) <font color=#1b1baa>$wfocus</font>
   <b><font color=#3a6797>set</font></b> dd(ismacro) <font color=#1b1baa>$ismacro</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> ne {}} {readcontents <font color=#1b1baa>$fname</font>}
-  <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$dd(fcont)</font> 0]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$dd(fcont)</font> 0]}]} <b><font color=#ca14ca>return</font></b>
   <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$line</font> dd(prevev) dd(win)
   <b><font color=#3a6797>set</font></b> dd(data) [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$line</font> 2 end]
   <b><font color=#3a6797>set</font></b> dd(idx) -1

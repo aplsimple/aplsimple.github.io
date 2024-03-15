@@ -99,7 +99,7 @@ fout - output .html file name
 First, puts the .md file to a text widget and highlights it.
 Then scans the text for highlighting tags to make their html counterparts.
 See also: hl_md::init</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#printer::MdOutput">MdOutput</a><span class=tooltiptext> printer::MdOutput : Puts out the .html made from .md (in a text buffer).
+<ul class=toc><li><div class=tooltip><a href="#printer::MdOutput">MdOutput</a><span class=tooltiptext> printer::MdOutput : Puts out the .html made from .md (in a text buffer): final processings.
 wtxt - text's path
 fout - output file name</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#printer::Off_Html_tags">Off_Html_tags</a><span class=tooltiptext> printer::Off_Html_tags : Disables html tags in a code snippet.
@@ -604,8 +604,17 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
           <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$p1</font> <font color=#8b2a0e>&quot;&lt;b&gt;&lt;font color=<font color=#1b1baa>$</font>clrVAR&gt;&quot;</font>
         }
         mdLIST {  ;<i><font color=#4b5d50># list</font></i>
-          <font color=#1b1baa>$wtxt</font> insert [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$p2</font>)}].end &lt;/li&gt;
-          <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$p1</font> <font color=#1b1baa>$p2</font> &lt;li&gt;
+          <b><font color=#3a6797>set</font></b> link [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$p1</font> <font color=#1b1baa>$p2</font>]
+          <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> lre [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> {^\s*(\d+).\s} <font color=#1b1baa>$link</font>] 0]] ne {}} {
+            <i><font color=#4b5d50># numbered list</font></i>
+            <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$p1</font> <font color=#1b1baa>$p2</font> <font color=#8b2a0e>&quot;&lt;ol start=\&quot;<font color=#1b1baa>$</font>lre\&quot;&gt;&lt;li&gt;&quot;</font>
+            <b><font color=#3a6797>set</font></b> endtag &lt;/li&gt;&lt;/ol&gt;
+          } <b><font color=#3a6797>else</font></b> {
+            <i><font color=#4b5d50># usual list</font></i>
+            <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$p1</font> <font color=#1b1baa>$p2</font> &lt;li&gt;
+            <b><font color=#3a6797>set</font></b> endtag &lt;/li&gt;
+          }
+          <font color=#1b1baa>$wtxt</font> insert [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$p2</font>)}].end <font color=#1b1baa>$endtag</font>
         }
         mdLINK {  ;<i><font color=#4b5d50># link</font></i>
           <b><font color=#3a6797>set</font></b> link [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$p1</font> <font color=#1b1baa>$p2</font>]
@@ -630,16 +639,25 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=printer::MdOutput></a>
 <b><font color=#ca14ca>proc</font></b> printer::MdOutput {wtxt fout} {
-  <i><font color=#4b5d50># Puts out the .html made from .md (in a text buffer).</font></i>
+  <i><font color=#4b5d50># Puts out the .html made from .md (in a text buffer): final processings.</font></i>
   <i><font color=#4b5d50>#   wtxt - text's path</font></i>
   <i><font color=#4b5d50>#   fout - output file name</font></i>
 
   fetchVars
   <b><font color=#3a6797>set</font></b> tmpC {}
   <b><font color=#3a6797>set</font></b> par 1
+  <b><font color=#3a6797>set</font></b> code 0
   <b><font color=#3a6797>foreach</font></b> line [<b><font color=#3a6797>split</font></b> [<font color=#1b1baa>$wtxt</font> get 1.0 end] \n] {
     <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$line</font>]
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$line</font> eq {}} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$line</font> eq {```}} {
+      <i><font color=#4b5d50># code snippet's start-end</font></i>
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> code [<b><font color=#3a6797>expr</font></b> {!<font color=#1b1baa>$code</font>}]]} {
+        <b><font color=#3a6797>set</font></b> line {&lt;pre class=<font color=#8b2a0e>&quot;code&quot;</font>&gt;}
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> line &lt;/pre&gt;
+      }
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$line</font> eq {}} {
+      <i><font color=#4b5d50># paragraph's start-end</font></i>
       <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$par</font>} {<b><font color=#3a6797>append</font></b> line <font color=#1b1baa>$paragr</font>}
       <b><font color=#3a6797>incr</font></b> par
     } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$par</font>} {
@@ -647,6 +665,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     }
     <b><font color=#3a6797>append</font></b> tmpC <font color=#1b1baa>$line</font> \n
   }
+  <i><font color=#4b5d50># paragraph's end</font></i>
   <b><font color=#3a6797>append</font></b> tmpC &lt;/p&gt;
   apave::writeTextFile <font color=#1b1baa>$fout</font> ::alited::printer::tmpC
 }

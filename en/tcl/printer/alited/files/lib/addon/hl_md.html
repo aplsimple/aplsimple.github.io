@@ -154,6 +154,7 @@ The alited's main files are contained in <a href="../../src/about.html">alited/s
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match <font color=#8b2a0e>&quot;    *&quot;</font> <font color=#1b1baa>$line</font>] || [<b><font color=#3a6797>string</font></b> match <font color=#8b2a0e>&quot;\t*&quot;</font> <font color=#1b1baa>$line</font>]} {
     <b><font color=#ca14ca>return</font></b> no ;<i><font color=#4b5d50># Tcl code to be processed by hl_tcl.tcl</font></i>
   }
+  <i><font color=#4b5d50># header</font></i>
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> <font color=#8b2a0e>&quot;^#<font color=#1b1baa>{</font>1,6<font color=#1b1baa>}</font>\[^#\]&quot;</font> <font color=#1b1baa>$line</font>] lre
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$lre</font> ne {}} {
     <b><font color=#3a6797>set</font></b> p1 [<b><font color=#3a6797>expr</font></b> {min(6,max(1,[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$lre</font>]-1))}]
@@ -161,12 +162,14 @@ The alited's main files are contained in <a href="../../src/about.html">alited/s
     <font color=#1b1baa>$w</font> tag add mdCMNT <font color=#1b1baa>$il</font>.0 <font color=#1b1baa>$il</font>.<font color=#1b1baa>$p1</font>
     <b><font color=#ca14ca>return</font></b> yes
   }
-  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> {^(\s*[<b><font color=#3a6797>*</font></b>+-]\s)} <font color=#1b1baa>$line</font>] lre
+  <i><font color=#4b5d50># list beginning with *, -, 1. 2. ..</font></i>
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> {^(\s*(([<b><font color=#3a6797>*</font></b>+-])|(\d+\.))\s)} <font color=#1b1baa>$line</font>] lre
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$lre</font> ne {}} {
     <b><font color=#3a6797>set</font></b> p1 [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$lre</font>]
     <font color=#1b1baa>$w</font> tag add mdLIST <font color=#1b1baa>$il</font>.0 <font color=#1b1baa>$il</font>.<font color=#1b1baa>$p1</font>
     <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>string</font></b> replace <font color=#1b1baa>$line</font> [<b><font color=#3a6797>incr</font></b> p1 -2] <font color=#1b1baa>$p1</font> { }]
   }
+  <i><font color=#4b5d50># back apostrophes for code snippets</font></i>
   <b><font color=#3a6797>set</font></b> apos [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> <font color=#653760>-all</font> <font color=#653760>-indices</font> {(^|[^`])+(`[^`]+`)+([^`]|$)} <font color=#1b1baa>$line</font>]
   <b><font color=#3a6797>foreach</font></b> {- - l2 -} <font color=#1b1baa>$apos</font> {
     <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$l2</font> p1 p2
@@ -176,6 +179,7 @@ The alited's main files are contained in <a href="../../src/about.html">alited/s
       <font color=#1b1baa>$w</font> tag add mdCMNT <font color=#1b1baa>$il</font>.<font color=#1b1baa>$p2</font> <font color=#1b1baa>$il</font>.[<b><font color=#3a6797>incr</font></b> p2]
     }
   }
+  <i><font color=#4b5d50># font highlightings: italic, bold, bold italic</font></i>
   <b><font color=#3a6797>set</font></b> italic [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> <font color=#653760>-all</font> <font color=#653760>-indices</font> {(^|[^*])+(\*[^*]+\*)+([^*]|$)} <font color=#1b1baa>$line</font>]
   <b><font color=#3a6797>foreach</font></b> {- - l2 -} <font color=#1b1baa>$italic</font> {
     <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$l2</font> p1 p2
@@ -203,13 +207,15 @@ The alited's main files are contained in <a href="../../src/about.html">alited/s
       <font color=#1b1baa>$w</font> tag add mdCMNT <font color=#1b1baa>$il</font>.<font color=#1b1baa>$p2</font> <font color=#1b1baa>$il</font>.[<b><font color=#3a6797>incr</font></b> p2 3]
     }
   }
-  <b><font color=#3a6797>set</font></b> links [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> <font color=#653760>-all</font> <font color=#653760>-indices</font> {(\[{1}[^\(\)]+\]{1}\({1}[^\(\)]+\){1})||(&[a-zA-Z]+;)} <font color=#1b1baa>$line</font>]
+  <i><font color=#4b5d50># html link</font></i>
+  <b><font color=#3a6797>set</font></b> links [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> <font color=#653760>-all</font> <font color=#653760>-indices</font> {(\[{1}[^\(\)]*\]{1}\({1}[^\(\)]+\){1})||(&[a-zA-Z]+;)} <font color=#1b1baa>$line</font>]
   <b><font color=#3a6797>foreach</font></b> l2 <font color=#1b1baa>$links</font> {
     <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$l2</font> p1 p2
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$p1</font>&lt;<font color=#1b1baa>$p2</font>} {
       <font color=#1b1baa>$w</font> tag add mdLINK <font color=#1b1baa>$il</font>.<font color=#1b1baa>$p1</font> <font color=#1b1baa>$il</font>.[<b><font color=#3a6797>incr</font></b> p2]
     }
   }
+  <i><font color=#4b5d50># html tag</font></i>
   <b><font color=#3a6797>set</font></b> tags [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> <font color=#653760>-all</font> <font color=#653760>-indices</font> {&lt;{1}/?\w+[^&gt;]*&gt;{1}} <font color=#1b1baa>$line</font>]
   <b><font color=#3a6797>foreach</font></b> l2 <font color=#1b1baa>$tags</font> {
     <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$l2</font> p1 p2
