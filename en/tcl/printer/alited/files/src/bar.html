@@ -139,6 +139,8 @@ TID - tab's ID (current one by default)
 args - list of attributes + values</span></div></li></ul>
 <li><b><a href="#Event_handlers">Event handlers</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#bar::OnTabMove">OnTabMove</a><span class=tooltiptext> bar::OnTabMove : Handles moving a tab in the bar.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bar::OnTabMove3">OnTabMove3</a><span class=tooltiptext> bar::OnTabMove3 : Handles moving selected tab(s) in the bar.
+TID - if empty, the selected tabs are moved</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#bar::OnTabSelection">OnTabSelection</a><span class=tooltiptext> bar::OnTabSelection : Handles selecting a tab in the bar.
 TID - tab's ID</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#bar::OnControlClick">OnControlClick</a><span class=tooltiptext> bar::OnControlClick : Shows a number of tabs selected by Ctrl+Click.</span></div></li></ul>
@@ -280,6 +282,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     <font color=#653760>-csel3</font> alited::bar::OnControlClick \
     <font color=#653760>-cdel</font> {alited::file::CloseFile %t yes} \
     <font color=#653760>-cmov2</font> alited::bar::OnTabMove \
+    <font color=#653760>-cmov3</font> {alited::bar::OnTabMove3 %t} \
     <font color=#653760>-title</font> <font color=#1b1baa>$al(MC,filelist)</font> \
     <font color=#653760>-expand</font> 9 <font color=#653760>-padx</font> 0 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$bd</font>]
   <b><font color=#3a6797>set</font></b> tabs [<b><font color=#3a6797>set</font></b> files [<b><font color=#3a6797>set</font></b> posis [<b><font color=#3a6797>set</font></b> wraps [<b><font color=#3a6797>list</font></b>]]]]
@@ -686,6 +689,20 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   alited::ini::SaveCurrentIni <font color=#1b1baa>$al(INI,save_onmove)</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=bar::OnTabMove3></a>
+<b><font color=#ca14ca>proc</font></b> bar::OnTabMove3 {{TID <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Handles moving selected tab(s) in the bar.</font></i>
+  <i><font color=#4b5d50>#   TID - if empty, the selected tabs are moved</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  alited::ini::SaveCurrentIni <font color=#1b1baa>$al(INI,save_onmove)</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> eq {}} {
+    <i><font color=#4b5d50># no selection of tabs after moving</font></i>
+    BAR unselectTab
+    OnControlClick
+  }
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=bar::OnTabSelection></a>

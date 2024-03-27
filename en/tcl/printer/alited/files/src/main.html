@@ -92,6 +92,31 @@ headers - headers of all selected units</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#main::UpdateTextGutterTree">UpdateTextGutterTree</a><span class=tooltiptext> main::UpdateTextGutterTree : Updates after replacements: text, gutter, unit tree.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#main::UpdateIcons">UpdateIcons</a><span class=tooltiptext> main::UpdateIcons : Updates after replacements: icons.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#main::UpdateTextGutterTreeIcons">UpdateTextGutterTreeIcons</a><span class=tooltiptext> main::UpdateTextGutterTreeIcons : Updates after replacements: text, gutter, unit tree, icons.</span></div></li></ul>
+<li><b><a href="#Mark_bar">Mark bar</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#main::FillMarkBar">FillMarkBar</a><span class=tooltiptext> main::FillMarkBar : Fills the mark bar, makes bindings for its tags.
+args - if set, contains canvas' path
+It's run from InitActions without *args*.
+See also: InitActions</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#main::UpdateMarkBar">UpdateMarkBar</a><span class=tooltiptext> main::UpdateMarkBar : Updates mark bar at changing -bg color.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#main::SetMark">SetMark</a><span class=tooltiptext> main::SetMark : Sets a mark in the mark bar.
+idx - index of tag used as the mark</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#main::UnsetMark">UnsetMark</a><span class=tooltiptext> main::UnsetMark : Unsets a mark in the mark bar or call a popup menu.
+idx - index of tag used as the mark
+X - X-coordinate of pointer
+Y - Y-coordinate of pointer</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#main::MarkWidth">MarkWidth</a><span class=tooltiptext> main::MarkWidth : Change the mark bar's width.
+i - 1/-1 to increment/decrement</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#main::MarkWidthSave">MarkWidthSave</a><span class=tooltiptext> main::MarkWidthSave : Saves alited.ini at need.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#main::UnsetOneMark">UnsetOneMark</a><span class=tooltiptext> main::UnsetOneMark : Unsets one mark in the mark bar.
+idx - index of tag used as the mark</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#main::UnsetAllMarks">UnsetAllMarks</a><span class=tooltiptext> main::UnsetAllMarks : Unsets all marks in the mark bar.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#main::SaveMarks">SaveMarks</a><span class=tooltiptext> main::SaveMarks : Saves mark data for a text to be closed.
+wtxt - text's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#main::RestoreMarks">RestoreMarks</a><span class=tooltiptext> main::RestoreMarks : Restores mark data for a text to be shown.
+fname - file name
+wtxt - text's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#main::MarkOptions">MarkOptions</a><span class=tooltiptext> main::MarkOptions : Returns options for marks.
+idx - index of tag</span></div></li></ul>
 <li><b><a href="#Focus">Focus</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#main::FocusText">FocusText</a><span class=tooltiptext> main::FocusText : Sets a focus on a current text.
 args - contains tab's ID and a cursor position.</span></div></li></ul>
@@ -234,6 +259,8 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>variable</font></b> gotoline1 {}    ;<i><font color=#4b5d50># line number of &quot;Go to Line&quot; dialogue</font></i>
   <b><font color=#3a6797>variable</font></b> gotoline2 {}    ;<i><font color=#4b5d50># units list of &quot;Go to Line&quot; dialogue</font></i>
   <b><font color=#3a6797>variable</font></b> gotolineTID {}  ;<i><font color=#4b5d50># tab ID last used in &quot;Go to Line&quot; dialogue</font></i>
+  <b><font color=#3a6797>variable</font></b> wcan {} fgcan {} bgcan {}   ;<i><font color=#4b5d50># canvas' path and its colors</font></i>
+  <b><font color=#3a6797>variable</font></b> saveini no      ;<i><font color=#4b5d50># flag &quot;save alited.ini&quot;</font></i>
 }
 <a id=Common></a>
 <i><font color=#4b5d50># ________________________ Common _________________________ #</font></i>
@@ -356,6 +383,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
       alited::main::SetTabs <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$al(prjindent)</font>
     }
     alited::file::DisplayFile <font color=#1b1baa>$TID</font> <font color=#1b1baa>$curfile</font> <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$doreload</font>
+    RestoreMarks <font color=#1b1baa>$curfile</font> <font color=#1b1baa>$wtxt</font>
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(prjindentAuto)</font>} {
       alited::main::SetTabs <font color=#1b1baa>$wtxt</font> [<b><font color=#3a6797>lindex</font></b> [CalcIndentation <font color=#1b1baa>$wtxt</font>] 0]
     }
@@ -490,6 +518,257 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 
   UpdateTextGutterTree
   UpdateIcons
+}
+<a id=Mark_bar></a>
+<i><font color=#4b5d50># ________________________ Mark bar _________________________ #</font></i>
+<a id=main::FillMarkBar></a>
+<b><font color=#ca14ca>proc</font></b> main::FillMarkBar {args} {
+  <i><font color=#4b5d50># Fills the mark bar, makes bindings for its tags.</font></i>
+  <i><font color=#4b5d50>#   args - if set, contains canvas' path</font></i>
+  <i><font color=#4b5d50># It's run from InitActions without *args*.</font></i>
+  <i><font color=#4b5d50># See also: InitActions</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>variable</font></b> wcan
+  <b><font color=#3a6797>variable</font></b> fgcan
+  <b><font color=#3a6797>variable</font></b> bgcan
+  <b><font color=#3a6797>lassign</font></b> [MarkOptions] N
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$args</font>]} {
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$args</font> wcan
+    <font color=#1b1baa>$wcan</font> create rectangle <font color=#8b2a0e>&quot;0 0 99 9999&quot;</font> <font color=#653760>-fill</font> <font color=#1b1baa>$bgcan</font> <font color=#653760>-outline</font> <font color=#1b1baa>$bgcan</font>
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#134070>winfo</font></b> geometry [<font color=#1b1baa>$obPav</font> Text]] x+] -&gt; h
+  <b><font color=#3a6797>set</font></b> hp [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$h</font>/<font color=#1b1baa>$N</font>-0.5)}]
+  <font color=#1b1baa>$wcan</font> configure <font color=#653760>-highlightbackground</font> <font color=#1b1baa>$bgcan</font> <font color=#653760>-highlightthickness</font> 0
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0; <b><font color=#3a6797>set</font></b> y 1} {<font color=#1b1baa>$i</font>&lt;(<font color=#1b1baa>$N</font>+1)} {<b><font color=#3a6797>incr</font></b> i} {
+    <b><font color=#3a6797>lassign</font></b> [MarkOptions <font color=#1b1baa>$i</font>] -&gt; tip mark
+    <b><font color=#3a6797>set</font></b> y2 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$y</font>+<font color=#1b1baa>$hp</font>}]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i</font>==<font color=#1b1baa>$N</font>} {<b><font color=#3a6797>incr</font></b> y2 9999}
+    <b><font color=#3a6797>set</font></b> al(<font color=#1b1baa>$mark</font>) [<font color=#1b1baa>$wcan</font> create rectangle <font color=#8b2a0e>&quot;1 <font color=#1b1baa>$</font>y 99 <font color=#1b1baa>$</font>y2&quot;</font> <font color=#653760>-fill</font> <font color=#1b1baa>$bgcan</font> <font color=#653760>-outline</font> <font color=#1b1baa>$fgcan</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$N</font>} {
+      <font color=#1b1baa>$wcan</font> bind <font color=#1b1baa>$al($mark)</font> &lt;ButtonPress-1&gt; <font color=#8b2a0e>&quot;alited::main::SetMark <font color=#1b1baa>$</font>i&quot;</font>
+      <font color=#1b1baa>$wcan</font> bind <font color=#1b1baa>$al($mark)</font> &lt;ButtonPress-3&gt; <font color=#8b2a0e>&quot;alited::main::UnsetMark <font color=#1b1baa>$</font>i %X %Y&quot;</font>
+      UnsetOneMark <font color=#1b1baa>$i</font>
+    }
+    <b><font color=#3a6797>incr</font></b> y <font color=#1b1baa>$hp</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=main::UpdateMarkBar></a>
+<b><font color=#ca14ca>proc</font></b> main::UpdateMarkBar {} {
+  <i><font color=#4b5d50># Updates mark bar at changing -bg color.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>lassign</font></b> [MarkOptions] N
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$N</font>} {<b><font color=#3a6797>incr</font></b> i} {
+    <b><font color=#3a6797>lassign</font></b> [MarkOptions <font color=#1b1baa>$i</font>] - - - markdata
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists al(<font color=#1b1baa>$markdata</font>)]} {UnsetOneMark <font color=#1b1baa>$i</font>}
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=main::SetMark></a>
+<b><font color=#ca14ca>proc</font></b> main::SetMark {idx} {
+  <i><font color=#4b5d50># Sets a mark in the mark bar.</font></i>
+  <i><font color=#4b5d50>#   idx - index of tag used as the mark</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> wcan
+  <b><font color=#3a6797>lassign</font></b> [MarkOptions <font color=#1b1baa>$idx</font>] -&gt; tip mark markdata colors
+  <font color=#1b1baa>$wcan</font> itemconfigure <font color=#1b1baa>$al($mark)</font> <font color=#653760>-fill</font> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$colors</font> <font color=#1b1baa>$idx</font>]
+  <b><font color=#3a6797>set</font></b> tag MARK<font color=#1b1baa>$idx</font>
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists al(<font color=#1b1baa>$markdata</font>)]} {
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$al($markdata)</font> fname pos
+    <b><font color=#3a6797>set</font></b> TID [alited::file::OpenFile <font color=#1b1baa>$fname</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> ne {}} {
+      <b><font color=#3a6797>set</font></b> wtxt [GetWTXT <font color=#1b1baa>$TID</font>]
+      <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$wtxt</font> tag ranges <font color=#1b1baa>$tag</font>] pos2
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is double <font color=#653760>-strict</font> <font color=#1b1baa>$pos2</font>]} {<b><font color=#3a6797>set</font></b> pos <font color=#1b1baa>$pos2</font>}
+      <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;::tk::TextSetCursor <font color=#1b1baa>$</font>wtxt <font color=#1b1baa>$</font>pos ; alited::main::UpdateAll&quot;</font>
+    }
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> fname [alited::bar::FileName]
+    <b><font color=#3a6797>set</font></b> wtxt [CurrentWTXT]
+    <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$wtxt</font> index insert]
+    <b><font color=#3a6797>set</font></b> nl [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$pos</font>)}]
+    <b><font color=#3a6797>set</font></b> al(<font color=#1b1baa>$markdata</font>) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$pos</font> <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$tag</font>]
+    <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$nl</font>.0 <font color=#1b1baa>$nl</font>.end]]
+    <b><font color=#3a6797>set</font></b> lmax 50
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$line</font>]&gt;<font color=#1b1baa>$lmax</font>} {
+      <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> 0 <font color=#1b1baa>$lmax</font>]...
+    }
+    <b><font color=#3a6797>set</font></b> tip [<b><font color=#3a6797>string</font></b> trim <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>file tail <font color=#1b1baa>$</font>fname<font color=#1b1baa>]</font> <font color=#1b1baa>$</font>nl:\n<font color=#1b1baa>$</font>line&quot;</font>]
+    ::baltip::tip <font color=#1b1baa>$wcan</font> <font color=#1b1baa>$tip</font> <font color=#653760>-ctag</font> <font color=#1b1baa>$al($mark)</font> <font color=#653760>-shiftX</font> 10 <font color=#653760>-pause</font> 0
+    ::baltip repaint <font color=#1b1baa>$wcan</font>
+  }
+  <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$wtxt</font> tag delete <font color=#1b1baa>$tag</font>}
+  <font color=#1b1baa>$wtxt</font> tag add <font color=#1b1baa>$tag</font> <font color=#1b1baa>$pos</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=main::UnsetMark></a>
+<b><font color=#ca14ca>proc</font></b> main::UnsetMark {idx X Y} {
+  <i><font color=#4b5d50># Unsets a mark in the mark bar or call a popup menu.</font></i>
+  <i><font color=#4b5d50>#   idx - index of tag used as the mark</font></i>
+  <i><font color=#4b5d50>#   X - X-coordinate of pointer</font></i>
+  <i><font color=#4b5d50>#   Y - Y-coordinate of pointer</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> wcan
+  <b><font color=#3a6797>set</font></b> disabletips no
+  <b><font color=#3a6797>lassign</font></b> [MarkOptions <font color=#1b1baa>$idx</font>] N tip mark markdata
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists al(<font color=#1b1baa>$markdata</font>)]} {
+    <b><font color=#3a6797>set</font></b> disabletips yes
+    UnsetOneMark <font color=#1b1baa>$idx</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> disabletips yes
+    <b><font color=#3a6797>set</font></b> popm <font color=#1b1baa>$al(WIN)</font>.popmMARK
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$popm</font>}
+    <b><font color=#134070>menu</font></b> <font color=#1b1baa>$popm</font> <font color=#653760>-tearoff</font> 1 <font color=#653760>-title</font> [msgcat::mc Mark]
+    <font color=#1b1baa>$popm</font> add command <font color=#653760>-label</font> [msgcat::mc {Clear All}] \
+      <font color=#653760>-command</font> <font color=#8b2a0e>&quot;alited::main::UnsetAllMarks&quot;</font>
+    <font color=#1b1baa>$popm</font> add separator
+    <b><font color=#3a6797>set</font></b> lab [msgcat::mc Width]
+    <font color=#1b1baa>$popm</font> add command <font color=#653760>-label</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>lab +&quot;</font> <font color=#653760>-command</font> <font color=#8b2a0e>&quot;alited::main::MarkWidth 1&quot;</font>
+    <font color=#1b1baa>$popm</font> add command <font color=#653760>-label</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>lab -&quot;</font> <font color=#653760>-command</font> <font color=#8b2a0e>&quot;alited::main::MarkWidth -1&quot;</font>
+    <font color=#1b1baa>$popm</font> add separator
+    <font color=#1b1baa>$popm</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,help)</font> <font color=#653760>-command</font> {alited::HelpAlited #bookmark}
+    <b><font color=#134070>tk_popup</font></b> <font color=#1b1baa>$popm</font> <font color=#1b1baa>$X</font> <font color=#1b1baa>$Y</font>
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$disabletips</font> && ![<b><font color=#3a6797>info</font></b> exists al(MARK_TIPOFF)]} {
+    <i><font color=#4b5d50># disable all default tips on empty marks</font></i>
+    <b><font color=#3a6797>set</font></b> al(MARK_TIPOFF) 1
+    <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$N</font>} {<b><font color=#3a6797>incr</font></b> i} {
+      <b><font color=#3a6797>lassign</font></b> [MarkOptions <font color=#1b1baa>$i</font>] - - - data
+      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists al(<font color=#1b1baa>$data</font>)]} {
+        UnsetOneMark <font color=#1b1baa>$i</font>
+      }
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=main::MarkWidth></a>
+<b><font color=#ca14ca>proc</font></b> main::MarkWidth {i} {
+  <i><font color=#4b5d50># Change the mark bar's width.</font></i>
+  <i><font color=#4b5d50>#   i - 1/-1 to increment/decrement</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> wcan
+  <b><font color=#3a6797>variable</font></b> saveini
+  <b><font color=#3a6797>set</font></b> width [<font color=#1b1baa>$wcan</font> cget <font color=#653760>-width</font>]
+  <b><font color=#3a6797>incr</font></b> width <font color=#1b1baa>$i</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$width</font>&gt;=5 && <font color=#1b1baa>$width</font>&lt;=99} {
+    <font color=#1b1baa>$wcan</font> configure <font color=#653760>-width</font> <font color=#1b1baa>$width</font>
+    <b><font color=#3a6797>set</font></b> al(markwidth) <font color=#1b1baa>$width</font>
+    <b><font color=#3a6797>set</font></b> saveini yes
+    <b><font color=#3a6797>after</font></b> 3000 alited::main::MarkWidthSave
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#134070>bell</font></b>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=main::MarkWidthSave></a>
+<b><font color=#ca14ca>proc</font></b> main::MarkWidthSave {} {
+  <i><font color=#4b5d50># Saves alited.ini at need.</font></i>
+
+  <b><font color=#3a6797>variable</font></b> saveini
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$saveini</font>} {
+    <b><font color=#3a6797>set</font></b> saveini no
+    alited::ini::SaveIni
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=main::UnsetOneMark></a>
+<b><font color=#ca14ca>proc</font></b> main::UnsetOneMark {idx} {
+  <i><font color=#4b5d50># Unsets one mark in the mark bar.</font></i>
+  <i><font color=#4b5d50>#   idx - index of tag used as the mark</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> wcan
+  <b><font color=#3a6797>variable</font></b> bgcan
+  <b><font color=#3a6797>lassign</font></b> [MarkOptions <font color=#1b1baa>$idx</font>] N tip mark markdata
+  <font color=#1b1baa>$wcan</font> itemconfigure <font color=#1b1baa>$al($mark)</font> <font color=#653760>-fill</font> <font color=#1b1baa>$bgcan</font>
+  ::baltip::tip <font color=#1b1baa>$wcan</font> <font color=#1b1baa>$tip</font> <font color=#653760>-ctag</font> <font color=#1b1baa>$al($mark)</font> <font color=#653760>-shiftX</font> 10
+  <b><font color=#3a6797>catch</font></b> {
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$al($markdata)</font> fname pos wtxt tag
+    <b><font color=#3a6797>unset</font></b> al(<font color=#1b1baa>$markdata</font>)
+    <font color=#1b1baa>$wtxt</font> tag delete <font color=#1b1baa>$tag</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=main::UnsetAllMarks></a>
+<b><font color=#ca14ca>proc</font></b> main::UnsetAllMarks {} {
+  <i><font color=#4b5d50># Unsets all marks in the mark bar.</font></i>
+
+  <b><font color=#3a6797>variable</font></b> wcan
+  <b><font color=#3a6797>variable</font></b> bgcan
+  <b><font color=#3a6797>lassign</font></b> [MarkOptions] N
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$N</font>} {<b><font color=#3a6797>incr</font></b> i} {
+    UnsetOneMark <font color=#1b1baa>$i</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=main::SaveMarks></a>
+<b><font color=#ca14ca>proc</font></b> main::SaveMarks {wtxt} {
+  <i><font color=#4b5d50># Saves mark data for a text to be closed.</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>foreach</font></b> tag [<font color=#1b1baa>$wtxt</font> tag names] {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match MARK* <font color=#1b1baa>$tag</font>]} {
+      <b><font color=#3a6797>set</font></b> idx [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$tag</font> 4 end]
+      <b><font color=#3a6797>lassign</font></b> [MarkOptions <font color=#1b1baa>$idx</font>] -&gt; tip mark markdata
+      <b><font color=#3a6797>catch</font></b> {
+        <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$al($markdata)</font> fname pos
+        <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$wtxt</font> tag ranges <font color=#1b1baa>$tag</font>] pos
+        <b><font color=#3a6797>set</font></b> al(<font color=#1b1baa>$markdata</font>) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$pos</font> <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$tag</font>]
+      }
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=main::RestoreMarks></a>
+<b><font color=#ca14ca>proc</font></b> main::RestoreMarks {fname wtxt} {
+  <i><font color=#4b5d50># Restores mark data for a text to be shown.</font></i>
+  <i><font color=#4b5d50>#   fname - file name</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>lassign</font></b> [MarkOptions] N
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$N</font>} {<b><font color=#3a6797>incr</font></b> i} {
+    <b><font color=#3a6797>lassign</font></b> [MarkOptions <font color=#1b1baa>$i</font>] N tip mark markdata
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists al(<font color=#1b1baa>$markdata</font>)]} {
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$al($markdata)</font> fname2 pos
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> eq <font color=#1b1baa>$fname2</font>} {
+        <b><font color=#3a6797>set</font></b> tag MARK<font color=#1b1baa>$i</font>
+        <b><font color=#3a6797>set</font></b> al(<font color=#1b1baa>$markdata</font>) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$pos</font> <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$tag</font>]
+        <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$wtxt</font> tag delete <font color=#1b1baa>$tag</font>}
+        <font color=#1b1baa>$wtxt</font> tag add <font color=#1b1baa>$tag</font> <font color=#1b1baa>$pos</font>
+      }
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=main::MarkOptions></a>
+<b><font color=#ca14ca>proc</font></b> main::MarkOptions {{idx 0}} {
+  <i><font color=#4b5d50># Returns options for marks.</font></i>
+  <i><font color=#4b5d50>#   idx - index of tag</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>variable</font></b> fgcan
+  <b><font color=#3a6797>variable</font></b> bgcan
+  <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$obPav</font> csGet] - - - bgcan - - - - fgcan
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists al(MARK_TIPOFF)]} {
+    <b><font color=#3a6797>set</font></b> tip {}
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> tip [msgcat::mc <font color=#8b2a0e>&quot;Left click sets / goes to a mark.\nRight click clears it.&quot;</font>]
+  }
+  <i><font color=#4b5d50># 12 greenish</font></i>
+  <b><font color=#3a6797>lappend</font></b> colors #00ff00 #00f500 #00eb00 #00e100 #00d700 #00cd00
+  <b><font color=#3a6797>lappend</font></b> colors #00c300 #00b900 #00af00 #00a500 #009b00 #009100
+  <i><font color=#4b5d50># 12 reddish</font></i>
+  <b><font color=#3a6797>lappend</font></b> colors #910000 #9b0000 #a50000 #af0000 #b90000 #c30000
+  <b><font color=#3a6797>lappend</font></b> colors #cd0000 #d70000 #e10000 #eb0000 #f50000 #ff0000
+  <b><font color=#3a6797>list</font></b> [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$colors</font>] <font color=#1b1baa>$tip</font> MARK,<font color=#1b1baa>$idx</font> MARKDATA,<font color=#1b1baa>$idx</font> <font color=#1b1baa>$colors</font>
 }
 <a id=Focus></a>
 <i><font color=#4b5d50># ________________________ Focus _________________________ #</font></i>
@@ -1014,8 +1293,9 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50># Initializes working with a main form of alited.</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
-  <i><font color=#4b5d50># fill the tab bar of alited</font></i>
+  <i><font color=#4b5d50># fill the bars waiting for full size of text widget</font></i>
   alited::bar::FillBar [<font color=#1b1baa>$obPav</font> BtsBar]
+  FillMarkBar
   <i><font color=#4b5d50># check for outdated TODOs for current project</font></i>
   <b><font color=#3a6797>lassign</font></b> [alited::project::IsOutdated <font color=#1b1baa>$al(prjname)</font> yes] is date todo
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$is</font>} {
@@ -1174,11 +1454,14 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     {.fraTop - - - - {add}}
     {.fraTop.PanTop - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} {<font color=#1b1baa>$::alited::PanTop_wh</font>}}
     {.fraTop.panTop.BtsBar  - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> top <font color=#653760>-fill</font> x <font color=#653760>-pady</font> 3}}
+    {.fraTop.panTop.canmark - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 0 <font color=#653760>-fill</font> both \
+      <font color=#653760>-padx</font> 0 <font color=#653760>-pady</font> 0 <font color=#653760>-ipadx</font> 0 <font color=#653760>-ipady</font> 0} {<font color=#653760>-w</font> <font color=#1b1baa>$al(markwidth)</font> \
+      <font color=#653760>-afteridle</font> {alited::main::FillMarkBar %w}}}
     {.fraTop.panTop.GutText - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 0 <font color=#653760>-fill</font> both}}
     {.fraTop.panTop.FrAText - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both \
       <font color=#653760>-padx</font> 0 <font color=#653760>-pady</font> 0 <font color=#653760>-ipadx</font> 0 <font color=#653760>-ipady</font> 0} {<font color=#653760>-background</font> <font color=#1b1baa>$::apave::BGMAIN2</font>}}
     {.fraTop.panTop.frAText.Text - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both} \
-      {<font color=#653760>-bd</font> 0 <font color=#653760>-w</font> 80 <font color=#653760>-h</font> 20 <font color=#653760>-gutter</font> GutText <font color=#653760>-gutterwidth</font> <font color=#1b1baa>$al(ED,gutterwidth)</font> \
+      {<font color=#653760>-bd</font> 0 <font color=#653760>-w</font> 80 <font color=#653760>-h</font> 30 <font color=#653760>-gutter</font> GutText <font color=#653760>-gutterwidth</font> <font color=#1b1baa>$al(ED,gutterwidth)</font> \
       <font color=#653760>-guttershift</font> <font color=#1b1baa>$al(ED,guttershift)</font> <font color=#1b1baa>$al(TEXT,opts)</font>}}
     {.fraTop.panTop.fraSbv - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> right <font color=#653760>-fill</font> y}}
 {#<a id=Find_units></a>
@@ -1218,7 +1501,8 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   }
   UpdateProjectInfo
   <i><font color=#4b5d50># a pause (and cycles) must be enough for FillBar to have proper -wbar option</font></i>
-  <b><font color=#3a6797>after</font></b> 50 {<b><font color=#3a6797>after</font></b> 30 {<b><font color=#3a6797>after</font></b> 10 {<b><font color=#3a6797>after</font></b> 10 {<b><font color=#3a6797>after</font></b> idle alited::main::InitActions}}}}
+  <b><font color=#3a6797>after</font></b> idle after 50 after idle after 50 after idle after 50 after idle after 50 \
+    alited::main::InitActions
   <b><font color=#134070>bind</font></b> [<font color=#1b1baa>$obPav</font> Pan] &lt;ButtonRelease&gt; ::alited::tree::AdjustWidth
   <b><font color=#3a6797>set</font></b> sbhi [<font color=#1b1baa>$obPav</font> SbhInfo]
   <b><font color=#3a6797>set</font></b> lbxi [<font color=#1b1baa>$obPav</font> LbxInfo]

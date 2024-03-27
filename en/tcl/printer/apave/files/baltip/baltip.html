@@ -523,6 +523,7 @@ The following options are special:
 <li><code><font color=#653760>-reset</font></code> - "-reset true" may be useful to set a new tip (callback or text) for listbox and treeview;</li>
 <li><code><font color=#653760>-command</font></code> - a command to be executed, with <code>%t</code> (tip's text) and <code>%w</code> (widget's path) wildcards;</li>
 <li><code><font color=#653760>-maxexp</font></code> - maximum number of tip's expositions.</li>
+<li><code><font color=#653760>-focus</font></code> - path to widget to set focus on, after showing a tip</li>
 </p><p>
 If <code><font color=#653760>-global</font> yes</code> option is used alone, it applies all global options to all registered tips. If <code><font color=#653760>-global</font> yes</code> option is used along with other options, only those options are applied to all registered tips.
 </p><p>
@@ -570,7 +571,7 @@ The <i><font color=#1b1baa>baltip</font></i> package has been developed with hel
 <i><font color=#4b5d50># License: MIT.</font></i>
 <i><font color=#4b5d50>###########################################################</font></i>
 
-<b><font color=#3a6797>package</font></b> provide baltip 1.6.0
+<b><font color=#3a6797>package</font></b> provide baltip 1.6.2
 <a id=Variables></a>
 <i><font color=#4b5d50># ________________________ Variables _________________________ #</font></i>
 
@@ -623,7 +624,7 @@ The <i><font color=#1b1baa>baltip</font></i> package has been developed with hel
   }
   <b><font color=#3a6797>set</font></b> force no
   <b><font color=#3a6797>set</font></b> index -1
-  <b><font color=#3a6797>lassign</font></b> {} geometry tag ctag nbktab reset command maxexp
+  <b><font color=#3a6797>lassign</font></b> {} geometry tag ctag nbktab reset command maxexp focus
   <b><font color=#3a6797>set</font></b> global [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$args</font> <font color=#653760>-global</font>] && [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$args</font> <font color=#653760>-global</font>]}]
   <b><font color=#3a6797>foreach</font></b> {n v} <font color=#1b1baa>$args</font> {
     <b><font color=#3a6797>set</font></b> n1 [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$n</font> 1 end]
@@ -635,7 +636,7 @@ The <i><font color=#1b1baa>baltip</font></i> package has been developed with hel
         <b><font color=#3a6797>set</font></b> my::ttdata(<font color=#1b1baa>$n1</font>) <font color=#1b1baa>$v</font>
       }
       <font color=#653760>-force</font> - <font color=#653760>-geometry</font> - <font color=#653760>-index</font> - <font color=#653760>-tag</font> - <font color=#653760>-global</font> - <font color=#653760>-ctag</font> - <font color=#653760>-nbktab</font> - <font color=#653760>-reset</font> - \
-      <font color=#653760>-command</font> - <font color=#653760>-maxexp</font> {
+      <font color=#653760>-command</font> - <font color=#653760>-maxexp</font> - <font color=#653760>-focus</font> {
         <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$n1</font> <font color=#1b1baa>$v</font>
       }
       <b><font color=#3a6797>default</font></b> {<b><font color=#ca14ca>return</font></b> <font color=#653760>-code</font> error <font color=#8b2a0e>&quot;baltip: invalid option \&quot;<font color=#1b1baa>$</font>n\&quot;&quot;</font>}
@@ -647,7 +648,8 @@ The <i><font color=#1b1baa>baltip</font></i> package has been developed with hel
       }
     }
   }
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$force</font> <font color=#1b1baa>$geometry</font> <font color=#1b1baa>$index</font> <font color=#1b1baa>$tag</font> <font color=#1b1baa>$ctag</font> <font color=#1b1baa>$nbktab</font> <font color=#1b1baa>$reset</font> <font color=#1b1baa>$command</font> <font color=#1b1baa>$maxexp</font>]
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> \
+    <font color=#1b1baa>$force</font> <font color=#1b1baa>$geometry</font> <font color=#1b1baa>$index</font> <font color=#1b1baa>$tag</font> <font color=#1b1baa>$ctag</font> <font color=#1b1baa>$nbktab</font> <font color=#1b1baa>$reset</font> <font color=#1b1baa>$command</font> <font color=#1b1baa>$maxexp</font> <font color=#1b1baa>$focus</font>]
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=baltip::cget></a>
@@ -687,9 +689,9 @@ The <i><font color=#1b1baa>baltip</font></i> package has been developed with hel
 <b><font color=#ca14ca>proc</font></b> ::baltip::optionlist {} {
   <i><font color=#4b5d50># All options of baltip.</font></i>
 
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#653760>-on</font> <font color=#653760>-per10</font> <font color=#653760>-fade</font> <font color=#653760>-pause</font> <font color=#653760>-fg</font> <font color=#653760>-bg</font> <font color=#653760>-bd</font> <font color=#653760>-padx</font> <font color=#653760>-pady</font> <font color=#653760>-padding</font> \
-      <font color=#653760>-font</font> <font color=#653760>-alpha</font> <font color=#653760>-text</font> <font color=#653760>-index</font> <font color=#653760>-tag</font> <font color=#653760>-bell</font> <font color=#653760>-under</font> <font color=#653760>-image</font> <font color=#653760>-compound</font> <font color=#653760>-relief</font> \
-      <font color=#653760>-ctag</font> <font color=#653760>-nbktab</font> <font color=#653760>-reset</font> <font color=#653760>-command</font> <font color=#653760>-maxexp</font> <font color=#653760>-shiftX</font> <font color=#653760>-shiftY</font> <font color=#653760>-ontop</font> <font color=#653760>-eternal</font>]
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#653760>-on</font> <font color=#653760>-per10</font> <font color=#653760>-fade</font> <font color=#653760>-pause</font> <font color=#653760>-fg</font> <font color=#653760>-bg</font> <font color=#653760>-bd</font> <font color=#653760>-padx</font> <font color=#653760>-pady</font> <font color=#653760>-padding</font> <font color=#653760>-font</font> \
+    <font color=#653760>-alpha</font> <font color=#653760>-text</font> <font color=#653760>-index</font> <font color=#653760>-tag</font> <font color=#653760>-bell</font> <font color=#653760>-under</font> <font color=#653760>-image</font> <font color=#653760>-compound</font> <font color=#653760>-relief</font> <font color=#653760>-ctag</font> \
+    <font color=#653760>-nbktab</font> <font color=#653760>-reset</font> <font color=#653760>-command</font> <font color=#653760>-maxexp</font> <font color=#653760>-focus</font> <font color=#653760>-shiftX</font> <font color=#653760>-shiftY</font> <font color=#653760>-ontop</font> <font color=#653760>-eternal</font>]
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=baltip::tippath></a>
@@ -729,8 +731,9 @@ The <i><font color=#1b1baa>baltip</font></i> package has been developed with hel
     <b><font color=#3a6797>set</font></b> arrsaved [<b><font color=#3a6797>array</font></b> get my::ttdata]
     <b><font color=#3a6797>set</font></b> optvals [::baltip::my::CGet {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
     <i><font color=#4b5d50># block of related lines for special options</font></i>
-    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$optvals</font> forced geo index ttag ctag nbktab reset command maxexp
-    <b><font color=#3a6797>set</font></b> optArgs [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$optvals</font> 9 end]  ;<i><font color=#4b5d50># get rid of special options</font></i>
+    <b><font color=#3a6797>set</font></b> specopt {forced geo index ttag ctag nbktab reset command maxexp focus}
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$optvals</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$specopt</font>
+    <b><font color=#3a6797>set</font></b> optArgs [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$optvals</font> [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$specopt</font>] end] ;<i><font color=#4b5d50># get rid of spec.options</font></i>
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> optvals <font color=#1b1baa>$my::ttdata(optvals,$w)</font>}]} {
       <b><font color=#3a6797>set</font></b> optvals <font color=#1b1baa>$optArgs</font>
     }
@@ -746,8 +749,12 @@ The <i><font color=#1b1baa>baltip</font></i> package has been developed with hel
     <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists my::ttdata(maxexp,<font color=#1b1baa>$w</font>)]} {
       <b><font color=#3a6797>set</font></b> my::ttdata(maxexp,<font color=#1b1baa>$w</font>) <font color=#1b1baa>$maxexp</font>
     }
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$focus</font>]} {
+      <b><font color=#3a6797>set</font></b> my::ttdata(focus,<font color=#1b1baa>$w</font>) <font color=#1b1baa>$focus</font>
+    }
     <b><font color=#3a6797>set</font></b> text [my::OptionsFromText <font color=#1b1baa>$w</font> <font color=#1b1baa>$text</font>]  ;<i><font color=#4b5d50># may reset -command and -maxexp</font></i>
-    <b><font color=#3a6797>set</font></b> onopt [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$text</font>] && <font color=#1b1baa>$my::ttdata(on)</font>}]
+    <b><font color=#3a6797>set</font></b> ontags [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$nbktab$ctag$ttag</font>]
+    <b><font color=#3a6797>set</font></b> onopt [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$text</font>] && <font color=#1b1baa>$my::ttdata(on)</font> || <font color=#1b1baa>$ontags</font>}]
     <b><font color=#3a6797>set</font></b> optArgs [<b><font color=#3a6797>dict</font></b> replace <font color=#1b1baa>$optArgs</font> <font color=#653760>-text</font> <font color=#1b1baa>$text</font>]
     <b><font color=#3a6797>set</font></b> optvals [<b><font color=#3a6797>dict</font></b> replace <font color=#1b1baa>$optvals</font> <font color=#653760>-text</font> <font color=#1b1baa>$text</font>]
     <b><font color=#3a6797>set</font></b> et 0
@@ -755,7 +762,7 @@ The <i><font color=#1b1baa>baltip</font></i> package has been developed with hel
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> my::ttdata(eternal,<font color=#1b1baa>$w</font>) <font color=#1b1baa>$et</font>]} {<b><font color=#3a6797>lappend</font></b> optvals <font color=#653760>-per10</font> 1}
     <b><font color=#3a6797>set</font></b> my::ttdata(optvals,<font color=#1b1baa>$w</font>) <font color=#1b1baa>$optvals</font>
     <b><font color=#3a6797>set</font></b> my::ttdata(on,<font color=#1b1baa>$w</font>) <font color=#1b1baa>$onopt</font>
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$text</font> ne {}} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$text</font> ne {} || <font color=#1b1baa>$ontags</font>} {
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$forced</font> || <font color=#1b1baa>$geo</font> ne {}} {::baltip::my::Show <font color=#1b1baa>$w</font> <font color=#1b1baa>$text</font> yes <font color=#1b1baa>$geo</font> <font color=#1b1baa>$optvals</font>}
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$geo</font> ne {}} {
         <i><font color=#4b5d50># balloon popup message</font></i>
@@ -1261,6 +1268,10 @@ The <i><font color=#1b1baa>baltip</font></i> package has been developed with hel
     <font color=#653760>-bd</font> <font color=#1b1baa>$data(-bd)</font> <font color=#653760>-bg</font> <font color=#1b1baa>$data(-bg)</font> <font color=#653760>-fg</font> <font color=#1b1baa>$data(-fg)</font> <font color=#653760>-font</font> <font color=#1b1baa>$data(-font)</font> \
     {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$imgoptions</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$cmpdoptions</font> <font color=#653760>-padx</font> <font color=#1b1baa>$data(-padx)</font> <font color=#653760>-pady</font> <font color=#1b1baa>$data(-pady)</font>] \
     <font color=#653760>-padx</font> <font color=#1b1baa>$data(-padding)</font> <font color=#653760>-pady</font> <font color=#1b1baa>$data(-padding)</font>
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists ttdata(focus,<font color=#1b1baa>$w</font>)]} {
+    <b><font color=#3a6797>set</font></b> foc <font color=#1b1baa>$ttdata(focus,$w)</font>
+    <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;catch <font color=#1b1baa>{</font>focus -force \[winfo toplevel <font color=#1b1baa>$</font>foc\]<font color=#1b1baa>}</font>; catch <font color=#1b1baa>{</font>focus <font color=#1b1baa>$</font>foc<font color=#1b1baa>}</font>&quot;</font>
+  }
   <i><font color=#4b5d50># defeat rare artifact by passing mouse over a tip to destroy it</font></i>
   <b><font color=#134070>bindtags</font></b> <font color=#1b1baa>$win</font> <font color=#8b2a0e>&quot;Tooltip<font color=#1b1baa>$</font>win&quot;</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$geo</font> eq {}} {
@@ -1273,7 +1284,7 @@ The <i><font color=#1b1baa>baltip</font></i> package has been developed with hel
   <b><font color=#3a6797>set</font></b> aint 20
   <b><font color=#3a6797>set</font></b> fint [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$data(-fade)</font>/<font color=#1b1baa>$aint</font>)}]
   <b><font color=#3a6797>set</font></b> icount [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$data(-per10)</font>/<font color=#1b1baa>$aint</font>*<font color=#1b1baa>$icount</font>/10.0)}]
-  <b><font color=#3a6797>set</font></b> icount [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$data(-per10)</font> ? max(1000/<font color=#1b1baa>$aint</font>+1,<font color=#1b1baa>$icount</font>) : 0}] ;<i><font color=#4b5d50># 1 sec. be minimal</font></i>
+  <b><font color=#3a6797>set</font></b> icount [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$data(-per10)</font> ? max(1000/<font color=#1b1baa>$aint</font>+1,<font color=#1b1baa>$icount</font>) : 0}] ;<i><font color=#4b5d50># 1 sec. minimum</font></i>
   <b><font color=#3a6797>set</font></b> ttdata(winGEO,<font color=#1b1baa>$win</font>) <font color=#1b1baa>$geo</font>
   <b><font color=#3a6797>set</font></b> ttdata(winUNDER,<font color=#1b1baa>$win</font>) <font color=#1b1baa>$data(-under)</font>
   <b><font color=#3a6797>set</font></b> ttdata(winSHIFTX,<font color=#1b1baa>$win</font>) <font color=#1b1baa>$data(-shiftX)</font>
@@ -1741,11 +1752,6 @@ The <i><font color=#1b1baa>baltip</font></i> package has been developed with hel
 }
 <a id=EOF></a>
 <i><font color=#4b5d50># ________________________________ EOF __________________________________ #</font></i>
-
-<i><font color=#4b5d50>#RUNF1: ./test.tcl</font></i>
-<i><font color=#4b5d50>#RUNF2: ../tests/test2_pave.tcl</font></i>
-<i><font color=#4b5d50>#EXEC1: ~/PG/github/freewrap/tclkit-8.6.11 /home/apl/PG/github/baltip/test.tcl</font></i>
-<i><font color=#4b5d50>#EXEC2: ~/PG/github/freewrap/tclkit-8.6.11 /home/apl/PG/github/pave/tests/test2_pave.tcl</font></i>
 
 </pre>
 

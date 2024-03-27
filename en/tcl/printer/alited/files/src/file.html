@@ -172,10 +172,13 @@ doit - flag "do save now, without any GUI"
 See also: ini::SaveCurrentIni</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::SaveFileAs">SaveFileAs</a><span class=tooltiptext> file::SaveFileAs : Saves the current file "as".
 TID - ID of tab</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#file::SaveAndClose">SaveAndClose</a><span class=tooltiptext> file::SaveAndClose : Saves and closes the current file.
+<ul class=toc><li><div class=tooltip><a href="#file::SaveAndClose">SaveAndClose</a><span class=tooltiptext> file::SaveAndClose : Saves and closes a file.
+TID - tab's ID
 This handles pressing Ctrl+W.
 Returns yes if the file was closed.</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#file::CloseAndDelete">CloseAndDelete</a><span class=tooltiptext> file::CloseAndDelete : Closes and deletes the current file.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#file::CloseAndDelete">CloseAndDelete</a><span class=tooltiptext> file::CloseAndDelete : Closes and deletes a file.
+TID - tab's ID
+Returns 1 for deleted, 0 for error/cancel.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::SaveAll">SaveAll</a><span class=tooltiptext> file::SaveAll : Saves all files.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::Reload1">Reload1</a><span class=tooltiptext> file::Reload1 : Reloads a current file with EOL.
 eol - the end of line</span></div></li></ul>
@@ -705,7 +708,11 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50>#   fname2 - 2nd file name</font></i>
   <i><font color=#4b5d50># Returns yes, if success.</font></i>
 
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>file</font></b> <font color=#1b1baa>$comm</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$fname2</font>} err]} {
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$comm</font> in {copy rename} && [<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fname2</font>]} {
+    alited::msg ok err <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>fname2\nalready exists.&quot;</font>
+    <b><font color=#ca14ca>return</font></b> no
+  }
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>file</font></b> <font color=#1b1baa>$comm</font> -- <font color=#1b1baa>$fname</font> <font color=#1b1baa>$fname2</font>} err]} {
     alited::msg ok err <font color=#1b1baa>$err</font> <font color=#653760>-text</font> 1 <font color=#653760>-w</font> 60 <font color=#653760>-h</font> {5 9}
     <b><font color=#ca14ca>return</font></b> no
   }
@@ -733,13 +740,15 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50>#   fname - file name</font></i>
   <i><font color=#4b5d50>#   doshow - flag &quot;show the file's text&quot;</font></i>
 
-  alited::bar::SetTabState <font color=#1b1baa>$TID</font> <font color=#653760>--fname</font> <font color=#1b1baa>$fname</font>
-  alited::bar::BAR <font color=#1b1baa>$TID</font> configure <font color=#653760>-text</font> {} <font color=#653760>-tip</font> {}
-  <b><font color=#3a6797>set</font></b> tab [alited::bar::UniqueListTab <font color=#1b1baa>$fname</font>]
-  <b><font color=#3a6797>set</font></b> sname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]
-  alited::bar::BAR <font color=#1b1baa>$TID</font> configure <font color=#653760>-text</font> <font color=#1b1baa>$sname</font> <font color=#653760>-tip</font> [FileStat <font color=#1b1baa>$fname</font>]
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$doshow</font>} {
-    alited::bar::BAR <font color=#1b1baa>$TID</font> show yes
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fname</font>]} {
+    alited::bar::SetTabState <font color=#1b1baa>$TID</font> <font color=#653760>--fname</font> <font color=#1b1baa>$fname</font>
+    alited::bar::BAR <font color=#1b1baa>$TID</font> configure <font color=#653760>-text</font> {} <font color=#653760>-tip</font> {}
+    <b><font color=#3a6797>set</font></b> tab [alited::bar::UniqueListTab <font color=#1b1baa>$fname</font>]
+    <b><font color=#3a6797>set</font></b> sname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]
+    alited::bar::BAR <font color=#1b1baa>$TID</font> configure <font color=#653760>-text</font> <font color=#1b1baa>$sname</font> <font color=#653760>-tip</font> [FileStat <font color=#1b1baa>$fname</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$doshow</font>} {
+      alited::bar::BAR <font color=#1b1baa>$TID</font> show yes
+    }
   }
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -752,6 +761,8 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50>#   fname2 - new file name (full)</font></i>
 
   <b><font color=#3a6797>set</font></b> fsplit [<b><font color=#3a6797>file</font></b> split <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>set</font></b> lfnam0 [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$fsplit</font>]
+  <b><font color=#3a6797>set</font></b> lfnam1 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$lfnam0</font>-1}]
   <b><font color=#3a6797>if</font></b> {![CommandForFile2 rename <font color=#1b1baa>$fname</font> <font color=#1b1baa>$fname2</font>]} <b><font color=#ca14ca>return</font></b>
   <b><font color=#3a6797>foreach</font></b> tab [alited::bar::BAR listTab] {
     <b><font color=#3a6797>set</font></b> TID [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tab</font> 0]
@@ -761,8 +772,9 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
       <b><font color=#ca14ca>break</font></b>
     }
     <b><font color=#3a6797>set</font></b> fsplit1 [<b><font color=#3a6797>file</font></b> split <font color=#1b1baa>$fname1</font>]
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first <font color=#1b1baa>$fsplit</font> <font color=#1b1baa>$fsplit1</font>]==0} {
-      <b><font color=#3a6797>set</font></b> fname1 [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$fname2</font> {<b><font color=#3a6797>*</font></b>}[<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$fsplit1</font> [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$fsplit</font>] end]]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$fsplit1</font> 0 <font color=#1b1baa>$lfnam1</font>] == <font color=#1b1baa>$fsplit</font>} {
+      <i><font color=#4b5d50># directory is renamed</font></i>
+      <b><font color=#3a6797>set</font></b> fname1 [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$fname2</font> {<b><font color=#3a6797>*</font></b>}[<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$fsplit1</font> <font color=#1b1baa>$lfnam0</font> end]]
       RenameFile <font color=#1b1baa>$TID</font> <font color=#1b1baa>$fname1</font> no
     }
   }
@@ -779,11 +791,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav obDl2 obDl2
   <b><font color=#3a6797>lassign</font></b> [TreeFilename] wtree name fname ID TID
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> eq {}} <b><font color=#ca14ca>return</font></b>
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> ne <font color=#8b2a0e>&quot;&quot;</font>} {
-    <b><font color=#134070>bell</font></b>
-    alited::msg ok warn [msgcat::mc {An open file can not be renamed:}]\n<font color=#1b1baa>$fname</font>
-    <b><font color=#ca14ca>return</font></b> 0
-  }
   <b><font color=#3a6797>lassign</font></b> [InputFileName <font color=#1b1baa>$al(MC,renamefile)</font> <font color=#1b1baa>$name</font> <font color=#1b1baa>$undermouse</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] res name2
   <b><font color=#3a6797>set</font></b> name2 [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$name2</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> && <font color=#1b1baa>$name2</font> ne {} && <font color=#1b1baa>$name2</font> ne <font color=#1b1baa>$name</font>} {
@@ -868,21 +875,18 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>set</font></b> tailname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]
   <b><font color=#3a6797>set</font></b> ext [<b><font color=#3a6797>file</font></b> extension <font color=#1b1baa>$tailname</font>]
   <b><font color=#3a6797>set</font></b> root [<b><font color=#3a6797>file</font></b> rootname <font color=#1b1baa>$tailname</font>]
-  <i><font color=#4b5d50># remove possibly existing suffix from the filename</font></i>
+  <i><font color=#4b5d50># possibly existing suffix in the filename</font></i>
   <b><font color=#3a6797>set</font></b> suffix {_\d+$}
   <b><font color=#3a6797>set</font></b> suff [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> <font color=#1b1baa>$suffix</font> <font color=#1b1baa>$root</font>]
+  <b><font color=#3a6797>set</font></b> root [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$root</font> 0 end-[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$suff</font>]]
   <b><font color=#3a6797>set</font></b> i1 2
   <b><font color=#3a6797>set</font></b> i2 99
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$suff</font> ne {}} {
-    <b><font color=#3a6797>set</font></b> root [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$root</font> 0 end-[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$suff</font>]]
-    <i><font color=#4b5d50># find a free number for the clone</font></i>
-    <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i <font color=#1b1baa>$i1</font>} {<font color=#1b1baa>$i</font>&lt;=<font color=#1b1baa>$i2</font>} {<b><font color=#3a6797>incr</font></b> i} {
-      <b><font color=#3a6797>set</font></b> suff [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> {\d+} <font color=#1b1baa>$i</font> \$ {}] <font color=#1b1baa>$suffix</font>]
-      <b><font color=#3a6797>set</font></b> fname2 [<b><font color=#3a6797>file</font></b> join [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname</font>] <font color=#1b1baa>$root$suff$ext</font>]
-      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fname2</font>]} <b><font color=#ca14ca>break</font></b>
-    }
-  } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>set</font></b> fname2 [<b><font color=#3a6797>file</font></b> join [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname</font>] <font color=#1b1baa>${root}</font>_<font color=#1b1baa>$i1$ext</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$suff</font> eq {}} {<b><font color=#3a6797>set</font></b> suff _<font color=#1b1baa>$i1</font>}
+  <i><font color=#4b5d50># find the free suffix for the clone</font></i>
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i <font color=#1b1baa>$i1</font>} {<font color=#1b1baa>$i</font>&lt;=<font color=#1b1baa>$i2</font>} {<b><font color=#3a6797>incr</font></b> i} {
+    <b><font color=#3a6797>set</font></b> suff [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> {\d+} <font color=#1b1baa>$i</font> \$ {}] <font color=#1b1baa>$suffix</font>]
+    <b><font color=#3a6797>set</font></b> fname2 [<b><font color=#3a6797>file</font></b> join [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname</font>] <font color=#1b1baa>$root$suff$ext</font>]
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fname2</font>]} <b><font color=#ca14ca>break</font></b>
   }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$fname2</font>
 }
@@ -1127,14 +1131,16 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=file::SaveAndClose></a>
-<b><font color=#ca14ca>proc</font></b> file::SaveAndClose {} {
-  <i><font color=#4b5d50># Saves and closes the current file.</font></i>
+<b><font color=#ca14ca>proc</font></b> file::SaveAndClose {{TID <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Saves and closes a file.</font></i>
+  <i><font color=#4b5d50>#   TID - tab's ID</font></i>
   <i><font color=#4b5d50># This handles pressing Ctrl+W.</font></i>
   <i><font color=#4b5d50># Returns yes if the file was closed.</font></i>
 
-  <b><font color=#3a6797>if</font></b> {[IsModified] && ![SaveFile]} {<b><font color=#ca14ca>return</font></b> no}
   <b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$::alited::bar::ctrltablist</font> 1]
-  alited::bar::BAR [alited::bar::CurrentTabID] close
+  <b><font color=#3a6797>if</font></b> {[IsModified <font color=#1b1baa>$TID</font>] && ![SaveFile <font color=#1b1baa>$TID</font>]} {<b><font color=#ca14ca>return</font></b> no}
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> eq {}} {<b><font color=#3a6797>set</font></b> TID [alited::bar::CurrentTabID]}
+  alited::bar::BAR <font color=#1b1baa>$TID</font> close
   <i><font color=#4b5d50># go to a previously viewed file</font></i>
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> TID [alited::bar::FileTID <font color=#1b1baa>$fname</font>]] ne {}} {
     alited::bar::BAR <font color=#1b1baa>$TID</font> show
@@ -1143,26 +1149,30 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=file::CloseAndDelete></a>
-<b><font color=#ca14ca>proc</font></b> file::CloseAndDelete {} {
-  <i><font color=#4b5d50># Closes and deletes the current file.</font></i>
+<b><font color=#ca14ca>proc</font></b> file::CloseAndDelete {{TID <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Closes and deletes a file.</font></i>
+  <i><font color=#4b5d50>#   TID - tab's ID</font></i>
+  <i><font color=#4b5d50># Returns 1 for deleted, 0 for error/cancel.</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
-  <b><font color=#3a6797>set</font></b> fname [alited::bar::FileName]
+  <b><font color=#3a6797>set</font></b> fname [alited::bar::FileName <font color=#1b1baa>$TID</font>]
   <b><font color=#3a6797>if</font></b> {[IsNoName <font color=#1b1baa>$fname</font>]} {
     <i><font color=#4b5d50># for a new file: to save first if modified (to think twice)</font></i>
-    <b><font color=#3a6797>if</font></b> {[IsModified]} {SaveFile} <b><font color=#3a6797>else</font></b> {SaveAndClose}
-    <b><font color=#ca14ca>return</font></b>
+    <b><font color=#3a6797>if</font></b> {[IsModified <font color=#1b1baa>$TID</font>]} {SaveFile <font color=#1b1baa>$TID</font>} <b><font color=#3a6797>else</font></b> {SaveAndClose <font color=#1b1baa>$TID</font>}
+    <b><font color=#ca14ca>return</font></b> 0
   }
   <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %f [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]] <font color=#1b1baa>$al(MC,delfile)</font>]
   <b><font color=#3a6797>if</font></b> {[alited::msg yesno warn <font color=#1b1baa>$msg</font> NO]} {
     <i><font color=#4b5d50># to save first (for normal closing only)</font></i>
-    <b><font color=#3a6797>if</font></b> {[SaveAndClose]} {
+    <b><font color=#3a6797>if</font></b> {[SaveAndClose <font color=#1b1baa>$TID</font>]} {
       DeleteFile <font color=#1b1baa>$fname</font>
       FillRecent <font color=#1b1baa>$fname</font>
       <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(TREE,isunits)</font>} {alited::tree::RecreateTree {} {} yes}
       alited::edit::MacroUpdate <font color=#1b1baa>$fname</font>
+      <b><font color=#ca14ca>return</font></b> 1
     }
   }
+  <b><font color=#ca14ca>return</font></b> 0
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=file::SaveAll></a>
@@ -1300,6 +1310,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
         <b><font color=#3a6797>set</font></b> res [SaveFile <font color=#1b1baa>$TID</font>]
       }
     }
+    alited::main::SaveMarks <font color=#1b1baa>$wtxt</font>
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtxt</font> ne [<font color=#1b1baa>$obPav</font> Text]} { ;<i><font color=#4b5d50># let [$obPav Text] be alive, as needed by 'pack'</font></i>
       <b><font color=#134070>destroy</font></b> <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$wsbv</font>
     }
@@ -1307,11 +1318,12 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     alited::ini::SaveCurrentIni <font color=#1b1baa>$al(INI,save_onclose)</font>
     <b><font color=#3a6797>after</font></b> 9999 [<b><font color=#3a6797>list</font></b> alited::file::ClearupOnClose <font color=#1b1baa>$TID</font> <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$fname</font>]
   }
-  alited::tree::UpdateFileTree
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(closefunc)</font> != 1} {  ;<i><font color=#4b5d50># close func = 1 means &quot;close all&quot;</font></i>
     AddRecent <font color=#1b1baa>$fname</font>
   }
   <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> alited::bar::RenameTitles <font color=#1b1baa>$TID</font>]
+  <b><font color=#3a6797>after</font></b> idle after 50 after idle after 50 after idle after 50 \
+    <b><font color=#3a6797>after</font></b> idle after 50 alited::tree::UpdateFileTree
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -1698,10 +1710,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>lindex</font></b> [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$ID</font> <font color=#653760>-values</font>] 1]
   <b><font color=#3a6797>set</font></b> TID [alited::bar::FileTID <font color=#1b1baa>$fname</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> ne <font color=#8b2a0e>&quot;&quot;</font>} {
-    <b><font color=#134070>bell</font></b>
-    alited::bar::BAR <font color=#1b1baa>$TID</font> show no no
-    alited::msg ok warn <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(MC,nodelopen)\n<font color=#1b1baa>$</font>fname&quot;</font>
-    <b><font color=#ca14ca>return</font></b> 0
+    <b><font color=#ca14ca>return</font></b> [alited::file::CloseAndDelete <font color=#1b1baa>$TID</font>]
   }
   <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %f <font color=#1b1baa>$name</font>] <font color=#1b1baa>$al(MC,delfile)</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font>&lt;11} {

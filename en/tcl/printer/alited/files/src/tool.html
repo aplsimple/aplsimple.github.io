@@ -62,6 +62,10 @@ img - name of icon</span></div></li></ul>
 <li><b><a href="#Edit_functions">Edit functions</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#tool::Undo">Undo</a><span class=tooltiptext> tool::Undo : Undoes a change.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#tool::Redo">Redo</a><span class=tooltiptext> tool::Redo : Redoes a change.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::SetPlainText">SetPlainText</a><span class=tooltiptext> tool::SetPlainText : Set the flag "plain text".
+wtxt - text path
+val - value of the flag
+Returns old value of the flag.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#tool::undoAll">undoAll</a><span class=tooltiptext> tool::undoAll : Undoes all changes.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#tool::redoAll">redoAll</a><span class=tooltiptext> tool::redoAll : Redoes all changes.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#tool::InsertInText">InsertInText</a><span class=tooltiptext> tool::InsertInText : Insert a string into a text possibly instead of its selection.
@@ -242,13 +246,30 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 <b><font color=#ca14ca>proc</font></b> tool::Undo {} {
   <i><font color=#4b5d50># Undoes a change.</font></i>
 
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>catch</font></b> {<b><font color=#134070>event</font></b> generate [alited::main::CurrentWTXT] &lt;&lt;Undo&gt;&gt;}]
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>catch</font></b> {[alited::main::CurrentWTXT] edit undo}]
 }
 <a id=tool::Redo></a>
 <b><font color=#ca14ca>proc</font></b> tool::Redo {} {
   <i><font color=#4b5d50># Redoes a change.</font></i>
 
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>catch</font></b> {<b><font color=#134070>event</font></b> generate [alited::main::CurrentWTXT] &lt;&lt;Redo&gt;&gt;}]
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>catch</font></b> {[alited::main::CurrentWTXT] edit redo}]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::SetPlainText></a>
+<b><font color=#ca14ca>proc</font></b> tool::SetPlainText {wtxt val} {
+  <i><font color=#4b5d50># Set the flag &quot;plain text&quot;.</font></i>
+  <i><font color=#4b5d50>#   wtxt - text path</font></i>
+  <i><font color=#4b5d50>#   val - value of the flag</font></i>
+  <i><font color=#4b5d50># Returns old value of the flag.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[alited::file::IsClang [alited::bar::FileName]]} {
+    <b><font color=#3a6797>set</font></b> oldval [::hl_c::cget <font color=#1b1baa>$wtxt</font> <font color=#653760>-plaintext</font>]
+    ::hl_c::configure <font color=#1b1baa>$wtxt</font> <font color=#653760>-plaintext</font> <font color=#1b1baa>$val</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> oldval [::hl_tcl::cget <font color=#1b1baa>$wtxt</font> <font color=#653760>-plaintext</font>]
+    ::hl_tcl::configure <font color=#1b1baa>$wtxt</font> <font color=#653760>-plaintext</font> <font color=#1b1baa>$val</font>
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$oldval</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=tool::undoAll></a>
@@ -256,9 +277,11 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50># Undoes all changes.</font></i>
 
   <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+  <b><font color=#3a6797>set</font></b> plaintext [SetPlainText <font color=#1b1baa>$wtxt</font> yes]
   <b><font color=#3a6797>while</font></b> {[<font color=#1b1baa>$wtxt</font> edit canundo]} {
     <b><font color=#3a6797>if</font></b> {[Undo]} <b><font color=#ca14ca>break</font></b>
   }
+  SetPlainText <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$plaintext</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=tool::redoAll></a>
@@ -266,9 +289,11 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50># Redoes all changes.</font></i>
 
   <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+  <b><font color=#3a6797>set</font></b> plaintext [SetPlainText <font color=#1b1baa>$wtxt</font> yes]
   <b><font color=#3a6797>while</font></b> {[<font color=#1b1baa>$wtxt</font> edit canredo]} {
     <b><font color=#3a6797>if</font></b> {[Redo]} <b><font color=#ca14ca>break</font></b>
   }
+  SetPlainText <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$plaintext</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=tool::InsertInText></a>
@@ -997,7 +1022,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$itc</font>==-1 && <font color=#1b1baa>$iee</font>==-1 && <font color=#1b1baa>$al(prjincons)</font>} {
     <b><font color=#3a6797>lappend</font></b> args tc=[alited::Tclexe]  ;<i><font color=#4b5d50># for console - set &quot;path to tclsh&quot; argument</font></i>
   }
-  <b><font color=#3a6797>append</font></b> args <font color=#8b2a0e>&quot; PN=<font color=#1b1baa>$</font>al(prjname)&quot;</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::alited::al(EM,exec)</font>} {
     e_menu1 <font color=#1b1baa>$args</font>
   } <b><font color=#3a6797>else</font></b> {

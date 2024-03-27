@@ -142,6 +142,8 @@ item2 - 2nd item</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#printer::MakeFile">MakeFile</a><span class=tooltiptext> printer::MakeFile : Makes a html file or a copy of file from a source file.
 fname - source file's name
 fname2 - resulting file</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#printer::RunFinal">RunFinal</a><span class=tooltiptext> printer::RunFinal : Runs final processor.
+check - if yes, beeps at empty final processor.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#printer::Process">Process</a><span class=tooltiptext> printer::Process : Processes files to make the resulting .html.
 wtree - tree's path</span></div></li></ul>
 <li><b><a href="#Buttons">Buttons</a></b></li>
@@ -1079,6 +1081,36 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$fname2</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
+<a id=printer::RunFinal></a>
+<b><font color=#ca14ca>proc</font></b> printer::RunFinal {{check no}} {
+  <i><font color=#4b5d50># Runs final processor.</font></i>
+  <i><font color=#4b5d50>#   check - if yes, beeps at empty final processor.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$final</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$dir</font> <font color=#1b1baa>$indexname</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$final</font> eq {%D} || <font color=#1b1baa>$final</font> eq {<font color=#8b2a0e>&quot;%D&quot;</font>}} {
+      ::apave::openDoc <font color=#1b1baa>$fname</font>
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$final</font> eq {%e}} {
+      alited::file::OpenFile <font color=#1b1baa>$fname</font>
+      <b><font color=#ca14ca>return</font></b> yes
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %D <font color=#1b1baa>$dir</font>] <font color=#1b1baa>$final</font>]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first e_menu.tcl <font color=#1b1baa>$com</font>]&gt;0 && [<b><font color=#3a6797>string</font></b> first m=%M <font color=#1b1baa>$com</font>]&gt;0} {
+        <i><font color=#4b5d50># e_menu items require project name & Linux/Windows terminals</font></i>
+        <b><font color=#3a6797>append</font></b> com <font color=#8b2a0e>&quot; PN=<font color=#1b1baa>$</font>al(prjname) \&quot;tt=<font color=#1b1baa>$</font>al(EM,tt=)\&quot; \&quot;wt=<font color=#1b1baa>$</font>al(EM,wt=)\&quot;&quot;</font>
+      }
+      <b><font color=#3a6797>set</font></b> com [alited::MapWildCards <font color=#1b1baa>$com</font>]
+      <b><font color=#3a6797>exec</font></b> -- {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$com</font> &
+    }
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$check</font>} {
+    <b><font color=#3a6797>set</font></b> final {<font color=#8b2a0e>&quot;%D&quot;</font>}
+    ::apave::FocusByForce [<font color=#1b1baa>$obDl2</font> chooserPath Fil]
+    <b><font color=#134070>bell</font></b>
+  }
+  <b><font color=#ca14ca>return</font></b> no
+}
+<i><font color=#4b5d50>#_______________________</font></i>
 <a id=printer::Process></a>
 <b><font color=#ca14ca>proc</font></b> printer::Process {wtree} {
   <i><font color=#4b5d50># Processes files to make the resulting .html.</font></i>
@@ -1149,24 +1181,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %d <font color=#1b1baa>$dcnt</font> %f <font color=#1b1baa>$fcnt</font>] <font color=#1b1baa>$msg</font>]
   Message <font color=#1b1baa>$msg</font>
   <b><font color=#134070>bell</font></b>
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$final</font> ne {}} {
-    <b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$dir</font> <font color=#1b1baa>$indexname</font>]
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$final</font> eq {%D} || <font color=#1b1baa>$final</font> eq {<font color=#8b2a0e>&quot;%D&quot;</font>}} {
-      ::apave::openDoc <font color=#1b1baa>$fname</font>
-    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$final</font> eq {%e}} {
-      alited::file::OpenFile <font color=#1b1baa>$fname</font>
-      <b><font color=#ca14ca>return</font></b> yes
-    } <b><font color=#3a6797>else</font></b> {
-      <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %D <font color=#1b1baa>$dir</font>] <font color=#1b1baa>$final</font>]
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first e_menu.tcl <font color=#1b1baa>$com</font>]&gt;0 && [<b><font color=#3a6797>string</font></b> first m=%M <font color=#1b1baa>$com</font>]&gt;0} {
-        <i><font color=#4b5d50># e_menu items require project name & Linux/Windows terminals</font></i>
-        <b><font color=#3a6797>append</font></b> com <font color=#8b2a0e>&quot; PN=<font color=#1b1baa>$</font>al(prjname) \&quot;tt=<font color=#1b1baa>$</font>al(EM,tt=)\&quot; \&quot;wt=<font color=#1b1baa>$</font>al(EM,wt=)\&quot;&quot;</font>
-      }
-      <b><font color=#3a6797>set</font></b> com [alited::MapWildCards <font color=#1b1baa>$com</font>]
-      <b><font color=#3a6797>exec</font></b> -- {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$com</font> &
-    }
-  }
-  <b><font color=#ca14ca>return</font></b> no
+  <b><font color=#ca14ca>return</font></b> [RunFinal]
 }
 <a id=Buttons></a>
 <i><font color=#4b5d50># ________________________ Buttons _________________________ #</font></i>
@@ -1190,7 +1205,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 <b><font color=#ca14ca>proc</font></b> printer::Help {} {
   <i><font color=#4b5d50># Handles &quot;Help&quot; button.</font></i>
 
-  alited::Help <font color=#1b1baa>$::alited::printer::win</font>
+  alited::HelpAlited #printer
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=printer::Ok></a>
@@ -1317,8 +1332,10 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     {.fraw.SpxCwidth + L 1 4 {<font color=#653760>-st</font> nsw <font color=#653760>-padx</font> 4} \
       {<font color=#653760>-tvar</font> ::alited::printer::cwidth <font color=#653760>-from</font> 5 <font color=#653760>-to</font> 99 <font color=#653760>-w</font> 4 <font color=#653760>-justify</font> center}}
     {.seh .fraw T 1 3 {<font color=#653760>-pady</font> 8}}
-    {.lab4 + T 1 1 {<font color=#653760>-st</font> nw} {<font color=#653760>-t</font> {Final processor:}}}
-    {.fil + T 1 3 {<font color=#653760>-st</font> new} {<font color=#653760>-tvar</font> ::alited::printer::final <font color=#653760>-w</font> <font color=#1b1baa>$wden</font>}}
+    {.lab4 + T 1 2 {<font color=#653760>-st</font> nw} {<font color=#653760>-t</font> {Final processor:}}}
+    {.btT + L 1 1 {<font color=#653760>-st</font> e <font color=#653760>-padx</font> 3} {<font color=#653760>-image</font> alimg_run \
+      <font color=#653760>-com</font> {::alited::printer::RunFinal 1} <font color=#653760>-tip</font> {Runs the final processor.}}}
+    {.Fil .lab4 T 1 3 {<font color=#653760>-st</font> new} {<font color=#653760>-tvar</font> ::alited::printer::final <font color=#653760>-w</font> <font color=#1b1baa>$wden</font>}}
     {fraTree fraTop T 2 1 {<font color=#653760>-st</font> news <font color=#653760>-cw</font> 1}}
     {.Tree - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} \
       {<font color=#653760>-height</font> 20 <font color=#653760>-columns</font> {L1 L2 PRL ID LEV LEAF FL1} <font color=#653760>-displaycolumns</font> {L1} \

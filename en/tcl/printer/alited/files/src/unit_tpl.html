@@ -82,9 +82,6 @@ pos - if not "", it's a position to be returned by default</span></div></li></ul
 wtxt - text's path</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#unit_tpl::SyntaxText">SyntaxText</a><span class=tooltiptext> unit_tpl::SyntaxText : Prepares syntax highlighting of template's text
 wtxt - the text's path</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#unit_tpl::IsIndented">IsIndented</a><span class=tooltiptext> unit_tpl::IsIndented : Gets a "normal" value of indentation flag, given that it can be an empty string.
-indent - indentation flag of template
-cont - contents of template</span></div></li></ul>
 <li><b><a href="#GUI_Handlers">GUI Handlers</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#unit_tpl::Ok">Ok</a><span class=tooltiptext> unit_tpl::Ok : Handles "OK" button.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#unit_tpl::Cancel">Cancel</a><span class=tooltiptext> unit_tpl::Cancel : Handles "Cancel" button.</span></div></li></ul>
@@ -182,11 +179,9 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>variable</font></b> tplpla  [<b><font color=#3a6797>list</font></b>]  ;<i><font color=#4b5d50># list of &quot;where to place&quot; of templates</font></i>
   <b><font color=#3a6797>variable</font></b> tplid   [<b><font color=#3a6797>list</font></b>]  ;<i><font color=#4b5d50># list of IDs of templates (in treeview)</font></i>
   <b><font color=#3a6797>variable</font></b> tplkeys [<b><font color=#3a6797>list</font></b>]  ;<i><font color=#4b5d50># list of keys of templates</font></i>
-  <b><font color=#3a6797>variable</font></b> tplinds [<b><font color=#3a6797>list</font></b>]  ;<i><font color=#4b5d50># list of indent flags (NOT USED)</font></i>
   <b><font color=#3a6797>variable</font></b> tplkey {}       ;<i><font color=#4b5d50># current template's keys</font></i>
   <b><font color=#3a6797>variable</font></b> tpl {}          ;<i><font color=#4b5d50># current template's name</font></i>
   <b><font color=#3a6797>variable</font></b> place 1         ;<i><font color=#4b5d50># current template's &quot;where to place&quot;</font></i>
-  <b><font color=#3a6797>variable</font></b> indent {}       ;<i><font color=#4b5d50># current indent flag (NOT USED)</font></i>
   <b><font color=#3a6797>variable</font></b> dosel yes       ;<i><font color=#4b5d50># if yes, enables &quot;Select&quot; action</font></i>
 }
 <a id=Ini></a>
@@ -196,12 +191,12 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50># Gets templates' data from al(TPL,list) saved in alited.ini.</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
-  <b><font color=#3a6797>foreach</font></b> tv {tpllist tplcont tplkeys tplpos tplpla tplinds} {
+  <b><font color=#3a6797>foreach</font></b> tv {tpllist tplcont tplkeys tplpos tplpla} {
     <b><font color=#3a6797>variable</font></b> <font color=#1b1baa>$tv</font>
     <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$tv</font> [<b><font color=#3a6797>list</font></b>]
   }
   <b><font color=#3a6797>foreach</font></b> lst <font color=#1b1baa>$al(TPL,list)</font> {
-    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$lst</font> tpl key cont pos pla indent}]} {
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$lst</font> tpl key cont pos pla}]} {
       <b><font color=#3a6797>set</font></b> cont [::alited::ProcEOL <font color=#1b1baa>$cont</font> in]
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tpl</font> ne {} && <font color=#1b1baa>$cont</font> ne {} && <font color=#1b1baa>$pos</font> ne {}} {
         <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> is double <font color=#653760>-strict</font> <font color=#1b1baa>$pos</font>]} {<b><font color=#3a6797>set</font></b> pos 1.0}
@@ -210,7 +205,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
         <b><font color=#3a6797>lappend</font></b> tplkeys <font color=#1b1baa>$key</font>
         <b><font color=#3a6797>lappend</font></b> tplpos <font color=#1b1baa>$pos</font>
         <b><font color=#3a6797>lappend</font></b> tplpla <font color=#1b1baa>$pla</font>
-        <b><font color=#3a6797>lappend</font></b> tplinds [IsIndented <font color=#1b1baa>$indent</font> <font color=#1b1baa>$cont</font>]
       }
     }
   }
@@ -236,13 +230,12 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>variable</font></b> tplkeys
   <b><font color=#3a6797>variable</font></b> tplpos
   <b><font color=#3a6797>variable</font></b> tplpla
-  <b><font color=#3a6797>variable</font></b> tplinds
   alited::keys::Delete template
   <b><font color=#3a6797>set</font></b> al(TPL,list) [<b><font color=#3a6797>list</font></b>]
-  <b><font color=#3a6797>foreach</font></b> tpl <font color=#1b1baa>$tpllist</font> key <font color=#1b1baa>$tplkeys</font> cont <font color=#1b1baa>$tplcont</font> pos <font color=#1b1baa>$tplpos</font> pla <font color=#1b1baa>$tplpla</font> ind <font color=#1b1baa>$tplinds</font> {
+  <b><font color=#3a6797>foreach</font></b> tpl <font color=#1b1baa>$tpllist</font> key <font color=#1b1baa>$tplkeys</font> cont <font color=#1b1baa>$tplcont</font> pos <font color=#1b1baa>$tplpos</font> pla <font color=#1b1baa>$tplpla</font> {
     <b><font color=#3a6797>set</font></b> cont [::alited::ProcEOL <font color=#1b1baa>$cont</font> out]
-    <b><font color=#3a6797>lappend</font></b> al(TPL,list) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$tpl</font> <font color=#1b1baa>$key</font> <font color=#1b1baa>$cont</font> <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pla</font> <font color=#1b1baa>$ind</font>]
-    alited::keys::Add template <font color=#1b1baa>$tpl</font> <font color=#1b1baa>$key</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$cont</font> <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pla</font> <font color=#1b1baa>$ind</font>]
+    <b><font color=#3a6797>lappend</font></b> al(TPL,list) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$tpl</font> <font color=#1b1baa>$key</font> <font color=#1b1baa>$cont</font> <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pla</font>]
+    alited::keys::Add template <font color=#1b1baa>$tpl</font> <font color=#1b1baa>$key</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$cont</font> <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pla</font>]
   }
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -304,10 +297,8 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>variable</font></b> tplcont
   <b><font color=#3a6797>variable</font></b> tplid
   <b><font color=#3a6797>variable</font></b> tplpla
-  <b><font color=#3a6797>variable</font></b> tplinds
   <b><font color=#3a6797>variable</font></b> tpl
   <b><font color=#3a6797>variable</font></b> place
-  <b><font color=#3a6797>variable</font></b> indent
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$item</font> eq {}} {<b><font color=#3a6797>set</font></b> item [Selected item no]}
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$item</font> ne {}} {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is digit <font color=#1b1baa>$item</font>]} {  ;<i><font color=#4b5d50># the item is an index</font></i>
@@ -320,7 +311,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
       <b><font color=#3a6797>set</font></b> tplkey [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tplkeys</font> <font color=#1b1baa>$isel</font>]
       <b><font color=#3a6797>set</font></b> place [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tplpla</font> <font color=#1b1baa>$isel</font>]
       <b><font color=#3a6797>set</font></b> cont [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tplcont</font> <font color=#1b1baa>$isel</font>]
-      <b><font color=#3a6797>set</font></b> indent [IsIndented [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tplinds</font> <font color=#1b1baa>$isel</font>] <font color=#1b1baa>$cont</font>]
       <b><font color=#3a6797>set</font></b> wtxt [<font color=#1b1baa>$obTpl</font> TexTpl]
       ::hl_tcl::iscurline <font color=#1b1baa>$wtxt</font> no
       <font color=#1b1baa>$wtxt</font> delete 1.0 end
@@ -399,25 +389,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 
   alited::SyntaxHighlight tcl <font color=#1b1baa>$wtxt</font> [alited::SyntaxColors]
 }
-<i><font color=#4b5d50>#_______________________</font></i>
-<a id=unit_tpl::IsIndented></a>
-<b><font color=#ca14ca>proc</font></b> unit_tpl::IsIndented {indent cont} {
-  <i><font color=#4b5d50># Gets a &quot;normal&quot; value of indentation flag, given that it can be an empty string.</font></i>
-  <i><font color=#4b5d50>#   indent - indentation flag of template</font></i>
-  <i><font color=#4b5d50>#   cont - contents of template</font></i>
-
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$indent</font> eq {}} {
-    <i><font color=#4b5d50># TODEL means flag=no</font></i>
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first TODEL <font color=#1b1baa>$cont</font>]&gt;-1} {<b><font color=#ca14ca>return</font></b> 0}
-    <i><font color=#4b5d50># underlines mean flag=yes</font></i>
-    <b><font color=#3a6797>foreach</font></b> u {_ - = * #} {
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first [<b><font color=#3a6797>string</font></b> repeat <font color=#1b1baa>$u</font> 10] <font color=#1b1baa>$cont</font>]&gt;-1} {
-        <b><font color=#ca14ca>return</font></b> 1
-      }
-    }
-  }
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> is true <font color=#653760>-strict</font> <font color=#1b1baa>$indent</font>]
-}
 <a id=GUI_Handlers></a>
 <i><font color=#4b5d50># ________________________ GUI Handlers _________________________ #</font></i>
 <a id=unit_tpl::Ok></a>
@@ -429,7 +400,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>variable</font></b> tplpos
   <b><font color=#3a6797>variable</font></b> tplcont
   <b><font color=#3a6797>variable</font></b> tplpla
-  <b><font color=#3a6797>variable</font></b> tplinds
   <b><font color=#3a6797>variable</font></b> dosel
   alited::CloseDlg
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$dosel</font> || [<b><font color=#3a6797>set</font></b> isel [Selected index]] eq {}} {
@@ -439,9 +409,8 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>set</font></b> tex [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tplcont</font> <font color=#1b1baa>$isel</font>]
   <b><font color=#3a6797>set</font></b> pos [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tplpos</font> <font color=#1b1baa>$isel</font>]
   <b><font color=#3a6797>set</font></b> pla [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tplpla</font> <font color=#1b1baa>$isel</font>]
-  <b><font color=#3a6797>set</font></b> ind [IsIndented [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tplinds</font> <font color=#1b1baa>$isel</font>] <font color=#1b1baa>$tex</font>]
   SaveIni
-  <font color=#1b1baa>$obTpl</font> res <font color=#1b1baa>$win</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$tex</font> <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pla</font> <font color=#1b1baa>$ind</font>]
+  <font color=#1b1baa>$obTpl</font> res <font color=#1b1baa>$win</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$tex</font> <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pla</font>]
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=unit_tpl::Cancel></a>
@@ -493,9 +462,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>variable</font></b> tplcont
   <b><font color=#3a6797>variable</font></b> tplpos
   <b><font color=#3a6797>variable</font></b> tplpla
-  <b><font color=#3a6797>variable</font></b> tplinds
   <b><font color=#3a6797>variable</font></b> place
-  <b><font color=#3a6797>variable</font></b> indent
   <b><font color=#3a6797>variable</font></b> tplkeys
   <b><font color=#3a6797>variable</font></b> tplkey
   <b><font color=#3a6797>variable</font></b> tplid
@@ -536,7 +503,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>lappend</font></b> tplcont <font color=#1b1baa>$txt</font>
   <b><font color=#3a6797>lappend</font></b> tplpos <font color=#1b1baa>$inpos</font>
   <b><font color=#3a6797>lappend</font></b> tplpla <font color=#1b1baa>$place</font>
-  <b><font color=#3a6797>lappend</font></b> tplinds <font color=#1b1baa>$indent</font>
   <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$tpllist</font>]] <font color=#1b1baa>$al(MC,tplnew)</font>]
   <b><font color=#3a6797>set</font></b> item [<font color=#1b1baa>$tree</font> insert {} end <font color=#653760>-values</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$tpl</font> <font color=#1b1baa>$tplkey</font>]]
   <b><font color=#3a6797>lappend</font></b> tplkeys <font color=#1b1baa>$tplkey</font>
@@ -557,9 +523,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>variable</font></b> tplcont
   <b><font color=#3a6797>variable</font></b> tplpos
   <b><font color=#3a6797>variable</font></b> tplpla
-  <b><font color=#3a6797>variable</font></b> tplinds
   <b><font color=#3a6797>variable</font></b> place
-  <b><font color=#3a6797>variable</font></b> indent
   <b><font color=#3a6797>variable</font></b> tplkeys
   <b><font color=#3a6797>variable</font></b> tplkey
   <b><font color=#3a6797>variable</font></b> tpl
@@ -568,7 +532,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>set</font></b> tplcont [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$tplcont</font> <font color=#1b1baa>$isel</font> <font color=#1b1baa>$isel</font> [Text]]
   <b><font color=#3a6797>set</font></b> tplpos [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$tplpos</font> <font color=#1b1baa>$isel</font> <font color=#1b1baa>$isel</font> [Pos [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tplpos</font> <font color=#1b1baa>$isel</font>]]]
   <b><font color=#3a6797>set</font></b> tplpla [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$tplpla</font> <font color=#1b1baa>$isel</font> <font color=#1b1baa>$isel</font> <font color=#1b1baa>$place</font>]
-  <b><font color=#3a6797>set</font></b> tplinds [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$tplinds</font> <font color=#1b1baa>$isel</font> <font color=#1b1baa>$isel</font> <font color=#1b1baa>$indent</font>]
   <b><font color=#3a6797>set</font></b> tplkeys [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$tplkeys</font> <font color=#1b1baa>$isel</font> <font color=#1b1baa>$isel</font> <font color=#1b1baa>$tplkey</font>]
   UpdateTree
   <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;::alited::unit_tpl::Select <font color=#1b1baa>$</font>isel&quot;</font>
@@ -585,7 +548,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>variable</font></b> tplcont
   <b><font color=#3a6797>variable</font></b> tplpos
   <b><font color=#3a6797>variable</font></b> tplpla
-  <b><font color=#3a6797>variable</font></b> tplinds
   <b><font color=#3a6797>variable</font></b> tplkeys
   <b><font color=#3a6797>variable</font></b> tplid
   <b><font color=#3a6797>variable</font></b> win
@@ -595,7 +557,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>if</font></b> {![alited::msg yesno warn <font color=#1b1baa>$msg</font> NO <font color=#653760>-centerme</font> <font color=#1b1baa>$win</font>]} {
     <b><font color=#ca14ca>return</font></b>
   }
-  <b><font color=#3a6797>foreach</font></b> tl {tpllist tplcont tplpos tplpla tplid tplkeys tplinds} {
+  <b><font color=#3a6797>foreach</font></b> tl {tpllist tplcont tplpos tplpla tplid tplkeys} {
     <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$tl</font> [<b><font color=#3a6797>lreplace</font></b> [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$tl</font>] <font color=#1b1baa>$isel</font> <font color=#1b1baa>$isel</font>]
   }
   <b><font color=#3a6797>set</font></b> llen [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$tpllist</font>]-1}]
@@ -615,7 +577,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>variable</font></b> tpl
   <b><font color=#3a6797>variable</font></b> tplkey
   <b><font color=#3a6797>variable</font></b> place
-  <b><font color=#3a6797>variable</font></b> indent
   <b><font color=#3a6797>variable</font></b> win
   <b><font color=#3a6797>set</font></b> al(TMPfname) alited.ini
   <b><font color=#3a6797>set</font></b> fname [<font color=#1b1baa>$obTpl</font> chooser tk_getOpenFile ::alited::al(TMPfname) \
@@ -628,9 +589,8 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>foreach</font></b> line [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$filecont</font> \n] {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match tpl=* <font color=#1b1baa>$line</font>]} {
       <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> 4 end]
-      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$line</font> tpl tplkey cont pos place indent}]} {
+      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$line</font> tpl tplkey cont pos place}]} {
         <b><font color=#3a6797>set</font></b> cont [::alited::ProcEOL <font color=#1b1baa>$cont</font> in]
-        <b><font color=#3a6797>set</font></b> indent [IsIndented <font color=#1b1baa>$indent</font> <font color=#1b1baa>$cont</font>]
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tpl</font> ne {} && <font color=#1b1baa>$cont</font> ne {} && <font color=#1b1baa>$pos</font> ne {}} {
           <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> is double <font color=#653760>-strict</font> <font color=#1b1baa>$pos</font>]} {<b><font color=#3a6797>set</font></b> pos 1.0}
           <font color=#1b1baa>$wtxt</font> delete 1.0 end
@@ -719,10 +679,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     {.radD - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 8} \
       {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;file's beginning&quot;</font> <font color=#653760>-var</font> ::alited::unit_tpl::place <font color=#653760>-value</font> 4 \
       <font color=#653760>-tip</font> {<font color=#653760>-BALTIP</font> {<font color=#1b1baa>$al(MC,tplaft4)</font>} <font color=#653760>-UNDER</font> 4}}}
-    {#.sev - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 20 <font color=#653760>-fill</font> y}}
-    {#.chb - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} \
-      {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Indent&quot;</font> <font color=#653760>-var</font> ::alited::unit_tpl::indent \
-      <font color=#653760>-tip</font> {<font color=#653760>-BALTIP</font> {<font color=#1b1baa>$al(MC,tplinds)</font>} <font color=#653760>-UNDER</font> 4}}}
     {LabMess fra2 T 1 10 {<font color=#653760>-st</font> nsew <font color=#653760>-pady</font> 0 <font color=#653760>-padx</font> 3} {<font color=#653760>-style</font> TLabelFS}}
     {fra3 + T 1 10 {<font color=#653760>-st</font> nsew}}
     {.ButHelp - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} \

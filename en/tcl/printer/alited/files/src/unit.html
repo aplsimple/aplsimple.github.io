@@ -123,17 +123,12 @@ tpldata - template</span></div></li></ul>
 tpldata - template
 dobreak - if yes, means "called from bindings, should return -code break"
 for noname file - save it beforehand, as templates refer to a file name</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#unit::CorrectPos">CorrectPos</a><span class=tooltiptext> unit::CorrectPos : Corrects an insert position at "after unit insert" specifically and only
-for this type of underlining: #______. Also, corrects the indentation
-of the template, counting the insertion point's indentation.
+<ul class=toc><li><div class=tooltip><a href="#unit::CorrectPos">CorrectPos</a><span class=tooltiptext> unit::CorrectPos : Corrects an insert position, counting the insertion point's indentation.
 wtxt - current text widget
 tex - template's text
 posc - relative position of cursor
 pos0 - position of insertion
-tplind - "indent" flag of the template
-If 1st line of the template is underlined, we place it under a previous
-unit's closing brace. But if the insertion point is already underlined
-or is a branch, we move 1st line of the template to its end.</span></div></li></ul>
+posi - cursor position</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#unit::Source_unit_tpl">Source_unit_tpl</a><span class=tooltiptext> unit::Source_unit_tpl : Sources unit_tpl.tcl.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#unit::Run_unit_tpl">Run_unit_tpl</a><span class=tooltiptext> unit::Run_unit_tpl : Runs Templates dialogue.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#unit::Add">Add</a><span class=tooltiptext> unit::Add : Runs a dialog "Add Template" and adds a chosen template to a text.</span></div></li></ul>
@@ -234,6 +229,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 
 <b><font color=#ca14ca>namespace</font></b> eval unit {
   <b><font color=#3a6797>variable</font></b> ilast -1  ;<i><font color=#4b5d50># last selection in the list of templates</font></i>
+  <b><font color=#3a6797>variable</font></b> REtodel {#!*\s*TODEL}
 }
 <a id=Common></a>
 <i><font color=#4b5d50># ________________________ Common _________________________ #</font></i>
@@ -516,7 +512,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50>#   tpldata - template</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al DIR DIR MNUDIR MNUDIR
-  <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$tpldata</font> tex pos place tplind
+  <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$tpldata</font> tex pos place
   <b><font color=#3a6797>set</font></b> sec [<b><font color=#3a6797>clock</font></b> seconds]
   <b><font color=#3a6797>set</font></b> fname [alited::bar::FileName]
   <i><font color=#4b5d50># fill the common wildcards</font></i>
@@ -543,15 +539,12 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50>#   # ar2 -</font></i>
   <i><font color=#4b5d50>#   # ar3 -</font></i>
   <b><font color=#3a6797>set</font></b> unithead [GetDeclaration <font color=#1b1baa>$wtxt</font> {} <font color=#1b1baa>$l1</font> <font color=#1b1baa>$l2</font>]
-<i><font color=#ff0000>#!  set pad1 [string repeat &quot; &quot; [::apave::obj leadingSpaces $unithead]]</font></i>
-  <b><font color=#3a6797>set</font></b> pad1 {}
   <b><font color=#3a6797>set</font></b> unithead [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$unithead</font> <font color=#8b2a0e>&quot;\{ &quot;</font>]
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$unithead</font> <font color=#8b2a0e>&quot;\{&quot;</font>] proc
   <b><font color=#3a6797>set</font></b> iarg [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$unithead</font> [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$proc</font>] end]
-  <b><font color=#3a6797>if</font></b> {[IsLeafRegexp]} {<b><font color=#3a6797>set</font></b> tex [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$tex</font>]}
-  <b><font color=#3a6797>set</font></b> pad2 [<b><font color=#3a6797>string</font></b> repeat <font color=#8b2a0e>&quot; &quot;</font> [::apave::obj leadingSpaces <font color=#1b1baa>$tex</font>]]
+  <b><font color=#3a6797>set</font></b> pad [<b><font color=#3a6797>string</font></b> repeat <font color=#8b2a0e>&quot; &quot;</font> [::apave::obj leadingSpaces <font color=#1b1baa>$tex</font>]]
   <b><font color=#3a6797>catch</font></b> {
-    <b><font color=#3a6797>set</font></b> tpla <font color=#1b1baa>$pad2</font>[<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \\n \n] <font color=#1b1baa>$al(TPL,%a)</font>]
+    <b><font color=#3a6797>set</font></b> tpla <font color=#1b1baa>$pad</font>[<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \\n \n] <font color=#1b1baa>$al(TPL,%a)</font>]
     <b><font color=#3a6797>set</font></b> oarg [<b><font color=#3a6797>set</font></b> st1 <font color=#8b2a0e>&quot;&quot;</font>]
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match \{<b><font color=#3a6797>*</font></b>\} <font color=#1b1baa>$iarg</font>]} {<b><font color=#3a6797>set</font></b> iarg [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$iarg</font> 1 end-1]}
     <b><font color=#3a6797>foreach</font></b> a [<b><font color=#3a6797>list</font></b> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$iarg</font>] {
@@ -560,14 +553,14 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$a</font> ne {}} {
         <b><font color=#3a6797>set</font></b> st [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %a <font color=#1b1baa>$a</font>] <font color=#1b1baa>$tpla</font>]
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$st1</font> eq <font color=#8b2a0e>&quot;&quot;</font>} {<b><font color=#3a6797>set</font></b> st1 <font color=#1b1baa>$st</font>}
-        <b><font color=#3a6797>append</font></b> oarg <font color=#1b1baa>$pad1$st</font>
+        <b><font color=#3a6797>append</font></b> oarg <font color=#1b1baa>$st</font>
       }
     }
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first %a <font color=#1b1baa>$tex</font>]&gt;-1} {
       <b><font color=#3a6797>set</font></b> place 0
       <b><font color=#3a6797>set</font></b> pos 1.[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$st1</font>]
     }
-    <b><font color=#3a6797>set</font></b> tex <font color=#1b1baa>$pad1</font>[<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \\n \n %a <font color=#1b1baa>$oarg</font>] <font color=#1b1baa>$tex</font>]
+    <b><font color=#3a6797>set</font></b> tex [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \\n \n %a <font color=#1b1baa>$oarg</font>] <font color=#1b1baa>$tex</font>]
   }
   <b><font color=#3a6797>set</font></b> ll1 [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$tex</font>]
   <b><font color=#3a6797>set</font></b> tex [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %p [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$proc</font> 1]] <font color=#1b1baa>$tex</font>]
@@ -578,7 +571,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
       <b><font color=#3a6797>set</font></b> pos <font color=#1b1baa>$r</font>.[<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$c</font>+<font color=#1b1baa>$ll</font>}]
     }
   }
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$tex</font> <font color=#1b1baa>$pos</font> <font color=#1b1baa>$place</font> <font color=#1b1baa>$tplind</font>]
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$tex</font> <font color=#1b1baa>$pos</font> <font color=#1b1baa>$place</font>]
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=unit::InsertTemplate></a>
@@ -596,7 +589,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   }
   <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
   <b><font color=#3a6797>lassign</font></b> [alited::tree::CurrentItemByLine <font color=#8b2a0e>&quot;&quot;</font> 1] itemID - - - - l1 l2
-  <b><font color=#3a6797>lassign</font></b> [TemplateData <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$l1</font> <font color=#1b1baa>$l2</font> <font color=#1b1baa>$tpldata</font>] tex posc place tplind
+  <b><font color=#3a6797>lassign</font></b> [TemplateData <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$l1</font> <font color=#1b1baa>$l2</font> <font color=#1b1baa>$tpldata</font>] tex posc place
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$posc</font> .] -&gt; col0
   <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$place</font> {
     0 { ;<i><font color=#4b5d50># returned by TemplateData: after a declaration</font></i>
@@ -612,7 +605,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$l2</font> ne <font color=#8b2a0e>&quot;&quot;</font>} {
         <b><font color=#3a6797>set</font></b> pos0 [<font color=#1b1baa>$wtxt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>l2.0 +1 line linestart&quot;</font>]
         <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$tex</font> end] ne <font color=#8b2a0e>&quot;\n&quot;</font>} {<b><font color=#3a6797>append</font></b> tex \n}
-        <b><font color=#3a6797>lassign</font></b> [CorrectPos <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$tex</font> <font color=#1b1baa>$posc</font> <font color=#1b1baa>$pos0</font> {} <font color=#1b1baa>$tplind</font>] tex pos0 posc
+        <b><font color=#3a6797>lassign</font></b> [CorrectPos <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$tex</font> <font color=#1b1baa>$posc</font> <font color=#1b1baa>$pos0</font> {}] tex pos0 posc
         <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$posc</font> .] -&gt; col0
       } <b><font color=#3a6797>else</font></b> {
         <b><font color=#3a6797>set</font></b> place 1
@@ -625,7 +618,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$place</font> == 1} {
     <b><font color=#3a6797>set</font></b> pos0 [<font color=#1b1baa>$wtxt</font> index <font color=#8b2a0e>&quot;insert +1 line linestart&quot;</font>]
     <b><font color=#3a6797>set</font></b> posi [<font color=#1b1baa>$wtxt</font> index <font color=#8b2a0e>&quot;insert linestart&quot;</font>]
-    <b><font color=#3a6797>lassign</font></b> [CorrectPos <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$tex</font> <font color=#1b1baa>$posc</font> <font color=#1b1baa>$pos0</font> <font color=#1b1baa>$posi</font> <font color=#1b1baa>$tplind</font>] tex pos0 posc
+    <b><font color=#3a6797>lassign</font></b> [CorrectPos <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$tex</font> <font color=#1b1baa>$posc</font> <font color=#1b1baa>$pos0</font> <font color=#1b1baa>$posi</font>] tex pos0 posc
     <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$posc</font> .] -&gt; col0
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$tex</font> end] ne <font color=#8b2a0e>&quot;\n&quot;</font>} {<b><font color=#3a6797>append</font></b> tex \n}
   }
@@ -639,23 +632,24 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=unit::CorrectPos></a>
-<b><font color=#ca14ca>proc</font></b> unit::CorrectPos {wtxt tex posc pos0 posi tplind} {
-  <i><font color=#4b5d50># Corrects an insert position at &quot;after unit insert&quot; specifically and only</font></i>
-  <i><font color=#4b5d50># for this type of underlining: #______. Also, corrects the indentation</font></i>
-  <i><font color=#4b5d50># of the template, counting the insertion point's indentation.</font></i>
+<b><font color=#ca14ca>proc</font></b> unit::CorrectPos {wtxt tex posc pos0 posi} {
+  <i><font color=#4b5d50># Corrects an insert position, counting the insertion point's indentation.</font></i>
   <i><font color=#4b5d50>#   wtxt - current text widget</font></i>
   <i><font color=#4b5d50>#   tex - template's text</font></i>
   <i><font color=#4b5d50>#   posc - relative position of cursor</font></i>
   <i><font color=#4b5d50>#   pos0 - position of insertion</font></i>
-  <i><font color=#4b5d50>#   tplind - &quot;indent&quot; flag of the template</font></i>
-  <i><font color=#4b5d50># If 1st line of the template is underlined, we place it under a previous</font></i>
-  <i><font color=#4b5d50># unit's closing brace. But if the insertion point is already underlined</font></i>
-  <i><font color=#4b5d50># or is a branch, we move 1st line of the template to its end.</font></i>
+  <i><font color=#4b5d50>#   posi - cursor position</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> REtodel
   <b><font color=#3a6797>set</font></b> tlist [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$tex</font> \n]
-  <b><font color=#3a6797>set</font></b> line1 [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tlist</font> 0]
-  <b><font color=#3a6797>set</font></b> indent1 [::apave::obj leadingSpaces <font color=#1b1baa>$line1</font>]  ;<i><font color=#4b5d50># indentation of the template</font></i>
+  <b><font color=#3a6797>set</font></b> indent1 0
+  <b><font color=#3a6797>foreach</font></b> t <font color=#1b1baa>$tlist</font> {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> t [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$t</font>]] ne {}} {
+      <b><font color=#3a6797>set</font></b> indent1 [::apave::obj leadingSpaces <font color=#1b1baa>$t</font>]  ;<i><font color=#4b5d50># indentation of the template</font></i>
+      <b><font color=#ca14ca>break</font></b>
+    }
+  }
   <b><font color=#3a6797>set</font></b> pos1 [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$wtxt</font> index <font color=#1b1baa>$pos0</font>])}]
   <b><font color=#3a6797>set</font></b> line2 [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$pos1</font>.0 <font color=#1b1baa>$pos1</font>.end]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$posi</font> eq {}} {
@@ -665,9 +659,9 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     <b><font color=#3a6797>set</font></b> linei [<b><font color=#3a6797>string</font></b> trimright [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$posi</font>.0 <font color=#1b1baa>$posi</font>.end]]
     <b><font color=#3a6797>set</font></b> indent2 [::apave::obj leadingSpaces <font color=#1b1baa>$linei</font>]
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$linei</font> eq {}} {
-      <b><font color=#3a6797>foreach</font></b> i {+1 +2 -1 -2} {
+      <b><font color=#3a6797>foreach</font></b> i {+0 +1 +2 -1 -2} {
         <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>expr</font></b> <font color=#1b1baa>$posi$i</font>]
-        <b><font color=#3a6797>set</font></b> ind [::apave::obj leadingSpaces [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$i</font>.0 <font color=#1b1baa>$i</font>.end]]
+        <b><font color=#3a6797>set</font></b> ind [::apave::obj leadingSpaces [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$i</font>.0 <font color=#1b1baa>$i</font>.end]=]
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ind</font>} {
           <b><font color=#3a6797>set</font></b> indent2 <font color=#1b1baa>$ind</font>
           <b><font color=#ca14ca>break</font></b>
@@ -676,8 +670,12 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     }
   }
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$posc</font> .] pl pc
+  <i><font color=#4b5d50># If 1st line of the template is underlined, we place it under a previous</font></i>
+  <i><font color=#4b5d50># unit's closing brace. But if the insertion point is already underlined</font></i>
+  <i><font color=#4b5d50># or is a branch, we move 1st line of the template to its end.</font></i>
+  <i><font color=#4b5d50># Or remove it at all, at the end of branch.</font></i>
+  <b><font color=#3a6797>set</font></b> line1 [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tlist</font> 0]
   <b><font color=#3a6797>set</font></b> under {^\s*#\s?_+$}
-  <i><font color=#4b5d50># move underline to the end or remove it at all</font></i>
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> <font color=#1b1baa>$under</font> <font color=#1b1baa>$line1</font>]} {
     <b><font color=#3a6797>set</font></b> isund [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>regexp</font></b> <font color=#1b1baa>$under</font> <font color=#1b1baa>$line2</font>] || [<b><font color=#3a6797>regexp</font></b> <font color=#1b1baa>$al(RE,leaf2)</font> <font color=#1b1baa>$line2</font>]}]
     <b><font color=#3a6797>while</font></b> {[<b><font color=#3a6797>incr</font></b> pos1 -1]&gt;1} {
@@ -700,21 +698,18 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
       }
     }
   }
-  <i><font color=#4b5d50># indent the template</font></i>
   Source_unit_tpl
-<i><font color=#ff0000>#!  if #\{$indent1&lt;$indent2 && [alited::unit_tpl::IsIndented $tplind $tex]#\} #\{</font></i>
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$indent1</font>&lt;<font color=#1b1baa>$indent2</font>} {
-    <b><font color=#3a6797>set</font></b> indent [<b><font color=#3a6797>string</font></b> repeat { } [<b><font color=#3a6797>incr</font></b> indent2 -<font color=#1b1baa>$indent1</font>]]
-    <b><font color=#3a6797>set</font></b> tlist [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$tex</font> \n]
-    <b><font color=#3a6797>set</font></b> tex {}
-    <b><font color=#3a6797>foreach</font></b> t <font color=#1b1baa>$tlist</font> {
+  <i><font color=#4b5d50># indent the template & increment the cursor position</font></i>
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>regexp</font></b> <font color=#1b1baa>$REtodel</font> <font color=#1b1baa>$tex</font>] && <font color=#1b1baa>$indent1</font>&lt;<font color=#1b1baa>$indent2</font>} {
+    <b><font color=#3a6797>incr</font></b> indent2 -<font color=#1b1baa>$indent1</font>
+    <b><font color=#3a6797>set</font></b> indent [<b><font color=#3a6797>string</font></b> repeat { } <font color=#1b1baa>$indent2</font>]
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$posc</font> .] pl pc
+    <b><font color=#3a6797>set</font></b> posc <font color=#1b1baa>$pl</font>.[<b><font color=#3a6797>incr</font></b> pc <font color=#1b1baa>$indent2</font>]
+    <b><font color=#3a6797>foreach</font></b> t [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$tex</font> \n] {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> _cnt]==1} {<b><font color=#3a6797>set</font></b> tex {}} {<b><font color=#3a6797>append</font></b> tex \n}
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$t</font> ne {}} {<b><font color=#3a6797>set</font></b> t <font color=#1b1baa>$indent$t</font>}
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> pos2]==<font color=#1b1baa>$pl</font>} {
-        <b><font color=#3a6797>set</font></b> posc <font color=#1b1baa>$pl</font>.[<b><font color=#3a6797>incr</font></b> pc <font color=#1b1baa>$indent2</font>]  ;<i><font color=#4b5d50># increment the cursor position</font></i>
-      }
-      <b><font color=#3a6797>append</font></b> tex <font color=#1b1baa>$t</font>\n
+      <b><font color=#3a6797>append</font></b> tex <font color=#1b1baa>$t</font>
     }
-    <b><font color=#3a6797>set</font></b> tex [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$tex</font> 0 end-1] ;<i><font color=#4b5d50># remove the last linefeed</font></i>
   }
   <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$tex</font> <font color=#1b1baa>$pos0</font> <font color=#1b1baa>$posc</font>]
 }
@@ -774,7 +769,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     <b><font color=#3a6797>set</font></b> name [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$ID</font> <font color=#653760>-text</font>]
     <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$name</font> %f [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]] <font color=#1b1baa>$al(MC,delitem)</font>]
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ans</font>&lt;11} {
-      <b><font color=#3a6797>set</font></b> ans [alited::msg <font color=#1b1baa>$dlg</font> ques <font color=#1b1baa>$msg</font> NO {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$dlgopts</font>]
+      <b><font color=#3a6797>set</font></b> ans [alited::msg <font color=#1b1baa>$dlg</font> ques <font color=#1b1baa>$msg</font> YES {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$dlgopts</font>]
     }
     <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$ans</font> {
       0 - 12 break

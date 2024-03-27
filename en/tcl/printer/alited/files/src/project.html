@@ -133,6 +133,8 @@ dmin - date in seconds to select</span></div></li></ul>
 msg - message
 mode - mode of Message</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#project::focusTree">focusTree</a><span class=tooltiptext> project::focusTree : Sets focus on the treeview.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#project::ValidateIni">ValidateIni</a><span class=tooltiptext> project::ValidateIni : Validates values of alited.ini.
+V - %V wildcard of -validatecommand</span></div></li></ul>
 <li><b><a href="#Files_tab's_procs">Files tab's procs</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#project::SelFiles">SelFiles</a><span class=tooltiptext> project::SelFiles : Checks for a selection of file listbox.
 Returns: list of listbox's path and the selection or {}.</span></div></li></ul>
@@ -255,8 +257,8 @@ args - not used arguments</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#project::Tab4">Tab4</a><span class=tooltiptext> project::Tab4 : Creates Commands tab of "Project".</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#project::Tab5">Tab5</a><span class=tooltiptext> project::Tab5 : Creates Files tab of "Project".</span></div></li></ul>
 <li><b><a href="#Main">Main</a></b></li>
-<ul class=toc><li><div class=tooltip><a href="#project::_create">_create</a><span class=tooltiptext> project::_create : Creates and opens "Projects" dialogue.</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#project::_run">_run</a><span class=tooltiptext> project::_run : Runs "Projects" dialogue.
+<ul class=toc><li><div class=tooltip><a href="#project::_create">_create</a><span class=tooltiptext> project::_create : Creates and opens Projects dialogue.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#project::_run">_run</a><span class=tooltiptext> project::_run : Runs Projects dialogue.
 checktodo - if yes, checks for outdated TODOs</span></div></li></ul>
 <li><b><a href="#EOF">EOF</a></b></li>
 
@@ -324,19 +326,19 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50># apave object of Projects</font></i>
   <b><font color=#3a6797>variable</font></b> obPrj pavedProject
 
-  <i><font color=#4b5d50># &quot;Projects&quot; dialogue's path</font></i>
+  <i><font color=#4b5d50># Projects dialogue's path</font></i>
   <b><font color=#3a6797>variable</font></b> win <font color=#1b1baa>$::alited::al(WIN)</font>.diaPrj
 
   <i><font color=#4b5d50># list of projects</font></i>
   <b><font color=#3a6797>variable</font></b> prjlist [<b><font color=#3a6797>list</font></b>]
 
-  <i><font color=#4b5d50># initial geometry of &quot;Projects&quot; dialogue (centered in the main form)</font></i>
+  <i><font color=#4b5d50># initial geometry of Projects dialogue (centered in the main form)</font></i>
   <b><font color=#3a6797>variable</font></b> geo root=<font color=#1b1baa>$::alited::al(WIN)</font>
 
   <i><font color=#4b5d50># saved index of last selected project</font></i>
   <b><font color=#3a6797>variable</font></b> ilast -1
 
-  <i><font color=#4b5d50># saved tab of &quot;Projects&quot; dialogue</font></i>
+  <i><font color=#4b5d50># saved tab of Projects dialogue</font></i>
   <b><font color=#3a6797>variable</font></b> oldTab {}
 
   <i><font color=#4b5d50># data of projects</font></i>
@@ -371,6 +373,8 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>variable</font></b> savedfilefilter <font color=#1b1baa>$filefilter</font>
   <b><font color=#3a6797>variable</font></b> savedcasefilter <font color=#1b1baa>$casefilter</font>
 
+  <i><font color=#4b5d50># flag &quot;save alited.ini&quot;</font></i>
+  <b><font color=#3a6797>variable</font></b> saveini no
 }
 <a id=Common></a>
 <i><font color=#4b5d50># ________________________ Common _________________________ #</font></i>
@@ -937,7 +941,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$al(prjroot)</font>]} {
     FocusInTab f1 [<font color=#1b1baa>$obPrj</font> chooserPath Dir]
     <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %d <font color=#1b1baa>$al(prjroot)</font>] <font color=#1b1baa>$al(makeroot)</font>]
-    <b><font color=#3a6797>if</font></b> {![alited::msg yesno ques <font color=#1b1baa>$msg</font> NO <font color=#653760>-geometry</font> root=<font color=#1b1baa>$win</font>]} {
+    <b><font color=#3a6797>if</font></b> {![alited::msg yesno ques <font color=#1b1baa>$msg</font> YES <font color=#653760>-geometry</font> root=<font color=#1b1baa>$win</font>]} {
       <b><font color=#ca14ca>return</font></b> no
     }
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>file</font></b> mkdir <font color=#1b1baa>$al(prjroot)</font>} err]} {
@@ -1090,6 +1094,20 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>variable</font></b> obPrj
   <b><font color=#134070>focus</font></b> <font color=#1b1baa>$win</font>
   <b><font color=#134070>focus</font></b> [<font color=#1b1baa>$obPrj</font> TreePrj]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=project::ValidateIni></a>
+<b><font color=#ca14ca>proc</font></b> project::ValidateIni {V} {
+  <i><font color=#4b5d50># Validates values of alited.ini.</font></i>
+  <i><font color=#4b5d50>#   V - %V wildcard of -validatecommand</font></i>
+
+  <b><font color=#3a6797>variable</font></b> saveini
+  <b><font color=#3a6797>set</font></b> saveini yes
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$V</font> eq {focusout}} {
+    alited::ini::SaveIni
+    <b><font color=#3a6797>set</font></b> saveini no
+  }
+  <b><font color=#ca14ca>return</font></b> 1
 }
 <a id=Files_tab's_procs></a>
 <i><font color=#4b5d50># ________________________ Files tab's procs _________________________ #</font></i>
@@ -2309,7 +2327,8 @@ README.md}
     {.lab - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-t</font> {TODO days ahead:}}}
     {.spx - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 8} \
       {<font color=#653760>-tvar</font> ::alited::al(todoahead) <font color=#653760>-from</font> 0 <font color=#653760>-to</font> 365 <font color=#653760>-w</font> 5 <font color=#653760>-justify</font> center \
-      <font color=#653760>-com</font> alited::project::Select}}
+      <font color=#653760>-com</font> alited::project::Select <font color=#653760>-validate</font> all \
+      <font color=#653760>-validatecommand</font> {alited::project::ValidateIni %V}}}
     {fra3 fra2 L 2 1 {<font color=#653760>-st</font> nsew} {<font color=#653760>-relief</font> groove <font color=#653760>-borderwidth</font> 2}}
     {.seh - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> x}}
     {.daT - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> both} \
@@ -2478,7 +2497,7 @@ README.md}
 <i><font color=#4b5d50># ________________________ Main _________________________ #</font></i>
 <a id=project::_create></a>
 <b><font color=#ca14ca>proc</font></b> project::_create {} {
-  <i><font color=#4b5d50># Creates and opens &quot;Projects&quot; dialogue.</font></i>
+  <i><font color=#4b5d50># Creates and opens Projects dialogue.</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   <b><font color=#3a6797>variable</font></b> obPrj
@@ -2554,15 +2573,16 @@ README.md}
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=project::_run></a>
 <b><font color=#ca14ca>proc</font></b> project::_run {{checktodo yes}} {
-  <i><font color=#4b5d50># Runs &quot;Projects&quot; dialogue.</font></i>
+  <i><font color=#4b5d50># Runs Projects dialogue.</font></i>
   <i><font color=#4b5d50>#   checktodo - if yes, checks for outdated TODOs</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   <b><font color=#3a6797>variable</font></b> win
   <b><font color=#3a6797>variable</font></b> msgtodo
   <b><font color=#3a6797>variable</font></b> updateGUI
-  <b><font color=#3a6797>set</font></b> updateGUI no
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$win</font>]} {<b><font color=#ca14ca>return</font></b> {}}
+  <b><font color=#3a6797>variable</font></b> saveini
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$win</font>]} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>set</font></b> updateGUI [<b><font color=#3a6797>set</font></b> saveini no]
   <b><font color=#3a6797>set</font></b> msgtodo {}
   <b><font color=#3a6797>update</font></b>  ;<i><font color=#4b5d50># if run from menu: there may be unupdated space under it (in some DE)</font></i>
   SaveSettings
@@ -2576,10 +2596,8 @@ README.md}
   }
   <b><font color=#3a6797>after</font></b> 200 alited::project::OnProjectEnter
   <b><font color=#3a6797>set</font></b> res [_create]
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$updateGUI</font>} {
-    alited::main::UpdateAll ;<i><font color=#4b5d50># settings may be changed as for GUI</font></i>
-  }
-  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$updateGUI</font>} alited::main::UpdateAll ;<i><font color=#4b5d50># settings may be changed as for GUI</font></i>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$saveini</font>} alited::ini::SaveIni
 }
 <a id=EOF></a>
 <i><font color=#4b5d50># _________________________________ EOF _________________________________ #</font></i>
