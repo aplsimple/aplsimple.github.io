@@ -118,7 +118,19 @@ The selection (or lines of selection) is saved to a temporary file
 that is processed by commands.</span></div></li></ul>
 <li><b><a href="#insertions">&nbsp;&nbsp;insertions</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#format::Mode5">Mode5</a><span class=tooltiptext> format::Mode5 : Inserts a string at the current cursor position.
-cont - list of config.file's lines</span></div></li></ul>
+Or does something without changing the text (if commands return "").
+cont - list of config.file's lines or variable name containing it
+args - contains the edited file name etc.</span></div></li></ul>
+<li><b><a href="#pluginable">&nbsp;&nbsp;pluginable</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#format::Mode6">Mode6</a><span class=tooltiptext> format::Mode6 : Runs a pluginable formatter.
+cont - list of config.file's lines
+args - formatter's file name etc.
+Returns 1st event to run the formatter or {}.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#format::EventOK">EventOK</a><span class=tooltiptext> format::EventOK : Checks if an event is correct (not overlap alited key mapping).
+fullformname - full path to formatter
+fform - formatter's name
+ev - the event
+wasacc - if true, -accelerator of $fform menu item was made</span></div></li></ul>
 <li><b><a href="#EOF">EOF</a></b></li>
 
 </ul>
@@ -184,12 +196,14 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 <b><font color=#ca14ca>namespace</font></b> eval format {
   <b><font color=#3a6797>variable</font></b> win <font color=#1b1baa>$::alited::al(WIN)</font>.formats
   <b><font color=#3a6797>variable</font></b> da
-  <b><font color=#3a6797>array</font></b> set da {dir 2 what 1 bgRE <font color=#8b2a0e>&quot;&quot;</font> geo <font color=#8b2a0e>&quot;&quot;</font>}
+  <b><font color=#3a6797>array</font></b> set da [<b><font color=#3a6797>list</font></b> dir 2 what 1 bgRE <font color=#8b2a0e>&quot;&quot;</font> geo <font color=#8b2a0e>&quot;&quot;</font>]
   <b><font color=#3a6797>set</font></b> da(separSav1) <font color=#1b1baa>$::alited::al(format_separ1)</font>
   <b><font color=#3a6797>set</font></b> da(separSav2) <font color=#1b1baa>$::alited::al(format_separ2)</font>
-  <b><font color=#3a6797>variable</font></b> valueOrig
-  <b><font color=#3a6797>variable</font></b> valueSel
-  <b><font color=#3a6797>variable</font></b> valueLines
+  <b><font color=#3a6797>variable</font></b> valueOrig {}
+  <b><font color=#3a6797>variable</font></b> valueSel {}
+  <b><font color=#3a6797>variable</font></b> valueLines {}
+  <b><font color=#3a6797>variable</font></b> cont6; <b><font color=#3a6797>array</font></b> set cont6 [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>variable</font></b> bind6; <b><font color=#3a6797>array</font></b> set bind6 [<b><font color=#3a6797>list</font></b>]
 }
 <a id=Move_unit_descriptions></a>
 <i><font color=#4b5d50># ________________________ Move unit descriptions _________________________ #</font></i>
@@ -810,7 +824,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$cont</font> {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> com [alited::edit::IniParameter command <font color=#1b1baa>$line</font>]] ne {}} {
       <b><font color=#3a6797>set</font></b> value [alited::edit::EscapeValue <font color=#1b1baa>$value</font>]
-      <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %v <font color=#1b1baa>$value</font>] <font color=#1b1baa>$com</font>]
+      <b><font color=#3a6797>set</font></b> com [alited::Map <font color=#653760>-nocase</font> <font color=#1b1baa>$com</font> %v <font color=#1b1baa>$value</font>]
       <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> value [<b><font color=#3a6797>eval</font></b> <font color=#1b1baa>$com</font>]} e]} {
         alited::Message <font color=#1b1baa>$e</font> 4
         <b><font color=#3a6797>set</font></b> err 1
@@ -834,7 +848,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>set</font></b> err 0
   <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$cont</font> {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> com [alited::edit::IniParameter command <font color=#1b1baa>$line</font>]] ne {}} {
-      <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %v <font color=#1b1baa>$value</font>] <font color=#1b1baa>$com</font>]
+      <b><font color=#3a6797>set</font></b> com [alited::Map {} <font color=#1b1baa>$com</font> %v <font color=#1b1baa>$value</font>]
       <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> value [<b><font color=#3a6797>eval</font></b> <font color=#1b1baa>$com</font>]} e]} {
         alited::Message <font color=#1b1baa>$e</font> 4
         <b><font color=#3a6797>set</font></b> err 1
@@ -869,7 +883,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtxt</font> eq {}} <b><font color=#ca14ca>return</font></b>
   <b><font color=#3a6797>lassign</font></b> [BeforeFormatting yes] wtxt valueLines
   <b><font color=#3a6797>set</font></b> comcount 0
-  <b><font color=#3a6797>set</font></b> err 0
   <b><font color=#3a6797>set</font></b> tmpname [alited::TmpFile FORMAT~]
   <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$cont</font> {
     <b><font color=#3a6797>set</font></b> com {}
@@ -887,8 +900,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$comcount</font>} <b><font color=#ca14ca>break</font></b>
     }
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$com</font> ne {}} {
-      <b><font color=#3a6797>set</font></b> abracadabra {<b><font color=#3a6797>*</font></b>@&D34oP`G-}
-      <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %% <font color=#1b1baa>$abracadabra</font>] <font color=#1b1baa>$com</font>]
       <b><font color=#3a6797>set</font></b> com [alited::MapWildCards <font color=#1b1baa>$com</font>]
       <i><font color=#4b5d50>#   %S - file name for saved selection</font></i>
       <i><font color=#4b5d50>#   %L - file name for saved lines of selection</font></i>
@@ -897,8 +908,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
       } <b><font color=#3a6797>elseif</font></b> {[<b><font color=#3a6797>string</font></b> first %L <font color=#1b1baa>$com</font>]&gt;=0 && <font color=#1b1baa>$valueLines</font> ne {}} {
         apave::writeTextFile <font color=#1b1baa>$tmpname</font> ::alited::format::valueLines
       }
-      <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map <font color=#653760>-nocase</font> [<b><font color=#3a6797>list</font></b> %S <font color=#1b1baa>$tmpname</font> %L <font color=#1b1baa>$tmpname</font>] <font color=#1b1baa>$com</font>]
-      <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$abracadabra</font> %] <font color=#1b1baa>$com</font>]
+      <b><font color=#3a6797>set</font></b> com [alited::Map <font color=#653760>-nocase</font> <font color=#1b1baa>$com</font> %S <font color=#1b1baa>$tmpname</font> %L <font color=#1b1baa>$tmpname</font>]
       alited::tool::Run_in_e_menu <font color=#1b1baa>$com</font>
     }
   }
@@ -908,20 +918,129 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 <a id=format::Mode5></a>
 <b><font color=#ca14ca>proc</font></b> format::Mode5 {cont args} {
   <i><font color=#4b5d50># Inserts a string at the current cursor position.</font></i>
-  <i><font color=#4b5d50>#   cont - list of config.file's lines</font></i>
+  <i><font color=#4b5d50># Or does something without changing the text (if commands return &quot;&quot;).</font></i>
+  <i><font color=#4b5d50>#   cont - list of config.file's lines or variable name containing it</font></i>
+  <i><font color=#4b5d50>#   args - contains the edited file name etc.</font></i>
 
-  <b><font color=#3a6797>lassign</font></b> [BeforeFormatting] wtxt
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al DIR DIR
+  <b><font color=#3a6797>lassign</font></b> [BeforeFormatting] wtxt value
+  <b><font color=#3a6797>set</font></b> value [alited::edit::EscapeValue <font color=#1b1baa>$value</font>]
+  <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$args</font> -&gt; fname
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists <font color=#1b1baa>$cont</font>]} {
+    <b><font color=#3a6797>set</font></b> cont [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$cont</font>]
+  }
   <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$cont</font> {
+    <b><font color=#3a6797>incr</font></b> il
     <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$wtxt</font> index insert]
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> com [alited::edit::IniParameter command <font color=#1b1baa>$line</font>]] ne {}} {
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> value [<b><font color=#3a6797>eval</font></b> <font color=#1b1baa>$com</font>]} e]} {
-        alited::Message <font color=#1b1baa>$e</font> 4
-        <b><font color=#3a6797>set</font></b> err 1
-        <b><font color=#ca14ca>break</font></b>
+    <b><font color=#3a6797>set</font></b> com [alited::edit::IniParameter command <font color=#1b1baa>$line</font> <font color=#653760>-nocase</font> -]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$com</font> ne {}} {
+      <b><font color=#3a6797>set</font></b> ending [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$com</font> eq <font color=#8b2a0e>&quot;-&quot;</font>}]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ending</font>} {
+        <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>join</font></b> [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$cont</font> <font color=#1b1baa>$il</font> end] \n]
       }
-      <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$pos</font> <font color=#1b1baa>$value</font>
+      <b><font color=#3a6797>set</font></b> selection [<font color=#1b1baa>$wtxt</font> tag ranges sel]
+      <b><font color=#3a6797>set</font></b> lsel [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$selection</font>]
+      <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$lsel</font>} {
+        <b><font color=#3a6797>set</font></b> value {}
+      }
+      <i><font color=#4b5d50># map format's own and template's woildcards</font></i>
+      <b><font color=#3a6797>set</font></b> com [alited::Map {} \
+        <font color=#1b1baa>$com</font> %W <font color=#1b1baa>$wtxt</font> %v <font color=#1b1baa>$value</font> %f <font color=#1b1baa>$fname</font> \
+        %d <font color=#1b1baa>$al(TPL,%d)</font> \
+        %t <font color=#1b1baa>$al(TPL,%t)</font> \
+        %u <font color=#1b1baa>$al(TPL,%u)</font> \
+        %U <font color=#1b1baa>$al(TPL,%U)</font> \
+        %w <font color=#1b1baa>$al(TPL,%w)</font> \
+        %A <font color=#1b1baa>$DIR</font> \
+        %M <font color=#1b1baa>$al(EM,mnudir)</font>]
+      <b><font color=#3a6797>set</font></b> value [<b><font color=#3a6797>eval</font></b> <font color=#1b1baa>$com</font>]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$value</font> ne {}} {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$lsel</font>} {
+          <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$selection</font> pos1 pos2
+          <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font> <font color=#1b1baa>$value</font>
+        } <b><font color=#3a6797>else</font></b> {
+          <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$pos</font> <font color=#1b1baa>$value</font>
+        }
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ending</font>} <b><font color=#ca14ca>break</font></b>
     }
   }
+}
+<a id=pluginable></a>
+<i><font color=#4b5d50>## ________________________ pluginable _________________________ ##</font></i>
+<a id=format::Mode6></a>
+<b><font color=#ca14ca>proc</font></b> format::Mode6 {cont args} {
+  <i><font color=#4b5d50># Runs a pluginable formatter.</font></i>
+  <i><font color=#4b5d50>#   cont - list of config.file's lines</font></i>
+  <i><font color=#4b5d50>#   args - formatter's file name etc.</font></i>
+  <i><font color=#4b5d50># Returns 1st event to run the formatter or {}.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> cont6
+  <b><font color=#3a6797>variable</font></b> bind6
+  <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$args</font> fullformname
+  <b><font color=#3a6797>set</font></b> fform [alited::edit::FormatterName <font color=#1b1baa>$fullformname</font>]
+  <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+  <b><font color=#3a6797>set</font></b> bind6(<font color=#1b1baa>$fform</font>) [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>set</font></b> res {}
+  <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$cont</font> {
+    <b><font color=#3a6797>incr</font></b> il
+    <b><font color=#3a6797>set</font></b> events [alited::edit::IniParameter events <font color=#1b1baa>$line</font> <font color=#653760>-nocase</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$events</font> ne {}} {
+      <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>list</font></b> alited::format::Mode5 ::alited::format::cont6(<font color=#1b1baa>$fform</font>) {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
+      <b><font color=#3a6797>foreach</font></b> ev [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$events</font> { ,}] {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ev</font> ne {}} {
+          <b><font color=#3a6797>set</font></b> wasacc [<b><font color=#3a6797>info</font></b> exist cont6(<font color=#1b1baa>$fform</font>)]
+          <b><font color=#3a6797>if</font></b> {[EventOK <font color=#1b1baa>$fullformname</font> <font color=#1b1baa>$fform</font> <font color=#1b1baa>$ev</font> <font color=#1b1baa>$wasacc</font>]} {
+            <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$ev</font> <font color=#1b1baa>$com</font>}
+            <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$bind6($fform)</font>]} {<b><font color=#3a6797>set</font></b> res <font color=#1b1baa>$ev</font>}
+            <b><font color=#3a6797>lappend</font></b> bind6(<font color=#1b1baa>$fform</font>) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$ev</font> <font color=#1b1baa>$com</font>]
+          } <b><font color=#3a6797>else</font></b> {
+            <b><font color=#3a6797>set</font></b> res {}
+            <b><font color=#ca14ca>break</font></b>
+          }
+        }
+        <b><font color=#3a6797>set</font></b> cont6(<font color=#1b1baa>$fform</font>) [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$cont</font> <font color=#1b1baa>$il</font> end]
+      }
+      <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+    }
+  }
+  <i><font color=#4b5d50># no event encountered - run the formatter once</font></i>
+  Mode5 <font color=#1b1baa>$cont</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=format::EventOK></a>
+<b><font color=#ca14ca>proc</font></b> format::EventOK {fullformname fform ev wasacc} {
+  <i><font color=#4b5d50># Checks if an event is correct (not overlap alited key mapping).</font></i>
+  <i><font color=#4b5d50>#   fullformname - full path to formatter</font></i>
+  <i><font color=#4b5d50>#   fform - formatter's name</font></i>
+  <i><font color=#4b5d50>#   ev - the event</font></i>
+  <i><font color=#4b5d50>#   wasacc - if true, -accelerator of $fform menu item was made</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> cont6
+  <b><font color=#3a6797>set</font></b> ev2 [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$ev</font> &lt;&gt;]
+  <b><font color=#3a6797>set</font></b> keys [alited::keys::EngagedList]
+  <b><font color=#3a6797>lappend</font></b> keys {<b><font color=#3a6797>*</font></b>}[alited::keys::ReservedList]
+  <b><font color=#3a6797>foreach</font></b> key <font color=#1b1baa>$keys</font> {
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$key</font> ev1
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ev1</font> eq <font color=#1b1baa>$ev2</font>} {
+      <b><font color=#3a6797>set</font></b> mitem [alited::menu::FormatsItemName <font color=#1b1baa>$fform</font>]
+      <b><font color=#3a6797>set</font></b> msg [msgcat::mc {%e is overlapped by formatter <font color=#8b2a0e>&quot;%f&quot;</font>}]
+      <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %e <font color=#1b1baa>$ev</font> %f <font color=#1b1baa>$mitem</font>] <font color=#1b1baa>$msg</font>]
+      alited::MessageError <font color=#1b1baa>$msg</font>
+      <b><font color=#ca14ca>return</font></b> no
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$wasacc</font>} {
+    <i><font color=#4b5d50># add -accelerator to Formats menu item of $fform</font></i>
+    <b><font color=#3a6797>set</font></b> mnu <font color=#1b1baa>$al(MENUFORMATS)</font>
+    <b><font color=#3a6797>set</font></b> itemttl [alited::menu::FormatsItemName <font color=#1b1baa>$fform</font>]
+    alited::edit::PluginAccelerator <font color=#1b1baa>$mnu</font> <font color=#1b1baa>$itemttl</font> <font color=#1b1baa>$ev2</font>
+  }
+  <b><font color=#3a6797>set</font></b> al(FORMATS,<font color=#1b1baa>$fform</font>,<font color=#1b1baa>$ev2</font>) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fullformname</font> <font color=#1b1baa>$ev2</font>]
+  <b><font color=#ca14ca>return</font></b> yes
 }
 <a id=EOF></a>
 <i><font color=#4b5d50># ________________________ EOF _________________________ #</font></i>

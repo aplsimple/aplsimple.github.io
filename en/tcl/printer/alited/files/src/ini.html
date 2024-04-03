@@ -85,6 +85,9 @@ val - value of option</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#ini::ReadIniMisc">ReadIniMisc</a><span class=tooltiptext> ini::ReadIniMisc : Gets miscellaneous options of alited.
 nam - name of option
 val - value of option</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#ini::ReadIniFormats">ReadIniFormats</a><span class=tooltiptext> ini::ReadIniFormats : Gets pluginable formatters of alited.
+nam - name of option
+val - value of option</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#ini::Em_Number">Em_Number</a><span class=tooltiptext> ini::Em_Number : Gets a real number of e_menu items counting non-empty ones only.
 em_N - current number of e_menu items</span></div></li></ul>
 <li><b><a href="#Reading_project_settings">Reading project settings</a></b></li>
@@ -435,6 +438,9 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 
   <i><font color=#4b5d50># width of mark bar</font></i>
   <b><font color=#3a6797>set</font></b> al(markwidth) 8
+
+  <i><font color=#4b5d50># switch &quot;show week numbers in calendar&quot;</font></i>
+  <b><font color=#3a6797>set</font></b> al(klndweeks) 0
 }
 <a id=Variables></a>
 <i><font color=#4b5d50># ________________________ Variables _________________________ #</font></i>
@@ -472,7 +478,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>set</font></b> mode <font color=#8b2a0e>&quot;&quot;</font>
   <b><font color=#3a6797>foreach</font></b> stini <font color=#1b1baa>$al(ini_file)</font> {
     <b><font color=#3a6797>switch</font></b> <font color=#653760>-exact</font> <font color=#1b1baa>$stini</font> {
-      {[Geometry]} - {[Options]} - {[Projects]} - {[Templates]} - {[Keys]} - {[EM]} - {[Tkcon]} - {[Misc]} {
+      {[Geometry]} - {[Options]} - {[Projects]} - {[Templates]} - {[Keys]} - {[EM]} - {[Tkcon]} - {[Misc]} - {[Formats]} {
         <b><font color=#3a6797>set</font></b> mode <font color=#1b1baa>$stini</font>
         <b><font color=#ca14ca>continue</font></b>
       }
@@ -490,6 +496,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
           {[EM]}        {ReadIniEM <font color=#1b1baa>$nam</font> <font color=#1b1baa>$val</font> em_i}
           {[Tkcon]}     {ReadIniTkcon <font color=#1b1baa>$nam</font> <font color=#1b1baa>$val</font>}
           {[Misc]}      {ReadIniMisc <font color=#1b1baa>$nam</font> <font color=#1b1baa>$val</font>}
+          {[Formats]}   {ReadIniFormats <font color=#1b1baa>$nam</font> <font color=#1b1baa>$val</font>}
         }
       }
     }
@@ -806,7 +813,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     showinfo {<b><font color=#3a6797>set</font></b> al(TREE,showinfo) <font color=#1b1baa>$val</font>}
     listSBL - HelpedMe - checkgeo - tonemoves - moveall - chosencolor \
     - sortList - activemacro - commentmode - format_separ1 - format_separ2 \
-    - TIPS,* - MNUGEO,* - markwidth {
+    - TIPS,* - MNUGEO,* - markwidth - klndweeks {
       <b><font color=#3a6797>set</font></b> al(<font color=#1b1baa>$nam</font>) <font color=#1b1baa>$val</font>
     }
     tplilast {<b><font color=#3a6797>set</font></b> ::alited::unit::ilast <font color=#1b1baa>$val</font>}
@@ -817,6 +824,22 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     chInRE2 {<b><font color=#3a6797>set</font></b> ::alited::find::chInRE2 [<b><font color=#3a6797>string</font></b> is true <font color=#1b1baa>$val</font>]}
     chExRE2 {<b><font color=#3a6797>set</font></b> ::alited::find::chExRE2 [<b><font color=#3a6797>string</font></b> is true <font color=#1b1baa>$val</font>]}
     geoRE2 {<b><font color=#3a6797>set</font></b> ::alited::find::geoRE2 <font color=#1b1baa>$val</font>}
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=ini::ReadIniFormats></a>
+<b><font color=#ca14ca>proc</font></b> ini::ReadIniFormats {nam val} {
+  <i><font color=#4b5d50># Gets pluginable formatters of alited.</font></i>
+  <i><font color=#4b5d50>#   nam - name of option</font></i>
+  <i><font color=#4b5d50>#   val - value of option</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>switch</font></b> <font color=#653760>-exact</font> -- <font color=#1b1baa>$nam</font> {
+    pluginable {
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$val</font> fullformname ev
+      <b><font color=#3a6797>set</font></b> fform [alited::edit::FormatterName <font color=#1b1baa>$fullformname</font>]
+      <b><font color=#3a6797>set</font></b> al(FORMATS,<font color=#1b1baa>$fform</font>,<font color=#1b1baa>$ev</font>) <font color=#1b1baa>$val</font>
+    }
   }
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -1142,6 +1165,13 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;format_separ1=<font color=#1b1baa>$</font>al(format_separ1)&quot;</font>
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;format_separ2=<font color=#1b1baa>$</font>al(format_separ2)&quot;</font>
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;markwidth=<font color=#1b1baa>$</font>al(markwidth)&quot;</font>
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;klndweeks=<font color=#1b1baa>$</font>al(klndweeks)&quot;</font>
+  <i><font color=#4b5d50># save the Edit/Formats pluginables</font></i>
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> {}
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> {[Formats]}
+  <b><font color=#3a6797>foreach</font></b> n [<b><font color=#3a6797>array</font></b> names al <font color=#653760>-glob</font> FORMATS,*] {
+    <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;pluginable=<font color=#1b1baa>$</font>al(<font color=#1b1baa>$</font>n)&quot;</font>
+  }
   <i><font color=#4b5d50># save the geometry options</font></i>
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> {}
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> {[Geometry]}
@@ -1582,7 +1612,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     }
   }
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$clrvals</font>]==[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$clrnams</font>]} {
-    ::hl_tcl::hl_colors {<font color=#653760>-AddTags</font>} <font color=#1b1baa>$Dark</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$clrvals</font>
+    ::hl_tcl::hl_colors <font color=#653760>-AddTags</font> <font color=#1b1baa>$Dark</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$clrvals</font>
   }
   ::hl_tcl::hl_colors . <font color=#1b1baa>$Dark</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$clrvals</font> ;<i><font color=#4b5d50># default Tcl syntax colors</font></i>
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(ED,BlinkCurs)</font>} {

@@ -101,13 +101,13 @@ wtxt - text widget's path</span></div></li></ul>
 <li><b><a href="#Show_results">Show results</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#find::ShowResults">ShowResults</a><span class=tooltiptext> find::ShowResults : Shows a message containing results of a search.
 msg - the message
-mode - mode for alited::Message
-TID - tab's ID where the searches were performed in</span></div></li></ul>
+TID - tab's ID where the searches were performed in
+fg - color for infobar</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#find::ShowResults1">ShowResults1</a><span class=tooltiptext> find::ShowResults1 : Shows a message of all found strings.
 allfnd - list of search results</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#find::ShowResults2">ShowResults2</a><span class=tooltiptext> find::ShowResults2 : Shows a message of number of found strings.
+<ul class=toc><li><div class=tooltip><a href="#find::ShowResults2">ShowResults2</a><span class=tooltiptext> find::ShowResults2 : Shows a message of number of found strings (e.g. in a tab).
 rn - number of found strings
-msg - messsage's template
+msg - message's template
 TID - tab's ID where the searches were performed in</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#find::InitShowResults">InitShowResults</a><span class=tooltiptext> find::InitShowResults : Clears the info list before any search.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#find::PutInfo">PutInfo</a><span class=tooltiptext> find::PutInfo : Puts a message to the info listbox widget, about a line found in a file.
@@ -115,6 +115,7 @@ fname - the file's name
 line - the line's number
 info - found info
 TID - tab's ID of the file
+fg - color of the message
 See also: info::Put</span></div></li></ul>
 <li><b><a href="#Do_search">Do search</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#find::SetTags">SetTags</a><span class=tooltiptext> find::SetTags : Adds a tag of found strings to a text widget.
@@ -531,17 +532,19 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>foreach</font></b> tab <font color=#1b1baa>$tabs</font> {
     <b><font color=#3a6797>set</font></b> TID [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tab</font> 0]
     alited::main::GetText <font color=#1b1baa>$TID</font> no no
+    <b><font color=#3a6797>lassign</font></b> [alited::FgAdditional] fgbr
     <b><font color=#3a6797>foreach</font></b> it <font color=#1b1baa>$al(_unittree,$TID)</font> {
       <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$it</font> lev leaf fl1 title l1 l2
       <b><font color=#3a6797>set</font></b> ttl [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$title</font> [<b><font color=#3a6797>string</font></b> last : <font color=#1b1baa>$title</font>]+1 end] ;<i><font color=#4b5d50># pure name, no NS</font></i>
       <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match <font color=#653760>-nocase</font> <font color=#8b2a0e>&quot;*<font color=#1b1baa>$</font>what*&quot;</font> <font color=#1b1baa>$ttl</font>]} {
-        <b><font color=#3a6797>set</font></b> fname [alited::bar::BAR <font color=#1b1baa>$TID</font> cget <font color=#653760>-text</font>]
-        PutInfo <font color=#1b1baa>$fname</font> <font color=#1b1baa>$l1</font> <font color=#1b1baa>$title</font> <font color=#1b1baa>$TID</font>
+        <b><font color=#3a6797>set</font></b> tname [alited::bar::TabName <font color=#1b1baa>$TID</font>]
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$leaf</font>} {<b><font color=#3a6797>set</font></b> fg {}} {<b><font color=#3a6797>set</font></b> fg <font color=#1b1baa>$fgbr</font>}
+        PutInfo <font color=#1b1baa>$tname</font> <font color=#1b1baa>$l1</font> <font color=#1b1baa>$title</font> <font color=#1b1baa>$TID</font> <font color=#1b1baa>$fg</font>
         <b><font color=#3a6797>incr</font></b> n
       }
     }
   }
-  ShowResults [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$n</font> %s <font color=#1b1baa>$what</font>] <font color=#1b1baa>$al(MC,frres1)</font>]
+  ShowResults [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$n</font> %s <font color=#1b1baa>$what</font>] <font color=#1b1baa>$al(MC,frres1)</font>] {} <font color=#653760>-fg</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=find::FindUnit></a>
@@ -680,19 +683,18 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 <a id=Show_results></a>
 <i><font color=#4b5d50># ________________________ Show results _________________________ #</font></i>
 <a id=find::ShowResults></a>
-<b><font color=#ca14ca>proc</font></b> find::ShowResults {msg {mode 3} {TID <font color=#8b2a0e>&quot;&quot;</font>}} {
+<b><font color=#ca14ca>proc</font></b> find::ShowResults {msg {TID <font color=#8b2a0e>&quot;&quot;</font>} {fg <font color=#8b2a0e>&quot;&quot;</font>}} {
   <i><font color=#4b5d50># Shows a message containing results of a search.</font></i>
   <i><font color=#4b5d50>#   msg - the message</font></i>
-  <i><font color=#4b5d50>#   mode - mode for alited::Message</font></i>
   <i><font color=#4b5d50>#   TID - tab's ID where the searches were performed in</font></i>
+  <i><font color=#4b5d50>#   fg - color for infobar</font></i>
 
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> eq {}} {<b><font color=#3a6797>set</font></b> TID [alited::bar::CurrentTabID]}
-  <b><font color=#3a6797>set</font></b> fname [alited::bar::BAR <font color=#1b1baa>$TID</font> cget <font color=#653760>-text</font>]
-  <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %f <font color=#1b1baa>$fname</font>] <font color=#1b1baa>$msg</font>]
+  <b><font color=#3a6797>set</font></b> tname [alited::bar::TabName <font color=#1b1baa>$TID</font>]
+  <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %f <font color=#1b1baa>$tname</font>] <font color=#1b1baa>$msg</font>]
   <i><font color=#4b5d50># results in info list:</font></i>
-  alited::info::Put <font color=#1b1baa>$msg</font> {} yes
+  alited::info::Put <font color=#1b1baa>$msg</font> {} yes no no <font color=#1b1baa>$fg</font>
   <i><font color=#4b5d50># results in status bar:</font></i>
-  alited::Message <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>msg <font color=#1b1baa>[</font>string repeat <font color=#1b1baa>{</font> <font color=#1b1baa>}</font> 40<font color=#1b1baa>]</font>&quot;</font> <font color=#1b1baa>$mode</font>
+  alited::Message <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>msg <font color=#1b1baa>[</font>string repeat <font color=#1b1baa>{</font> <font color=#1b1baa>}</font> 40<font color=#1b1baa>]</font>&quot;</font> 3
   <i><font color=#4b5d50># update line numbers of current file, as they are gone after the search</font></i>
   <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot; \</font>
 <font color=#8b2a0e>    alited::main::CursorPos <font color=#1b1baa>[</font>alited::main::CurrentWTXT<font color=#1b1baa>]</font> ; \</font>
@@ -710,14 +712,15 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=find::ShowResults2></a>
 <b><font color=#ca14ca>proc</font></b> find::ShowResults2 {rn msg {TID <font color=#8b2a0e>&quot;&quot;</font>}} {
-  <i><font color=#4b5d50># Shows a message of number of found strings.</font></i>
+  <i><font color=#4b5d50># Shows a message of number of found strings (e.g. in a tab).</font></i>
   <i><font color=#4b5d50>#   rn - number of found strings</font></i>
-  <i><font color=#4b5d50>#   msg - messsage's template</font></i>
+  <i><font color=#4b5d50>#   msg - message's template</font></i>
   <i><font color=#4b5d50>#   TID - tab's ID where the searches were performed in</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   <b><font color=#3a6797>variable</font></b> data
-  ShowResults [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$rn</font> %s <font color=#1b1baa>$data(en1)</font> %r <font color=#1b1baa>$data(en2)</font>] <font color=#1b1baa>$msg</font>] 3 <font color=#1b1baa>$TID</font>
+  <b><font color=#3a6797>set</font></b> tn [alited::bar::TabName <font color=#1b1baa>$TID</font>]
+  ShowResults [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$rn</font> %s <font color=#1b1baa>$data(en1)</font> %r <font color=#1b1baa>$data(en2)</font> %f <font color=#1b1baa>$tn</font>] <font color=#1b1baa>$msg</font>] 3
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=find::InitShowResults></a>
@@ -731,17 +734,18 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=find::PutInfo></a>
-<b><font color=#ca14ca>proc</font></b> find::PutInfo {fname line info TID} {
+<b><font color=#ca14ca>proc</font></b> find::PutInfo {fname line info TID {fg <font color=#8b2a0e>&quot;&quot;</font>}} {
   <i><font color=#4b5d50># Puts a message to the info listbox widget, about a line found in a file.</font></i>
   <i><font color=#4b5d50>#   fname - the file's name</font></i>
   <i><font color=#4b5d50>#   line - the line's number</font></i>
   <i><font color=#4b5d50>#   info - found info</font></i>
   <i><font color=#4b5d50>#   TID - tab's ID of the file</font></i>
+  <i><font color=#4b5d50>#   fg - color of the message</font></i>
   <i><font color=#4b5d50># See also: info::Put</font></i>
 
   <b><font color=#3a6797>set</font></b> msg <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>fname  <font color=#1b1baa>$</font>line:  <font color=#1b1baa>$</font>info&quot;</font>
   <b><font color=#3a6797>set</font></b> dat [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$TID</font> <font color=#1b1baa>$line</font>]
-  alited::info::Put <font color=#1b1baa>$msg</font> <font color=#1b1baa>$dat</font>
+  alited::info::Put <font color=#1b1baa>$msg</font> <font color=#1b1baa>$dat</font> no no no <font color=#1b1baa>$fg</font>
 }
 <a id=Do_search></a>
 <i><font color=#4b5d50># ________________________ Do search _________________________ #</font></i>
@@ -930,7 +934,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50>#   TID - tab's ID</font></i>
   <i><font color=#4b5d50>#   tagme - if &quot;add&quot;, means &quot;add find tag to the found strings of the text&quot;</font></i>
 
-  <b><font color=#3a6797>set</font></b> fname [alited::bar::BAR <font color=#1b1baa>$TID</font> cget <font color=#653760>-text</font>]
+  <b><font color=#3a6797>set</font></b> tname [alited::bar::TabName <font color=#1b1baa>$TID</font>]
   <b><font color=#3a6797>set</font></b> l1 -1
   <b><font color=#3a6797>set</font></b> allfnd [Search <font color=#1b1baa>$wtxt</font>]
   <b><font color=#3a6797>foreach</font></b> idx12 <font color=#1b1baa>$allfnd</font> {
@@ -939,7 +943,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     <b><font color=#3a6797>set</font></b> l2 [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$index1</font>)}]
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$l1</font> != <font color=#1b1baa>$l2</font>} {
       <b><font color=#3a6797>set</font></b> line [<font color=#1b1baa>$wtxt</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>index1 linestart&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>index1 lineend&quot;</font>]
-      PutInfo <font color=#1b1baa>$fname</font> <font color=#1b1baa>$l2</font> [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$line</font>] <font color=#1b1baa>$TID</font>
+      PutInfo <font color=#1b1baa>$tname</font> <font color=#1b1baa>$l2</font> [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$line</font>] <font color=#1b1baa>$TID</font>
       <b><font color=#3a6797>set</font></b> l1 <font color=#1b1baa>$l2</font>
     }
   }

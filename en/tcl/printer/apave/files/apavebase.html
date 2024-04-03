@@ -121,6 +121,8 @@ atrs - new default attributes
 widget - Tcl/Tk command for the new registered widget type
 See also: APaveBase::defaultATTRS</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#initBaltip">initBaltip</a><span class=tooltiptext> initBaltip : Initializes baltip package.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#focusApp">focusApp</a><span class=tooltiptext> focusApp : Restores app's focus: if app loses focus, restoring it
+focuses main window, ignores modal toplevel, locks keyboard.</span></div></li></ul>
 <li><b><a href="#Text_little_procs">&nbsp;&nbsp;Text little procs</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#eventOnText">eventOnText</a><span class=tooltiptext> eventOnText : Generates an event on a text, saving its current index in hl_tcl.
 w - text widget's path
@@ -1033,6 +1035,19 @@ Docs:
           ; <b><font color=#ca14ca>proc</font></b> BindToEvent {args} {}
           }
         }
+      }
+    }
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=focusApp></a>
+  <b><font color=#ca14ca>proc</font></b> focusApp {} {
+    <i><font color=#4b5d50># Restores app's focus: if app loses focus, restoring it</font></i>
+    <i><font color=#4b5d50># focuses main window, ignores modal toplevel, locks keyboard.</font></i>
+
+    <b><font color=#3a6797>catch</font></b> {
+      <b><font color=#134070>focus</font></b> <font color=#653760>-force</font> <font color=#1b1baa>$::apave::FOCUSED</font>
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>focus</font></b>] eq <font color=#1b1baa>$::apave::FOCUSED</font>} {
+        <b><font color=#134070>event</font></b> generate <font color=#1b1baa>$::apave::FOCUSED</font> &lt;Tab&gt; ;<i><font color=#4b5d50># enter a field</font></i>
       }
     }
   }
@@ -2266,13 +2281,13 @@ Docs:
       <i><font color=#4b5d50># chooser's default geometry centered in parent</font></i>
       <b><font color=#3a6797>if</font></b> {![<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$wp</font>]} {<b><font color=#3a6797>set</font></b> wp .}
       <b><font color=#3a6797>set</font></b> geom [<b><font color=#3a6797>set</font></b> W 640]x[<b><font color=#3a6797>set</font></b> H 470]
-      <b><font color=#3a6797>append</font></b> geom [<b><font color=#ca14ca>my</font></b> CenteredXY {<b><font color=#3a6797>*</font></b>}[<b><font color=#3a6797>split</font></b> [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$wp</font>] x+] <font color=#1b1baa>$W</font> <font color=#1b1baa>$H</font>]
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>append</font></b> geom [<b><font color=#ca14ca>my</font></b> CenteredXY {<b><font color=#3a6797>*</font></b>}[<b><font color=#3a6797>split</font></b> [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$wp</font>] x+] <font color=#1b1baa>$W</font> <font color=#1b1baa>$H</font>]}
     }
     <b><font color=#3a6797>if</font></b> {[::isunix]} {
       <i><font color=#4b5d50># the below equilibristics provides the smooth display</font></i>
       <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;catch <font color=#1b1baa>{</font>wm withdraw <font color=#1b1baa>$</font>wchooser; wm geometry <font color=#1b1baa>$</font>wchooser 1x1<font color=#1b1baa>}</font>&quot;</font>
       <b><font color=#3a6797>after</font></b> 0 [<b><font color=#3a6797>list</font></b> after idle \
-        <font color=#8b2a0e>&quot;catch <font color=#1b1baa>{</font>wm withdraw <font color=#1b1baa>$</font>wchooser; wm geometry <font color=#1b1baa>$</font>wchooser <font color=#1b1baa>$</font>geom; wm deiconify <font color=#1b1baa>$</font>wchooser<font color=#1b1baa>}</font>; wm geometry <font color=#1b1baa>$</font>wchooser <font color=#1b1baa>$</font>geom&quot;</font>]
+        <font color=#8b2a0e>&quot;catch <font color=#1b1baa>{</font>wm withdraw <font color=#1b1baa>$</font>wchooser; wm geometry <font color=#1b1baa>$</font>wchooser <font color=#1b1baa>$</font>geom; wm deiconify <font color=#1b1baa>$</font>wchooser; wm geometry <font color=#1b1baa>$</font>wchooser <font color=#1b1baa>$</font>geom<font color=#1b1baa>}</font>&quot;</font>]
     }
     <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$wchooser</font>
   }
@@ -2420,7 +2435,7 @@ Docs:
         <b><font color=#134070>focus</font></b> <font color=#1b1baa>$bname</font>
       }
       <b><font color=#134070>focus</font></b> <font color=#1b1baa>$tname</font>
-      <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>tname selection range 0 end ; <font color=#1b1baa>$</font>tname icursor end&quot;</font>
+      <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;catch <font color=#1b1baa>{$</font>tname selection range 0 end ; <font color=#1b1baa>$</font>tname icursor end<font color=#1b1baa>}</font>&quot;</font>
     }
     <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
   }
@@ -4456,6 +4471,10 @@ Docs:
       <b><font color=#3a6797>append</font></b> opt(-onclose) <font color=#8b2a0e>&quot;; ::apave::obj EXPORT CleanUps <font color=#1b1baa>$</font>win&quot;</font>
     }
     <b><font color=#134070>wm</font></b> protocol <font color=#1b1baa>$win</font> WM_DELETE_WINDOW <font color=#1b1baa>$opt(-onclose)</font>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$modal</font>} {
+      <b><font color=#3a6797>set</font></b> ::apave::FOCUSED <font color=#1b1baa>$win</font>
+      <b><font color=#134070>wm</font></b> protocol <font color=#1b1baa>$win</font> WM_TAKE_FOCUS ::apave::focusApp
+    }
     <i><font color=#4b5d50># get the window's geometry from its requested sizes</font></i>
     <b><font color=#3a6797>set</font></b> inpgeom <font color=#1b1baa>$opt(-geometry)</font>
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$inpgeom</font> eq {}} {

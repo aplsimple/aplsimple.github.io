@@ -75,6 +75,7 @@ See also: bar::FillBar</span></div></li></ul>
 <li><b><a href="#Port_to_listen">&nbsp;&nbsp;Port to listen</a></b></li>
 <li><b><a href="#Open_an_existing_app">&nbsp;&nbsp;Open an existing app</a></b></li>
 <li><b><a href="#alited::">alited::</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#FgAdditional">FgAdditional</a><span class=tooltiptext> FgAdditional : Gets the list of additional colors: branch, red, todo.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#FgFgBold">FgFgBold</a><span class=tooltiptext> FgFgBold : Gets foregrounds of normal and colored text of current color scheme
 and red color of TODOs.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#ListPaved">ListPaved</a><span class=tooltiptext> ListPaved : Return a list of apave objects for dialogues.</span></div></li></ul>
@@ -112,6 +113,10 @@ arName - fully qualified array name
 args - proc name & arguments</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#InitUnitTree">InitUnitTree</a><span class=tooltiptext> InitUnitTree : Initializes the unit tree of file to be processed.
 TID - tab's ID</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#Map">Map</a><span class=tooltiptext> Map : Maps wildcards and %% in a string.
+opts - options of "string map" command
+str - string
+args - list of wildcards and values: {%w1 $val1 %w2 $val2 ...}</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#MapWildCards">MapWildCards</a><span class=tooltiptext> MapWildCards : Maps some common wildcards in a command
 com - the command
 Wildcards:
@@ -122,6 +127,7 @@ Wildcards:
 %A - directory of alited
 %M - directory of e_menu's menus
 %E - Tcl/Tk executable as set in Preferences/Tools</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#Font">Font</a><span class=tooltiptext> Font : Gets editor's font.</span></div></li></ul>
 <li><b><a href="#Messages">&nbsp;&nbsp;Messages</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#MessageTags">MessageTags</a><span class=tooltiptext> MessageTags : Gets tags for texts shown with messages.
 Returns "-tags option" for messages.</span></div></li></ul>
@@ -143,7 +149,9 @@ msg - message
 mode - 1: simple; 2: bold; 3: bold color; 4: bold red bell; 5: static; 6: bold red
 lab - label's name to display the message in
 first - serves to recursively erase the message</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#MessageNotDisturb">MessageNotDisturb</a><span class=tooltiptext> MessageNotDisturb : Show "Don't disturb" message.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#MessageNotDisturb">MessageNotDisturb</a><span class=tooltiptext> MessageNotDisturb : Shows "Don't disturb" message.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#MessageError">MessageError</a><span class=tooltiptext> MessageError : Doubles error message: in infobar and in status bar.
+msg - error message</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#Balloon">Balloon</a><span class=tooltiptext> Balloon : Displays a message in a balloon window.
 msg - message
 red - yes for red background
@@ -265,7 +273,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 <i><font color=#4b5d50># License: MIT.</font></i>
 <i><font color=#4b5d50>###########################################################</font></i>
 
-<b><font color=#3a6797>package</font></b> provide alited 1.8.1  ;<i><font color=#4b5d50># for documentation (esp. for Ruff!)</font></i>
+<b><font color=#3a6797>package</font></b> provide alited 1.8.2  ;<i><font color=#4b5d50># for documentation (esp. for Ruff!)</font></i>
 
 <b><font color=#ca14ca>namespace</font></b> eval alited {
 
@@ -643,13 +651,21 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 <i><font color=#4b5d50># __________________________ alited:: ________________________ #</font></i>
 
 <b><font color=#ca14ca>namespace</font></b> eval alited {
+<a id=FgAdditional></a>
+  <b><font color=#ca14ca>proc</font></b> FgAdditional {} {
+    <i><font color=#4b5d50># Gets the list of additional colors: branch, red, todo.</font></i>
+
+    <b><font color=#3a6797>lassign</font></b> [::hl_tcl::addingColors {} <font color=#653760>-AddTags</font>] - - fgbr - - fgred - - - fgtodo
+    <b><font color=#3a6797>list</font></b>  <font color=#1b1baa>$fgbr</font> <font color=#1b1baa>$fgred</font> <font color=#1b1baa>$fgtodo</font>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
 <a id=FgFgBold></a>
   <b><font color=#ca14ca>proc</font></b> FgFgBold {} {
     <i><font color=#4b5d50># Gets foregrounds of normal and colored text of current color scheme</font></i>
     <i><font color=#4b5d50># and red color of TODOs.</font></i>
 
     <b><font color=#3a6797>variable</font></b> obPav
-    <b><font color=#3a6797>lassign</font></b> [::hl_tcl::addingColors] -&gt; fgred
+    <b><font color=#3a6797>lassign</font></b> [FgAdditional] -&gt; fgred
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> lst [<font color=#1b1baa>$obPav</font> csGet]}]} {
       <b><font color=#3a6797>set</font></b> fg [<b><font color=#134070>ttk::style</font></b> lookup <font color=#8b2a0e>&quot;.&quot;</font> <font color=#653760>-foreground</font>]
       <b><font color=#3a6797>set</font></b> bg [<b><font color=#134070>ttk::style</font></b> lookup <font color=#8b2a0e>&quot;.&quot;</font> <font color=#653760>-background</font>]
@@ -657,7 +673,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     } <b><font color=#3a6797>else</font></b> {
       <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$lst</font> - fg - bg fgbold
     }
-    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fg</font> <font color=#1b1baa>$fgbold</font> <font color=#1b1baa>$fgred</font> <font color=#1b1baa>$bg</font>]
+    <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fg</font> <font color=#1b1baa>$fgbold</font> <font color=#1b1baa>$fgred</font> <font color=#1b1baa>$bg</font>
   }
   <i><font color=#4b5d50>#_______________________</font></i>
 <a id=ListPaved></a>
@@ -824,6 +840,21 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     <b><font color=#ca14ca>return</font></b> 1
   }
   <i><font color=#4b5d50>#_______________________</font></i>
+<a id=Map></a>
+  <b><font color=#ca14ca>proc</font></b> Map {opts str args} {
+  <i><font color=#4b5d50># Maps wildcards and %% in a string.</font></i>
+  <i><font color=#4b5d50>#   opts - options of &quot;string map&quot; command</font></i>
+  <i><font color=#4b5d50>#   str - string</font></i>
+  <i><font color=#4b5d50>#   args - list of wildcards and values: {%w1 $val1 %w2 $val2 ...}</font></i>
+
+    <b><font color=#3a6797>set</font></b> abra {<b><font color=#3a6797>*</font></b>^e!`i@U50=|}
+    <b><font color=#3a6797>set</font></b> str [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %% <font color=#1b1baa>$abra</font>] <font color=#1b1baa>$str</font>]
+    <b><font color=#3a6797>foreach</font></b> {wc val} <font color=#1b1baa>$args</font> {
+      <b><font color=#3a6797>set</font></b> str [<b><font color=#3a6797>string</font></b> map {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wc</font> <font color=#1b1baa>$val</font>] <font color=#1b1baa>$str</font>]
+    }
+    <b><font color=#3a6797>set</font></b> str [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$abra</font> %] <font color=#1b1baa>$str</font>]
+}
+  <i><font color=#4b5d50>#_______________________</font></i>
 <a id=MapWildCards></a>
   <b><font color=#ca14ca>proc</font></b> MapWildCards {com} {
     <i><font color=#4b5d50># Maps some common wildcards in a command</font></i>
@@ -841,16 +872,22 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     <b><font color=#3a6797>variable</font></b> DIR
     <b><font color=#3a6797>set</font></b> filename [bar::FileName]
     <b><font color=#3a6797>set</font></b> dirname [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$filename</font>]
-    <b><font color=#3a6797>set</font></b> abra {<b><font color=#3a6797>*</font></b>^e!`i@U50=|}
-    <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %% <font color=#1b1baa>$abra</font>] <font color=#1b1baa>$com</font>]
-    <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %H [apave::HomeDir]] <font color=#1b1baa>$com</font>]
-    <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %P <font color=#1b1baa>$al(prjroot)</font>] <font color=#1b1baa>$com</font>]
-    <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %F <font color=#1b1baa>$filename</font>] <font color=#1b1baa>$com</font>]
-    <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %D <font color=#1b1baa>$dirname</font>] <font color=#1b1baa>$com</font>]
-    <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %A <font color=#1b1baa>$DIR</font>] <font color=#1b1baa>$com</font>]
-    <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %M <font color=#1b1baa>$al(EM,mnudir)</font>] <font color=#1b1baa>$com</font>]
-    <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %E [Tclexe]] <font color=#1b1baa>$com</font>]
-    <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$abra</font> %] <font color=#1b1baa>$com</font>]
+    <b><font color=#3a6797>set</font></b> com [Map {} <font color=#1b1baa>$com</font> \
+      %H [apave::HomeDir] \
+      %P <font color=#1b1baa>$al(prjroot)</font> \
+      %F <font color=#1b1baa>$filename</font> \
+      %D <font color=#1b1baa>$dirname</font> \
+      %A <font color=#1b1baa>$DIR</font> \
+      %M <font color=#1b1baa>$al(EM,mnudir)</font> \
+      %E [Tclexe]]
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=Font></a>
+  <b><font color=#ca14ca>proc</font></b> Font {} {
+    <i><font color=#4b5d50># Gets editor's font.</font></i>
+
+    <b><font color=#3a6797>variable</font></b> al
+    <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$al(FONT,txt)</font>
   }
 <a id=Messages></a>
   <i><font color=#4b5d50>## ________________________ Messages _________________________ ##</font></i>
@@ -995,7 +1032,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50>#_______________________</font></i>
 <a id=MessageNotDisturb></a>
   <b><font color=#ca14ca>proc</font></b> MessageNotDisturb {} {
-    <i><font color=#4b5d50># Show &quot;Don't disturb&quot; message.</font></i>
+    <i><font color=#4b5d50># Shows &quot;Don't disturb&quot; message.</font></i>
 
     <b><font color=#3a6797>variable</font></b> al
     <b><font color=#3a6797>lassign</font></b> [alited::complete::TextCursorCoordinates] X Y
@@ -1003,6 +1040,15 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     Message <font color=#1b1baa>$msg</font> 3
     ::baltip::showBalloon <font color=#1b1baa>$msg</font> \
       <font color=#653760>-geometry</font> <font color=#8b2a0e>&quot;+<font color=#1b1baa>$</font>X+<font color=#1b1baa>$</font>Y&quot;</font> <font color=#653760>-fg</font> <font color=#1b1baa>$al(MOVEFG)</font> <font color=#653760>-bg</font> <font color=#1b1baa>$al(MOVEBG)</font>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=MessageError></a>
+  <b><font color=#ca14ca>proc</font></b> MessageError {msg} {
+  <i><font color=#4b5d50># Doubles error message: in infobar and in status bar.</font></i>
+  <i><font color=#4b5d50>#   msg - error message</font></i>
+
+    info::Put <font color=#1b1baa>$msg</font> {} yes yes yes <font color=#653760>-fg</font>
+    Message <font color=#1b1baa>$msg</font> 4
   }
   <i><font color=#4b5d50>#_______________________</font></i>
 <a id=Balloon></a>
@@ -1390,7 +1436,10 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
       <b><font color=#3a6797>if</font></b> {[file::AllSaved]} {
         alited::menu::SaveCascadeMenuGeo
         <b><font color=#3a6797>catch</font></b> {find::CloseFind}  ;<i><font color=#4b5d50># save Find/Replace geometry</font></i>
-        <b><font color=#3a6797>catch</font></b> {ini::SaveIni}     ;<i><font color=#4b5d50># save alited's settings</font></i>
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> eq {2}} {
+          <i><font color=#4b5d50># save alited's settings: in main::_run not saved yet</font></i>
+          <b><font color=#3a6797>catch</font></b> {ini::SaveIni}
+        }
         tool::_close                     ;<i><font color=#4b5d50># close all of the</font></i>
         <b><font color=#3a6797>catch</font></b> {run::Cancel}              ;<i><font color=#4b5d50># possibly open</font></i>
         <b><font color=#3a6797>catch</font></b> {check::Cancel}            ;<i><font color=#4b5d50># non-modal</font></i>

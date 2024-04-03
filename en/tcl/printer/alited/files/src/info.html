@@ -66,7 +66,8 @@ msg - the message
 inf - additional data for the message (1st line of unit etc.)
 bold - if yes, displays the message bolded
 red - if yes, makes the message seen in red color
-see - if yes, makes the message seen</span></div></li></ul>
+see - if yes, makes the message seen
+fg - {} or foreground color or -fg</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#info::Clear">Clear</a><span class=tooltiptext> info::Clear : Clears the info listbox widget and the related data.
 i - index of message (if omitted, clears all messages)</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#info::ClearOut">ClearOut</a><span class=tooltiptext> info::ClearOut : Clears and out of the info listbox.</span></div></li></ul>
@@ -168,13 +169,14 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=info::Put></a>
-<b><font color=#ca14ca>proc</font></b> info::Put {msg {inf <font color=#8b2a0e>&quot;&quot;</font>} {bold no} {red no} {see no}} {
+<b><font color=#ca14ca>proc</font></b> info::Put {msg {inf <font color=#8b2a0e>&quot;&quot;</font>} {bold no} {red no} {see no} {fg <font color=#8b2a0e>&quot;&quot;</font>}} {
   <i><font color=#4b5d50># Puts a message to the info listbox widget.</font></i>
   <i><font color=#4b5d50>#   msg - the message</font></i>
   <i><font color=#4b5d50>#   inf - additional data for the message (1st line of unit etc.)</font></i>
   <i><font color=#4b5d50>#   bold - if yes, displays the message bolded</font></i>
   <i><font color=#4b5d50>#   red - if yes, makes the message seen in red color</font></i>
   <i><font color=#4b5d50>#   see - if yes, makes the message seen</font></i>
+  <i><font color=#4b5d50>#   fg - {} or foreground color or -fg</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited obPav obPav
   <b><font color=#3a6797>variable</font></b> list
@@ -193,8 +195,14 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$red</font>} {
     <b><font color=#3a6797>set</font></b> fgbold <font color=#1b1baa>$fgred</font>
     <b><font color=#3a6797>set</font></b> lastred <font color=#1b1baa>$llen</font>
-  } <b><font color=#3a6797>elseif</font></b> {!<font color=#1b1baa>$bold</font>} {
+  } <b><font color=#3a6797>elseif</font></b> {!<font color=#1b1baa>$bold</font> && <font color=#1b1baa>$fg</font> eq {}} {
     <b><font color=#ca14ca>return</font></b>
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fg</font> ne {}} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fg</font> eq <font color=#8b2a0e>&quot;-fg&quot;</font>} {
+      <b><font color=#3a6797>lassign</font></b> [alited::FgAdditional] -&gt; fg
+    }
+    <b><font color=#3a6797>set</font></b> fgbold <font color=#1b1baa>$fg</font>
   }
   <font color=#1b1baa>$lbx</font> itemconfigure end <font color=#653760>-foreground</font> <font color=#1b1baa>$fgbold</font>
 }

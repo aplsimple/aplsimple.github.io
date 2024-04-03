@@ -114,6 +114,8 @@ wtxt - text's path</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#unit::IsLeafRegexp">IsLeafRegexp</a><span class=tooltiptext> unit::IsLeafRegexp : Checks for using "leaf's regexp" setting.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#unit::UnitRegexp">UnitRegexp</a><span class=tooltiptext> unit::UnitRegexp : Gets RE to check unit's beginning.</span></div></li></ul>
 <li><b><a href="#Templates">Templates</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#unit::TemplateMap">TemplateMap</a><span class=tooltiptext> unit::TemplateMap : Maps a string using template wildcards.
+str - string to map</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#unit::TemplateData">TemplateData</a><span class=tooltiptext> unit::TemplateData : Replaces the template wildcards with data of current text and unit.
 wtxt - text's path
 l1 - 1st line of current unit
@@ -503,6 +505,29 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 }
 <a id=Templates></a>
 <i><font color=#4b5d50># ________________________ Templates _________________________ #</font></i>
+<a id=unit::TemplateMap></a>
+<b><font color=#ca14ca>proc</font></b> unit::TemplateMap {str} {
+  <i><font color=#4b5d50># Maps a string using template wildcards.</font></i>
+  <i><font color=#4b5d50>#   str - string to map</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al DIR DIR
+  <b><font color=#3a6797>set</font></b> sec [<b><font color=#3a6797>clock</font></b> seconds]
+  <b><font color=#3a6797>set</font></b> fname [alited::bar::FileName]
+  <b><font color=#ca14ca>return</font></b> [alited::Map {} <font color=#1b1baa>$str</font> \
+    %d [alited::tool::FormatDate <font color=#1b1baa>$sec</font>] \
+    %t [<b><font color=#3a6797>clock</font></b> format <font color=#1b1baa>$sec</font> <font color=#653760>-format</font> <font color=#1b1baa>$al(TPL,%t)</font> <font color=#653760>-locale</font> <font color=#1b1baa>$::alited::al(LOCAL)</font>] \
+    %u <font color=#1b1baa>$al(TPL,%u)</font> \
+    %U <font color=#1b1baa>$al(TPL,%U)</font> \
+    %m <font color=#1b1baa>$al(TPL,%m)</font> \
+    %w <font color=#1b1baa>$al(TPL,%w)</font> \
+    %F <font color=#1b1baa>$fname</font> \
+    %f [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>] \
+    %n [<b><font color=#3a6797>file</font></b> rootname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]] \
+    %A <font color=#1b1baa>$DIR</font> \
+    %M <font color=#1b1baa>$al(EM,mnudir)</font> \
+    ]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
 <a id=unit::TemplateData></a>
 <b><font color=#ca14ca>proc</font></b> unit::TemplateData {wtxt l1 l2 tpldata} {
   <i><font color=#4b5d50># Replaces the template wildcards with data of current text and unit.</font></i>
@@ -515,23 +540,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$tpldata</font> tex pos place
   <b><font color=#3a6797>set</font></b> sec [<b><font color=#3a6797>clock</font></b> seconds]
   <b><font color=#3a6797>set</font></b> fname [alited::bar::FileName]
-  <i><font color=#4b5d50># fill the common wildcards</font></i>
-  <b><font color=#3a6797>set</font></b> abra {<b><font color=#3a6797>*</font></b>^e!`i@U50=|}
-  <b><font color=#3a6797>set</font></b> tex [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %% <font color=#1b1baa>$abra</font>] <font color=#1b1baa>$tex</font>]
-  <b><font color=#3a6797>set</font></b> tex [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \
-    %d [alited::tool::FormatDate <font color=#1b1baa>$sec</font>] \
-    %t [<b><font color=#3a6797>clock</font></b> format <font color=#1b1baa>$sec</font> <font color=#653760>-format</font> <font color=#1b1baa>$al(TPL,%t)</font> <font color=#653760>-locale</font> <font color=#1b1baa>$::alited::al(LOCAL)</font>] \
-    %u <font color=#1b1baa>$al(TPL,%u)</font> \
-    %U <font color=#1b1baa>$al(TPL,%U)</font> \
-    %m <font color=#1b1baa>$al(TPL,%m)</font> \
-    %w <font color=#1b1baa>$al(TPL,%w)</font> \
-    %F <font color=#1b1baa>$fname</font> \
-    %f [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>] \
-    %n [<b><font color=#3a6797>file</font></b> rootname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]] \
-    %A <font color=#1b1baa>$DIR</font> \
-    %M <font color=#1b1baa>$al(EM,mnudir)</font> \
-    ] <font color=#1b1baa>$tex</font>]
-  <b><font color=#3a6797>set</font></b> tex [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$abra</font> %] <font color=#1b1baa>$tex</font>]
+  <b><font color=#3a6797>set</font></b> tex [TemplateMap <font color=#1b1baa>$tex</font>]
   <i><font color=#4b5d50># get a list of proc/method's arguments:</font></i>
   <i><font color=#4b5d50># from &quot;proc pr {ar1 ar2 ar3} &quot; and a template &quot;  # %a -\n&quot;</font></i>
   <i><font color=#4b5d50># to get</font></i>

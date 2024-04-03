@@ -176,11 +176,13 @@ See also:
 <ul class=toc><li><div class=tooltip><a href="#edit::IniParameter">IniParameter</a><span class=tooltiptext> edit::IniParameter : Gets parameter value from a line of ini-file.
 parname - parameter name (can contain several names separated with comma)
 line - line content
-case - option "-nocase" for regexp (default) or any other option</span></div></li></ul>
+case - option "-nocase" for regexp (default) or any other option
+defval - default value</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#edit::SourceFormatTcl">SourceFormatTcl</a><span class=tooltiptext> edit::SourceFormatTcl : Sources format.tcl.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#edit::FormatUnitDesc">FormatUnitDesc</a><span class=tooltiptext> edit::FormatUnitDesc</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#edit::RunFormat">RunFormat</a><span class=tooltiptext> edit::RunFormat : Does format according to a format file.
-fname - format file's name</span></div></li></ul>
+fname - format file's name
+forbind - if no, called from menu</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#edit::OpenFormatFile">OpenFormatFile</a><span class=tooltiptext> edit::OpenFormatFile : Opens file(s) from data/format directory or its subdirectories.
 dir - (sub)directory name</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#edit::InvertStringCase">InvertStringCase</a><span class=tooltiptext> edit::InvertStringCase : Inverts cases in a string (e.g. InversE -> iNVERSe).
@@ -200,6 +202,15 @@ s2 - 2nd string</span></div></li></ul>
 value - the value</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#edit::UnEscapeValue">UnEscapeValue</a><span class=tooltiptext> edit::UnEscapeValue : Unescapes a value's backslashes and braces.
 value - the value</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::BindPluginables">BindPluginables</a><span class=tooltiptext> edit::BindPluginables : Binds pluginable formatters to the edited text.
+wtxt - text's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::PluginAccelerator">PluginAccelerator</a><span class=tooltiptext> edit::PluginAccelerator : Adds -accelerator to Formats menu item or returns a list of
+accelerators used by pluginables.
+mnu - menu path
+itemttl - item's title
+ev - event</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#edit::FormatterName">FormatterName</a><span class=tooltiptext> edit::FormatterName : Gets formatter's file name from its full name.
+fname - full name of formatter file</span></div></li></ul>
 <li><b><a href="#EOF">EOF</a></b></li>
 
 </ul>
@@ -543,10 +554,14 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$clr</font> {}] -&gt; r g b
     <b><font color=#3a6797>set</font></b> clr #<font color=#1b1baa>$r$r$g$g$b$b</font>
   }
-  <b><font color=#3a6797>scan</font></b> <font color=#1b1baa>$clr</font> <font color=#8b2a0e>&quot;#%02x%02x%02x&quot;</font> r g b
-  <b><font color=#3a6797>set</font></b> c [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$r</font>&lt;100 && <font color=#1b1baa>$g</font>&lt;100 || <font color=#1b1baa>$r</font>&lt;100 && <font color=#1b1baa>$b</font>&lt;100 || <font color=#1b1baa>$b</font>&lt;100 && <font color=#1b1baa>$g</font>&lt;100 ||
-    (<font color=#1b1baa>$r</font>+<font color=#1b1baa>$g</font>+<font color=#1b1baa>$b</font>)&lt;300 ? 255 : 0}]
-  <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>string</font></b> toupper [<b><font color=#3a6797>format</font></b> <font color=#8b2a0e>&quot;#%02x%02x%02x&quot;</font> <font color=#1b1baa>$c</font> <font color=#1b1baa>$c</font> <font color=#1b1baa>$c</font>]]
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#134070>winfo</font></b> rgb . <font color=#1b1baa>$clr</font>] r g b
+  <b><font color=#3a6797>if</font></b> {(<font color=#1b1baa>$r</font>%256+<font color=#1b1baa>$b</font>%256)&lt;15 && (<font color=#1b1baa>$g</font>%256)&gt;180} {
+    <b><font color=#3a6797>set</font></b> res #000000
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$r</font>+1.5*<font color=#1b1baa>$g</font>+0.5*<font color=#1b1baa>$b</font> &gt; 100000} {
+    <b><font color=#3a6797>set</font></b> res #000000
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> res #FFFFFF
+  }
   <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font> <font color=#1b1baa>$clr</font>]
 }
 <a id=At_modifications></a>
@@ -1338,16 +1353,18 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 <a id=Formats></a>
 <i><font color=#4b5d50># ________________________ Formats _________________________ #</font></i>
 <a id=edit::IniParameter></a>
-<b><font color=#ca14ca>proc</font></b> edit::IniParameter {parname line {case <font color=#653760>-nocase</font>}} {
+<b><font color=#ca14ca>proc</font></b> edit::IniParameter {parname line {case <font color=#653760>-nocase</font>} {defval <font color=#8b2a0e>&quot;&quot;</font>}} {
   <i><font color=#4b5d50># Gets parameter value from a line of ini-file.</font></i>
   <i><font color=#4b5d50>#   parname - parameter name (can contain several names separated with comma)</font></i>
   <i><font color=#4b5d50>#   line - line content</font></i>
   <i><font color=#4b5d50>#   case - option &quot;-nocase&quot; for regexp (default) or any other option</font></i>
+  <i><font color=#4b5d50>#   defval - default value</font></i>
 
   <b><font color=#3a6797>foreach</font></b> pname [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$parname</font> ,] {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$case</font> <font color=#8b2a0e>&quot;^\\s*<font color=#1b1baa>$</font>pname\\s*=\\s*&quot;</font> <font color=#1b1baa>$line</font>]} {
       <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>string</font></b> first = <font color=#1b1baa>$line</font>]
       <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> [<b><font color=#3a6797>incr</font></b> i] end]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$res</font>] eq {}} {<b><font color=#3a6797>set</font></b> res -}
       <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$res</font>]
     }
   }
@@ -1373,12 +1390,16 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=edit::RunFormat></a>
-<b><font color=#ca14ca>proc</font></b> edit::RunFormat {fname} {
+<b><font color=#ca14ca>proc</font></b> edit::RunFormat {fname {forbind no}} {
   <i><font color=#4b5d50># Does format according to a format file.</font></i>
   <i><font color=#4b5d50>#   fname - format file's name</font></i>
+  <i><font color=#4b5d50>#   forbind - if no, called from menu</font></i>
 
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   SourceFormatTcl
   <b><font color=#3a6797>set</font></b> fcont [<b><font color=#3a6797>split</font></b> [::apave::readTextFile <font color=#1b1baa>$fname</font>] \n]
+  <b><font color=#3a6797>set</font></b> fform [FormatterName <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>unset</font></b> <font color=#653760>-nocomplain</font> al(FORMATS,<font color=#1b1baa>$fform</font>)
   <b><font color=#3a6797>set</font></b> mode 0
   <b><font color=#3a6797>set</font></b> cont [<b><font color=#3a6797>list</font></b>]
   <b><font color=#3a6797>set</font></b> backslashed {}
@@ -1396,8 +1417,17 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$cont</font> {
     <b><font color=#3a6797>incr</font></b> iline
     <b><font color=#3a6797>set</font></b> mode [IniParameter mode <font color=#1b1baa>$line</font>]
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mode</font> in {1 2 3 4 5}} {
-      alited::format::Mode<font color=#1b1baa>$mode</font> [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$cont</font> <font color=#1b1baa>$iline</font> end]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mode</font> in {1 2 3 4 5 6}} {
+      <b><font color=#3a6797>set</font></b> ev [alited::format::Mode<font color=#1b1baa>$mode</font> \
+        [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$cont</font> <font color=#1b1baa>$iline</font> end] <font color=#1b1baa>$fname</font> [alited::bar::FileName]]
+      <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$forbind</font> && <font color=#1b1baa>$mode</font>==6 && <font color=#1b1baa>$ev</font> ne {}} {
+        <b><font color=#3a6797>set</font></b> ev [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$ev</font> &lt;&gt;]
+        <b><font color=#3a6797>set</font></b> mitem [alited::menu::FormatsItemName <font color=#1b1baa>$fform</font>]
+        <b><font color=#3a6797>set</font></b> msg [msgcat::mc {Use %e to run <font color=#8b2a0e>&quot;%m&quot;</font>}]
+        <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %e <font color=#1b1baa>$ev</font> %m <font color=#1b1baa>$mitem</font>] <font color=#1b1baa>$msg</font>]
+        alited::Message <font color=#1b1baa>$msg</font> 3
+        alited::ini::SaveIni
+      }
       <b><font color=#ca14ca>break</font></b>
     }
   }
@@ -1506,6 +1536,78 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50>#   value - the value</font></i>
 
   <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \\\\ \\ \\\}  \} \\\{ \{] <font color=#1b1baa>$value</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::BindPluginables></a>
+<b><font color=#ca14ca>proc</font></b> edit::BindPluginables {wtxt} {
+  <i><font color=#4b5d50># Binds pluginable formatters to the edited text.</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> lformat [<b><font color=#3a6797>array</font></b> names al <font color=#653760>-glob</font> FORMATS,*]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$lformat</font>]} {
+    SourceFormatTcl
+    <b><font color=#3a6797>foreach</font></b> n <font color=#1b1baa>$lformat</font> {
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$al($n)</font> fullformname ev
+      <b><font color=#3a6797>set</font></b> fform [FormatterName <font color=#1b1baa>$fullformname</font>]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists ::alited::format::bind6(<font color=#1b1baa>$fform</font>)] && \
+      [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$::alited::format::bind6($fform)</font>]} {
+        <b><font color=#3a6797>foreach</font></b> b <font color=#1b1baa>$::alited::format::bind6($fform)</font> {
+          <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$b</font> ev com
+          <b><font color=#3a6797>catch</font></b> {
+            <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$ev</font> <font color=#1b1baa>$com</font>
+          }
+        }
+      } <b><font color=#3a6797>else</font></b> {
+        RunFormat <font color=#1b1baa>$fullformname</font> yes
+      }
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::PluginAccelerator></a>
+<b><font color=#ca14ca>proc</font></b> edit::PluginAccelerator {mnu {itemttl <font color=#8b2a0e>&quot;&quot;</font>} {ev <font color=#8b2a0e>&quot;&quot;</font>} {retlist <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Adds -accelerator to Formats menu item or returns a list of</font></i>
+  <i><font color=#4b5d50># accelerators used by pluginables.</font></i>
+  <i><font color=#4b5d50>#   mnu - menu path</font></i>
+  <i><font color=#4b5d50>#   itemttl - item's title</font></i>
+  <i><font color=#4b5d50>#   ev - event</font></i>
+
+  <b><font color=#3a6797>set</font></b> nitems [<font color=#1b1baa>$mnu</font> index end]
+  <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;=<font color=#1b1baa>$nitems</font>} {<b><font color=#3a6797>incr</font></b> i} {
+    <b><font color=#3a6797>set</font></b> typ [<font color=#1b1baa>$mnu</font> type <font color=#1b1baa>$i</font>]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> ttl [<font color=#1b1baa>$mnu</font> entrycget <font color=#1b1baa>$i</font> <font color=#653760>-label</font>]}]} {<b><font color=#3a6797>set</font></b> ttl {}}
+    <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$typ</font> {
+      command {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$itemttl</font> ne {} && <font color=#1b1baa>$itemttl</font> eq <font color=#1b1baa>$ttl</font>} {
+          <font color=#1b1baa>$mnu</font> entryconfigure <font color=#1b1baa>$i</font> <font color=#653760>-accelerator</font> [::apave::KeyAccelerator <font color=#1b1baa>$ev</font>]
+          <b><font color=#ca14ca>break</font></b> ;<i><font color=#4b5d50># it's call to set an accelerator</font></i>
+        }
+        <b><font color=#3a6797>set</font></b> acc [<font color=#1b1baa>$mnu</font> entrycget <font color=#1b1baa>$i</font> <font color=#653760>-accelerator</font>]
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$acc</font> ne {}} {
+          <b><font color=#3a6797>set</font></b> acc [<b><font color=#3a6797>string</font></b> map {+ - Ctrl Control} <font color=#1b1baa>$acc</font>]
+          <b><font color=#3a6797>lappend</font></b> retlist <font color=#1b1baa>$acc</font>
+        }
+      }
+      cascade {
+        <b><font color=#3a6797>set</font></b> cascade [<font color=#1b1baa>$mnu</font> entrycget <font color=#1b1baa>$i</font> <font color=#653760>-menu</font>]
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$cascade</font> ne {}} {
+          <b><font color=#3a6797>set</font></b> retlist [PluginAccelerator <font color=#1b1baa>$cascade</font> <font color=#1b1baa>$itemttl</font> <font color=#1b1baa>$ev</font> <font color=#1b1baa>$retlist</font>]
+          <b><font color=#ca14ca>continue</font></b>
+        }
+      }
+      separator - tearoff {}
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$retlist</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=edit::FormatterName></a>
+<b><font color=#ca14ca>proc</font></b> edit::FormatterName {fname} {
+  <i><font color=#4b5d50># Gets formatter's file name from its full name.</font></i>
+  <i><font color=#4b5d50>#   fname - full name of formatter file</font></i>
+
+  <b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>
 }
 <a id=EOF></a>
 <i><font color=#4b5d50># _________________________________ EOF _________________________________ #</font></i>

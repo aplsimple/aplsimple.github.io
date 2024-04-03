@@ -79,6 +79,8 @@ n2 - 2nd name</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#menu::FillMacroItems">FillMacroItems</a><span class=tooltiptext> menu::FillMacroItems : Fills play macro items.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#menu::Paver">Paver</a><span class=tooltiptext> menu::Paver : Loads and calls Paver tool.
 mode - 0 run paver; 1 auto update flag; 2 view code; 3 help</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#menu::FormatsItemName">FormatsItemName</a><span class=tooltiptext> menu::FormatsItemName : Gets a Formats item's name.
+fname - formatter file's name</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#menu::FillFormatItems">FillFormatItems</a><span class=tooltiptext> menu::FillFormatItems : Fills Edit/Format submenu with items taken from "alited/data/format" directory.
 mnu - submenu's path
 dir - directory name
@@ -419,6 +421,14 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   }
 }
 <i><font color=#4b5d50>#_______________________</font></i>
+<a id=menu::FormatsItemName></a>
+<b><font color=#ca14ca>proc</font></b> menu::FormatsItemName {fname} {
+  <i><font color=#4b5d50># Gets a Formats item's name.</font></i>
+  <i><font color=#4b5d50>#   fname - formatter file's name</font></i>
+
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>file</font></b> rootname [<b><font color=#3a6797>string</font></b> range [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>] 4 end]]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
 <a id=menu::FillFormatItems></a>
 <b><font color=#ca14ca>proc</font></b> menu::FillFormatItems {mnu {dir <font color=#8b2a0e>&quot;&quot;</font>} {lev 0} {mnuID 0}} {
   <i><font color=#4b5d50># Fills Edit/Format submenu with items taken from &quot;alited/data/format&quot; directory.</font></i>
@@ -433,7 +443,8 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   }
   <b><font color=#3a6797>set</font></b> fnames [<b><font color=#3a6797>glob</font></b> <font color=#653760>-nocomplain</font> <font color=#653760>-directory</font> <font color=#1b1baa>$dir</font> *]
   <b><font color=#3a6797>foreach</font></b> fn [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-dictionary</font> <font color=#1b1baa>$fnames</font>] {
-    <b><font color=#3a6797>set</font></b> it [<b><font color=#3a6797>string</font></b> range [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fn</font>] 4 end] ;<i><font color=#4b5d50># first 4 chars for sorting</font></i>
+    <i><font color=#4b5d50># first 4 chars for sorting</font></i>
+    <b><font color=#3a6797>set</font></b> it [FormatsItemName <font color=#1b1baa>$fn</font>]
     <b><font color=#3a6797>set</font></b> it [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> _ { }] <font color=#1b1baa>$it</font>]
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> isdirectory <font color=#1b1baa>$fn</font>]} {
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$lev</font>&lt;3} {  ;<i><font color=#4b5d50># prohibit too deep diving</font></i>
@@ -614,7 +625,8 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50>### ________________________ Formats _________________________ ###</font></i>
 
   MenuCascade <font color=#1b1baa>$m</font> format [msgcat::mc Formats]
-  FillFormatItems <font color=#1b1baa>$m</font>.format
+  <b><font color=#3a6797>set</font></b> al(MENUFORMATS) <font color=#1b1baa>$m</font>.format
+  FillFormatItems <font color=#1b1baa>$al(MENUFORMATS)</font>
   <font color=#1b1baa>$m</font> add separator
 
   <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc {Put New Line}] <font color=#653760>-command</font> alited::main::InsertLine <font color=#653760>-accelerator</font> <font color=#1b1baa>$al(acc_18)</font>
@@ -694,7 +706,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#134070>menu</font></b> <font color=#1b1baa>$m</font>.filelist <font color=#653760>-tearoff</font> 0
   <font color=#1b1baa>$m</font> add cascade <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,filelist)</font> <font color=#653760>-menu</font> <font color=#1b1baa>$m</font>.filelist
   <font color=#1b1baa>$m</font>.filelist add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,filelist)</font> <font color=#653760>-command</font> {alited::bar::BAR popList} <font color=#653760>-accelerator</font> <font color=#1b1baa>$al(acc_21)</font>
-  <font color=#1b1baa>$m</font>.filelist add checkbutton <font color=#653760>-label</font> [msgcat::mc {Sorted}] <font color=#653760>-variable</font> ::alited::al(sortList)
+  <font color=#1b1baa>$m</font>.filelist add checkbutton <font color=#653760>-label</font> [msgcat::mc {Sorted}] <font color=#653760>-variable</font> ::alited::al(sortList) <font color=#653760>-command</font> alited::ini::SaveIni
   <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,checktcl...)</font> <font color=#653760>-command</font> alited::CheckRun
   <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc {Project Printer...}] <font color=#653760>-command</font> alited::PrinterRun
 <a id=Paver></a>
@@ -730,16 +742,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     <font color=#653760>-variable</font> ::alited::al(wrapwords) <font color=#653760>-command</font> alited::file::WrapLines
   <font color=#1b1baa>$m</font> add checkbutton <font color=#653760>-label</font> [msgcat::mc {Tip File Info}] \
     <font color=#653760>-variable</font> ::alited::al(TREE,showinfo) <font color=#653760>-command</font> alited::file::UpdateFileStat
-
-  <b><font color=#134070>menu</font></b> <font color=#1b1baa>$m</font>.tipson <font color=#653760>-tearoff</font> 1
-  <font color=#1b1baa>$m</font> add cascade <font color=#653760>-label</font> [msgcat::mc {Tips on / off}] <font color=#653760>-menu</font> <font color=#1b1baa>$m</font>.tipson
-  <font color=#1b1baa>$m</font>.tipson add checkbutton <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,projects)</font> <font color=#653760>-variable</font> ::alited::al(TIPS,Projects) <font color=#653760>-command</font> alited::ini::SaveIni
-  <font color=#1b1baa>$m</font>.tipson add checkbutton <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,tpl)</font> <font color=#653760>-variable</font> ::alited::al(TIPS,Templates) <font color=#653760>-command</font> alited::ini::SaveIni
-  <font color=#1b1baa>$m</font>.tipson add checkbutton <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,pref)</font> <font color=#653760>-variable</font> ::alited::al(TIPS,Preferences) <font color=#653760>-command</font> alited::ini::SaveIni
-  <font color=#1b1baa>$m</font>.tipson add checkbutton <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,FavLists)</font> <font color=#653760>-variable</font> ::alited::al(TIPS,SavedFavorites) <font color=#653760>-command</font> alited::ini::SaveIni
-  <font color=#1b1baa>$m</font>.tipson add separator
-  <font color=#1b1baa>$m</font>.tipson add checkbutton <font color=#653760>-label</font> [msgcat::mc Units] <font color=#653760>-variable</font> ::alited::al(TIPS,Tree) <font color=#653760>-command</font> alited::ini::SaveIni
-  <font color=#1b1baa>$m</font>.tipson add checkbutton <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,favorites)</font> <font color=#653760>-variable</font> ::alited::al(TIPS,TreeFavor) <font color=#653760>-command</font> alited::ini::SaveIni
+  <font color=#1b1baa>$m</font> add separator
 
   MenuCascade <font color=#1b1baa>$m</font> tint [msgcat::mc Tint]
   <b><font color=#3a6797>lassign</font></b> [TintRange] max min
@@ -755,12 +758,31 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     <font color=#1b1baa>$m</font>.tint add checkbutton <font color=#653760>-label</font> <font color=#1b1baa>$ti2</font> <font color=#653760>-command</font> <font color=#8b2a0e>&quot;alited::menu::SetTint <font color=#1b1baa>$</font>ti&quot;</font> <font color=#653760>-variable</font> alited::menu::tint(<font color=#1b1baa>$ti</font>)
   }
   CheckTint
+
+  <b><font color=#134070>menu</font></b> <font color=#1b1baa>$m</font>.tipson <font color=#653760>-tearoff</font> 1
+  <font color=#1b1baa>$m</font> add cascade <font color=#653760>-label</font> [msgcat::mc {Tips on / off}] <font color=#653760>-menu</font> <font color=#1b1baa>$m</font>.tipson
+  <font color=#1b1baa>$m</font>.tipson add checkbutton <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,projects)</font> <font color=#653760>-variable</font> ::alited::al(TIPS,Projects) <font color=#653760>-command</font> alited::ini::SaveIni
+  <font color=#1b1baa>$m</font>.tipson add checkbutton <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,tpl)</font> <font color=#653760>-variable</font> ::alited::al(TIPS,Templates) <font color=#653760>-command</font> alited::ini::SaveIni
+  <font color=#1b1baa>$m</font>.tipson add checkbutton <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,pref)</font> <font color=#653760>-variable</font> ::alited::al(TIPS,Preferences) <font color=#653760>-command</font> alited::ini::SaveIni
+  <font color=#1b1baa>$m</font>.tipson add checkbutton <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,FavLists)</font> <font color=#653760>-variable</font> ::alited::al(TIPS,SavedFavorites) <font color=#653760>-command</font> alited::ini::SaveIni
+  <font color=#1b1baa>$m</font>.tipson add separator
+  <font color=#1b1baa>$m</font>.tipson add checkbutton <font color=#653760>-label</font> [msgcat::mc Units] <font color=#653760>-variable</font> ::alited::al(TIPS,Tree) <font color=#653760>-command</font> alited::ini::SaveIni
+  <font color=#1b1baa>$m</font>.tipson add checkbutton <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,favorites)</font> <font color=#653760>-variable</font> ::alited::al(TIPS,TreeFavor) <font color=#653760>-command</font> alited::ini::SaveIni
+
+  <b><font color=#134070>menu</font></b> <font color=#1b1baa>$m</font>.weekcal <font color=#653760>-tearoff</font> 0
+  <font color=#1b1baa>$m</font> add cascade <font color=#653760>-label</font> [msgcat::mc {Weeks in Calendar}] <font color=#653760>-menu</font> <font color=#1b1baa>$m</font>.weekcal
+  <font color=#1b1baa>$m</font>.weekcal add radiobutton <font color=#653760>-value</font> 0 <font color=#653760>-label</font> None \
+    <font color=#653760>-variable</font> ::alited::al(klndweeks) <font color=#653760>-command</font> alited::ini::SaveIni
+  <font color=#1b1baa>$m</font>.weekcal add radiobutton <font color=#653760>-value</font> 1 <font color=#653760>-label</font> Classic \
+    <font color=#653760>-variable</font> ::alited::al(klndweeks) <font color=#653760>-command</font> alited::ini::SaveIni
+  <font color=#1b1baa>$m</font>.weekcal add radiobutton <font color=#653760>-value</font> 2 <font color=#653760>-label</font> Sticky \
+    <font color=#653760>-variable</font> ::alited::al(klndweeks) <font color=#653760>-command</font> alited::ini::SaveIni
+
   <font color=#1b1baa>$m</font> add separator
   <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,formatdesc...)</font> <font color=#653760>-command</font> alited::edit::FormatUnitDesc
   <font color=#1b1baa>$m</font> add separator
 
   <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc {For Start...}] <font color=#653760>-command</font> alited::tool::AfterStartDlg
-  <font color=#1b1baa>$m</font> add separator
   <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> [msgcat::mc Configurations...] <font color=#653760>-command</font> alited::menu::Configurations
   <font color=#1b1baa>$m</font> add separator
   <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,pref...)</font> <font color=#653760>-command</font> alited::pref::_run
