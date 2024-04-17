@@ -77,6 +77,7 @@ pos2 - ending position in a current line</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#tool::FormatDate">FormatDate</a><span class=tooltiptext> tool::FormatDate : Formats a date.
 date - date to be formatted (a current date if omitted)</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#tool::DatePicker">DatePicker</a><span class=tooltiptext> tool::DatePicker : Calls a calendar to pick a date.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::LineCoordinates">LineCoordinates</a><span class=tooltiptext> tool::LineCoordinates : Gets X, Y screen coordinates of current line.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#tool::SrcPath">SrcPath</a><span class=tooltiptext> tool::SrcPath : Gets a path to an external tool.
 This may be useful at calling alited by tclkit:
 tkcon, aloupe etc. may be located in "src" subdirectory of alited.</span></div></li></ul>
@@ -335,9 +336,8 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>source</font></b> [SrcPath [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$PAVEDIR</font> pickers color aloupe aloupe.tcl]]}
   }
   <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> is boolean <font color=#653760>-strict</font> <font color=#1b1baa>$al(moveall)</font>]} {<b><font color=#3a6797>set</font></b> al(moveall) 0}
-  <b><font color=#3a6797>lassign</font></b> [alited::complete::TextCursorCoordinates] X Y
-  <b><font color=#3a6797>incr</font></b> Y 10
-  <b><font color=#3a6797>set</font></b> res [::apave::obj chooser colorChooser ::alited::al(chosencolor) \
+  <b><font color=#3a6797>lassign</font></b> [LineCoordinates] X Y
+  <b><font color=#3a6797>set</font></b> res [obj chooser colorChooser ::alited::al(chosencolor) \
     <font color=#653760>-moveall</font> <font color=#1b1baa>$al(moveall)</font> <font color=#653760>-parent</font> <font color=#1b1baa>$al(WIN)</font> <font color=#653760>-geometry</font> +<font color=#1b1baa>$X</font>+<font color=#1b1baa>$Y</font> <font color=#653760>-inifile</font> [aloupePath]]
   <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>lassign</font></b> [::tk::dialog::color::GetOptions] al(moveall)}
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> ne {}} {
@@ -368,15 +368,23 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   } <b><font color=#3a6797>elseif</font></b> {![<b><font color=#3a6797>info</font></b> exists al(klnddate)]} {
     <b><font color=#3a6797>set</font></b> al(klnddate) [FormatDate]
   }
-  <b><font color=#3a6797>lassign</font></b> [alited::complete::TextCursorCoordinates] X Y
-  <b><font color=#3a6797>incr</font></b> Y 10
-  <b><font color=#3a6797>set</font></b> res [::apave::obj chooser dateChooser ::alited::al(klnddate) \
+  <b><font color=#3a6797>lassign</font></b> [LineCoordinates] X Y
+  <b><font color=#3a6797>set</font></b> res [obj chooser dateChooser ::alited::al(klnddate) \
     <font color=#653760>-parent</font> <font color=#1b1baa>$al(WIN)</font> <font color=#653760>-geometry</font> +<font color=#1b1baa>$X</font>+<font color=#1b1baa>$Y</font> <font color=#653760>-dateformat</font> <font color=#1b1baa>$al(TPL,%d)</font> \
     <font color=#653760>-weeks</font> <font color=#1b1baa>$al(klndweeks)</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> ne {}} {
     <b><font color=#3a6797>set</font></b> al(klnddate) <font color=#1b1baa>$res</font>
     InsertInText <font color=#1b1baa>$res</font>
   }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::LineCoordinates></a>
+<b><font color=#ca14ca>proc</font></b> tool::LineCoordinates {} {
+  <i><font color=#4b5d50># Gets X, Y screen coordinates of current line.</font></i>
+
+  <b><font color=#3a6797>lassign</font></b> [alited::complete::CursorCoordsChar {} linestart] X Y
+  <b><font color=#3a6797>if</font></b> {[::iswindows]} {<b><font color=#3a6797>incr</font></b> Y 50} {<b><font color=#3a6797>incr</font></b> Y 10}
+  <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$X</font> <font color=#1b1baa>$Y</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=tool::SrcPath></a>
@@ -489,7 +497,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50>#   what - what to translate</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al LIBDIR LIBDIR
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> command ::alited::hl_trans::translateLine] eq {}} {
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> command ::alited::hl_trans::TranslateText] eq {}} {
     <b><font color=#ca14ca>namespace</font></b> eval ::alited {
       <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$LIBDIR</font> addon hl_trans.tcl]
     }
@@ -562,7 +570,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(EM,geometry)</font> eq {}} {
     <i><font color=#4b5d50># at 1st exposition, center e_menu approximately</font></i>
     <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$al(WIN)</font>] x+] w h x y
-    <b><font color=#3a6797>set</font></b> al(EM,geometry) [apave::obj EXPORT CenteredXY <font color=#1b1baa>$w</font> <font color=#1b1baa>$h</font> <font color=#1b1baa>$x</font> <font color=#1b1baa>$y</font> 300 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$h</font>/2}]]
+    <b><font color=#3a6797>set</font></b> al(EM,geometry) [obj EXPORT CenteredXY <font color=#1b1baa>$w</font> <font color=#1b1baa>$h</font> <font color=#1b1baa>$x</font> <font color=#1b1baa>$y</font> 300 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$h</font>/2}]]
   }
   <b><font color=#3a6797>set</font></b> ed [<b><font color=#3a6797>info</font></b> nameofexecutable]\ <font color=#1b1baa>$SCRIPTNORMAL</font>\ <font color=#1b1baa>$CONFIGDIR</font>
 
@@ -1001,14 +1009,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>if</font></b> {{EX=1} ni <font color=#1b1baa>$args</font>} {
     <b><font color=#3a6797>append</font></b> args { AL=1}  ;<i><font color=#4b5d50># to read a current file only at &quot;Run me&quot;</font></i>
   }
-  <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
-  <b><font color=#3a6797>lassign</font></b> [::hl_tcl::hl_colors .] - - clrSTR clrVAR clrCMN clrPROC
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$clrSTR</font> eq {lightgreen}} {<b><font color=#3a6797>set</font></b> clrSTR #90ee90}
-  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> match #* <font color=#1b1baa>$clrSTR</font>]} {<b><font color=#3a6797>set</font></b> clrSTR <font color=#1b1baa>$clrVAR</font>}
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match #* <font color=#1b1baa>$clrSTR</font>]} {
-    <b><font color=#3a6797>lassign</font></b> [alited::edit::InvertBg <font color=#1b1baa>$clrSTR</font>] fg2
-    <b><font color=#3a6797>append</font></b> args <font color=#8b2a0e>&quot; HC=<font color=#1b1baa>$</font>clrPROC,<font color=#1b1baa>$</font>fg2,<font color=#1b1baa>$</font>clrSTR,<font color=#1b1baa>$</font>clrCMN&quot;</font>
-  }
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#1b1baa>$args</font> {SH=1}]]&gt;-1} {
     <b><font color=#3a6797>set</font></b> args [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$args</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font> [SHarg]]
   }
@@ -1113,11 +1113,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>set</font></b> opts <font color=#8b2a0e>&quot;EX=<font color=#1b1baa>$</font>what&quot;</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$what</font> eq {}} {
     <b><font color=#3a6797>set</font></b> doit [::apave::extractOptions args <font color=#653760>-doit</font> 0]
-<i><font color=#ff0000>#!    lassign [alited::ExtTrans] ext istrans from to</font></i>
-<i><font color=#ff0000>#!    if #\{!$doit && $istrans#\} #\{</font></i>
-<i><font color=#ff0000>#!      alited::hl_trans::translateLine $from $to</font></i>
-<i><font color=#ff0000>#!      return</font></i>
-<i><font color=#ff0000>#!    #\}</font></i>
     <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$::alited::DEBUG</font>} {
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(EM,exec)</font>} {
         <b><font color=#3a6797>set</font></b> fpid [alited::TmpFile .pid~]

@@ -78,7 +78,7 @@ See also: bar::FillBar</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#FgAdditional">FgAdditional</a><span class=tooltiptext> FgAdditional : Gets the list of additional colors: branch, red, todo.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#FgFgBold">FgFgBold</a><span class=tooltiptext> FgFgBold : Gets foregrounds of normal and colored text of current color scheme
 and red color of TODOs.</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#ListPaved">ListPaved</a><span class=tooltiptext> ListPaved : Return a list of apave objects for dialogues.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#ListPaved">ListPaved</a><span class=tooltiptext> ListPaved : Returns a list of apave objects for dialogues.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#SyntaxColors">SyntaxColors</a><span class=tooltiptext> SyntaxColors : Gets colors for syntax highlighting.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#SyntaxHighlight">SyntaxHighlight</a><span class=tooltiptext> SyntaxHighlight : Makes a text being syntax highlighted.
 lng - language (tcl, c)
@@ -273,7 +273,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 <i><font color=#4b5d50># License: MIT.</font></i>
 <i><font color=#4b5d50>###########################################################</font></i>
 
-<b><font color=#3a6797>package</font></b> provide alited 1.8.2  ;<i><font color=#4b5d50># for documentation (esp. for Ruff!)</font></i>
+<b><font color=#3a6797>package</font></b> provide alited 1.8.3  ;<i><font color=#4b5d50># for documentation (esp. for Ruff!)</font></i>
 
 <b><font color=#ca14ca>namespace</font></b> eval alited {
 
@@ -400,9 +400,8 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 
   <i><font color=#4b5d50># project options' names</font></i>
   <b><font color=#3a6797>variable</font></b> OPTS [<b><font color=#3a6797>list</font></b> \
-    prjname prjroot prjdirign prjEOL prjindent prjindentAuto prjredunit \
-    prjmultiline prjbeforerun prjtrailwhite prjincons prjmaxcoms prjtran \
-    prjtrans prjtransadd prjuseleafRE prjleafRE]
+    prjname prjroot prjdirign prjEOL prjindent prjindentAuto prjredunit prjmaxcoms \
+    prjmultiline prjbeforerun prjtrailwhite prjincons prjuseleafRE prjleafRE]
 
   <i><font color=#4b5d50># directory tree's content</font></i>
   <b><font color=#3a6797>variable</font></b> _dirtree [<b><font color=#3a6797>list</font></b>]
@@ -425,14 +424,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>set</font></b> al(prjmaxcoms) 20   ;<i><font color=#4b5d50># maximum of &quot;Run...&quot; commands</font></i>
   <b><font color=#3a6797>set</font></b> al(prjuseleafRE) 0  ;<i><font color=#4b5d50># &quot;use leaf's RE&quot;</font></i>
   <b><font color=#3a6797>set</font></b> al(prjleafRE) {}    ;<i><font color=#4b5d50># &quot;leaf's RE&quot;</font></i>
-  <b><font color=#3a6797>set</font></b> al(ED,TRAN) https://libretranslate.de/translate
-  <b><font color=#3a6797>set</font></b> al(ED,TRANS) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$al(ED,TRAN)</font> \
-    https://translate.argosopentech.com/translate \
-    https://translate.terraprint.co/translate]
-  <b><font color=#3a6797>set</font></b> al(ED,TRANSADD) 1
-  <b><font color=#3a6797>set</font></b> al(prjtran) <font color=#1b1baa>$al(ED,TRAN)</font>   ;<i><font color=#4b5d50># current translation site</font></i>
-  <b><font color=#3a6797>set</font></b> al(prjtrans) <font color=#1b1baa>$al(ED,TRANS)</font> ;<i><font color=#4b5d50># list of translation sites</font></i>
-  <b><font color=#3a6797>set</font></b> al(prjtransadd) <font color=#1b1baa>$al(ED,TRANSADD)</font>   ;<i><font color=#4b5d50>#</font></i>
   <b><font color=#3a6797>foreach</font></b> _ <font color=#1b1baa>$OPTS</font> {<b><font color=#3a6797>set</font></b> al(DEFAULT,<font color=#1b1baa>$_</font>) <font color=#1b1baa>$al($_)</font>}
 
   <b><font color=#3a6797>set</font></b> al(TITLE) {%f :: %d :: %p}           ;<i><font color=#4b5d50># alited title's template</font></i>
@@ -444,7 +435,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>set</font></b> al(TextExts) <font color=#1b1baa>$al(TextExtsDef)</font>
   <b><font color=#3a6797>set</font></b> al(MOVEFG) black
   <b><font color=#3a6797>set</font></b> al(MOVEBG) #7eeeee
-
 <a id=Procs_to_raise_the_alited_app></a>
   <i><font color=#4b5d50>## __________________ Procs to raise the alited app ___________________ ##</font></i>
 <a id=raise_window></a>
@@ -511,6 +501,8 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::BARSDIR</font> bartabs.tcl]
 <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::HLDIR</font>  hl_tcl.tcl]
 <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::HLDIR</font>  hl_c.tcl]
+
+<b><font color=#3a6797>namespace</font></b> import ::apave::obj ::apave::openDoc
 
 ::apave::mainWindowOfApp <font color=#1b1baa>$::alited::al(WIN)</font>
 <a id=::argv,_::argc></a>
@@ -678,9 +670,9 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50>#_______________________</font></i>
 <a id=ListPaved></a>
   <b><font color=#ca14ca>proc</font></b> ListPaved {} {
-    <i><font color=#4b5d50># Return a list of apave objects for dialogues.</font></i>
+    <i><font color=#4b5d50># Returns a list of apave objects for dialogues.</font></i>
 
-    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> obDlg obDl2 obFND obFN2 obCHK obRun]
+    <b><font color=#3a6797>list</font></b> obDlg obDl2 obFND obFN2 obCHK obRun
   }
   <i><font color=#4b5d50>#_______________________</font></i>
 <a id=SyntaxColors></a>
@@ -704,8 +696,8 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     <i><font color=#4b5d50>#   args - other options</font></i>
 
     <b><font color=#3a6797>variable</font></b> al
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$cs</font> eq {}} {<b><font color=#3a6797>set</font></b> cs [::apave::obj csCurrent]}
-    ::hl_<font color=#1b1baa>${lng}</font>::hl_init <font color=#1b1baa>$wtxt</font> <font color=#653760>-dark</font> [::apave::obj csDark <font color=#1b1baa>$cs</font>] <font color=#653760>-colors</font> <font color=#1b1baa>$colors</font> \
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$cs</font> eq {}} {<b><font color=#3a6797>set</font></b> cs [obj csCurrent]}
+    ::hl_<font color=#1b1baa>${lng}</font>::hl_init <font color=#1b1baa>$wtxt</font> <font color=#653760>-dark</font> [obj csDark <font color=#1b1baa>$cs</font>] <font color=#653760>-colors</font> <font color=#1b1baa>$colors</font> \
       <font color=#653760>-multiline</font> 1 <font color=#653760>-font</font> <font color=#1b1baa>$al(FONT,txt)</font> <font color=#653760>-insertwidth</font> <font color=#1b1baa>$al(CURSORWIDTH)</font> \
       <font color=#653760>-cmdpos</font> ::apave::None <font color=#653760>-dobind</font> yes {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
     ::hl_<font color=#1b1baa>${lng}</font>::hl_text <font color=#1b1baa>$wtxt</font>
@@ -900,7 +892,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     <b><font color=#3a6797>set</font></b> ::alited::textTags [<b><font color=#3a6797>list</font></b> \
       [<b><font color=#3a6797>list</font></b> <font color=#8b2a0e>&quot;r&quot;</font> <font color=#8b2a0e>&quot;-font <font color=#1b1baa>{$</font>::apave::FONTMAINBOLD<font color=#1b1baa>}</font> -foreground <font color=#1b1baa>$</font>fS&quot;</font>] \
       [<b><font color=#3a6797>list</font></b> <font color=#8b2a0e>&quot;b&quot;</font> <font color=#8b2a0e>&quot;-foreground <font color=#1b1baa>$</font>fS&quot;</font>] \
-      [<b><font color=#3a6797>list</font></b> <font color=#8b2a0e>&quot;link&quot;</font> <font color=#8b2a0e>&quot;::apave::openDoc %t@@https://%l@@&quot;</font>] \
+      [<b><font color=#3a6797>list</font></b> <font color=#8b2a0e>&quot;link&quot;</font> <font color=#8b2a0e>&quot;openDoc %t@@https://%l@@&quot;</font>] \
       ]
     <b><font color=#ca14ca>return</font></b> <font color=#8b2a0e>&quot;-tags ::alited::textTags&quot;</font>
   }
@@ -1113,7 +1105,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     <i><font color=#4b5d50># Shows a main help of alited.</font></i>
     <i><font color=#4b5d50>#   ilink - internal link</font></i>
 
-    ::apave::openDoc file://[<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::DIR</font> doc index.html]<font color=#1b1baa>$ilink</font>
+    openDoc file://[<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::DIR</font> doc index.html]<font color=#1b1baa>$ilink</font>
   }
   <i><font color=#4b5d50>#_______________________</font></i>
 <a id=HelpFile></a>
@@ -1158,8 +1150,10 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
       <b><font color=#3a6797>set</font></b> args [<b><font color=#3a6797>linsert</font></b> <font color=#1b1baa>$args</font> 0 <font color=#653760>-h</font> 30 <font color=#653760>-scroll</font> 1]
     }
     <b><font color=#3a6797>after</font></b> 200 [<b><font color=#3a6797>list</font></b> alited::HelpOnce 0 <font color=#1b1baa>$fname</font>]
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ale1Help</font> && [<b><font color=#3a6797>set</font></b> dlg [<font color=#1b1baa>$pobj</font> dlgPath]] ne <font color=#1b1baa>$al(WIN)</font>} {
-      <b><font color=#134070>destroy</font></b> <font color=#1b1baa>$dlg</font>  ;<i><font color=#4b5d50># -ale1Help option permits the only Help window</font></i>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ale1Help</font>} {
+      <i><font color=#4b5d50># if run from &quot;Help/Context&quot;, remove its predecessor</font></i>
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$al(DLGPREV)</font>}
+      <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;set ::alited::al(DLGPREV) \[<font color=#1b1baa>$</font>pobj dlgPath\]&quot;</font>
     }
     <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$pobj</font> ok {} Help <font color=#8b2a0e>&quot;\n<font color=#1b1baa>$</font>msg\n&quot;</font> <font color=#653760>-modal</font> no <font color=#653760>-waitvar</font> no \
       <font color=#653760>-onclose</font> <font color=#8b2a0e>&quot;alited::destroyWindow %w <font color=#1b1baa>[</font>focus<font color=#1b1baa>]</font>&quot;</font> <font color=#653760>-centerme</font> <font color=#1b1baa>$win</font> <font color=#653760>-text</font> 1 <font color=#653760>-scroll</font> no \
@@ -1318,7 +1312,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
           <b><font color=#3a6797>set</font></b> fsz <font color=#1b1baa>$al(FONTSIZE,std)</font>
         }
         <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>${addon}</font>::init <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$al(FONT,txt)</font> <font color=#1b1baa>$fsz</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$colors</font>]
-        ::apave::obj set_highlight_matches <font color=#1b1baa>$wtxt</font>
+        obj set_highlight_matches <font color=#1b1baa>$wtxt</font>
         <b><font color=#3a6797>foreach</font></b> tag {sel hilited hilited2} {<b><font color=#3a6797>after</font></b> idle <font color=#1b1baa>$wtxt</font> tag raise <font color=#1b1baa>$tag</font>}
       }
     }

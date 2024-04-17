@@ -63,6 +63,12 @@ document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'
 <ul class=toc><li><div class=tooltip><a href="#::isunix">isunix</a><span class=tooltiptext> ::isunix : Checks for "platform is Unix".</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#::isKDE">isKDE</a><span class=tooltiptext> ::isKDE : Checks for "desktop is KDE".</span></div></li></ul>
 <li><b><a href="#apave_NS">apave NS</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#obj">obj</a><span class=tooltiptext> obj : Calls a method of APave class.
+com - a method
+args - arguments of the method
+It can (and must) be used only for temporary tasks.
+For persistent tasks, use a "normal" apave object.
+Returns the command's result.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#None">None</a><span class=tooltiptext> None : Useful when to do nothing is better than to do something.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#autoexec">autoexec</a><span class=tooltiptext> autoexec : Imitates Tcl's auto_execok.
 comm - a command to find
@@ -82,6 +88,7 @@ See also:
 [wiki.tcl-lang.org](https://wiki.tcl-lang.org/page/Reformatting+Tcl+code+indentation)</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#traceRemove">traceRemove</a><span class=tooltiptext> traceRemove : Cancels tracing of a variable.
 v - variable's name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#initBaltip">initBaltip</a><span class=tooltiptext> initBaltip : Initializes baltip package.</span></div></li></ul>
 <li><b><a href="#Integers">&nbsp;&nbsp;Integers</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#getN">getN</a><span class=tooltiptext> getN : Gets a number from a string
 sn - string containing a number
@@ -124,6 +131,9 @@ item - item to push
 pos - position in the list to push in
 max - maximum length of the list</span></div></li></ul>
 <li><b><a href="#Widgets">&nbsp;&nbsp;Widgets</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#checkGeometry">checkGeometry</a><span class=tooltiptext> checkGeometry : Checks a window's geometry.
+geo - the geometry
+Returns a "normalized" geometry (+0+0 if input not correct).</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#repaintWindow">repaintWindow</a><span class=tooltiptext> repaintWindow : Shows a window and, optionally, focuses on a widget of it.
 win - the window's path
 wfoc - the widget's path or a command to get it
@@ -148,6 +158,8 @@ w1 - the widget's path</span></div></li></ul>
 w - the field's path</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#FocusByForce">FocusByForce</a><span class=tooltiptext> FocusByForce : Focuses a widget.
 foc - widget's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#KeyAccelerator">KeyAccelerator</a><span class=tooltiptext> KeyAccelerator : Returns a key accelerator.
+acc - key name, may contain 2 items (e.g. Control-D Control-d)</span></div></li></ul>
 <li><b><a href="#Blinking_widgets">&nbsp;&nbsp;&nbsp;&nbsp;Blinking widgets</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#blinkWidget">blinkWidget</a><span class=tooltiptext> blinkWidget</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#blinkWidgetImage">blinkWidgetImage</a><span class=tooltiptext> blinkWidgetImage : Makes a widget's image blink.
@@ -245,7 +257,7 @@ Docs:
 <i><font color=#4b5d50>###########################################################</font></i>
 
 <b><font color=#3a6797>package</font></b> require Tk
-<b><font color=#3a6797>package</font></b> provide apave 4.4.1
+<b><font color=#3a6797>package</font></b> provide apave 4.4.2
 
 <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join [<b><font color=#3a6797>file</font></b> dirname [<b><font color=#3a6797>info</font></b> script]] apavedialog.tcl]
 <a id=Independent_procs></a>
@@ -272,7 +284,35 @@ Docs:
 <i><font color=#4b5d50># ________________________ apave NS _________________________ #</font></i>
 
 <b><font color=#ca14ca>namespace</font></b> eval ::apave {
+
+  <b><font color=#3a6797>namespace</font></b> export obj openDoc
+
   mainWindowOfApp .
+
+  <b><font color=#3a6797>variable</font></b> _OBJ_ {}
+<a id=obj></a>
+  <b><font color=#ca14ca>proc</font></b> obj {com args} {
+    <i><font color=#4b5d50># Calls a method of APave class.</font></i>
+    <i><font color=#4b5d50>#   com - a method</font></i>
+    <i><font color=#4b5d50>#   args - arguments of the method</font></i>
+    <i><font color=#4b5d50># It can (and must) be used only for temporary tasks.</font></i>
+    <i><font color=#4b5d50># For persistent tasks, use a &quot;normal&quot; apave object.</font></i>
+    <i><font color=#4b5d50># Returns the command's result.</font></i>
+
+    <b><font color=#3a6797>variable</font></b> _OBJ_
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$_OBJ_</font> eq {}} {<b><font color=#3a6797>set</font></b> _OBJ_ [::apave::APave new]}
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> exported [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$com</font> eq <font color=#8b2a0e>&quot;EXPORT&quot;</font>}]]} {
+      <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$args</font> 0]
+      <b><font color=#3a6797>set</font></b> args [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$args</font> 1 end]
+      <b><font color=#ca14ca>oo::objdefine</font></b> <font color=#1b1baa>$_OBJ_</font> <font color=#8b2a0e>&quot;export <font color=#1b1baa>$</font>com&quot;</font>
+    }
+    <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$_OBJ_</font> <font color=#1b1baa>$com</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$exported</font>} {
+      <b><font color=#ca14ca>oo::objdefine</font></b> <font color=#1b1baa>$_OBJ_</font> <font color=#8b2a0e>&quot;unexport <font color=#1b1baa>$</font>com&quot;</font>
+    }
+    <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
 <a id=None></a>
   <b><font color=#ca14ca>proc</font></b> None {args} {
     <i><font color=#4b5d50># Useful when to do nothing is better than to do something.</font></i>
@@ -356,6 +396,31 @@ Docs:
     <b><font color=#3a6797>foreach</font></b> t [<b><font color=#3a6797>trace</font></b> info variable <font color=#1b1baa>$v</font>] {
       <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$t</font> o c
       <b><font color=#3a6797>trace</font></b> remove variable <font color=#1b1baa>$v</font> <font color=#1b1baa>$o</font> <font color=#1b1baa>$c</font>
+    }
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=initBaltip></a>
+  <b><font color=#ca14ca>proc</font></b> initBaltip {} {
+    <i><font color=#4b5d50># Initializes baltip package.</font></i>
+
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> command ::baltip] eq {}} {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::apave::ISBALTIP</font>} {
+        <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::apave::SRCDIR</font> baltip baltip.tcl]
+      } <b><font color=#3a6797>else</font></b> {
+        <i><font color=#4b5d50># disabling baltip facilities with stub proc (no source &quot;baltip.src&quot;)</font></i>
+        <b><font color=#ca14ca>namespace</font></b> eval ::baltip {
+          <b><font color=#3a6797>variable</font></b> expproc [<b><font color=#3a6797>list</font></b> configure cget tip update hide repaint \
+            optionlist tippath clear sleep showBalloon showTip]
+          <b><font color=#3a6797>foreach</font></b> _ <font color=#1b1baa>$expproc</font> {
+          ; <b><font color=#ca14ca>proc</font></b> <font color=#1b1baa>$_</font> {args} {<b><font color=#ca14ca>return</font></b> {}}
+            <b><font color=#3a6797>namespace</font></b> export <font color=#1b1baa>$_</font>
+          }
+          <b><font color=#3a6797>namespace</font></b> ensemble create
+          <b><font color=#ca14ca>namespace</font></b> eval my {
+          ; <b><font color=#ca14ca>proc</font></b> BindToEvent {args} {}
+          }
+        }
+      }
     }
   }
 <a id=Integers></a>
@@ -494,6 +559,19 @@ Docs:
   }
 <a id=Widgets></a>
   <i><font color=#4b5d50>## ________________________ Widgets _________________________ ##</font></i>
+<a id=checkGeometry></a>
+  <b><font color=#ca14ca>proc</font></b> checkGeometry {geo} {
+    <i><font color=#4b5d50># Checks a window's geometry.</font></i>
+    <i><font color=#4b5d50>#   geo - the geometry</font></i>
+    <i><font color=#4b5d50># Returns a &quot;normalized&quot; geometry (+0+0 if input not correct).</font></i>
+
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>regexp</font></b> {^\d+x\d+$} <font color=#1b1baa>$geo</font>] && ![<b><font color=#3a6797>regexp</font></b> {^\+\d+\+\d+$} <font color=#1b1baa>$geo</font>] \
+    && ![<b><font color=#3a6797>regexp</font></b> {^\d+x\d+\+\d+\+\d+$} <font color=#1b1baa>$geo</font>]} {
+      <b><font color=#3a6797>set</font></b> geo +0+0
+    }
+    <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$geo</font>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
 <a id=repaintWindow></a>
   <b><font color=#ca14ca>proc</font></b> repaintWindow {win {wfoc <font color=#8b2a0e>&quot;&quot;</font>}} {
     <i><font color=#4b5d50># Shows a window and, optionally, focuses on a widget of it.</font></i>
@@ -626,6 +704,15 @@ Docs:
     } <b><font color=#3a6797>else</font></b> {
       <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>focus</font></b> <font color=#653760>-force</font> [<b><font color=#134070>winfo</font></b> toplevel <font color=#1b1baa>$foc</font>]; <b><font color=#134070>focus</font></b> <font color=#1b1baa>$foc</font>}
     }
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=KeyAccelerator></a>
+  <b><font color=#ca14ca>proc</font></b> KeyAccelerator {acc} {
+    <i><font color=#4b5d50># Returns a key accelerator.</font></i>
+    <i><font color=#4b5d50>#   acc - key name, may contain 2 items (e.g. Control-D Control-d)</font></i>
+
+    <b><font color=#3a6797>set</font></b> acc [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$acc</font> 0]
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> map {Control Ctrl - + bracketleft [ bracketright ]} <font color=#1b1baa>$acc</font>]
   }
 <a id=Blinking_widgets></a>
   <i><font color=#4b5d50>### ________________________ Blinking widgets _________________________ ###</font></i>

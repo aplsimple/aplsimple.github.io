@@ -74,9 +74,6 @@ txt - text
 src - source language code
 dest - destination language code
 args - additional options for http::geturl</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#hl_trans::translateLine">translateLine</a><span class=tooltiptext> hl_trans::translateLine : Translates a current line of the text.
-from - source language code
-to - destination language code</span></div></li></ul>
 <li><b><a href="#EOF">EOF</a></b></li>
 
 </ul>
@@ -154,7 +151,6 @@ The alited's main files are contained in <a href="../../src/about.html">alited/s
   <i><font color=#4b5d50>#   args - highlighting colors</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
-  <b><font color=#3a6797>variable</font></b> postUrl <font color=#1b1baa>$al(ED,tran)</font>
   <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$args</font> clrCOM clrCOMTK clrSTR clrVAR clrCMN clrPROC
   <font color=#1b1baa>$w</font> tag config iniPROC <font color=#653760>-font</font> <font color=#1b1baa>$font</font> <font color=#653760>-foreground</font> <font color=#1b1baa>$clrPROC</font>
   <b><font color=#3a6797>dict</font></b> set font <font color=#653760>-slant</font> italic
@@ -201,7 +197,7 @@ The alited's main files are contained in <a href="../../src/about.html">alited/s
   <b><font color=#3a6797>variable</font></b> postUrl
   <b><font color=#3a6797>set</font></b> query [<b><font color=#3a6797>http::formatQuery</font></b> q <font color=#1b1baa>$txt</font> source <font color=#1b1baa>$src</font> target <font color=#1b1baa>$dest</font> format text api_key {}]
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {
-      <b><font color=#3a6797>set</font></b> post [<b><font color=#3a6797>http::geturl</font></b> <font color=#1b1baa>$postUrl</font> <font color=#653760>-query</font> <font color=#1b1baa>$query</font> <font color=#653760>-method</font> POST {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
+    <b><font color=#3a6797>set</font></b> post [<b><font color=#3a6797>http::geturl</font></b> <font color=#1b1baa>$postUrl</font> <font color=#653760>-query</font> <font color=#1b1baa>$query</font> <font color=#653760>-method</font> POST {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
   } err]} {
     <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> 0 <font color=#1b1baa>$err</font>]
   }
@@ -217,51 +213,7 @@ The alited's main files are contained in <a href="../../src/about.html">alited/s
   <b><font color=#3a6797>set</font></b> translation [<b><font color=#3a6797>encoding</font></b> convertfrom utf-8 <font color=#1b1baa>$translation</font>]
   <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> 1 [htmlparse::mapEscapes <font color=#1b1baa>$translation</font>]]
 }
-<i><font color=#4b5d50>#_______________________</font></i>
-<a id=hl_trans::translateLine></a>
-<b><font color=#ca14ca>proc</font></b> hl_trans::translateLine {from to} {
-  <i><font color=#4b5d50># Translates a current line of the text.</font></i>
-  <i><font color=#4b5d50>#   from - source language code</font></i>
-  <i><font color=#4b5d50>#   to - destination language code</font></i>
-
-<b><font color=#3a6797>if</font></b> 0 {  ;<i><font color=#4b5d50># obsolete</font></i>
-  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
-  <b><font color=#3a6797>variable</font></b> errmsg
-  <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
-  <b><font color=#3a6797>set</font></b> nl [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$wtxt</font> index insert])}]
-  <b><font color=#3a6797>set</font></b> line [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$nl</font>.0 <font color=#1b1baa>$nl</font>.end]
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$line</font>] eq {}} {
-    <b><font color=#134070>bell</font></b>
-    <b><font color=#ca14ca>return</font></b>
-  }
-  alited::MessageNotDisturb
-  <b><font color=#3a6797>lassign</font></b> [TranslateText <font color=#1b1baa>$line</font> <font color=#1b1baa>$from</font> <font color=#1b1baa>$to</font>] ok translation
-  ::baltip hide
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ok</font>} {
-    <b><font color=#3a6797>set</font></b> nchars [::apave::obj leadingSpaces <font color=#1b1baa>$line</font>]
-    <b><font color=#3a6797>set</font></b> indent [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$line</font> 0 <font color=#1b1baa>$nchars</font>-1]
-    <b><font color=#3a6797>set</font></b> translation <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>indent<font color=#1b1baa>[</font>string trimleft <font color=#1b1baa>$</font>translation<font color=#1b1baa>]</font>&quot;</font>
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(ED,transadd)</font>} {
-      <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$nl</font>.end \n<font color=#1b1baa>$translation</font>
-      <b><font color=#3a6797>incr</font></b> nl
-    } <b><font color=#3a6797>else</font></b> {
-      <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$nl</font>.0 <font color=#1b1baa>$nl</font>.end <font color=#1b1baa>$translation</font>
-    }
-    <b><font color=#3a6797>update</font></b>
-    <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$wtxt</font> tag add iniPROC <font color=#1b1baa>$nl</font>.0 <font color=#1b1baa>$nl</font>.end]
-    <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>incr</font></b> nl} {<font color=#1b1baa>$nl</font>&lt;=[<font color=#1b1baa>$wtxt</font> index end]} {<b><font color=#3a6797>incr</font></b> nl} {
-      <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$nl</font>.0 <font color=#1b1baa>$nl</font>.end]]
-      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$line</font> ne {}} {
-        ::tk::TextSetCursor <font color=#1b1baa>$wtxt</font> [<font color=#1b1baa>$wtxt</font> index <font color=#1b1baa>$nl</font>.0]
-        <b><font color=#ca14ca>break</font></b>
-      }
-    }
-    alited::main::HighlightLine
-  } <b><font color=#3a6797>else</font></b> {
-    alited::Message <font color=#1b1baa>$translation</font> 4
-  }
-}
-}<a id=EOF></a>
+<a id=EOF></a>
 <i><font color=#4b5d50># ________________________ EOF _________________________ #</font></i>
 
 </pre>

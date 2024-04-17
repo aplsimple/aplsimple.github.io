@@ -133,7 +133,11 @@ initmnu - yes, if called to initialize mnu dir</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#ini::CreateIcon">CreateIcon</a><span class=tooltiptext> ini::CreateIcon : Create an icon (of normal and big size).
 icon - name of icon</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#ini::EditSettings">EditSettings</a><span class=tooltiptext> ini::EditSettings : Displays the settings file, just to look behind the wall.</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#ini::HighlightEditSettings">HighlightEditSettings</a><span class=tooltiptext> ini::HighlightEditSettings : Highlights the settings file.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#ini::HighlightFileText">HighlightFileText</a><span class=tooltiptext> ini::HighlightFileText : Highlights a text of a file.
+wtxt - the text's path
+fname - the file name (extension)
+ro - flag "readonly text"
+args - additional options</span></div></li></ul>
 <li><b><a href="#Main_(+_tool_bar)">Main (+ tool bar)</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#ini::InitGUI">InitGUI</a><span class=tooltiptext> ini::InitGUI : Initializes GUI.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#ini::InitFonts">InitFonts</a><span class=tooltiptext> ini::InitFonts : Loads main fonts for alited to use as default and mono.</span></div></li></ul>
@@ -215,9 +219,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>set</font></b> al(ED,guttershift) 3  ;<i><font color=#4b5d50># space between gutter and text</font></i>
   <b><font color=#3a6797>set</font></b> al(ED,btsbd) 0        ;<i><font color=#4b5d50># borderwidth for bartabs</font></i>
   <b><font color=#3a6797>set</font></b> al(ED,BlinkCurs) 1    ;<i><font color=#4b5d50># blinking cursor</font></i>
-  <b><font color=#3a6797>set</font></b> al(ED,tran) <font color=#1b1baa>$al(ED,TRAN)</font>   ;<i><font color=#4b5d50># translation site</font></i>
-  <b><font color=#3a6797>set</font></b> al(ED,trans) <font color=#1b1baa>$al(ED,TRANS)</font> ;<i><font color=#4b5d50># list of translation sites</font></i>
-  <b><font color=#3a6797>set</font></b> al(ED,transadd) <font color=#1b1baa>$al(ED,TRANSADD)</font> ;<i><font color=#4b5d50># if 0, replaces the translated text</font></i>
   <b><font color=#3a6797>set</font></b> al(TREE,isunits) yes  ;<i><font color=#4b5d50># current mode of tree: units/files</font></i>
   <b><font color=#3a6797>set</font></b> al(TREE,units) no     ;<i><font color=#4b5d50># flag &quot;is a unit tree created&quot;</font></i>
   <b><font color=#3a6797>set</font></b> al(TREE,files) no     ;<i><font color=#4b5d50># flag &quot;is a file tree created&quot;</font></i>
@@ -394,6 +395,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>set</font></b> al(TIPS,Preferences) 1
   <b><font color=#3a6797>set</font></b> al(TIPS,Templates) 1
   <b><font color=#3a6797>set</font></b> al(TIPS,SavedFavorites) 1
+  <b><font color=#3a6797>set</font></b> al(TIPS,Marks) 1
 
   <i><font color=#4b5d50># flag &quot;sorted file list&quot;</font></i>
   <b><font color=#3a6797>set</font></b> al(sortList) 0
@@ -466,7 +468,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>set</font></b> al(KEYS,bind) [<b><font color=#3a6797>list</font></b>]
   <b><font color=#3a6797>set</font></b> em_i 0
   <b><font color=#3a6797>set</font></b> fontsize [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$al(FONTSIZE,std)</font>+1}]
-  <b><font color=#3a6797>set</font></b> al(FONT,txt) <font color=#8b2a0e>&quot;-family <font color=#1b1baa>{[</font>::apave::obj basicTextFont<font color=#1b1baa>]}</font> -size <font color=#1b1baa>$</font>fontsize&quot;</font>
+  <b><font color=#3a6797>set</font></b> al(FONT,txt) <font color=#8b2a0e>&quot;-family <font color=#1b1baa>{[</font>obj basicTextFont<font color=#1b1baa>]}</font> -size <font color=#1b1baa>$</font>fontsize&quot;</font>
   <b><font color=#3a6797>lassign</font></b> <font color=#8b2a0e>&quot;&quot;</font> ::alited::Pan_wh ::alited::PanL_wh ::alited::PanR_wh \
     ::alited::PanBM_wh ::alited::PanTop_wh ::alited::al(GEOM)
   <b><font color=#3a6797>puts</font></b> <font color=#8b2a0e>&quot;alited pwd    : <font color=#1b1baa>[</font>pwd<font color=#1b1baa>]</font>&quot;</font>
@@ -645,8 +647,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     guttershift   {<b><font color=#3a6797>set</font></b> al(ED,guttershift) <font color=#1b1baa>$val</font>}
     btsbd         {<b><font color=#3a6797>set</font></b> al(ED,btsbd) <font color=#1b1baa>$val</font>}
     BlinkCurs     {<b><font color=#3a6797>set</font></b> al(ED,BlinkCurs) <font color=#1b1baa>$val</font>}
-    EDtran        {<b><font color=#3a6797>set</font></b> al(ED,tran) <font color=#1b1baa>$val</font>}
-    EDtrans       {<b><font color=#3a6797>set</font></b> al(ED,trans) <font color=#1b1baa>$val</font>}
     ClrCurs       {<b><font color=#3a6797>set</font></b> al(CURSORCOLOR) <font color=#1b1baa>$val</font>}
     cursorwidth   {<b><font color=#3a6797>set</font></b> al(CURSORWIDTH) <font color=#1b1baa>$val</font>}
     prjdefault    {<b><font color=#3a6797>set</font></b> al(PRJDEFAULT) <font color=#1b1baa>$val</font>}
@@ -656,7 +656,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     ALEversion    {<b><font color=#3a6797>set</font></b> al(ALEversion) <font color=#1b1baa>$val</font>}
     todoahead     {<b><font color=#3a6797>set</font></b> al(todoahead) <font color=#1b1baa>$val</font>}
   }
-<i><font color=#4b5d50>#    EDtransadd    {set al(ED,transadd) $val} obsolete</font></i>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=ini::ReadIniTemplates></a>
@@ -929,7 +928,12 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$val</font>] ne {}} {
     <b><font color=#3a6797>switch</font></b> <font color=#653760>-exact</font> -- <font color=#1b1baa>$nam</font> {
-      tab {<b><font color=#3a6797>lappend</font></b> al(tabs) <font color=#1b1baa>$val</font>}
+      tab {
+        <b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$val</font> 0]
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-exact</font> <font color=#653760>-index</font> 0 <font color=#1b1baa>$al(tabs)</font> <font color=#1b1baa>$fname</font>]&lt;0} {
+          <b><font color=#3a6797>lappend</font></b> al(tabs) <font color=#1b1baa>$val</font>
+        }
+      }
       recent {alited::file::InsertRecent <font color=#1b1baa>$val</font> end}
       encode - eol {
         <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$val</font> \t] k v
@@ -1075,9 +1079,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;guttershift=<font color=#1b1baa>$</font>al(ED,guttershift)&quot;</font>
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;btsbd=<font color=#1b1baa>$</font>al(ED,btsbd)&quot;</font>
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;BlinkCurs=<font color=#1b1baa>$</font>al(ED,BlinkCurs)&quot;</font>
-  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;EDtran=<font color=#1b1baa>$</font>al(ED,tran)&quot;</font>
-  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;EDtrans=<font color=#1b1baa>$</font>al(ED,trans)&quot;</font>
-<i><font color=#4b5d50>#  puts $chan &quot;EDtransadd=$al(ED,transadd)&quot;</font></i>
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;ClrCurs=<font color=#1b1baa>$</font>al(CURSORCOLOR)&quot;</font>
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;prjdefault=<font color=#1b1baa>$</font>al(PRJDEFAULT)&quot;</font>
   <b><font color=#3a6797>foreach</font></b> k [<b><font color=#3a6797>array</font></b> names al DEFAULT,*] {
@@ -1307,7 +1308,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50># Views changes for updating.</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited DATADIR DATADIR
-  ::apave::obj vieweditFile [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$DATADIR</font> to-update.txt] {} <font color=#653760>-rotext</font> 1 <font color=#653760>-h</font> 25
+  obj vieweditFile [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$DATADIR</font> to-update.txt] {} <font color=#653760>-rotext</font> 1 <font color=#653760>-h</font> 25
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=ini::UpdateTemplates></a>
@@ -1567,22 +1568,28 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50># Displays the settings file, just to look behind the wall.</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
-  <b><font color=#3a6797>after</font></b> idle alited::ini::HighlightEditSettings
+  <b><font color=#3a6797>after</font></b> idle alited::ini::HighlightFileText
   <font color=#1b1baa>$obPav</font> vieweditFile <font color=#1b1baa>$al(INI)</font> {} <font color=#653760>-rotext</font> 1 <font color=#653760>-h</font> 25
 }
 <i><font color=#4b5d50>#_______________________</font></i>
-<a id=ini::HighlightEditSettings></a>
-<b><font color=#ca14ca>proc</font></b> ini::HighlightEditSettings {} {
-  <i><font color=#4b5d50># Highlights the settings file.</font></i>
+<a id=ini::HighlightFileText></a>
+<b><font color=#ca14ca>proc</font></b> ini::HighlightFileText {{wtxt <font color=#8b2a0e>&quot;&quot;</font>} {fname <font color=#8b2a0e>&quot;&quot;</font>} {ro 1} args} {
+  <i><font color=#4b5d50># Highlights a text of a file.</font></i>
+  <i><font color=#4b5d50>#   wtxt - the text's path</font></i>
+  <i><font color=#4b5d50>#   fname - the file name (extension)</font></i>
+  <i><font color=#4b5d50>#   ro - flag &quot;readonly text&quot;</font></i>
+  <i><font color=#4b5d50>#   args - additional options</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
   <b><font color=#3a6797>set</font></b> colors [alited::Hl_Colors]
-  <b><font color=#3a6797>set</font></b> wtxt [<font color=#1b1baa>$obPav</font> TexM]
-  <b><font color=#3a6797>set</font></b> plcom [alited::HighlightAddon <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$al(INI)</font> <font color=#1b1baa>$colors</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtxt</font> eq {}} {<b><font color=#3a6797>set</font></b> wtxt [<font color=#1b1baa>$obPav</font> TexM]}
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> eq {}} {<b><font color=#3a6797>set</font></b> fname <font color=#1b1baa>$al(INI)</font>}
+  <b><font color=#3a6797>set</font></b> plcom [alited::HighlightAddon <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$colors</font>]
   ::hl_tcl::hl_init <font color=#1b1baa>$wtxt</font> <font color=#653760>-font</font> <font color=#1b1baa>$al(FONT,txt)</font> <font color=#653760>-dark</font> [<font color=#1b1baa>$obPav</font> csDark] \
     <font color=#653760>-multiline</font> 1 <font color=#653760>-colors</font> <font color=#1b1baa>$colors</font> <font color=#653760>-insertwidth</font> <font color=#1b1baa>$al(CURSORWIDTH)</font> \
-    <font color=#653760>-readonly</font> 1 <font color=#653760>-plaintext</font> 0 <font color=#653760>-plaincom</font> <font color=#1b1baa>$plcom</font>
+    <font color=#653760>-readonly</font> <font color=#1b1baa>$ro</font> <font color=#653760>-plaintext</font> 0 <font color=#653760>-plaincom</font> <font color=#1b1baa>$plcom</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
   ::hl_tcl::hl_text <font color=#1b1baa>$wtxt</font>
+  alited::main::SetTabs <font color=#1b1baa>$wtxt</font> [<b><font color=#3a6797>lindex</font></b> [alited::main::CalcIndentation] 0]
 }
 <a id=Main_(+_tool_bar)></a>
 <i><font color=#4b5d50># ________________________ Main (+ tool bar) _________________________ #</font></i>
@@ -1591,14 +1598,14 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50># Initializes GUI.</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
-  ::apave::obj basicFontSize <font color=#1b1baa>$al(FONTSIZE,std)</font>
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(INI,HUE)</font>} {::apave::obj csToned <font color=#1b1baa>$al(INI,CS)</font> <font color=#1b1baa>$al(INI,HUE)</font>}
+  obj basicFontSize <font color=#1b1baa>$al(FONTSIZE,std)</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(INI,HUE)</font>} {obj csToned <font color=#1b1baa>$al(INI,CS)</font> <font color=#1b1baa>$al(INI,HUE)</font>}
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(CURSORCOLOR)</font> eq {}} {
-    <b><font color=#3a6797>set</font></b> al(CURSORCOLOR) [<b><font color=#3a6797>lindex</font></b> [::apave::obj csGet <font color=#1b1baa>$al(INI,CS)</font>] 7]
+    <b><font color=#3a6797>set</font></b> al(CURSORCOLOR) [<b><font color=#3a6797>lindex</font></b> [obj csGet <font color=#1b1baa>$al(INI,CS)</font>] 7]
   }
-  ::apave::obj csSet <font color=#1b1baa>$al(INI,CS)</font> . <font color=#653760>-doit</font> <font color=#653760>-clrcurs</font> <font color=#1b1baa>$al(CURSORCOLOR)</font>
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(INI,HUE)</font>} {::apave::obj csToned <font color=#1b1baa>$al(INI,CS)</font> <font color=#1b1baa>$al(INI,HUE)</font> yes}
-  <b><font color=#3a6797>set</font></b> Dark [::apave::obj csDark]
+  obj csSet <font color=#1b1baa>$al(INI,CS)</font> . <font color=#653760>-doit</font> <font color=#653760>-clrcurs</font> <font color=#1b1baa>$al(CURSORCOLOR)</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(INI,HUE)</font>} {obj csToned <font color=#1b1baa>$al(INI,CS)</font> <font color=#1b1baa>$al(INI,HUE)</font> yes}
+  <b><font color=#3a6797>set</font></b> Dark [obj csDark]
   <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists al(ED,clrCOM)] || ![<b><font color=#3a6797>info</font></b> exists al(ED,CclrCOM)] || \
   ![<b><font color=#3a6797>info</font></b> exists al(ED,Dark)] || <font color=#1b1baa>$al(ED,Dark)</font> != <font color=#1b1baa>$Dark</font>} {
     alited::pref::Tcl_Default <font color=#1b1baa>$al(syntaxidx)</font> yes
@@ -1616,13 +1623,13 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   }
   ::hl_tcl::hl_colors . <font color=#1b1baa>$Dark</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$clrvals</font> ;<i><font color=#4b5d50># default Tcl syntax colors</font></i>
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(ED,BlinkCurs)</font>} {
-    <b><font color=#3a6797>lassign</font></b> [::apave::obj defaultATTRS tex] texopts texattrs
-    ::apave::obj defaultATTRS tex <font color=#1b1baa>$texopts</font> [<b><font color=#3a6797>dict</font></b> set texattrs <font color=#653760>-insertofftime</font> 0]
+    <b><font color=#3a6797>lassign</font></b> [obj defaultATTRS tex] texopts texattrs
+    obj defaultATTRS tex <font color=#1b1baa>$texopts</font> [<b><font color=#3a6797>dict</font></b> set texattrs <font color=#653760>-insertofftime</font> 0]
   }
-  ::apave::obj setShowOption <font color=#653760>-resizable</font> 0
+  obj setShowOption <font color=#653760>-resizable</font> 0
   <b><font color=#3a6797>if</font></b> {[::isKDE]} {  ;<i><font color=#4b5d50># esp. for KDE:</font></i>
     <i><font color=#4b5d50># dialogue windows should be topmost, otherwise KDE hides them at losing focus</font></i>
-    ::apave::obj setShowOption <font color=#653760>-ontop</font> yes
+    obj setShowOption <font color=#653760>-ontop</font> yes
   }
   <b><font color=#3a6797>lassign</font></b> [::apave::defaultAttrs spx] opts atrs
   ::apave::defaultAttrs spx <font color=#1b1baa>$opts</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>atrs -justify center -w 9&quot;</font>
@@ -1636,7 +1643,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(FONT)</font> ne {}} {
     <b><font color=#3a6797>catch</font></b> {
-      ::apave::obj basicDefFont [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$al(FONT)</font> <font color=#653760>-family</font>]
+      obj basicDefFont [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$al(FONT)</font> <font color=#653760>-family</font>]
     }
     <b><font color=#3a6797>set</font></b> smallfont <font color=#1b1baa>$al(FONT)</font>
     <b><font color=#3a6797>catch</font></b> {
@@ -1650,12 +1657,12 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     }
     ::baltip::configure <font color=#653760>-font</font> <font color=#1b1baa>$smallfont</font>
   }
-  <b><font color=#3a6797>set</font></b> statusfont [::apave::obj basicSmallFont]
+  <b><font color=#3a6797>set</font></b> statusfont [obj basicSmallFont]
   <b><font color=#3a6797>catch</font></b> {
     <b><font color=#3a6797>set</font></b> statusfont [<b><font color=#3a6797>dict</font></b> set statusfont <font color=#653760>-size</font> <font color=#1b1baa>$al(FONTSIZE,small)</font>]
   }
-  ::apave::obj basicSmallFont <font color=#1b1baa>$statusfont</font>
-  ::apave::obj basicFontSize <font color=#1b1baa>$al(FONTSIZE,std)</font>
+  obj basicSmallFont <font color=#1b1baa>$statusfont</font>
+  obj basicFontSize <font color=#1b1baa>$al(FONTSIZE,std)</font>
   <b><font color=#3a6797>set</font></b> gl [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$MSGSDIR</font> <font color=#1b1baa>$al(LOCAL)</font>]
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> flist [<b><font color=#3a6797>glob</font></b> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>gl.msg&quot;</font>]}] || <font color=#1b1baa>$flist</font> eq {}} {
     <b><font color=#3a6797>set</font></b> al(LOCAL) en
@@ -1698,7 +1705,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>namespace</font></b> upvar ::alited::pref em_Num em_Num em_ico em_ico em_inf em_inf em_mnu em_mnu
 
   ::apave::initBaltip
-  ::apave::obj chooserGeomVars ::alited::DirGeometry ::alited::FilGeometry
+  obj chooserGeomVars ::alited::DirGeometry ::alited::FilGeometry
   GetUserDirs
   CheckIni
   ReadIni
@@ -1833,7 +1840,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#134070>image</font></b> create photo alimg_kbd <font color=#653760>-data</font> [<b><font color=#3a6797>set</font></b> ::alited::img::_AL_IMG(kbd)]
   <i><font color=#4b5d50># styles & fonts used in &quot;small&quot; dialogues</font></i>
   initStyles
-  <b><font color=#3a6797>lassign</font></b> [::apave::obj create_FontsType small <font color=#653760>-size</font> <font color=#1b1baa>$al(FONTSIZE,small)</font>] \
+  <b><font color=#3a6797>lassign</font></b> [obj create_FontsType small <font color=#653760>-size</font> <font color=#1b1baa>$al(FONTSIZE,small)</font>] \
      al(FONT,defsmall) al(FONT,monosmall)
   <b><font color=#3a6797>lassign</font></b> [alited::FgFgBold] -&gt; al(FG,Bold)
 }

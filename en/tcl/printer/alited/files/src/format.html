@@ -131,6 +131,11 @@ fullformname - full path to formatter
 fform - formatter's name
 ev - the event
 wasacc - if true, -accelerator of $fform menu item was made</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#format::CreateFormatIcon">CreateFormatIcon</a><span class=tooltiptext> format::CreateFormatIcon : Create icon of formatter in toolbar.
+icon - icon name
+sep - true if separated
+com - command
+fform - formatter file name</span></div></li></ul>
 <li><b><a href="#EOF">EOF</a></b></li>
 
 </ul>
@@ -204,6 +209,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>variable</font></b> valueLines {}
   <b><font color=#3a6797>variable</font></b> cont6; <b><font color=#3a6797>array</font></b> set cont6 [<b><font color=#3a6797>list</font></b>]
   <b><font color=#3a6797>variable</font></b> bind6; <b><font color=#3a6797>array</font></b> set bind6 [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>variable</font></b> icon6; <b><font color=#3a6797>array</font></b> set icon6 [<b><font color=#3a6797>list</font></b>]
 }
 <a id=Move_unit_descriptions></a>
 <i><font color=#4b5d50># ________________________ Move unit descriptions _________________________ #</font></i>
@@ -419,7 +425,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$cont</font> 0]  ;<i><font color=#4b5d50># already processed?</font></i>
   }
   <i><font color=#4b5d50># padding (indentation) of unit's declaration</font></i>
-  <b><font color=#3a6797>set</font></b> pad [::apave::obj leadingSpaces <font color=#1b1baa>$line</font>]
+  <b><font color=#3a6797>set</font></b> pad [obj leadingSpaces <font color=#1b1baa>$line</font>]
   <b><font color=#3a6797>set</font></b> pad [<b><font color=#3a6797>string</font></b> repeat { } <font color=#1b1baa>$pad</font>]
   <b><font color=#3a6797>set</font></b> replcont [<b><font color=#3a6797>set</font></b> replln [<b><font color=#3a6797>list</font></b>]]
   <i><font color=#4b5d50># find the inside description</font></i>
@@ -468,7 +474,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>regexp</font></b> [LeafRE] <font color=#1b1baa>$line</font>]} {
     <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$cont</font> 0]  ;<i><font color=#4b5d50># not unit's declaraion - already processed?</font></i>
   }
-  <b><font color=#3a6797>set</font></b> pad0 [::apave::obj leadingSpaces <font color=#1b1baa>$line</font>]
+  <b><font color=#3a6797>set</font></b> pad0 [obj leadingSpaces <font color=#1b1baa>$line</font>]
   <b><font color=#3a6797>set</font></b> pad0 [<b><font color=#3a6797>string</font></b> repeat { } <font color=#1b1baa>$pad0</font>]
   <i><font color=#4b5d50># get the outside description</font></i>
   <b><font color=#3a6797>set</font></b> replln 0
@@ -980,14 +986,19 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>variable</font></b> bind6
   <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$args</font> fullformname
   <b><font color=#3a6797>set</font></b> fform [alited::edit::FormatterName <font color=#1b1baa>$fullformname</font>]
+  <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>list</font></b> alited::format::Mode5 ::alited::format::cont6(<font color=#1b1baa>$fform</font>) {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
   <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
   <b><font color=#3a6797>set</font></b> bind6(<font color=#1b1baa>$fform</font>) [<b><font color=#3a6797>list</font></b>]
-  <b><font color=#3a6797>set</font></b> res {}
+  <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>set</font></b> icon {}]
+  <b><font color=#3a6797>set</font></b> sep 0
   <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$cont</font> {
     <b><font color=#3a6797>incr</font></b> il
+    <b><font color=#3a6797>set</font></b> sp [alited::edit::IniParameter sep <font color=#1b1baa>$line</font> <font color=#653760>-nocase</font>]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is true <font color=#653760>-strict</font> <font color=#1b1baa>$sp</font>]} {<b><font color=#3a6797>set</font></b> sep 1}
+    <b><font color=#3a6797>set</font></b> ic [alited::edit::IniParameter icon <font color=#1b1baa>$line</font> <font color=#653760>-nocase</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ic</font> ne {}} {<b><font color=#3a6797>set</font></b> icon <font color=#1b1baa>$ic</font>}
     <b><font color=#3a6797>set</font></b> events [alited::edit::IniParameter events <font color=#1b1baa>$line</font> <font color=#653760>-nocase</font>]
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$events</font> ne {}} {
-      <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>list</font></b> alited::format::Mode5 ::alited::format::cont6(<font color=#1b1baa>$fform</font>) {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
       <b><font color=#3a6797>foreach</font></b> ev [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$events</font> { ,}] {
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ev</font> ne {}} {
           <b><font color=#3a6797>set</font></b> wasacc [<b><font color=#3a6797>info</font></b> exist cont6(<font color=#1b1baa>$fform</font>)]
@@ -1002,11 +1013,15 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
         }
         <b><font color=#3a6797>set</font></b> cont6(<font color=#1b1baa>$fform</font>) [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$cont</font> <font color=#1b1baa>$il</font> end]
       }
-      <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+      <b><font color=#ca14ca>break</font></b>
     }
   }
-  <i><font color=#4b5d50># no event encountered - run the formatter once</font></i>
-  Mode5 <font color=#1b1baa>$cont</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$icon</font> ne {}} {
+    CreateFormatIcon <font color=#1b1baa>$icon</font> <font color=#1b1baa>$sep</font> <font color=#1b1baa>$com</font> <font color=#1b1baa>$fform</font>
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$res</font> eq {}} {
+    <i><font color=#4b5d50># no event encountered - run the formatter once</font></i>
+    Mode5 <font color=#1b1baa>$cont</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
+  }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -1041,6 +1056,38 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   }
   <b><font color=#3a6797>set</font></b> al(FORMATS,<font color=#1b1baa>$fform</font>,<font color=#1b1baa>$ev2</font>) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fullformname</font> <font color=#1b1baa>$ev2</font>]
   <b><font color=#ca14ca>return</font></b> yes
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=format::CreateFormatIcon></a>
+<b><font color=#ca14ca>proc</font></b> format::CreateFormatIcon {icon sep com fform} {
+  <i><font color=#4b5d50># Create icon of formatter in toolbar.</font></i>
+  <i><font color=#4b5d50>#   icon - icon name</font></i>
+  <i><font color=#4b5d50>#   sep - true if separated</font></i>
+  <i><font color=#4b5d50>#   com - command</font></i>
+  <i><font color=#4b5d50>#   fform - formatter file name</font></i>
+
+  <b><font color=#3a6797>variable</font></b> icon6
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists icon6(<font color=#1b1baa>$icon</font>)]} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>set</font></b> icon6(<font color=#1b1baa>$icon</font>) 1
+  <b><font color=#3a6797>set</font></b> but [alited::tool::ToolButName <font color=#1b1baa>$icon</font>]_2
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$sep</font>} {
+    <b><font color=#3a6797>set</font></b> separ [<b><font color=#134070>ttk::separator</font></b> <font color=#1b1baa>${but}</font>_sep <font color=#653760>-orient</font> vertical]
+    <b><font color=#134070>pack</font></b> <font color=#1b1baa>$separ</font> <font color=#653760>-side</font> left <font color=#653760>-fill</font> y <font color=#653760>-padx</font> 6
+  }
+  <b><font color=#3a6797>lassign</font></b> [obj csGet] fga fg bga bg
+  <b><font color=#3a6797>set</font></b> fontB [obj boldTextFont 16]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> img [alited::ini::CreateIcon <font color=#1b1baa>$icon</font>]-big; <b><font color=#134070>image</font></b> inuse <font color=#1b1baa>$img</font>}]} {
+    <b><font color=#3a6797>set</font></b> txt <font color=#1b1baa>$icon</font>
+    <b><font color=#3a6797>set</font></b> istext 1
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> txt {}
+    <b><font color=#3a6797>set</font></b> istext 0
+  }
+  <b><font color=#3a6797>set</font></b> attrs [obj toolbarItem_Attrs <font color=#1b1baa>$istext</font> <font color=#1b1baa>$img</font> <font color=#1b1baa>$fontB</font> <font color=#1b1baa>$fg</font> <font color=#1b1baa>$bg</font> <font color=#1b1baa>$fga</font> <font color=#1b1baa>$bga</font>]
+  <b><font color=#134070>button</font></b> <font color=#1b1baa>$but</font> <font color=#653760>-text</font> <font color=#1b1baa>$txt</font> <font color=#653760>-command</font> <font color=#1b1baa>$com</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$attrs</font>
+  ::baltip tip <font color=#1b1baa>$but</font> [msgcat::mc Pluginable]\n[alited::menu::FormatsItemName <font color=#1b1baa>$fform</font>]
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$but</font> &lt;Button-3&gt; {alited::tool::PopupBar %X %Y}
+  <b><font color=#134070>pack</font></b> <font color=#1b1baa>$but</font> <font color=#653760>-side</font> left
 }
 <a id=EOF></a>
 <i><font color=#4b5d50># ________________________ EOF _________________________ #</font></i>

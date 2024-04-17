@@ -258,8 +258,8 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50># &quot;Preferences&quot; dialogue's path</font></i>
   <b><font color=#3a6797>variable</font></b> win <font color=#1b1baa>$::alited::al(WIN)</font>.diaPref
 
-  <i><font color=#4b5d50># geometry for message boxes: to center in &quot;Preferences&quot; dialogue</font></i>
-  <b><font color=#3a6797>variable</font></b> geo root=<font color=#1b1baa>$::alited::al(WIN)</font>
+  <i><font color=#4b5d50># geometry</font></i>
+  <b><font color=#3a6797>variable</font></b> geo {}
 
   <i><font color=#4b5d50># saved data of settings</font></i>
   <b><font color=#3a6797>variable</font></b> data; <b><font color=#3a6797>array</font></b> set data [<b><font color=#3a6797>list</font></b>]
@@ -605,8 +605,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
       <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$al(comm_port_list)</font>]&gt;32} <b><font color=#ca14ca>break</font></b>
     }
     <b><font color=#3a6797>set</font></b> al(EM,DiffTool) [<b><font color=#3a6797>file</font></b> join {<b><font color=#3a6797>*</font></b>}[<b><font color=#3a6797>file</font></b> split <font color=#1b1baa>$al(EM,DiffTool)</font>]]
-    <b><font color=#3a6797>set</font></b> al(ED,trans) [[<font color=#1b1baa>$obPrf</font> CbxTrans] cget <font color=#653760>-values</font>]
-    ::apave::PushInList al(ED,trans) <font color=#1b1baa>$al(ED,tran)</font>
     <b><font color=#3a6797>set</font></b> al(RE,proc) [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$al(RE,proc)</font>]
     <font color=#1b1baa>$obPrf</font> res <font color=#1b1baa>$win</font> 1
     alited::Exit - 1 no
@@ -912,12 +910,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     {.labTrWs .labMult T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,trailwhite)</font>}}}
     {.SwiTrWs + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} \
       {<font color=#653760>-var</font> ::alited::al(DEFAULT,prjtrailwhite) <font color=#653760>-tabnext</font> alited::Tnext}}
-    {.labTrans .labTrWs T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Translation link:}}}
-    {.CbxTrans + L 1 9 {<font color=#653760>-st</font> ew <font color=#653760>-pady</font> 5} {<font color=#653760>-h</font> 12 <font color=#653760>-cbxsel</font> {<font color=#1b1baa>$al(ED,tran)</font>} \
-      <font color=#653760>-tvar</font> ::alited::al(ED,tran) <font color=#653760>-values</font> {<font color=#1b1baa>$al(ED,trans)</font>} \
-      <font color=#653760>-clearcom</font> {alited::main::ClearCbx %w ::alited::al(ED,tran)}}}
-    {#.labSwTrans .labTrans T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Adding translations:}}}
-    {#.SwiTrans + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-var</font> ::alited::al(ED,transadd) <font color=#653760>-tip</font> {If OFF, replaces the original text.}}}
   }
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -929,7 +921,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$args</font> a
   <b><font color=#3a6797>set</font></b> a [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$a</font> :]
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is integer <font color=#1b1baa>$a</font>]} {
-    <b><font color=#3a6797>lassign</font></b> [::apave::obj csGet <font color=#1b1baa>$a</font>] - fg - bg
+    <b><font color=#3a6797>lassign</font></b> [obj csGet <font color=#1b1baa>$a</font>] - fg - bg
     <b><font color=#ca14ca>return</font></b> <font color=#8b2a0e>&quot;-background <font color=#1b1baa>$</font>bg -foreground <font color=#1b1baa>$</font>fg&quot;</font>
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#ca14ca>return</font></b> {}
@@ -959,8 +951,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     <b><font color=#3a6797>set</font></b> state disabled
     [<font color=#1b1baa>$obPrf</font> CbxEOL] configure <font color=#653760>-state</font> <font color=#1b1baa>$state</font>
   }
-  <i><font color=#4b5d50># SwiTrans obsolete</font></i>
-  <b><font color=#3a6797>foreach</font></b> w {EntIgn SpxIndent SpxRedunit SwiMult ChbIndAuto SwiTrWs CbxTrans} {
+  <b><font color=#3a6797>foreach</font></b> w {EntIgn SpxIndent SpxRedunit SwiMult ChbIndAuto SwiTrWs} {
     [<font color=#1b1baa>$obPrf</font> <font color=#1b1baa>$w</font>] configure <font color=#653760>-state</font> <font color=#1b1baa>$state</font>
   }
 }
@@ -980,7 +971,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50>#   cs - the color scheme's index (if omitted, the chosen one's)</font></i>
 
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$cs</font> eq {}} {<b><font color=#3a6797>set</font></b> cs [GetCS]}
-  <b><font color=#ca14ca>return</font></b> [::apave::obj csDark <font color=#1b1baa>$cs</font>]
+  <b><font color=#ca14ca>return</font></b> [obj csDark <font color=#1b1baa>$cs</font>]
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=pref::GetLocaleImage></a>
@@ -1024,7 +1015,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 
   fetchVars
   <b><font color=#3a6797>set</font></b> cs [GetCS]
-  <b><font color=#3a6797>set</font></b> cclr [<b><font color=#3a6797>lindex</font></b> [::apave::obj csGet <font color=#1b1baa>$cs</font>] 7]
+  <b><font color=#3a6797>set</font></b> cclr [<b><font color=#3a6797>lindex</font></b> [obj csGet <font color=#1b1baa>$cs</font>] 7]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(CURSORCOLOR)</font> ne <font color=#1b1baa>$cclr</font>} {
     <b><font color=#3a6797>catch</font></b> {
       .alwin.diaPref.fra.fraR.nbk.f1.fra1.labclrCC configure <font color=#653760>-background</font> <font color=#1b1baa>$cclr</font>
@@ -1634,7 +1625,6 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   fetchVars
   <b><font color=#3a6797>set</font></b> al(EM,exec) yes
   <b><font color=#3a6797>set</font></b> al(EM,ownCS) no
-  <b><font color=#3a6797>set</font></b> al(EM,geometry) {}
   <b><font color=#3a6797>set</font></b> emdir [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::USERDIR</font> e_menu]
   <b><font color=#3a6797>set</font></b> al(EM,mnudir) [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$emdir</font> menus]
   <b><font color=#3a6797>set</font></b> al(EM,mnu) [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$al(EM,mnudir)</font> menu.em]
@@ -1709,8 +1699,15 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 <b><font color=#ca14ca>proc</font></b> pref::Tkcon_Default {} {
   <i><font color=#4b5d50># Sets defaults for &quot;Tools/Tkcon&quot; tab.</font></i>
 
-  fetchVars
-  <b><font color=#3a6797>set</font></b> al(tkcon,options) {<font color=#653760>-rows</font> 24 <font color=#653760>-cols</font> 80 <font color=#653760>-fontsize</font> 13 <font color=#653760>-geometry</font> {} <font color=#653760>-showmenu</font> 1 <font color=#653760>-topmost</font> 0}
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> g <font color=#8b2a0e>&quot;<font color=#1b1baa>{}</font>&quot;</font>
+  <b><font color=#3a6797>catch</font></b> {
+    <b><font color=#3a6797>set</font></b> ls [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$al(tkcon,options)</font>]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#1b1baa>$ls</font> <font color=#653760>-geometry</font>]]&gt;-1} {
+      <b><font color=#3a6797>set</font></b> g [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$ls</font> [<b><font color=#3a6797>incr</font></b> i]]
+    }
+  }
+  <b><font color=#3a6797>set</font></b> al(tkcon,options) <font color=#8b2a0e>&quot;-rows 24 -cols 80 -fontsize 13 -geometry <font color=#1b1baa>$</font>g -showmenu 1 -topmost 0&quot;</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=pref::Tkcon_Default1></a>
@@ -2018,6 +2015,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fnotes</font>]} {
     <font color=#1b1baa>$wtxt</font> insert end [::apave::readTextFile <font color=#1b1baa>$fnotes</font>]
   }
+  <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;alited::ini::HighlightFileText <font color=#1b1baa>$</font>wtxt .md 0&quot;</font>
   <font color=#1b1baa>$wtxt</font> edit reset; <font color=#1b1baa>$wtxt</font> edit modified no
   [<font color=#1b1baa>$obPrf</font> TexTclKeys] insert end <font color=#1b1baa>$al(ED,TclKeyWords)</font>
   [<font color=#1b1baa>$obPrf</font> TexCKeys] insert end <font color=#1b1baa>$al(ED,CKeyWords)</font>
@@ -2027,17 +2025,18 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
       Emenu_Tab {
         <b><font color=#3a6797>set</font></b> nbk nbk6
         <b><font color=#3a6797>set</font></b> nt <font color=#1b1baa>$win</font>.fra.fraR.nbk6.f3
+        <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>1st ; ::alited::pref::Tab <font color=#1b1baa>$</font>nbk <font color=#1b1baa>$</font>nt yes&quot;</font>
       }
     }
-    <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>1st ; ::alited::pref::Tab <font color=#1b1baa>$</font>nbk <font color=#1b1baa>$</font>nt yes&quot;</font>
   } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$oldTab</font> ne {}} {
-    <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>1st ; ::alited::pref::Tab <font color=#1b1baa>$</font>oldTab&quot;</font>
+    <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>1st ; ::alited::pref::Tab <font color=#1b1baa>$</font>oldTab <font color=#1b1baa>{}</font> yes&quot;</font>
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;::alited::pref::Tab nbk&quot;</font> ;<i><font color=#4b5d50># first entering</font></i>
   }
   <b><font color=#3a6797>foreach</font></b> o {o O} {<b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;Control-<font color=#1b1baa>$o</font>&gt; alited::ini::EditSettings}
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;F1&gt; <font color=#8b2a0e>&quot;<font color=#1b1baa>[$</font>obPrf ButHelp<font color=#1b1baa>]</font> invoke&quot;</font>
   <font color=#1b1baa>$obPrf</font> untouchWidgets *.texSample *.texCSample
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$geo</font> in [<b><font color=#3a6797>list</font></b> {} <font color=#8b2a0e>&quot;<font color=#1b1baa>{}</font>&quot;</font>]} {<b><font color=#3a6797>set</font></b> geo root=<font color=#1b1baa>$al(WIN)</font>}
   <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$obPrf</font> showModal <font color=#1b1baa>$win</font> <font color=#653760>-geometry</font> <font color=#1b1baa>$geo</font> <font color=#653760>-minsize</font> {800 600} <font color=#653760>-resizable</font> 1 \
     <font color=#653760>-onclose</font> ::alited::pref::Cancel]
   <b><font color=#3a6797>set</font></b> fcont [<font color=#1b1baa>$wtxt</font> get 1.0 {end -1c}]

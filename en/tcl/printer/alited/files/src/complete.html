@@ -176,12 +176,14 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 <a id=Common></a>
 <i><font color=#4b5d50># ________________________ Common _________________________ #</font></i>
 <a id=complete::CursorCoordsChar></a>
-<b><font color=#ca14ca>proc</font></b> complete::CursorCoordsChar {wtxt shift} {
+<b><font color=#ca14ca>proc</font></b> complete::CursorCoordsChar {{wtxt <font color=#8b2a0e>&quot;&quot;</font>} {shift <font color=#8b2a0e>&quot;&quot;</font>}} {
   <i><font color=#4b5d50># Gets cursor's screen coordinates and a character under cursor in a text.</font></i>
   <i><font color=#4b5d50>#   wtxt - text's path</font></i>
   <i><font color=#4b5d50>#   shift - shift from the cursor where to get non-empty char</font></i>
   <i><font color=#4b5d50># Returns a list of X, Y coordinates and a character under the cursor.</font></i>
 
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtxt</font> eq {}} {<b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]}
+  <b><font color=#134070>focus</font></b> <font color=#1b1baa>$wtxt</font>
   <b><font color=#3a6797>set</font></b> poi [<font color=#1b1baa>$wtxt</font> index insert]
   <b><font color=#3a6797>set</font></b> ch [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$poi</font> [<font color=#1b1baa>$wtxt</font> index {insert +1c}]]
   <b><font color=#3a6797>set</font></b> nl [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$poi</font>)}]
@@ -190,7 +192,11 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     <b><font color=#3a6797>set</font></b> w 0
     <b><font color=#3a6797>set</font></b> ch -
   } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$ch</font>] eq {}} {<b><font color=#3a6797>set</font></b> pos <font color=#8b2a0e>&quot;insert <font color=#1b1baa>$</font>shift&quot;</font>} {<b><font color=#3a6797>set</font></b> pos insert}
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$ch</font>] eq {} || <font color=#1b1baa>$shift</font> eq {linestart}} {
+      <b><font color=#3a6797>set</font></b> pos <font color=#8b2a0e>&quot;insert <font color=#1b1baa>$</font>shift&quot;</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> pos insert
+    }
     <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$wtxt</font> index <font color=#1b1baa>$pos</font>]
     <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$wtxt</font> bbox <font color=#1b1baa>$pos</font>] X Y w h
   }
@@ -214,11 +220,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50>#   wtxt - text's path</font></i>
   <i><font color=#4b5d50># Returns a list of X and Y coordinates.</font></i>
 
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtxt</font> eq {}} {
-    <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
-  }
-  <b><font color=#134070>focus</font></b> <font color=#1b1baa>$wtxt</font>
-  <b><font color=#3a6797>set</font></b> res [CursorCoordsChar <font color=#1b1baa>$wtxt</font> {}]
+  <b><font color=#3a6797>set</font></b> res [CursorCoordsChar <font color=#1b1baa>$wtxt</font>]
   <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$res</font> X Y ch
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ch</font> eq {} || <font color=#1b1baa>$ch</font> eq <font color=#8b2a0e>&quot;\n&quot;</font>} {
     <i><font color=#4b5d50># EOL =&gt; get a previous char's coordinates</font></i>

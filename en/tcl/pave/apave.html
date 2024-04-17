@@ -542,6 +542,25 @@ padding: 0%;
   }
   <font color=#1b1baa>$w</font> configure <font color=#6c3e67>-image</font> <font color=#1b1baa>$imgcur</font>
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::apave::checkGeometry'>checkGeometry</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Checks a window's geometry.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>checkGeometry</span> <span class='ruff_arg'>geo</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>geo</code></code></td><td class='ruff_defitem'>the geometry</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a &quot;normalized&quot; geometry (+0+0 if input not correct).</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_checkGeometry' href="javascript:toggleSource('apave_checkGeometry')">Show source</a></p>
+<div id='apave_checkGeometry' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::checkGeometry {geo} {
+  <i><font color=#4b5d50># Checks a window's geometry.</font></i>
+  <i><font color=#4b5d50>#   geo - the geometry</font></i>
+  <i><font color=#4b5d50># Returns a &quot;normalized&quot; geometry (+0+0 if input not correct).</font></i>
+
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>regexp</font></b> {^\d+x\d+$} <font color=#1b1baa>$geo</font>] && ![<b><font color=#3a6797>regexp</font></b> {^\+\d+\+\d+$} <font color=#1b1baa>$geo</font>]  && ![<b><font color=#3a6797>regexp</font></b> {^\d+x\d+\+\d+\+\d+$} <font color=#1b1baa>$geo</font>]} {
+    <b><font color=#3a6797>set</font></b> geo +0+0
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$geo</font>
+}<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::checkHomeDir'>checkHomeDir</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>For Tcl 9.0 &amp; Windows: checks a command for &quot;~&quot;.</p>
@@ -701,7 +720,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   widget - Tcl/Tk command for the new registered widget type</font></i>
   <i><font color=#4b5d50># See also: APaveBase::defaultATTRS</font></i>
 
-  <b><font color=#ca14ca>return</font></b> [obj defaultATTRS <font color=#1b1baa>$type</font> <font color=#1b1baa>$opts</font> <font color=#1b1baa>$atrs</font> <font color=#1b1baa>$widget</font>]
+  obj defaultATTRS <font color=#1b1baa>$type</font> <font color=#1b1baa>$opts</font> <font color=#1b1baa>$atrs</font> <font color=#1b1baa>$widget</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::deiconify'>deiconify</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -911,17 +930,49 @@ padding: 0%;
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::focusApp'>focusApp</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
-<p class='ruff'>Restores app's focus: if app loses focus, restoring it focuses main window, ignores modal toplevel, locks keyboard.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>focusApp</span> </div>
+<p class='ruff'>Saves (if <em>win</em> is set) or restores app's focus.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>focusApp</span> <span class='ruff_arg'>?win?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>win</code></code></td><td class='ruff_defitem'>focused window's path; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+</table>
+<h5 class='ruff'>Description</h5><p class='ruff'>In some DE, if app loses focus, restoring it focuses main window, ignores modal toplevel, locks keyboard. focusApp tries to focus on last modal window.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_focusApp' href="javascript:toggleSource('apave_focusApp')">Show source</a></p>
-<div id='apave_focusApp' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::focusApp {} {
-  <i><font color=#4b5d50># Restores app's focus: if app loses focus, restoring it</font></i>
+<div id='apave_focusApp' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::focusApp {{win {}}} {
+  <i><font color=#4b5d50># Saves (if *win* is set) or restores app's focus.</font></i>
+  <i><font color=#4b5d50>#   win - focused window's path</font></i>
+  <i><font color=#4b5d50># In some DE, if app loses focus, restoring it</font></i>
   <i><font color=#4b5d50># focuses main window, ignores modal toplevel, locks keyboard.</font></i>
+  <i><font color=#4b5d50># focusApp tries to focus on last modal window.</font></i>
 
+  <b><font color=#3a6797>variable</font></b> FOCUSED
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$win</font> ne {}} {
+    setProperty FOCW_<font color=#1b1baa>$win</font> [<b><font color=#134070>focus</font></b>]
+    <b><font color=#ca14ca>return</font></b>
+  }
   <b><font color=#3a6797>catch</font></b> {
-    <b><font color=#134070>focus</font></b> <font color=#6c3e67>-force</font> <font color=#1b1baa>$::apave::FOCUSED</font>
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>focus</font></b>] eq <font color=#1b1baa>$::apave::FOCUSED</font>} {
-      <b><font color=#134070>event</font></b> generate <font color=#1b1baa>$::apave::FOCUSED</font> &lt;Tab&gt; ;<i><font color=#4b5d50># enter a field</font></i>
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> foc [<b><font color=#134070>focus</font></b>]] ne {}} {
+      <b><font color=#3a6797>set</font></b> foc [<b><font color=#134070>winfo</font></b> toplevel <font color=#1b1baa>$foc</font>]
+      <b><font color=#3a6797>set</font></b> modal 0
+      <b><font color=#3a6797>foreach</font></b> fw <font color=#1b1baa>$FOCUSED</font> {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fw</font> eq <font color=#1b1baa>$foc</font>} {<b><font color=#3a6797>set</font></b> modal 1; <b><font color=#ca14ca>break</font></b>}
+      }
+      <i><font color=#4b5d50># if non-modal is currently focused, let it be so</font></i>
+      <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$modal</font>} {
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>focus</font></b>] eq <font color=#1b1baa>$foc</font>} {<b><font color=#3a6797>catch</font></b> {<b><font color=#134070>focus</font></b> [getProperty FOCW_<font color=#1b1baa>$foc</font>]}}
+        <b><font color=#ca14ca>return</font></b>
+      }
+    }
+    <i><font color=#4b5d50># find and focus last open modal</font></i>
+    <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$FOCUSED</font>]} {<font color=#1b1baa>$i</font>} {} {
+      <b><font color=#3a6797>set</font></b> fw [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$FOCUSED</font> [<b><font color=#3a6797>incr</font></b> i -1]]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$fw</font>]} {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fw</font> ne <font color=#1b1baa>$foc</font>} {
+          <b><font color=#134070>focus</font></b> <font color=#6c3e67>-force</font> <font color=#1b1baa>$fw</font>
+          <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>focus</font></b> [getProperty FOCW_<font color=#1b1baa>$fw</font>]}
+        }
+        <b><font color=#ca14ca>break</font></b>
+      }
+      <b><font color=#3a6797>set</font></b> FOCUSED [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$FOCUSED</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
     }
   }
 }<br><br></code></pre></div>
@@ -1145,7 +1196,7 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$iconset</font> ne {} && <font color=#8b2a0e>&quot;_AP_IMG(img<font color=#1b1baa>$</font>icon-<font color=#1b1baa>$</font>iconset)&quot;</font> in [<b><font color=#134070>image</font></b> names]} {
     <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>set</font></b> _AP_IMG(<font color=#1b1baa>$icon</font>-<font color=#1b1baa>$iconset</font>)]
   }
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>set</font></b> _AP_IMG(<font color=#1b1baa>$icon</font>)]
+  <b><font color=#3a6797>set</font></b> _AP_IMG(<font color=#1b1baa>$icon</font>)
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::iconifyOption'>iconifyOption</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -1755,7 +1806,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   win - window's path</font></i>
   <i><font color=#4b5d50># This should be run at application start, before opening any window.</font></i>
 
-  <b><font color=#ca14ca>return</font></b> [WindowStatus . MAIN_WINDOW_OF_APP <font color=#1b1baa>$win</font>]
+  WindowStatus . MAIN_WINDOW_OF_APP <font color=#1b1baa>$win</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::mc'>mc</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -2810,7 +2861,7 @@ padding: 0%;
     }
     <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$defval</font>
   }
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>set</font></b> _AP_VARS(<font color=#1b1baa>$w</font>,<font color=#1b1baa>$name</font>) <font color=#1b1baa>$val</font>]  ;<i><font color=#4b5d50># setting</font></i>
+  <b><font color=#3a6797>set</font></b> _AP_VARS(<font color=#1b1baa>$w</font>,<font color=#1b1baa>$name</font>) <font color=#1b1baa>$val</font>  ;<i><font color=#4b5d50># setting</font></i>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::withdraw'>withdraw</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -2970,6 +3021,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>ok</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveDialog::ok" title="APaveDialog.ok" class='ruff_cmd'>APaveDialog.ok</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>okcancel</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveDialog::okcancel" title="APaveDialog.okcancel" class='ruff_cmd'>APaveDialog.okcancel</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>onKeyTextM</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::onKeyTextM" title="APaveBase.onKeyTextM" class='ruff_cmd'>APaveBase.onKeyTextM</a></td></tr>
+<tr><td class='ruff_defitem'><code><code>optionCascade_add</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::optionCascade_add" title="APaveBase.optionCascade_add" class='ruff_cmd'>APaveBase.optionCascade_add</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>optionCascadeText</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::optionCascadeText" title="APaveBase.optionCascadeText" class='ruff_cmd'>APaveBase.optionCascadeText</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>ownWName</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::ownWName" title="APaveBase.ownWName" class='ruff_cmd'>APaveBase.ownWName</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>parentWName</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::parentWName" title="APaveBase.parentWName" class='ruff_cmd'>APaveBase.parentWName</a></td></tr>
@@ -3006,6 +3058,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>themeWindow</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::themeWindow" title="ObjectTheming.themeWindow" class='ruff_cmd'>ObjectTheming.themeWindow</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>timeoutButton</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::timeoutButton" title="APaveBase.timeoutButton" class='ruff_cmd'>APaveBase.timeoutButton</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>tk_optionCascade</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::tk_optionCascade" title="APaveBase.tk_optionCascade" class='ruff_cmd'>APaveBase.tk_optionCascade</a></td></tr>
+<tr><td class='ruff_defitem'><code><code>toolbarItem_Attrs</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::toolbarItem_Attrs" title="APaveBase.toolbarItem_Attrs" class='ruff_cmd'>APaveBase.toolbarItem_Attrs</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>touchWidgets</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::touchWidgets" title="ObjectTheming.touchWidgets" class='ruff_cmd'>ObjectTheming.touchWidgets</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>unhighlight_matches</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveDialog::unhighlight_matches" title="APaveDialog.unhighlight_matches" class='ruff_cmd'>APaveDialog.unhighlight_matches</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>untouchWidgets</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::untouchWidgets" title="ObjectTheming.untouchWidgets" class='ruff_cmd'>ObjectTheming.untouchWidgets</a></td></tr>
@@ -3468,6 +3521,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveBase::makeWindow" title="makeWindow" class='ruff_cmd'>makeWindow</a></code></td><td class='ruff_defitem'>Creates a toplevel window that has to be paved.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveBase::menuTips" title="menuTips" class='ruff_cmd'>menuTips</a></code></td><td class='ruff_defitem'>Makes tip(s) for menu and its items.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveBase::onKeyTextM" title="onKeyTextM" class='ruff_cmd'>onKeyTextM</a></code></td><td class='ruff_defitem'>Processes indents and braces at pressing keys.</td></tr>
+<tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveBase::optionCascade_add" title="optionCascade_add" class='ruff_cmd'>optionCascade_add</a></code></td><td class='ruff_defitem'>Adds tk_optionCascade items recursively.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveBase::optionCascadeText" title="optionCascadeText" class='ruff_cmd'>optionCascadeText</a></code></td><td class='ruff_defitem'>Rids a tk_optionCascade item of braces.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveBase::ownWName" title="ownWName" class='ruff_cmd'>ownWName</a></code></td><td class='ruff_defitem'>Gets a tail (last part) of widget's name</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveBase::parentWName" title="parentWName" class='ruff_cmd'>parentWName</a></code></td><td class='ruff_defitem'>Gets parent name of widget.</td></tr>
@@ -3492,6 +3546,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>themeWindow</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::themeWindow" title="ObjectTheming.themeWindow" class='ruff_cmd'>ObjectTheming.themeWindow</a></td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveBase::timeoutButton" title="timeoutButton" class='ruff_cmd'>timeoutButton</a></code></td><td class='ruff_defitem'>Invokes a button's action after a timeout.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveBase::tk_optionCascade" title="tk_optionCascade" class='ruff_cmd'>tk_optionCascade</a></code></td><td class='ruff_defitem'>A bit modified tk_optionCascade widget made by Richard Suchenwirth.</td></tr>
+<tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveBase::toolbarItem_Attrs" title="toolbarItem_Attrs" class='ruff_cmd'>toolbarItem_Attrs</a></code></td><td class='ruff_defitem'>Gets attributes of toolbar button.</td></tr>
 <tr><td class='ruff_defitem'><code><code>touchWidgets</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::touchWidgets" title="ObjectTheming.touchWidgets" class='ruff_cmd'>ObjectTheming.touchWidgets</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>untouchWidgets</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::untouchWidgets" title="ObjectTheming.untouchWidgets" class='ruff_cmd'>ObjectTheming.untouchWidgets</a></td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveBase::validateColorChoice" title="validateColorChoice" class='ruff_cmd'>validateColorChoice</a></code></td><td class='ruff_defitem'>Displays a current color of color chooser's entry.</td></tr>
@@ -3823,7 +3878,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   W - widget/method name (e.g. Fil, Dir)</font></i>
   <i><font color=#4b5d50>#   w - ent / lab for entry / label</font></i>
 
-  <b><font color=#ca14ca>return</font></b> [::apave::precedeWidgetName [<b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$W</font>] <font color=#1b1baa>$w</font>]
+  ::apave::precedeWidgetName [<b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$W</font>] <font color=#1b1baa>$w</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::clearEntry'>clearEntry</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -3938,7 +3993,6 @@ padding: 0%;
   <i><font color=#4b5d50>#     pobj configure edge &quot;@@&quot;</font></i>
 
   <b><font color=#3a6797>foreach</font></b> {optnam optval} <font color=#1b1baa>$args</font> {<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$optnam</font> <font color=#1b1baa>$optval</font>}
-  <b><font color=#ca14ca>return</font></b>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::dateChooser'>dateChooser</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -4137,7 +4191,6 @@ padding: 0%;
     }
   }
   <b><font color=#ca14ca>my</font></b> resetText <font color=#1b1baa>$w</font> <font color=#1b1baa>$state</font>
-  <b><font color=#ca14ca>return</font></b>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::displayText'>displayText</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -4164,7 +4217,6 @@ padding: 0%;
   } <b><font color=#3a6797>else</font></b> {
     <font color=#1b1baa>$w</font> configure <font color=#6c3e67>-state</font> <font color=#1b1baa>$state</font>
   }
-  <b><font color=#ca14ca>return</font></b>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::dlgPath'>dlgPath</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -4312,7 +4364,6 @@ padding: 0%;
       <b><font color=#ca14ca>return</font></b>
     }
   }
-  <b><font color=#ca14ca>return</font></b>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::fontChooser'>fontChooser</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -4348,7 +4399,7 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> foc [<b><font color=#3a6797>info</font></b> commands *__tk__fontchooser.ok]] ne {}} {
     <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> after 0 [<b><font color=#3a6797>list</font></b> catch <font color=#8b2a0e>&quot;focus -force <font color=#1b1baa>$</font>foc&quot;</font>]]
   }
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$tvar</font>] ;<i><font color=#4b5d50>#$font</font></i>
+  <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$tvar</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::getShowOption'>getShowOption</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -4385,7 +4436,7 @@ padding: 0%;
   <i><font color=#4b5d50># Returns the content of text.</font></i>
 
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> SplitContentVariable [<b><font color=#ca14ca>my</font></b> GetContentVariable <font color=#1b1baa>$tvar</font>]]  -&gt; txtnam wid
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> trimright [<font color=#1b1baa>$txtnam</font> get 1.0 end]]
+  <b><font color=#3a6797>string</font></b> trimright [<font color=#1b1baa>$txtnam</font> get 1.0 end]
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::getWidChildren'>getWidChildren</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -4562,7 +4613,7 @@ padding: 0%;
   <i><font color=#4b5d50># Returns a number of leading spaces of a line</font></i>
   <i><font color=#4b5d50>#   line - the line</font></i>
 
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$line</font>]-[<b><font color=#3a6797>string</font></b> length [<b><font color=#3a6797>string</font></b> trimleft <font color=#1b1baa>$line</font>]]}]
+  <b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$line</font>]-[<b><font color=#3a6797>string</font></b> length [<b><font color=#3a6797>string</font></b> trimleft <font color=#1b1baa>$line</font>]]}
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::makeLabelLinked'>makeLabelLinked</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -4681,7 +4732,6 @@ padding: 0%;
     <b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> &lt;Control-a&gt; <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>w tag add sel 1.0 end; break&quot;</font>
   }
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> &lt;Button-3&gt; <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> themePopup <font color=#1b1baa>$</font>w.popupMenu; tk_popup <font color=#1b1baa>$</font>w.popupMenu %X %Y&quot;</font>
-  <b><font color=#ca14ca>return</font></b>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::makeWindow'>makeWindow</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -4709,7 +4759,7 @@ padding: 0%;
   }
   <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$wtop</font>}
   <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions args <font color=#6c3e67>-type</font> {}] type
-  <b><font color=#134070>toplevel</font></b> <font color=#1b1baa>$wtop</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
+  <b><font color=#3a6797>set</font></b> Modalwin [<b><font color=#134070>toplevel</font></b> <font color=#1b1baa>$wtop</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
   ::apave::withdraw <font color=#1b1baa>$wtop</font> ;<i><font color=#4b5d50># nice to hide all gui manipulations</font></i>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$type</font> ne {} && [<b><font color=#134070>tk</font></b> windowingsystem] eq {x11}} {
     <b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$wtop</font> <font color=#6c3e67>-type</font> <font color=#1b1baa>$type</font>
@@ -4855,6 +4905,54 @@ padding: 0%;
     }
   }
 }<br><br></code></pre></div>
+</div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::optionCascade_add'>optionCascade_add</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Adds tk_optionCascade items recursively.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT optionCascade_add</span> <span class='ruff_arg'>w vname argl precom ?args?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>w</code></code></td><td class='ruff_defitem'>tk_optionCascade widget's name</td></tr>
+<tr><td class='ruff_defitem'><code><code>vname</code></code></td><td class='ruff_defitem'>variable name for current selection</td></tr>
+<tr><td class='ruff_defitem'><code><code>argl</code></code></td><td class='ruff_defitem'>Not documented.</td></tr>
+<tr><td class='ruff_defitem'><code><code>precom</code></code></td><td class='ruff_defitem'>command to get entry's options (%a presents its label)</td></tr>
+<tr><td class='ruff_defitem'><code><code>args</code></code></td><td class='ruff_defitem'>additional options of entries</td></tr>
+<tr><td class='ruff_defitem'><code><code>arg1</code></code></td><td class='ruff_defitem'>list of items to be added</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_APaveBase_optionCascade_add' href="javascript:toggleSource('apave_APaveBase_optionCascade_add')">Show source</a></p>
+<div id='apave_APaveBase_optionCascade_add' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> optionCascade_add {w vname argl precom args} {
+  <i><font color=#4b5d50># Adds tk_optionCascade items recursively.</font></i>
+  <i><font color=#4b5d50>#   w      - tk_optionCascade widget's name</font></i>
+  <i><font color=#4b5d50>#   vname  - variable name for current selection</font></i>
+  <i><font color=#4b5d50>#   arg1   - list of items to be added</font></i>
+  <i><font color=#4b5d50>#   precom - command to get entry's options (%a presents its label)</font></i>
+  <i><font color=#4b5d50>#   args   - additional options of entries</font></i>
+
+  <b><font color=#3a6797>set</font></b> n [<b><font color=#3a6797>set</font></b> colbreak 0]
+  <b><font color=#3a6797>foreach</font></b> arg <font color=#1b1baa>$argl</font> {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$arg</font> eq {--}} {
+      <font color=#1b1baa>$w</font> add separator
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$arg</font> eq {|}} {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>tk</font></b> windowingsystem] ne {aqua}} { <b><font color=#3a6797>set</font></b> colbreak 1 }
+      <b><font color=#ca14ca>continue</font></b>
+    } <b><font color=#3a6797>elseif</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$arg</font>] == 1} {
+      <b><font color=#3a6797>set</font></b> label [<b><font color=#ca14ca>my</font></b> optionCascadeText [<b><font color=#3a6797>join</font></b> <font color=#1b1baa>$arg</font>]]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$precom</font> eq {}} {
+        <b><font color=#3a6797>set</font></b> adds {}
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> adds [<b><font color=#3a6797>eval</font></b> {<b><font color=#3a6797>*</font></b>}[<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \$ \\\$ \[ \\\[]  [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %a <font color=#1b1baa>$label</font>] <font color=#1b1baa>$precom</font>]]]
+      }
+      <font color=#1b1baa>$w</font> add radiobutton <font color=#6c3e67>-label</font> <font color=#1b1baa>$label</font> <font color=#6c3e67>-variable</font> <font color=#1b1baa>$vname</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$adds</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> child [<b><font color=#134070>menu</font></b> <font color=#1b1baa>$w</font>.[<b><font color=#3a6797>incr</font></b> n] <font color=#6c3e67>-tearoff</font> 0]
+      <font color=#1b1baa>$w</font> add cascade <font color=#6c3e67>-label</font> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$arg</font> 0] <font color=#6c3e67>-menu</font> <font color=#1b1baa>$child</font>
+      <b><font color=#ca14ca>my</font></b> optionCascade_add <font color=#1b1baa>$child</font> <font color=#1b1baa>$vname</font> [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$arg</font> 1 end] <font color=#1b1baa>$precom</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
+    }
+    <b><font color=#3a6797>if</font></b> <font color=#1b1baa>$colbreak</font> {
+      <font color=#1b1baa>$w</font> entryconfigure end <font color=#6c3e67>-columnbreak</font> 1
+      <b><font color=#3a6797>set</font></b> colbreak 0
+    }
+  }
+  <b><font color=#ca14ca>return</font></b>
+}<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::optionCascadeText'>optionCascadeText</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Rids a tk_optionCascade item of braces.</p>
@@ -4891,7 +4989,7 @@ padding: 0%;
   <i><font color=#4b5d50># Gets a tail (last part) of widget's name</font></i>
   <i><font color=#4b5d50>#   name - name (path) of the widget</font></i>
 
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$name</font> .] end]
+  <b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$name</font> .] end
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::parentWName'>parentWName</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -4905,7 +5003,7 @@ padding: 0%;
   <i><font color=#4b5d50># Gets parent name of widget.</font></i>
   <i><font color=#4b5d50>#   name - name (path) of the widget</font></i>
 
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$name</font> 0 [<b><font color=#3a6797>string</font></b> last . <font color=#1b1baa>$name</font>]-1]
+  <b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$name</font> 0 [<b><font color=#3a6797>string</font></b> last . <font color=#1b1baa>$name</font>]-1
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::pavedPath'>pavedPath</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -4915,7 +5013,7 @@ padding: 0%;
 <div id='apave_APaveBase_pavedPath' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> pavedPath {} {
   <i><font color=#4b5d50># Gets the currently paved window's path.</font></i>
 
-  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$::apave::_AP_VARS(WPAVE)</font>
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$Modalwin</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::paveoptionValue'>paveoptionValue</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -5017,7 +5115,6 @@ padding: 0%;
 
   <b><font color=#ca14ca>my</font></b> TextCommandForChange <font color=#1b1baa>$w</font> {} <font color=#1b1baa>$on</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$popup</font>} {<b><font color=#ca14ca>my</font></b> makePopup <font color=#1b1baa>$w</font> <font color=#1b1baa>$on</font> yes}
-  <b><font color=#ca14ca>return</font></b>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::res'>res</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -5152,7 +5249,6 @@ padding: 0%;
     <b><font color=#3a6797>append</font></b> res <font color=#8b2a0e>&quot; ; ::apave::bindToEvent <font color=#1b1baa>$</font>wt &lt;<font color=#1b1baa>$</font>k&gt; ::apave::CursorToBEOL <font color=#1b1baa>$</font>wt lineend&quot;</font>
   }
   <b><font color=#3a6797>append</font></b> res <font color=#8b2a0e>&quot; ; ::apave::bindToEvent <font color=#1b1baa>$</font>wt &lt;Alt-Up&gt; <font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> linesMove <font color=#1b1baa>$</font>wt -1 ; ::apave::bindToEvent <font color=#1b1baa>$</font>wt &lt;Alt-Down&gt; <font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> linesMove <font color=#1b1baa>$</font>wt +1&quot;</font>
-  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::showModal'>showModal</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -5168,9 +5264,9 @@ padding: 0%;
   <i><font color=#4b5d50>#   win - window's name</font></i>
   <i><font color=#4b5d50>#   args - attributes of window (&quot;-name value&quot; pairs)</font></i>
 
-  <b><font color=#3a6797>set</font></b> ::apave::MODALWINDOW [<b><font color=#3a6797>set</font></b> Modalwin <font color=#1b1baa>$win</font>]
+  <b><font color=#3a6797>set</font></b> ::apave::MODALWINDOW <font color=#1b1baa>$win</font>
   ::apave::setAppIcon <font color=#1b1baa>$win</font>
-  <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions args <font color=#6c3e67>-centerme</font> {} <font color=#6c3e67>-ontop</font> 0 <font color=#6c3e67>-modal</font> yes <font color=#6c3e67>-minsize</font> {}  <font color=#6c3e67>-themed</font> {} <font color=#6c3e67>-input</font> 0 <font color=#6c3e67>-variable</font> {} <font color=#6c3e67>-waitvar</font> {} <font color=#6c3e67>-transient</font> {-} <font color=#6c3e67>-root</font> {} <font color=#6c3e67>-parent</font> {}]  centerme ontop modal minsize themed input varname waitvar transient root parent
+  <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions args <font color=#6c3e67>-centerme</font> {} <font color=#6c3e67>-ontop</font> 0 <font color=#6c3e67>-modal</font> yes  <font color=#6c3e67>-minsize</font> {} <font color=#6c3e67>-themed</font> {} <font color=#6c3e67>-input</font> 0 <font color=#6c3e67>-variable</font> {} <font color=#6c3e67>-waitvar</font> {} <font color=#6c3e67>-transient</font> {-}  <font color=#6c3e67>-root</font> {} <font color=#6c3e67>-parent</font> {} <font color=#6c3e67>-waitme</font> {}]  centerme ontop modal minsize themed input varname waitvar transient  root parent waitme
   <font color=#1b1baa>$win</font> configure <font color=#6c3e67>-bg</font> [<b><font color=#3a6797>lindex</font></b> [<b><font color=#ca14ca>my</font></b> csGet] 3]  ;<i><font color=#4b5d50># removes blinking by default bg</font></i>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$themed</font> in {{} {0}} && [<b><font color=#ca14ca>my</font></b> csCurrent] != [apave::cs_Non]} {
     <b><font color=#ca14ca>my</font></b> colorWindow <font color=#1b1baa>$win</font>
@@ -5245,11 +5341,12 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {!(<font color=#1b1baa>$modal</font> || <font color=#1b1baa>$waitvar</font>)} {
     <b><font color=#3a6797>append</font></b> opt(-onclose) <font color=#8b2a0e>&quot;; ::apave::obj EXPORT CleanUps <font color=#1b1baa>$</font>win&quot;</font>
   }
-  <b><font color=#134070>wm</font></b> protocol <font color=#1b1baa>$win</font> WM_DELETE_WINDOW <font color=#1b1baa>$opt(-onclose)</font>
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$modal</font>} {
-    <b><font color=#3a6797>set</font></b> ::apave::FOCUSED <font color=#1b1baa>$win</font>
-    <b><font color=#134070>wm</font></b> protocol <font color=#1b1baa>$win</font> WM_TAKE_FOCUS ::apave::focusApp
+  <b><font color=#3a6797>foreach</font></b> ev {KeyRelease ButtonRelease} {
+    <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> bind <font color=#1b1baa>$Modalwin</font> &lt;<font color=#1b1baa>$ev</font>&gt; <font color=#8b2a0e>&quot;::apave::focusApp <font color=#1b1baa>$</font>Modalwin&quot;</font>]
   }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$modal</font>} {<b><font color=#3a6797>lappend</font></b> ::apave::FOCUSED <font color=#1b1baa>$win</font>}
+  <b><font color=#134070>wm</font></b> protocol <font color=#1b1baa>$win</font> WM_TAKE_FOCUS {<b><font color=#3a6797>after</font></b> idle ::apave::focusApp}
+  <b><font color=#134070>wm</font></b> protocol <font color=#1b1baa>$win</font> WM_DELETE_WINDOW <font color=#1b1baa>$opt(-onclose)</font>
   <i><font color=#4b5d50># get the window's geometry from its requested sizes</font></i>
   <b><font color=#3a6797>set</font></b> inpgeom <font color=#1b1baa>$opt(-geometry)</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$inpgeom</font> eq {}} {
@@ -5297,18 +5394,19 @@ padding: 0%;
       <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#ca14ca>my</font></b> CenteredXY <font color=#1b1baa>$rw</font> <font color=#1b1baa>$rh</font> <font color=#1b1baa>$rx</font> <font color=#1b1baa>$ry</font> <font color=#1b1baa>$w</font> <font color=#1b1baa>$h</font>] +] -&gt; x y
       <b><font color=#3a6797>set</font></b> inpgeom <font color=#1b1baa>${w}</font>x<font color=#1b1baa>$h</font>+<font color=#1b1baa>$x</font>+<font color=#1b1baa>$y</font>
     }
+    <b><font color=#3a6797>set</font></b> inpgeom [::apave::checkGeometry <font color=#1b1baa>$inpgeom</font>]
     <b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font> <font color=#1b1baa>$inpgeom</font>
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$opt(-focus)</font> eq {Tab}} {
     <b><font color=#3a6797>after</font></b> 100 <font color=#8b2a0e>&quot;catch <font color=#1b1baa>{</font>focus <font color=#1b1baa>$</font>win; event generate <font color=#1b1baa>$</font>win &lt;Tab&gt;<font color=#1b1baa>}</font>&quot;</font> ;<i><font color=#4b5d50># to focus on 1st</font></i>
   } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>after</font></b> 100 <font color=#8b2a0e>&quot;catch <font color=#1b1baa>{</font>focus -force <font color=#1b1baa>$</font>opt(-focus)<font color=#1b1baa>}</font>&quot;</font>
+    <b><font color=#3a6797>after</font></b> 100 <font color=#8b2a0e>&quot;catch <font color=#1b1baa>{</font>focus -force <font color=#1b1baa>$</font>opt(-focus); apave::setProperty FOCW_<font color=#1b1baa>$</font>win <font color=#1b1baa>$</font>opt(-focus)<font color=#1b1baa>}</font>&quot;</font>
   }
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists ::transpops::my::cntwait]} {
     <i><font color=#4b5d50># this specific bind - for transpops package (to hide a demo message by keys)</font></i>
     <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;Control-Alt-0&gt; {<b><font color=#3a6797>set</font></b> ::transpops::my::cntwait 0}
   }
-  <b><font color=#ca14ca>my</font></b> showWindow <font color=#1b1baa>$win</font> <font color=#1b1baa>$modal</font> <font color=#1b1baa>$ontop</font> <font color=#1b1baa>$varname</font> <font color=#1b1baa>$minsize</font> <font color=#1b1baa>$waitvar</font>
+  <b><font color=#ca14ca>my</font></b> showWindow <font color=#1b1baa>$win</font> <font color=#1b1baa>$modal</font> <font color=#1b1baa>$ontop</font> <font color=#1b1baa>$varname</font> <font color=#1b1baa>$minsize</font> <font color=#1b1baa>$waitvar</font> <font color=#1b1baa>$waitme</font>
   <b><font color=#3a6797>set</font></b> res 0
   <b><font color=#3a6797>catch</font></b> {
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$modal</font> || <font color=#1b1baa>$waitvar</font>} {<b><font color=#ca14ca>my</font></b> CleanUps <font color=#1b1baa>$win</font>}
@@ -5322,7 +5420,7 @@ padding: 0%;
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::showWindow'>showWindow</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Displays a windows and goes in tkwait cycle to interact with a user.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT showWindow</span> <span class='ruff_arg'>win modal ontop ?var? ?minsize? ?waitvar?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT showWindow</span> <span class='ruff_arg'>win modal ontop ?var? ?minsize? ?waitvar? ?waitme?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>win</code></code></td><td class='ruff_defitem'>the window's path</td></tr>
 <tr><td class='ruff_defitem'><code><code>modal</code></code></td><td class='ruff_defitem'>yes at showing the window as modal</td></tr>
@@ -5330,9 +5428,10 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>var</code></code></td><td class='ruff_defitem'>variable's name to receive a result (tkwait's variable); <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>minsize</code></code></td><td class='ruff_defitem'>list {minwidth minheight} or {}; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>waitvar</code></code></td><td class='ruff_defitem'>if yes, force tkwait variable (mostly for non-modal windows); <i>optional, default</i> <code>1</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>waitme</code></code></td><td class='ruff_defitem'>if empty, deiconify immediately, otherwise after waiting a variable or &quot;timeout and/or idle&quot; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_APaveBase_showWindow' href="javascript:toggleSource('apave_APaveBase_showWindow')">Show source</a></p>
-<div id='apave_APaveBase_showWindow' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> showWindow {win modal ontop {var {}} {minsize {}} {waitvar 1}} {
+<div id='apave_APaveBase_showWindow' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> showWindow {win modal ontop {var {}} {minsize {}} {waitvar 1} {waitme {}}} {
   <i><font color=#4b5d50># Displays a windows and goes in tkwait cycle to interact with a user.</font></i>
   <i><font color=#4b5d50>#   win - the window's path</font></i>
   <i><font color=#4b5d50>#   modal - yes at showing the window as modal</font></i>
@@ -5340,9 +5439,20 @@ padding: 0%;
   <i><font color=#4b5d50>#   var - variable's name to receive a result (tkwait's variable)</font></i>
   <i><font color=#4b5d50>#   minsize - list {minwidth minheight} or {}</font></i>
   <i><font color=#4b5d50>#   waitvar - if yes, force tkwait variable (mostly for non-modal windows)</font></i>
+  <i><font color=#4b5d50>#   waitme - if empty, deiconify immediately, otherwise after waiting a variable or &quot;timeout and/or idle&quot;</font></i>
 
   ::apave::InfoWindow [<b><font color=#3a6797>expr</font></b> {[::apave::InfoWindow] + 1}] <font color=#1b1baa>$win</font> <font color=#1b1baa>$modal</font> <font color=#1b1baa>$var</font> yes
-  ::apave::deiconify <font color=#1b1baa>$win</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$waitme</font> ne {}} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists <font color=#1b1baa>$waitme</font>]} {
+      <b><font color=#3a6797>vwait</font></b> <font color=#1b1baa>$waitme</font>
+      ::apave::deiconify <font color=#1b1baa>$win</font>
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>incr</font></b> <font color=#1b1baa>$waitme</font>} ;<i><font color=#4b5d50># used to trigger chained events</font></i>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>after</font></b> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$waitme</font> ::apave::deiconify <font color=#1b1baa>$win</font>
+    }
+  } <b><font color=#3a6797>else</font></b> {
+    ::apave::deiconify <font color=#1b1baa>$win</font>
+  }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$minsize</font> eq {}} {
     <b><font color=#3a6797>set</font></b> minsize [<b><font color=#3a6797>list</font></b> [<b><font color=#134070>winfo</font></b> width <font color=#1b1baa>$win</font>] [<b><font color=#134070>winfo</font></b> height <font color=#1b1baa>$win</font>]]
   }
@@ -5413,7 +5523,6 @@ padding: 0%;
   <i><font color=#4b5d50># Applies a color scheme to a popup menu.</font></i>
   <i><font color=#4b5d50>#   mnu - name of popup menu</font></i>
   <i><font color=#4b5d50># The method is to be redefined in descendants/mixins.</font></i>
-  <b><font color=#ca14ca>return</font></b>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::timeoutButton'>timeoutButton</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -5447,7 +5556,6 @@ padding: 0%;
     <b><font color=#ca14ca>return</font></b>
   }
   <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exist <font color=#1b1baa>$w</font>]} {<font color=#1b1baa>$w</font> invoke}
-  <b><font color=#ca14ca>return</font></b>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::tk_optionCascade'>tk_optionCascade</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -5491,11 +5599,42 @@ padding: 0%;
   <b><font color=#134070>ttk::menubutton</font></b> <font color=#1b1baa>$w</font> <font color=#6c3e67>-menu</font> <font color=#1b1baa>$win</font> <font color=#6c3e67>-text</font> [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$vname</font>] <font color=#6c3e67>-style</font> TMenuButtonWest {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$mbopts</font>
   <b><font color=#134070>menu</font></b> <font color=#1b1baa>$win</font> <font color=#6c3e67>-tearoff</font> 0
   <b><font color=#ca14ca>my</font></b> menuTips <font color=#1b1baa>$win</font> <font color=#1b1baa>$tip</font> <font color=#1b1baa>$w</font>
-  <b><font color=#ca14ca>my</font></b> OptionCascade_add <font color=#1b1baa>$win</font> <font color=#1b1baa>$vname</font> <font color=#1b1baa>$items</font> <font color=#1b1baa>$precom</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
+  <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> after 0 [<b><font color=#3a6797>list</font></b> [<b><font color=#ca14ca>self</font></b>] optionCascade_add <font color=#1b1baa>$win</font> <font color=#1b1baa>$vname</font> <font color=#1b1baa>$items</font> <font color=#1b1baa>$precom</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]]
   <b><font color=#3a6797>trace</font></b> add variable <font color=#1b1baa>$vname</font> write  <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>w config -text \&quot;\[<font color=#1b1baa>[</font>self<font color=#1b1baa>]</font> optionCascadeText \$<font color=#1b1baa>{$</font>vname<font color=#1b1baa>}</font>\]\&quot; ;\#&quot;</font>
   <b><font color=#3a6797>lappend</font></b> ::apave::_AP_VARS(_TRACED_<font color=#1b1baa>$w</font>) <font color=#1b1baa>$vname</font>
   ::apave::bindToEvent <font color=#1b1baa>$w</font> &lt;ButtonPress&gt; <b><font color=#134070>focus</font></b> <font color=#1b1baa>$w</font>
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$win</font>
+}<br><br></code></pre></div>
+</div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::toolbarItem_Attrs'>toolbarItem_Attrs</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Gets attributes of toolbar button.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT toolbarItem_Attrs</span> <span class='ruff_arg'>istext img fontB fg bg fga bga</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>istext</code></code></td><td class='ruff_defitem'>true if textual button</td></tr>
+<tr><td class='ruff_defitem'><code><code>img</code></code></td><td class='ruff_defitem'>image of button</td></tr>
+<tr><td class='ruff_defitem'><code><code>fontB</code></code></td><td class='ruff_defitem'>bold font</td></tr>
+<tr><td class='ruff_defitem'><code><code>fg</code></code></td><td class='ruff_defitem'>foreground</td></tr>
+<tr><td class='ruff_defitem'><code><code>bg</code></code></td><td class='ruff_defitem'>background</td></tr>
+<tr><td class='ruff_defitem'><code><code>fga</code></code></td><td class='ruff_defitem'>active foreground</td></tr>
+<tr><td class='ruff_defitem'><code><code>bga</code></code></td><td class='ruff_defitem'>active background</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_APaveBase_toolbarItem_Attrs' href="javascript:toggleSource('apave_APaveBase_toolbarItem_Attrs')">Show source</a></p>
+<div id='apave_APaveBase_toolbarItem_Attrs' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> toolbarItem_Attrs {istext img fontB fg bg fga bga} {
+  <i><font color=#4b5d50># Gets attributes of toolbar button.</font></i>
+  <i><font color=#4b5d50>#   istext - true if textual button</font></i>
+  <i><font color=#4b5d50>#   img - image of button</font></i>
+  <i><font color=#4b5d50>#   fontB - bold font</font></i>
+  <i><font color=#4b5d50>#   fg - foreground</font></i>
+  <i><font color=#4b5d50>#   bg - background</font></i>
+  <i><font color=#4b5d50>#   fga - active foreground</font></i>
+  <i><font color=#4b5d50>#   bga - active background</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$istext</font>} {
+    <b><font color=#3a6797>set</font></b> img <font color=#8b2a0e>&quot;-font <font color=#1b1baa>{$</font>fontB<font color=#1b1baa>}</font> -foreground <font color=#1b1baa>$</font>fg -background <font color=#1b1baa>$</font>bg -width 2 -pady 0 -padx 2&quot;</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> img <font color=#8b2a0e>&quot;-image <font color=#1b1baa>$</font>img -background <font color=#1b1baa>$</font>bg&quot;</font>
+  }
+  <b><font color=#3a6797>append</font></b> img <font color=#8b2a0e>&quot; -relief flat -overrelief raised -activeforeground <font color=#1b1baa>$</font>fga  -activebackground <font color=#1b1baa>$</font>bga -highlightthickness 0 -takefocus 0&quot;</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::validateColorChoice'>validateColorChoice</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -5614,7 +5753,9 @@ padding: 0%;
   <b><font color=#3a6797>switch</font></b> <font color=#6c3e67>-glob</font> -- <font color=#1b1baa>$nam3</font> {
     bts {
       <b><font color=#3a6797>set</font></b> widget ttk::frame
-      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>namespace</font></b> exists ::bartabs]} {<b><font color=#3a6797>package</font></b> require bartabs}
+      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>namespace</font></b> exists ::bartabs]} {
+        <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::apave::SRCDIR</font> bartabs bartabs.tcl]
+      }
       <b><font color=#3a6797>set</font></b> attrs <font color=#8b2a0e>&quot;-bartabs <font color=#1b1baa>{$</font>attrs<font color=#1b1baa>}</font>&quot;</font>
     }
     but {
@@ -5814,7 +5955,7 @@ padding: 0%;
   }
   <b><font color=#3a6797>set</font></b> options [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$options</font>]
   <b><font color=#3a6797>set</font></b> attrs   [<b><font color=#3a6797>list</font></b> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$attrs</font>]
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$widget</font> <font color=#1b1baa>$options</font> <font color=#1b1baa>$attrs</font> <font color=#1b1baa>$nam3</font> <font color=#1b1baa>$disabled</font>]
+  <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$widget</font> <font color=#1b1baa>$options</font> <font color=#1b1baa>$attrs</font> <font color=#1b1baa>$nam3</font> <font color=#1b1baa>$disabled</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::window'>window</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -5905,6 +6046,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveDialog::ok" title="ok" class='ruff_cmd'>ok</a></code></td><td class='ruff_defitem'>Shows the <em>OK</em> dialog.</td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveDialog::okcancel" title="okcancel" class='ruff_cmd'>okcancel</a></code></td><td class='ruff_defitem'>Shows the <em>OKCANCEL</em> dialog.</td></tr>
 <tr><td class='ruff_defitem'><code><code>onKeyTextM</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::onKeyTextM" title="APaveBase.onKeyTextM" class='ruff_cmd'>APaveBase.onKeyTextM</a></td></tr>
+<tr><td class='ruff_defitem'><code><code>optionCascade_add</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::optionCascade_add" title="APaveBase.optionCascade_add" class='ruff_cmd'>APaveBase.optionCascade_add</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>optionCascadeText</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::optionCascadeText" title="APaveBase.optionCascadeText" class='ruff_cmd'>APaveBase.optionCascadeText</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>ownWName</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::ownWName" title="APaveBase.ownWName" class='ruff_cmd'>APaveBase.ownWName</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>parentWName</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::parentWName" title="APaveBase.parentWName" class='ruff_cmd'>APaveBase.parentWName</a></td></tr>
@@ -5941,6 +6083,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>themeWindow</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::themeWindow" title="ObjectTheming.themeWindow" class='ruff_cmd'>ObjectTheming.themeWindow</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>timeoutButton</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::timeoutButton" title="APaveBase.timeoutButton" class='ruff_cmd'>APaveBase.timeoutButton</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>tk_optionCascade</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::tk_optionCascade" title="APaveBase.tk_optionCascade" class='ruff_cmd'>APaveBase.tk_optionCascade</a></td></tr>
+<tr><td class='ruff_defitem'><code><code>toolbarItem_Attrs</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::toolbarItem_Attrs" title="APaveBase.toolbarItem_Attrs" class='ruff_cmd'>APaveBase.toolbarItem_Attrs</a></td></tr>
 <tr><td class='ruff_defitem'><code><code>touchWidgets</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::touchWidgets" title="ObjectTheming.touchWidgets" class='ruff_cmd'>ObjectTheming.touchWidgets</a></td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveDialog::unhighlight_matches" title="unhighlight_matches" class='ruff_cmd'>unhighlight_matches</a></code></td><td class='ruff_defitem'>Unhighlights matches of selected word in a text.</td></tr>
 <tr><td class='ruff_defitem'><code><code>untouchWidgets</code></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::ObjectTheming::untouchWidgets" title="ObjectTheming.untouchWidgets" class='ruff_cmd'>ObjectTheming.untouchWidgets</a></td></tr>
@@ -6025,7 +6168,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   args - options</font></i>
 
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> PrepArgs {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] args
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font>  {ButABORT Abort 1 ButRETRY Retry 2 ButCANCEL  Cancel 0} But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>]
+  <b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font>  {ButABORT Abort 1 ButRETRY Retry 2 ButCANCEL  Cancel 0} But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveDialog::askForSave'>askForSave</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveDialog" title="::apave::APaveDialog" class='ruff_cmd'>::apave::APaveDialog</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveDialog'>APaveDialog</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -6076,7 +6219,6 @@ padding: 0%;
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> GetLinePosition <font color=#1b1baa>$txt</font> insert] linestart lineend
   <font color=#1b1baa>$txt</font> delete <font color=#1b1baa>$linestart</font> <font color=#1b1baa>$lineend</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dobreak</font>} {<b><font color=#ca14ca>return</font></b> <font color=#6c3e67>-code</font> break}
-  <b><font color=#ca14ca>return</font></b>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveDialog::doubleText'>doubleText</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveDialog" title="::apave::APaveDialog" class='ruff_cmd'>::apave::APaveDialog</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveDialog'>APaveDialog</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -6112,7 +6254,6 @@ padding: 0%;
   }
   <font color=#1b1baa>$txt</font> insert <font color=#1b1baa>$pos3</font> <font color=#1b1baa>$duptext</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dobreak</font>} {<b><font color=#ca14ca>return</font></b> <font color=#6c3e67>-code</font> break}
-  <b><font color=#ca14ca>return</font></b>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveDialog::findInText'>findInText</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveDialog" title="::apave::APaveDialog" class='ruff_cmd'>::apave::APaveDialog</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveDialog'>APaveDialog</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -6167,7 +6308,7 @@ padding: 0%;
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dobell</font>} <b><font color=#134070>bell</font></b>
     <b><font color=#3a6797>set</font></b> res no
   }
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font> <font color=#1b1baa>$sel</font>]
+  <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font> <font color=#1b1baa>$sel</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveDialog::get_highlighted'>get_highlighted</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveDialog" title="::apave::APaveDialog" class='ruff_cmd'>::apave::APaveDialog</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveDialog'>APaveDialog</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -6204,7 +6345,7 @@ padding: 0%;
       <b><font color=#3a6797>set</font></b> sel [<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pos2</font>]]
     }
   }
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$sel</font> <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pos2</font>]
+  <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$sel</font> <font color=#1b1baa>$pos</font> <font color=#1b1baa>$pos2</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveDialog::get_HighlightedString'>get_HighlightedString</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveDialog" title="::apave::APaveDialog" class='ruff_cmd'>::apave::APaveDialog</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveDialog'>APaveDialog</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -6340,7 +6481,6 @@ padding: 0%;
     ::apave::undoOut <font color=#1b1baa>$txt</font>
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dobreak</font>} {<b><font color=#ca14ca>return</font></b> <font color=#6c3e67>-code</font> break}
   }
-  <b><font color=#ca14ca>return</font></b>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveDialog::misc'>misc</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveDialog" title="::apave::APaveDialog" class='ruff_cmd'>::apave::APaveDialog</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveDialog'>APaveDialog</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -6374,7 +6514,7 @@ padding: 0%;
     }
   }
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> PrepArgs {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] args
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font> <font color=#1b1baa>$apave_msc_bttns</font> But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>]
+  <b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font> <font color=#1b1baa>$apave_msc_bttns</font> But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveDialog::ok'>ok</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveDialog" title="::apave::APaveDialog" class='ruff_cmd'>::apave::APaveDialog</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveDialog'>APaveDialog</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -6395,7 +6535,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   args - options</font></i>
 
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> PrepArgs {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] args comOK
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font> <font color=#8b2a0e>&quot;ButOK OK <font color=#1b1baa>$</font>comOK&quot;</font> ButOK {} <font color=#1b1baa>$args</font>]
+  <b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font> <font color=#8b2a0e>&quot;ButOK OK <font color=#1b1baa>$</font>comOK&quot;</font> ButOK {} <font color=#1b1baa>$args</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveDialog::okcancel'>okcancel</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveDialog" title="::apave::APaveDialog" class='ruff_cmd'>::apave::APaveDialog</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveDialog'>APaveDialog</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -6418,7 +6558,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   args - options</font></i>
 
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> PrepArgs {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] args
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font>  {ButOK OK 1 ButCANCEL Cancel 0} But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>]
+  <b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font>  {ButOK OK 1 ButCANCEL Cancel 0} But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveDialog::pasteText'>pasteText</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveDialog" title="::apave::APaveDialog" class='ruff_cmd'>::apave::APaveDialog</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveDialog'>APaveDialog</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -6678,7 +6818,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   args - options</font></i>
 
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> PrepArgs {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] args
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font>  {ButRETRY Retry 1 ButCANCEL Cancel 0} But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>]
+  <b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font>  {ButRETRY Retry 1 ButCANCEL Cancel 0} But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveDialog::seek_highlight'>seek_highlight</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveDialog" title="::apave::APaveDialog" class='ruff_cmd'>::apave::APaveDialog</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveDialog'>APaveDialog</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -6852,7 +6992,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   args - options</font></i>
 
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> PrepArgs {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] args
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font>  {ButYES Yes 1 ButNO No 0} But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>]
+  <b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font>  {ButYES Yes 1 ButNO No 0} But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveDialog::yesnocancel'>yesnocancel</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveDialog" title="::apave::APaveDialog" class='ruff_cmd'>::apave::APaveDialog</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveDialog'>APaveDialog</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -6875,7 +7015,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   args - options</font></i>
 
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> PrepArgs {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] args
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font>  {ButYES Yes 1 ButNO No 2 ButCANCEL Cancel 0} But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>]
+  <b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font>  {ButYES Yes 1 ButNO No 2 ButCANCEL Cancel 0} But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>
 }<br><br></code></pre></div>
 </div><br><br><h3 class='ruffclass'><a name='::apave::ObjectProperty'>ObjectProperty</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h3>
 <div style='clear:both;'></div>
@@ -8069,6 +8209,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::bindToEvent'>bindToEvent</a><span class='tooltiptext'>Binds an event on a widget to a command.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::blinkWidget'>blinkWidget</a><span class='tooltiptext'>Makes a widget blink.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::blinkWidgetImage'>blinkWidgetImage</a><span class='tooltiptext'>Makes a widget's image blink.
+</span></h4><h4 class='tooltip'><a href='apave.html#::apave::checkGeometry'>checkGeometry</a><span class='tooltiptext'>Checks a window's geometry.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::checkHomeDir'>checkHomeDir</a><span class='tooltiptext'>For Tcl 9.0 &amp; Windows: checks a command for &quot;~&quot;.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::countChar'>countChar</a><span class='tooltiptext'>Counts a character in a string.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::cs_Active'>cs_Active</a><span class='tooltiptext'>Gets/sets &quot;is changing CS possible&quot; flag for a whole application.
@@ -8088,7 +8229,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::extractOptions'>extractOptions</a><span class='tooltiptext'>Gets options' values and removes the options from the input list.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::FileRelativeTail'>FileRelativeTail</a><span class='tooltiptext'>Gets a base relative path. E.g. FileRelativeTail /a/b /a/b/cd/ef =&gt; ../ef
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::FileTail'>FileTail</a><span class='tooltiptext'>Extracts a tail path from a full file path. E.g. FileTail /a/b /a/b/cd/ef =&gt; cd/ef
-</span></h4><h4 class='tooltip'><a href='apave.html#::apave::focusApp'>focusApp</a><span class='tooltiptext'>Restores app's focus: if app loses focus, restoring it focuses main window, ignores modal toplevel, locks keyboard.
+</span></h4><h4 class='tooltip'><a href='apave.html#::apave::focusApp'>focusApp</a><span class='tooltiptext'>Saves (if <em>win</em> is set) or restores app's focus.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::FocusByForce'>FocusByForce</a><span class='tooltiptext'>Focuses a widget.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::focusedWidget'>focusedWidget</a><span class='tooltiptext'>Gets a flag &quot;is a widget can be focused&quot;.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::focusFirst'>focusFirst</a><span class='tooltiptext'>Sets a focus on a first widget of a parent widget.
@@ -8199,6 +8340,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveBase::makeWindow'>makeWindow</a><span class='tooltiptext'>Creates a toplevel window that has to be paved.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveBase::menuTips'>menuTips</a><span class='tooltiptext'>Makes tip(s) for menu and its items.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveBase::onKeyTextM'>onKeyTextM</a><span class='tooltiptext'>Processes indents and braces at pressing keys.
+</span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveBase::optionCascade_add'>optionCascade_add</a><span class='tooltiptext'>Adds tk_optionCascade items recursively.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveBase::optionCascadeText'>optionCascadeText</a><span class='tooltiptext'>Rids a tk_optionCascade item of braces.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveBase::ownWName'>ownWName</a><span class='tooltiptext'>Gets a tail (last part) of widget's name
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveBase::parentWName'>parentWName</a><span class='tooltiptext'>Gets parent name of widget.
@@ -8218,6 +8360,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveBase::themePopup'>themePopup</a><span class='tooltiptext'>Applies a color scheme to a popup menu.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveBase::timeoutButton'>timeoutButton</a><span class='tooltiptext'>Invokes a button's action after a timeout.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveBase::tk_optionCascade'>tk_optionCascade</a><span class='tooltiptext'>A bit modified tk_optionCascade widget made by Richard Suchenwirth.
+</span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveBase::toolbarItem_Attrs'>toolbarItem_Attrs</a><span class='tooltiptext'>Gets attributes of toolbar button.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveBase::validateColorChoice'>validateColorChoice</a><span class='tooltiptext'>Displays a current color of color chooser's entry.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveBase::waitWinVar'>waitWinVar</a><span class='tooltiptext'>Tk waiting for variable's change.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveBase::widgetType'>widgetType</a><span class='tooltiptext'>Gets the widget type based on 3 initial letters of its name. Also fills the grid/pack options and attributes of the widget.
