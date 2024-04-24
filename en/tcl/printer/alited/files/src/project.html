@@ -48,7 +48,7 @@ document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'
 
 <title>project.tcl</title>
 
-<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#bdd7e7><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
 
 <div id="bodyContent" class="dokuwiki">
 <div id="dw__toc" class="dw__toc">
@@ -132,6 +132,8 @@ dmin - date in seconds to select</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#project::Message">Message</a><span class=tooltiptext> project::Message : Displays a message in statusbar of projects dialogue.
 msg - message
 mode - mode of Message</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#project::KeyOnTree">KeyOnTree</a><span class=tooltiptext> project::KeyOnTree : Handles key press on the tree.
+K - key</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#project::focusTree">focusTree</a><span class=tooltiptext> project::focusTree : Sets focus on the treeview.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#project::ValidateIni">ValidateIni</a><span class=tooltiptext> project::ValidateIni : Validates values of alited.ini.
 V - %V wildcard of -validatecommand</span></div></li></ul>
@@ -309,7 +311,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 
 </p>
 
-<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>project.tcl</b></font></div></td></table>
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#bdd7e7><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>project.tcl</b></font></div></td></table>
 
 <pre class="code"><i><font color=#4b5d50>###########################################################<a id=project.tcl></a></font></i>
 <i><font color=#4b5d50># Name:    project.tcl</font></i>
@@ -544,7 +546,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <i><font color=#4b5d50># save project names to 'prjlist' variable to display it by treeview widget</font></i>
   <b><font color=#3a6797>lappend</font></b> prjlist <font color=#1b1baa>$pname</font>
   <i><font color=#4b5d50># save project files' settings in prjinfo array</font></i>
-  <b><font color=#3a6797>set</font></b> filecont [::apave::readTextFile <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>set</font></b> filecont [readTextFile <font color=#1b1baa>$fname</font>]
   <b><font color=#3a6797>foreach</font></b> opt <font color=#1b1baa>$OPTS</font> {
     <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> prjinfo(<font color=#1b1baa>$pname</font>,<font color=#1b1baa>$opt</font>) <font color=#1b1baa>$prjinfo(*DEFAULT*,$opt)</font>}  ;<i><font color=#4b5d50>#defaults</font></i>
   }
@@ -558,7 +560,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     }
   }
   <b><font color=#3a6797>set</font></b> prjinfo(<font color=#1b1baa>$pname</font>,prjroot) <font color=#1b1baa>$DIR</font>
-  <b><font color=#3a6797>foreach</font></b> line [::apave::textsplit <font color=#1b1baa>$filecont</font>] {
+  <b><font color=#3a6797>foreach</font></b> line [textsplit <font color=#1b1baa>$filecont</font>] {
     <b><font color=#3a6797>lassign</font></b> [GetOptVal <font color=#1b1baa>$line</font>] opt val
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lsearch</font></b> <font color=#1b1baa>$OPTS</font> <font color=#1b1baa>$opt</font>]&gt;-1} {
       <b><font color=#3a6797>set</font></b> prjinfo(<font color=#1b1baa>$pname</font>,<font color=#1b1baa>$opt</font>) [::alited::ProcEOL <font color=#1b1baa>$val</font> in]
@@ -581,13 +583,13 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al OPTS OPTS
   <b><font color=#3a6797>variable</font></b> prjinfo
-  <b><font color=#3a6797>set</font></b> filecont [::apave::readTextFile <font color=#1b1baa>$oldname</font>]
-  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$filecont</font>]} {
+  <b><font color=#3a6797>set</font></b> filecont [readTextFile <font color=#1b1baa>$oldname</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$filecont</font> eq {}} {
     alited::ini::SaveIniPrj
-    <b><font color=#3a6797>set</font></b> filecont [::apave::readTextFile <font color=#1b1baa>$oldname</font>]
+    <b><font color=#3a6797>set</font></b> filecont [readTextFile <font color=#1b1baa>$oldname</font>]
   }
   <b><font color=#3a6797>set</font></b> newcont {}
-  <b><font color=#3a6797>foreach</font></b> line [::apave::textsplit <font color=#1b1baa>$filecont</font>] {
+  <b><font color=#3a6797>foreach</font></b> line [textsplit <font color=#1b1baa>$filecont</font>] {
     <b><font color=#3a6797>lassign</font></b> [GetOptVal <font color=#1b1baa>$line</font>] opt val
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$line</font> eq {[Tabs]}} {
       <b><font color=#3a6797>foreach</font></b> tab <font color=#1b1baa>$al(tablist)</font> {
@@ -608,7 +610,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     }
     <b><font color=#3a6797>append</font></b> newcont <font color=#1b1baa>$line</font> \n
   }
-  ::apave::writeTextFile <font color=#1b1baa>$fname</font> newcont
+  writeTextFile <font color=#1b1baa>$fname</font> newcont
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$oldname</font> ne <font color=#1b1baa>$fname</font>} {
     <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>file</font></b> delete <font color=#1b1baa>$oldname</font>}
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dorename</font>} {
@@ -675,7 +677,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fcontOrig</font> eq {} && <font color=#1b1baa>$fcont</font> ne {}} {
       <b><font color=#3a6797>set</font></b> fcont __<font color=#1b1baa>$al(MC,coms)</font>__<font color=#1b1baa>$fcont</font>
     }
-    ::apave::writeTextFile <font color=#1b1baa>$fnotes</font> fcont 0 0
+    writeTextFile <font color=#1b1baa>$fnotes</font> fcont 0 0
   }
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -701,7 +703,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>variable</font></b> klnddata
   <b><font color=#3a6797>set</font></b> frems [RemsFile <font color=#1b1baa>$prj</font>]
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$frems</font>]} {
-    <b><font color=#3a6797>set</font></b> res [::apave::readTextFile <font color=#1b1baa>$frems</font>]
+    <b><font color=#3a6797>set</font></b> res [readTextFile <font color=#1b1baa>$frems</font>]
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>list</font></b>]
   }
@@ -768,7 +770,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   }
   ::klnd::update {} {} {} <font color=#1b1baa>$prjinfo($prjname,prjrem)</font>
   <b><font color=#3a6797>set</font></b> fcont <font color=#1b1baa>$prjinfo($prjname,prjrem)</font>
-  ::apave::writeTextFile [RemsFile <font color=#1b1baa>$prjname</font>] fcont 0 0
+  writeTextFile [RemsFile <font color=#1b1baa>$prjname</font>] fcont 0 0
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=project::KlndBorderText></a>
@@ -801,7 +803,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <font color=#1b1baa>$wtxt</font> delete 1.0 end
   <b><font color=#3a6797>set</font></b> fnotes [NotesFile <font color=#1b1baa>$prj</font>]
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fnotes</font>]} {
-    <b><font color=#3a6797>set</font></b> cont [::apave::readTextFile <font color=#1b1baa>$fnotes</font>]
+    <b><font color=#3a6797>set</font></b> cont [readTextFile <font color=#1b1baa>$fnotes</font>]
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> ir [<b><font color=#3a6797>string</font></b> first run1<font color=#1b1baa>$COMSEP</font> <font color=#1b1baa>$cont</font>]]&gt;-1} {
       <i><font color=#4b5d50># get commands for Commands tab (project's and common)</font></i>
       <b><font color=#3a6797>foreach</font></b> com [<b><font color=#3a6797>split</font></b> [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$cont</font> <font color=#1b1baa>$i</font> end] \n] {
@@ -1087,6 +1089,27 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 
   <b><font color=#3a6797>variable</font></b> obPrj
   alited::Message <font color=#1b1baa>$msg</font> <font color=#1b1baa>$mode</font> [<font color=#1b1baa>$obPrj</font> LabMess]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=project::KeyOnTree></a>
+<b><font color=#ca14ca>proc</font></b> project::KeyOnTree {K} {
+  <i><font color=#4b5d50># Handles key press on the tree.</font></i>
+  <i><font color=#4b5d50>#   K - key</font></i>
+  
+  <b><font color=#3a6797>variable</font></b> prjlist
+  Message {}
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> {^[a-zA-Z]$} <font color=#1b1baa>$K</font>]} {
+    <b><font color=#3a6797>set</font></b> icur [Selected index no]
+    <b><font color=#3a6797>foreach</font></b> pos [<b><font color=#3a6797>list</font></b> [<b><font color=#3a6797>incr</font></b> icur] 0] {
+      <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i <font color=#1b1baa>$pos</font>} {<font color=#1b1baa>$i</font>&lt;[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$prjlist</font>]} {<b><font color=#3a6797>incr</font></b> i} {
+        <b><font color=#3a6797>set</font></b> k [<b><font color=#3a6797>string</font></b> index [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$prjlist</font> <font color=#1b1baa>$i</font>] 0]
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> compare <font color=#653760>-nocase</font> <font color=#1b1baa>$k</font> <font color=#1b1baa>$K</font>]==0} {
+          Select <font color=#1b1baa>$i</font>
+          <b><font color=#ca14ca>return</font></b>
+        }
+      }
+    }
+  }
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=project::focusTree></a>
@@ -1607,14 +1630,14 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     <b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$al(prjroot)</font> <font color=#1b1baa>$fn</font>]
     <b><font color=#3a6797>switch</font></b> <font color=#653760>-glob</font> <font color=#653760>-nocase</font> -- [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fn</font>] {
       README* - CHANGELOG* {
-        <b><font color=#3a6797>set</font></b> err [<b><font color=#3a6797>catch</font></b> {::apave::writeTextFile <font color=#1b1baa>$fname</font> {} 1} errmess]
+        <b><font color=#3a6797>set</font></b> err [<b><font color=#3a6797>catch</font></b> {writeTextFile <font color=#1b1baa>$fname</font> {} 1} errmess]
       }
       LICENCE* - LICENSE* {
         <b><font color=#3a6797>set</font></b> fname0 [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$curinfo(prjroot)</font> <font color=#1b1baa>$fn</font>]
         <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fname0</font>]} {
           <b><font color=#3a6797>set</font></b> err [<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>file</font></b> copy <font color=#1b1baa>$fname0</font> <font color=#1b1baa>$fname</font>} errmess]
         } <b><font color=#3a6797>else</font></b> {
-          <b><font color=#3a6797>set</font></b> err [<b><font color=#3a6797>catch</font></b> {::apave::writeTextFile <font color=#1b1baa>$fname</font> {} 1} errmess]
+          <b><font color=#3a6797>set</font></b> err [<b><font color=#3a6797>catch</font></b> {writeTextFile <font color=#1b1baa>$fname</font> {} 1} errmess]
         }
       }
       <b><font color=#3a6797>default</font></b> {
@@ -2526,7 +2549,7 @@ README.md}
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$tree</font> &lt;Double-Button-1&gt; ::alited::project::ProjectEnter
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$tree</font> &lt;Return&gt; ::alited::project::ProjectEnter
   <b><font color=#3a6797>foreach</font></b> ev {KeyPress ButtonPress} {
-    <b><font color=#134070>bind</font></b> <font color=#1b1baa>$tree</font> &lt;<font color=#1b1baa>$ev</font>&gt; {+ ::alited::project::Message {}}
+    <b><font color=#134070>bind</font></b> <font color=#1b1baa>$tree</font> &lt;<font color=#1b1baa>$ev</font>&gt; {+ ::alited::project::KeyOnTree %K}
   }
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;F1&gt; <font color=#8b2a0e>&quot;<font color=#1b1baa>[$</font>obPrj ButHelp<font color=#1b1baa>]</font> invoke&quot;</font>
   <b><font color=#134070>bind</font></b> [<font color=#1b1baa>$obPrj</font> LabMess] &lt;Button-1&gt; ::alited::project::ProcMessage
@@ -2591,7 +2614,7 @@ README.md}
 
 </pre>
 
-<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>project.tcl</b></font></div></td></table>
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#bdd7e7><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>project.tcl</b></font></div></td></table>
 
 </section>
 <script>

@@ -48,7 +48,7 @@ document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'
 
 <title>file.tcl</title>
 
-<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#bdd7e7><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
 
 <div id="bodyContent" class="dokuwiki">
 <div id="dw__toc" class="dw__toc">
@@ -302,7 +302,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 
 </p>
 
-<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>file.tcl</b></font></div></td></table>
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#bdd7e7><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>file.tcl</b></font></div></td></table>
 
 <pre class="code"><i><font color=#4b5d50>###########################################################<a id=file.tcl></a></font></i>
 <i><font color=#4b5d50># Name:    file.tcl</font></i>
@@ -905,7 +905,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   <b><font color=#3a6797>set</font></b> enc [Encoding <font color=#1b1baa>$fname</font>]
   <b><font color=#3a6797>append</font></b> enc { } [EOL <font color=#1b1baa>$fname</font>]
-  <b><font color=#3a6797>set</font></b> filecont [::apave::readTextFile <font color=#1b1baa>$fname</font> {} <font color=#1b1baa>$doErr</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$enc</font>]
+  <b><font color=#3a6797>set</font></b> filecont [readTextFile <font color=#1b1baa>$fname</font> {} <font color=#1b1baa>$doErr</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$enc</font>]
   <b><font color=#3a6797>set</font></b> al(_unittree,<font color=#1b1baa>$TID</font>) [alited::unit::GetUnits <font color=#1b1baa>$TID</font> <font color=#1b1baa>$filecont</font>]
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$filecont</font>
 }
@@ -955,7 +955,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=file::OpenFile></a>
-<b><font color=#ca14ca>proc</font></b> file::OpenFile {{fnames <font color=#8b2a0e>&quot;&quot;</font>} {reload no} {islist no} {Message {}}} {
+<b><font color=#ca14ca>proc</font></b> file::OpenFile {{fnames <font color=#8b2a0e>&quot;&quot;</font>} {reload no} {islist no} {Message <font color=#8b2a0e>&quot;&quot;</font>}} {
   <i><font color=#4b5d50># Handles &quot;Open file&quot; menu item.</font></i>
   <i><font color=#4b5d50>#   fnames - file name (if not set, asks for it)</font></i>
   <i><font color=#4b5d50>#   reload - if yes, loads the file even if it has a &quot;strange&quot; extension</font></i>
@@ -965,10 +965,8 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
   <b><font color=#3a6797>variable</font></b> ansOpen
-  <b><font color=#3a6797>set</font></b> chosen no
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fnames</font> eq {}} {
     <b><font color=#3a6797>set</font></b> al(TMPfname) {}
-    <b><font color=#3a6797>set</font></b> chosen yes
     <b><font color=#3a6797>set</font></b> fnames [<font color=#1b1baa>$obPav</font> chooser tk_getOpenFile ::alited::al(TMPfname) <font color=#653760>-multiple</font> 1 \
       <font color=#653760>-initialdir</font> [<b><font color=#3a6797>file</font></b> dirname [alited::bar::CurrentTab 2]] <font color=#653760>-parent</font> <font color=#1b1baa>$al(WIN)</font>]
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(lifo)</font>} {<b><font color=#3a6797>set</font></b> fnames [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-decreasing</font> <font color=#1b1baa>$fnames</font>]}
@@ -1028,9 +1026,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
     alited::bar::BAR <font color=#1b1baa>$TID</font> show <font color=#1b1baa>$many</font> <font color=#1b1baa>$many</font>
   }
   RecreateFileTree
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$chosen</font>} {
-    <b><font color=#3a6797>after</font></b> idle {<b><font color=#134070>focus</font></b> <font color=#653760>-force</font> [alited::main::CurrentWTXT]}
-  }
+  alited::FocusText
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$TID</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -1057,7 +1053,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
   <b><font color=#3a6797>set</font></b> wtxt [alited::main::GetWTXT <font color=#1b1baa>$TID</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(prjtrailwhite)</font>} {alited::edit::RemoveTrailWhites <font color=#1b1baa>$TID</font> yes <font color=#1b1baa>$doit</font>}
   <b><font color=#3a6797>set</font></b> fcont [<font color=#1b1baa>$wtxt</font> get 1.0 <font color=#8b2a0e>&quot;end - 1 chars&quot;</font>]  ;<i><font color=#4b5d50># last \n excluded</font></i>
-  <b><font color=#3a6797>if</font></b> {![::apave::writeTextFile <font color=#1b1baa>$fname</font> fcont 0 1 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$enc</font>]} {
+  <b><font color=#3a6797>if</font></b> {![writeTextFile <font color=#1b1baa>$fname</font> fcont 0 1 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$enc</font>]} {
     alited::msg ok err [::apave::error <font color=#1b1baa>$fname</font>] <font color=#653760>-w</font> 50 <font color=#653760>-text</font> 1
     <b><font color=#3a6797>unset</font></b> al(_NO_OUTWARD_)
     <b><font color=#ca14ca>return</font></b> 0
@@ -1839,7 +1835,7 @@ Some additional alited's files are also contained in <a href="../lib/addon/hl_al
 
 </pre>
 
-<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#87bcd3><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>file.tcl</b></font></div></td></table>
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#bdd7e7><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>file.tcl</b></font></div></td></table>
 
 </section>
 <script>
