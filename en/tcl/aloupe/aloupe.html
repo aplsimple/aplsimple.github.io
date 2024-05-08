@@ -407,7 +407,47 @@ padding: 0%;
 <p class='ruff'>MIT.</p>
 <br><h2 class='ruff'><a name='::aloupe-Commands'></a>Commands<span class='tinylink'><a href='aloupe.html#::aloupe'>aloupe</a>, <a href='#top'>Top</a></span></h2>
 <div style='clear:both;'></div>
-<br><br><br><h4 class='ruffproc'><a name='::aloupe::option'>option</a><span class='ns_scope'> [<a href="aloupe.html#::aloupe" title="::aloupe" class='ruff_cmd'>::aloupe</a>]</span><span class='tinylink'><a href='aloupe.html#::aloupe'>aloupe</a>, <a href='#top'>Top</a></span></h4>
+<br><br><br><h4 class='ruffproc'><a name='::aloupe::FindPackages'>FindPackages</a><span class='ns_scope'> [<a href="aloupe.html#::aloupe" title="::aloupe" class='ruff_cmd'>::aloupe</a>]</span><span class='tinylink'><a href='aloupe.html#::aloupe'>aloupe</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Tries to find required packages in an upper bin directory.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>FindPackages</span> </div>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_aloupe_FindPackages' href="javascript:toggleSource('aloupe_FindPackages')">Show source</a></p>
+<div id='aloupe_FindPackages' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::aloupe::FindPackages {} {
+  <i><font color=#4b5d50># Tries to find required packages in an upper bin directory.</font></i>
+
+  <b><font color=#3a6797>set</font></b> dirs [<b><font color=#3a6797>file</font></b> split [<b><font color=#3a6797>file</font></b> dirname [<b><font color=#3a6797>file</font></b> normalize <font color=#1b1baa>$::aloupe::aloupescript</font>]]]
+  <b><font color=#3a6797>while</font></b> 1 {
+    <b><font color=#3a6797>set</font></b> dir [<b><font color=#3a6797>file</font></b> join {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$dirs</font> bin]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$dir</font>]} {
+      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>set</font></b> ::aloupe::starterr [::aloupe::GetPackages <font color=#1b1baa>$dir</font>]]} {
+        <b><font color=#ca14ca>return</font></b> yes
+      }
+    }
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> dirs [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$dirs</font> end end]] eq {}} <b><font color=#ca14ca>break</font></b>
+  }
+  <b><font color=#ca14ca>return</font></b> no
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::aloupe::GetPackages'>GetPackages</a><span class='ns_scope'> [<a href="aloupe.html#::aloupe" title="::aloupe" class='ruff_cmd'>::aloupe</a>]</span><span class='tinylink'><a href='aloupe.html#::aloupe'>aloupe</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Gets required packages.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>GetPackages</span> <span class='ruff_arg'>?dir?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>dir</code></code></td><td class='ruff_defitem'>supposed directory of packages; <i>optional, default</i> <code>.</code></td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_aloupe_GetPackages' href="javascript:toggleSource('aloupe_GetPackages')">Show source</a></p>
+<div id='aloupe_GetPackages' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::aloupe::GetPackages {{dir .}} {
+  <i><font color=#4b5d50># Gets required packages.</font></i>
+  <i><font color=#4b5d50>#   dir - supposed directory of packages</font></i>
+
+  <b><font color=#3a6797>set</font></b> dir [<b><font color=#3a6797>file</font></b> normalize <font color=#1b1baa>$dir</font>]
+  <b><font color=#3a6797>set</font></b> dir1 [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>glob</font></b> <font color=#6c3e67>-nocomplain</font> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$dir</font> treectrl*]] 0]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists ::auto_path] && <font color=#1b1baa>$dir1</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> dir2 [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>glob</font></b> <font color=#6c3e67>-nocomplain</font> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$dir</font> Img1.*]] 0]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dir2</font> ne {}} {<b><font color=#3a6797>lappend</font></b> ::auto_path <font color=#1b1baa>$dir1</font> <font color=#1b1baa>$dir2</font>}
+  }
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>package</font></b> require treectrl; <b><font color=#3a6797>package</font></b> require Img} ::aloupe::runerr]
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::aloupe::option'>option</a><span class='ns_scope'> [<a href="aloupe.html#::aloupe" title="::aloupe" class='ruff_cmd'>::aloupe</a>]</span><span class='tinylink'><a href='aloupe.html#::aloupe'>aloupe</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Returns a value of aloupe option.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>option</span> <span class='ruff_arg'>opt</span></div>
@@ -532,22 +572,24 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::aloupe::my::CountDownPause'>CountDownPause</a><span class='ns_scope'> [<a href="aloupe.html#::aloupe::my" title="::aloupe::my" class='ruff_cmd'>::aloupe::my</a>]</span><span class='tinylink'><a href='aloupe.html#::aloupe::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Counts down a pause.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>CountDownPause</span> <span class='ruff_arg'>p</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>CountDownPause</span> <span class='ruff_arg'>pause p</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>pause</code></code></td><td class='ruff_defitem'>seconds to count down</td></tr>
 <tr><td class='ruff_defitem'><code><code>p</code></code></td><td class='ruff_defitem'>remaining seconds to count down</td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_aloupe_my_CountDownPause' href="javascript:toggleSource('aloupe_my_CountDownPause')">Show source</a></p>
-<div id='aloupe_my_CountDownPause' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::aloupe::my::CountDownPause {p} {
+<div id='aloupe_my_CountDownPause' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::aloupe::my::CountDownPause {pause p} {
   <i><font color=#4b5d50># Counts down a pause.</font></i>
+  <i><font color=#4b5d50>#   pause - seconds to count down</font></i>
   <i><font color=#4b5d50>#   p - remaining seconds to count down</font></i>
 
   <b><font color=#3a6797>variable</font></b> data
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$p</font>} {
-    <b><font color=#3a6797>set</font></b> ::aloupe::my::pause [<b><font color=#3a6797>incr</font></b> p -1]
+    <b><font color=#3a6797>set</font></b> ::aloupe::my::pause [<b><font color=#3a6797>incr</font></b> p -1] ;<i><font color=#4b5d50># shows remaining seconds</font></i>
     <b><font color=#3a6797>set</font></b> msec [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$p</font> ? 1000 : 200}]
-    <b><font color=#3a6797>after</font></b> <font color=#1b1baa>$msec</font> [<b><font color=#3a6797>list</font></b> ::aloupe::my::CountDownPause <font color=#1b1baa>$p</font>]
+    <b><font color=#3a6797>after</font></b> <font color=#1b1baa>$msec</font> [<b><font color=#3a6797>list</font></b> ::aloupe::my::CountDownPause <font color=#1b1baa>$pause</font> <font color=#1b1baa>$p</font>]
   } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>set</font></b> ::aloupe::my::pause <font color=#1b1baa>$data(-pause)</font>
+    <b><font color=#3a6797>set</font></b> ::aloupe::my::pause <font color=#1b1baa>$pause</font>
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::aloupe::my::Create'>Create</a><span class='ns_scope'> [<a href="aloupe.html#::aloupe::my" title="::aloupe::my" class='ruff_cmd'>::aloupe::my</a>]</span><span class='tinylink'><a href='aloupe.html#::aloupe::my'>my</a>, <a href='#top'>Top</a></span></h4>
@@ -651,7 +693,7 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> canvas <font color=#1b1baa>$data(WLOUP)</font>.c
   <b><font color=#134070>canvas</font></b> <font color=#1b1baa>$canvas</font> <font color=#6c3e67>-width</font> 100 <font color=#6c3e67>-height</font> 100 <font color=#6c3e67>-background</font> <font color=#1b1baa>$data(-background)</font>  <font color=#6c3e67>-relief</font> flat <font color=#6c3e67>-bd</font> 0 <font color=#6c3e67>-highlightthickness</font> 1 <font color=#6c3e67>-highlightbackground</font> red
   <b><font color=#134070>pack</font></b> <font color=#1b1baa>$canvas</font> <font color=#6c3e67>-fill</font> both <font color=#6c3e67>-expand</font> true
-  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$canvas</font> &lt;ButtonPress-1&gt;   {::aloupe::my::DragStart %W %X %Y}
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$canvas</font> &lt;ButtonPress-1&gt;   {::aloupe::my::DragStart %W %X %Y %x %y}
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$canvas</font> &lt;B1-Motion&gt;       {::aloupe::my::Drag %W %X %Y}
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$canvas</font> &lt;ButtonRelease-1&gt; {::aloupe::my::DragEnd %W}
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$canvas</font> &lt;Escape&gt;          {::aloupe::my::Exit}
@@ -675,12 +717,10 @@ padding: 0%;
 
   <b><font color=#3a6797>variable</font></b> data
   <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists data(dragX)]} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$data(WLOUP)</font> <font color=#6c3e67>-topmost</font> 1 <font color=#6c3e67>-alpha</font> 0.0
+  <b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$data(WDISP)</font> <font color=#6c3e67>-alpha</font> 0.0
   <b><font color=#134070>wm</font></b> withdraw <font color=#1b1baa>$data(WLOUP)</font>
-  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$data(-ontop)</font> && ![<b><font color=#3a6797>string</font></b> match <font color=#1b1baa>$data(WDISP)</font>* <font color=#1b1baa>$data(FOCUS)</font>] &&
-  <font color=#1b1baa>$::tcl_platform(platform)</font> eq <font color=#8b2a0e>&quot;unix&quot;</font>} {
-    <i><font color=#4b5d50># the disp window can be overlapped by others =&gt; it should be deiconified</font></i>
-    <b><font color=#134070>wm</font></b> withdraw <font color=#1b1baa>$data(WDISP)</font>
-  }
+  <b><font color=#134070>wm</font></b> withdraw <font color=#1b1baa>$data(WDISP)</font>
   <b><font color=#3a6797>set</font></b> curX [<b><font color=#134070>winfo</font></b> rootx <font color=#1b1baa>$w</font>]
   <b><font color=#3a6797>set</font></b> curY [<b><font color=#134070>winfo</font></b> rooty <font color=#1b1baa>$w</font>]
   <b><font color=#3a6797>set</font></b> curW [<b><font color=#134070>winfo</font></b> width <font color=#1b1baa>$w</font>]
@@ -700,6 +740,7 @@ padding: 0%;
   }
   <b><font color=#134070>wm</font></b> deiconify <font color=#1b1baa>$data(WDISP)</font>
   <b><font color=#134070>wm</font></b> deiconify <font color=#1b1baa>$data(WLOUP)</font>
+  <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;  wm attributes <font color=#1b1baa>$</font>data(WLOUP) -topmost 1 -alpha <font color=#1b1baa>$</font>data(-alpha); wm attributes <font color=#1b1baa>$</font>data(WDISP) -alpha 1.0&quot;</font>
   <b><font color=#134070>focus</font></b> <font color=#6c3e67>-force</font> <font color=#1b1baa>$data(WDISP)</font>.but2
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::aloupe::my::Drag'>Drag</a><span class='ns_scope'> [<a href="aloupe.html#::aloupe::my" title="::aloupe::my" class='ruff_cmd'>::aloupe::my</a>]</span><span class='tinylink'><a href='aloupe.html#::aloupe::my'>my</a>, <a href='#top'>Top</a></span></h4>
@@ -736,10 +777,10 @@ padding: 0%;
   <i><font color=#4b5d50># Ends the frag-and-drop of the loupe and displays its magnified image.</font></i>
   <i><font color=#4b5d50>#   w - the loupe window's path</font></i>
 
-  <b><font color=#3a6797>variable</font></b> data
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$data(-pause)</font>} {
-    <b><font color=#3a6797>after</font></b> 1000 [<b><font color=#3a6797>list</font></b> ::aloupe::my::CountDownPause <font color=#1b1baa>$data(-pause)</font>]
-    <b><font color=#3a6797>after</font></b> [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$data(-pause)</font>*1000}] [<b><font color=#3a6797>list</font></b> ::aloupe::my::DisplayImage <font color=#1b1baa>$w</font>]
+  <b><font color=#3a6797>variable</font></b> pause
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$pause</font>} {
+    <b><font color=#3a6797>after</font></b> 1000 [<b><font color=#3a6797>list</font></b> ::aloupe::my::CountDownPause <font color=#1b1baa>$pause</font> <font color=#1b1baa>$pause</font>]
+    <b><font color=#3a6797>after</font></b> [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$pause</font>*1000}] [<b><font color=#3a6797>list</font></b> ::aloupe::my::DisplayImage <font color=#1b1baa>$w</font>]
   } <b><font color=#3a6797>else</font></b> {
     ::aloupe::my::DisplayImage <font color=#1b1baa>$w</font>
   }
@@ -747,28 +788,30 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::aloupe::my::DragStart'>DragStart</a><span class='ns_scope'> [<a href="aloupe.html#::aloupe::my" title="::aloupe::my" class='ruff_cmd'>::aloupe::my</a>]</span><span class='tinylink'><a href='aloupe.html#::aloupe::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Initializes the frag-and-drop of the loupe.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>DragStart</span> <span class='ruff_arg'>w X Y</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>DragStart</span> <span class='ruff_arg'>w X Y x y</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>w</code></code></td><td class='ruff_defitem'>the loupe window's path</td></tr>
 <tr><td class='ruff_defitem'><code><code>X</code></code></td><td class='ruff_defitem'>X-coordinate of the mouse pointer</td></tr>
 <tr><td class='ruff_defitem'><code><code>Y</code></code></td><td class='ruff_defitem'>Y-coordinate of the mouse pointer</td></tr>
+<tr><td class='ruff_defitem'><code><code>x</code></code></td><td class='ruff_defitem'>X-coordinate inside the loupe</td></tr>
+<tr><td class='ruff_defitem'><code><code>y</code></code></td><td class='ruff_defitem'>Y-coordinate inside the loupe</td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_aloupe_my_DragStart' href="javascript:toggleSource('aloupe_my_DragStart')">Show source</a></p>
-<div id='aloupe_my_DragStart' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::aloupe::my::DragStart {w X Y} {
+<div id='aloupe_my_DragStart' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::aloupe::my::DragStart {w X Y x y} {
   <i><font color=#4b5d50># Initializes the frag-and-drop of the loupe.</font></i>
   <i><font color=#4b5d50>#   w - the loupe window's path</font></i>
   <i><font color=#4b5d50>#   X - X-coordinate of the mouse pointer</font></i>
   <i><font color=#4b5d50>#   Y - Y-coordinate of the mouse pointer</font></i>
+  <i><font color=#4b5d50>#   x - X-coordinate inside the loupe</font></i>
+  <i><font color=#4b5d50>#   y - Y-coordinate inside the loupe</font></i>
 
   <b><font color=#3a6797>variable</font></b> data
   <b><font color=#3a6797>variable</font></b> size
   <b><font color=#3a6797>variable</font></b> zoom
-  <b><font color=#3a6797>variable</font></b> pause
   <b><font color=#3a6797>set</font></b> data(FOCUS) [<b><font color=#134070>focus</font></b>]
   <b><font color=#134070>focus</font></b> <font color=#6c3e67>-force</font> <font color=#1b1baa>$data(WDISP)</font>
   <b><font color=#3a6797>set</font></b> data(-size) <font color=#1b1baa>$size</font>
   <b><font color=#3a6797>set</font></b> data(-zoom) <font color=#1b1baa>$zoom</font>
-  <b><font color=#3a6797>set</font></b> data(-pause) <font color=#1b1baa>$pause</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$data(PREVZOOM)</font> != <font color=#1b1baa>$data(-zoom)</font> || <font color=#1b1baa>$data(PREVSIZE)</font> != <font color=#1b1baa>$data(-size)</font>} {
     SaveGeometry
     Create no
@@ -778,12 +821,12 @@ padding: 0%;
   }
   <b><font color=#3a6797>set</font></b> data(COLOR) [<b><font color=#3a6797>set</font></b> data(CAPTURE) <font color=#8b2a0e>&quot;&quot;</font>]
   StyleButton2 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$data(BUTCFG)</font>
+  <b><font color=#3a6797>set</font></b> data(x) <font color=#1b1baa>$x</font>
+  <b><font color=#3a6797>set</font></b> data(y) <font color=#1b1baa>$y</font>
   InitGeometry
   <b><font color=#3a6797>update</font></b>
   <b><font color=#3a6797>set</font></b> data(dragX) [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$X</font> - [<b><font color=#134070>winfo</font></b> rootx <font color=#1b1baa>$w</font>]}]
   <b><font color=#3a6797>set</font></b> data(dragY) [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$Y</font> - [<b><font color=#134070>winfo</font></b> rooty <font color=#1b1baa>$w</font>]}]
-  <b><font color=#3a6797>set</font></b> data(dragw) [<b><font color=#134070>winfo</font></b> width <font color=#1b1baa>$w</font>]
-  <b><font color=#3a6797>set</font></b> data(dragh) [<b><font color=#134070>winfo</font></b> height <font color=#1b1baa>$w</font>]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::aloupe::my::Exit'>Exit</a><span class='ns_scope'> [<a href="aloupe.html#::aloupe::my" title="::aloupe::my" class='ruff_cmd'>::aloupe::my</a>]</span><span class='tinylink'><a href='aloupe.html#::aloupe::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -853,8 +896,10 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$geom</font> eq <font color=#8b2a0e>&quot;&quot;</font>} {
     <b><font color=#3a6797>set</font></b> sz [<b><font color=#3a6797>expr</font></b> {2*<font color=#1b1baa>$data(-size)</font>}]
     <b><font color=#3a6797>lassign</font></b> [<b><font color=#134070>winfo</font></b> pointerxy .] x y
-    <b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$x</font>-<font color=#1b1baa>$sz</font>/2}]
-    <b><font color=#3a6797>set</font></b> y [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$y</font>-<font color=#1b1baa>$sz</font>/2}]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists data(x)]} {<b><font color=#3a6797>set</font></b> dx <font color=#1b1baa>$data(x)</font>} {<b><font color=#3a6797>set</font></b> dx <font color=#1b1baa>$sz</font>/2}
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists data(y)]} {<b><font color=#3a6797>set</font></b> dy <font color=#1b1baa>$data(y)</font>} {<b><font color=#3a6797>set</font></b> dy <font color=#1b1baa>$sz</font>/2}
+    <b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> <font color=#1b1baa>$x</font>-<font color=#1b1baa>$dx</font>]
+    <b><font color=#3a6797>set</font></b> y [<b><font color=#3a6797>expr</font></b> <font color=#1b1baa>$y</font>-<font color=#1b1baa>$dy</font>]
     <b><font color=#3a6797>set</font></b> geom <font color=#1b1baa>${sz}</font>x<font color=#1b1baa>${sz}</font>+<font color=#1b1baa>$x</font>+<font color=#1b1baa>$y</font>
   }
   <b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$data(WLOUP)</font> <font color=#1b1baa>$geom</font>
@@ -1129,7 +1174,9 @@ padding: 0%;
     ::apave::obj chooserGeomVars {} ::aloupe::my::data(-fcgeom)
   }
 }<br><br></code></pre></div>
-</div></div></div><div class='yui-b navbox' ><h1><a href='#::aloupe'>aloupe</a></h1><h2><a href='#::aloupe-Usage'>Usage</a></h2><h2><a href='#::aloupe-Options'>Options</a></h2><h2><a href='#::aloupe-Links'>Links</a></h2><h2><a href='#::aloupe-License'>License</a></h2><h2><a href='#::aloupe-Commands'>Commands</a></h2><h4 class='tooltip'><a href='aloupe.html#::aloupe::option'>option</a><span class='tooltiptext'>Returns a value of aloupe option.
+</div></div></div><div class='yui-b navbox' ><h1><a href='#::aloupe'>aloupe</a></h1><h2><a href='#::aloupe-Usage'>Usage</a></h2><h2><a href='#::aloupe-Options'>Options</a></h2><h2><a href='#::aloupe-Links'>Links</a></h2><h2><a href='#::aloupe-License'>License</a></h2><h2><a href='#::aloupe-Commands'>Commands</a></h2><h4 class='tooltip'><a href='aloupe.html#::aloupe::FindPackages'>FindPackages</a><span class='tooltiptext'>Tries to find required packages in an upper bin directory.
+</span></h4><h4 class='tooltip'><a href='aloupe.html#::aloupe::GetPackages'>GetPackages</a><span class='tooltiptext'>Gets required packages.
+</span></h4><h4 class='tooltip'><a href='aloupe.html#::aloupe::option'>option</a><span class='tooltiptext'>Returns a value of aloupe option.
 </span></h4><h4 class='tooltip'><a href='aloupe.html#::aloupe::run'>run</a><span class='tooltiptext'>Runs the loupe.
 </span></h4><h4 class='tooltip'><a href='aloupe.html#::aloupe::RunSolo'>RunSolo</a><span class='tooltiptext'>Runs aloupe as a sole Tcl script. When aloupe runs from tclkit, it may fail. So try it with tclsh deployed.
 </span></h4><h1><a href='#::aloupe::my'>aloupe::my</a></h1><h2><a href='#::aloupe::my-Commands'>Commands</a></h2><h4 class='tooltip'><a href='aloupe.html#::aloupe::my::Button2Click'>Button2Click</a><span class='tooltiptext'>Processes the click on 'Clipboard' button.

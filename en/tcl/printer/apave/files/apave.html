@@ -62,6 +62,7 @@ document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'
 <ul class=toc><li><div class=tooltip><a href="#::iswindows">iswindows</a><span class=tooltiptext> ::iswindows : Checks for "platform is MS Windows".</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#::isunix">isunix</a><span class=tooltiptext> ::isunix : Checks for "platform is Unix".</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#::isKDE">isKDE</a><span class=tooltiptext> ::isKDE : Checks for "desktop is KDE".</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#::asKDE">asKDE</a><span class=tooltiptext> ::asKDE : Checks for DE behaving as weird as KDE.</span></div></li></ul>
 <li><b><a href="#apave_NS">apave NS</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#obj">obj</a><span class=tooltiptext> obj : Calls a method of APave class.
 com - a method
@@ -156,10 +157,15 @@ w - widget's path</span></div></li></ul>
 w1 - the widget's path</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#CursorAtEnd">CursorAtEnd</a><span class=tooltiptext> CursorAtEnd : Sets the cursor at the end of a field.
 w - the field's path</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#FocusByForce">FocusByForce</a><span class=tooltiptext> FocusByForce : Focuses a widget.
+<ul class=toc><li><div class=tooltip><a href="#focusByForce">focusByForce</a><span class=tooltiptext> focusByForce : Focuses a widget.
 foc - widget's path</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#KeyAccelerator">KeyAccelerator</a><span class=tooltiptext> KeyAccelerator : Returns a key accelerator.
 acc - key name, may contain 2 items (e.g. Control-D Control-d)</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#InvertBg">InvertBg</a><span class=tooltiptext> InvertBg : Gets a "inverted" color (white/black) for an color.
+clr - color (#hhh or #hhhhhh)
+B - "black" color
+W - "white" color
+Returns a list of "black/white" and normalized input color</span></div></li></ul>
 <li><b><a href="#Blinking_widgets">&nbsp;&nbsp;&nbsp;&nbsp;Blinking widgets</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#blinkWidget">blinkWidget</a><span class=tooltiptext> blinkWidget</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#blinkWidgetImage">blinkWidgetImage</a><span class=tooltiptext> blinkWidgetImage : Makes a widget's image blink.
@@ -225,6 +231,12 @@ args - additional options (`-readonly 1` for viewing the file).
 If *fg* isn't empty, all three colors are used to color a text.
 See also:
 [aplsimple.github.io](https://aplsimple.github.io/en/tcl/pave/index.html)</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#onTop">onTop</a><span class=tooltiptext> onTop : Sets -topmost attribute for windows or gets a list of topmost windows.
+wpar - parent window's path
+top - -topmost attribute's value
+wtoplist - list of windows to process
+res - used to get the result
+Returns a list of "topmost=$top" windows found on $wpar path.</span></div></li></ul>
 <li><b><a href="#EONS">EONS</a></b></li>
 <li><b><a href="#EOF">EOF</a></b></li>
 
@@ -257,7 +269,7 @@ Docs:
 <i><font color=#4b5d50>###########################################################</font></i>
 
 <b><font color=#3a6797>package</font></b> require Tk
-<b><font color=#3a6797>package</font></b> provide apave 4.4.2
+<b><font color=#3a6797>package</font></b> provide apave 4.4.5
 
 <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join [<b><font color=#3a6797>file</font></b> dirname [<b><font color=#3a6797>info</font></b> script]] apavedialog.tcl]
 <a id=Independent_procs></a>
@@ -280,12 +292,17 @@ Docs:
 
   <b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>info</font></b> exists ::env(XDG_CURRENT_DESKTOP)] && <font color=#1b1baa>$::env(XDG_CURRENT_DESKTOP)</font> eq {KDE}}
 }
-<a id=apave_NS></a>
+<a id=::asKDE></a>
+<b><font color=#ca14ca>proc</font></b> ::asKDE {} {
+  <i><font color=#4b5d50># Checks for DE behaving as weird as KDE.</font></i>
+
+  <b><font color=#3a6797>expr</font></b> {[::isKDE] && ![<b><font color=#3a6797>package</font></b> vsatisfies [<b><font color=#3a6797>package</font></b> require Tcl] 8.6.11-]}
+}<a id=apave_NS></a>
 <i><font color=#4b5d50># ________________________ apave NS _________________________ #</font></i>
 
 <b><font color=#ca14ca>namespace</font></b> eval ::apave {
 
-  <b><font color=#3a6797>namespace</font></b> export obj openDoc readTextFile writeTextFile undoIn undoOut
+  <b><font color=#3a6797>namespace</font></b> export obj openDoc textsplit focusByForce *TextFile undo* *Option*
 
   mainWindowOfApp .
 
@@ -693,13 +710,13 @@ Docs:
     <font color=#1b1baa>$w</font> icursor end
   }
   <i><font color=#4b5d50>#_______________________</font></i>
-<a id=FocusByForce></a>
-  <b><font color=#ca14ca>proc</font></b> FocusByForce {foc {cnt 10}} {
+<a id=focusByForce></a>
+  <b><font color=#ca14ca>proc</font></b> focusByForce {foc {cnt 10}} {
     <i><font color=#4b5d50># Focuses a widget.</font></i>
     <i><font color=#4b5d50>#   foc - widget's path</font></i>
 
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> cnt -1]&gt;0} {
-      <b><font color=#3a6797>after</font></b> idle after 5 ::apave::FocusByForce <font color=#1b1baa>$foc</font> <font color=#1b1baa>$cnt</font>
+      <b><font color=#3a6797>after</font></b> idle after 5 ::apave::focusByForce <font color=#1b1baa>$foc</font> <font color=#1b1baa>$cnt</font>
     } <b><font color=#3a6797>else</font></b> {
       <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>focus</font></b> <font color=#653760>-force</font> [<b><font color=#134070>winfo</font></b> toplevel <font color=#1b1baa>$foc</font>]; <b><font color=#134070>focus</font></b> <font color=#1b1baa>$foc</font>}
     }
@@ -712,6 +729,27 @@ Docs:
 
     <b><font color=#3a6797>set</font></b> acc [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$acc</font> 0]
     <b><font color=#3a6797>string</font></b> map {Control Ctrl - + bracketleft [ bracketright ]} <font color=#1b1baa>$acc</font>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=InvertBg></a>
+  <b><font color=#ca14ca>proc</font></b> InvertBg {clr {B #000000} {W #FFFFFF}} {
+    <i><font color=#4b5d50># Gets a &quot;inverted&quot; color (white/black) for an color.</font></i>
+    <i><font color=#4b5d50>#   clr - color (#hhh or #hhhhhh)</font></i>
+    <i><font color=#4b5d50>#   B - &quot;black&quot; color</font></i>
+    <i><font color=#4b5d50>#   W - &quot;white&quot; color</font></i>
+    <i><font color=#4b5d50># Returns a list of &quot;black/white&quot; and normalized input color</font></i>
+
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$clr</font>]==4} {
+      <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$clr</font> {}] -&gt; r g b
+      <b><font color=#3a6797>set</font></b> clr #<font color=#1b1baa>$r$r$g$g$b$b</font>
+    }
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#134070>winfo</font></b> rgb . <font color=#1b1baa>$clr</font>] r g b
+    <b><font color=#3a6797>if</font></b> {(<font color=#1b1baa>$r</font>%256+<font color=#1b1baa>$b</font>%256)&lt;15 && (<font color=#1b1baa>$g</font>%256)&gt;180 || <font color=#1b1baa>$r</font>+1.5*<font color=#1b1baa>$g</font>+0.5*<font color=#1b1baa>$b</font> &gt; 100000} {
+      <b><font color=#3a6797>set</font></b> res <font color=#1b1baa>$B</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> res <font color=#1b1baa>$W</font>
+    }
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font> <font color=#1b1baa>$clr</font>]
   }
 <a id=Blinking_widgets></a>
   <i><font color=#4b5d50>### ________________________ Blinking widgets _________________________ ###</font></i>
@@ -1374,6 +1412,30 @@ Docs:
       <b><font color=#3a6797>set</font></b> res [::apave::writeTextFile <font color=#1b1baa>$fname</font> data]
     } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$newfile</font>} {
       <b><font color=#3a6797>file</font></b> delete <font color=#1b1baa>$fname</font>
+    }
+    <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
+<a id=onTop></a>
+  <b><font color=#ca14ca>method</font></b> onTop {wpar top {wtoplist -} {res <font color=#8b2a0e>&quot;&quot;</font>}} {
+    <i><font color=#4b5d50># Sets -topmost attribute for windows or gets a list of topmost windows.</font></i>
+    <i><font color=#4b5d50>#   wpar - parent window's path</font></i>
+    <i><font color=#4b5d50>#   top - -topmost attribute's value</font></i>
+    <i><font color=#4b5d50>#   wtoplist - list of windows to process</font></i>
+    <i><font color=#4b5d50>#   res - used to get the result</font></i>
+    <i><font color=#4b5d50># Returns a list of &quot;topmost=$top&quot; windows found on $wpar path.</font></i>
+
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtoplist</font> ne <font color=#8b2a0e>&quot;-&quot;</font>} {
+      <i><font color=#4b5d50># sets the attribute</font></i>
+      <b><font color=#3a6797>foreach</font></b> w <font color=#1b1baa>$wtoplist</font> {<b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$w</font> <font color=#653760>-topmost</font> <font color=#1b1baa>$top</font>}
+    } <b><font color=#3a6797>else</font></b> {
+      <i><font color=#4b5d50># gets a list of topmost windows</font></i>
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wpar</font> ne {}} {
+        <b><font color=#3a6797>set</font></b> res [<b><font color=#ca14ca>my</font></b> onTop [<b><font color=#134070>winfo</font></b> parent <font color=#1b1baa>$wpar</font>] <font color=#1b1baa>$top</font> - <font color=#1b1baa>$res</font>]
+        <b><font color=#3a6797>catch</font></b> {
+          <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$wpar</font> <font color=#653760>-topmost</font>]==<font color=#1b1baa>$top</font>} {<b><font color=#3a6797>lappend</font></b> res <font color=#1b1baa>$wpar</font>}
+        }
+      }
     }
     <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
   }
