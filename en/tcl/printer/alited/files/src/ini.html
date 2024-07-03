@@ -90,6 +90,8 @@ nam - name of option
 val - value of option</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#ini::Em_Number">Em_Number</a><span class=tooltiptext> ini::Em_Number : Gets a real number of e_menu items counting non-empty ones only.
 em_N - current number of e_menu items</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#ini::InitXterminal">InitXterminal</a><span class=tooltiptext> ini::InitXterminal : Gets Linux terminal called by x-terminal-emulator, saves the result to al(EM,tt).
+See also: tool::EM_Options</span></div></li></ul>
 <li><b><a href="#Reading_project_settings">Reading project settings</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#ini::ReadIniPrj">ReadIniPrj</a><span class=tooltiptext> ini::ReadIniPrj : Reads a project's settings.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#ini::ReadPrjTabs">ReadPrjTabs</a><span class=tooltiptext> ini::ReadPrjTabs : Gets tabs of project.
@@ -336,7 +338,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> al(EM,TclList) [<b><font color=#3a6797>list</font></b>]
   <b><font color=#3a6797>set</font></b> al(EM,h=) [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::HOMEDIR</font> DOC www.tcl.tk man tcl8.6]
   <b><font color=#3a6797>set</font></b> al(EM,tt=) x-terminal-emulator
-  <b><font color=#3a6797>set</font></b> al(EM,tt=List) <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(EM,tt=)\tlxterminal --geometry=220x55\txfce4-terminal\tkonsole\tmlterm\tqterminal\tEterm\txgterm&quot;</font>
+  <b><font color=#3a6797>set</font></b> al(EM,tt=List) <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(EM,tt=)\txfce4-terminal\tlxterminal --geometry=220x55\tgnome-terminal --wait\tkonsole\tqterminal\tEterm\tmlterm\txgterm&quot;</font>
   <b><font color=#3a6797>set</font></b> al(EM,wt=) cmd.exe
   <b><font color=#3a6797>set</font></b> al(EM,wt=List) <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(EM,wt=)\tpowershell.exe&quot;</font>
   <b><font color=#3a6797>set</font></b> al(EM,mnu) menu.em
@@ -578,6 +580,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     alited::pref::Tkcon_Default
     alited::pref::Tkcon_Default1
   }
+  InitXterminal
   <b><font color=#3a6797>set</font></b> al(ini_file) {}  ;<i><font color=#4b5d50># to reread alited.ini contents, at need in next time</font></i>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -804,7 +807,14 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       ]
     }
     emtt       {<b><font color=#3a6797>set</font></b> al(EM,tt=) <font color=#1b1baa>$val</font>}
-    emttList   {<b><font color=#3a6797>set</font></b> al(EM,tt=List) <font color=#1b1baa>$val</font>}
+    emttList   {
+      <b><font color=#3a6797>foreach</font></b> tt [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$al(EM,tt=List)</font> \t] {
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first \t<font color=#1b1baa>$tt</font> \t<font color=#1b1baa>$val</font>]&lt;0} {
+          <b><font color=#3a6797>append</font></b> val \t<font color=#1b1baa>$tt</font>  ;<i><font color=#4b5d50># let default items be in the list</font></i>
+        }
+      }
+      <b><font color=#3a6797>set</font></b> al(EM,tt=List) <font color=#1b1baa>$val</font>
+    }
     emwt       {<b><font color=#3a6797>set</font></b> al(EM,wt=) <font color=#1b1baa>$val</font>}
     emmenu     {<b><font color=#3a6797>set</font></b> al(EM,mnu) [::apave::UnixPath <font color=#1b1baa>$val</font>]}
     emmenudir  {
@@ -886,6 +896,29 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     }
   }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$em_N</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=ini::InitXterminal></a>
+<b><font color=#ca14ca>proc</font></b> ini::InitXterminal {} {
+  <i><font color=#4b5d50># Gets Linux terminal called by x-terminal-emulator, saves the result to al(EM,tt).</font></i>
+  <i><font color=#4b5d50># See also: tool::EM_Options</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> al(EM,tt) <font color=#1b1baa>$al(EM,tt=)</font>
+  <b><font color=#3a6797>set</font></b> tty [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$al(EM,tt)</font>] 0]
+  <b><font color=#3a6797>set</font></b> xte x-terminal-emulator
+  <b><font color=#3a6797>if</font></b> {[::isunix] && [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$tty</font>] eq <font color=#1b1baa>$xte</font>} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>auto_execok</font></b> <font color=#1b1baa>$tty</font>] eq {} || [<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> man [<b><font color=#3a6797>exec</font></b> man <font color=#1b1baa>$xte</font>]}]} {
+      <b><font color=#3a6797>set</font></b> al(EM,tt) {} ;<i><font color=#4b5d50># no x-terminal-emulator command</font></i>
+      <b><font color=#ca14ca>return</font></b>
+    }
+    <b><font color=#3a6797>switch</font></b> <font color=#653760>-glob</font> <font color=#1b1baa>$man</font> {
+      GNOME-TERMINAL* {<b><font color=#3a6797>set</font></b> tt {gnome-terminal <font color=#653760>--wait</font>}}
+      XFCE4-TERMINAL* {<b><font color=#3a6797>set</font></b> tt xfce4-terminal}
+      <b><font color=#3a6797>default</font></b> {<b><font color=#ca14ca>return</font></b>}
+    }
+    <b><font color=#3a6797>set</font></b> al(EM,tt) <font color=#1b1baa>$tt</font>[<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$al(EM,tt=)</font> [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$tty</font>] end]
+  }
 }
 <a id=Reading_project_settings></a>
 <i><font color=#4b5d50># _______________________ Reading project settings _________________________ #</font></i>

@@ -731,13 +731,28 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(REG_TXT,<font color=#1b1baa>$txt</font>) {}  ;<i><font color=#4b5d50># disables Modified at changing the text</font></i>
   <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(KEYWORDS,<font color=#1b1baa>$txt</font>) {}
   <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(DOBIND,<font color=#1b1baa>$txt</font>) 0
-  <b><font color=#3a6797>foreach</font></b> {opt val} {<font color=#6c3e67>-dark</font> 0 <font color=#6c3e67>-readonly</font> 0 <font color=#6c3e67>-cmd</font> {} <font color=#6c3e67>-cmdpos</font> {} <font color=#6c3e67>-optRE</font> 1 <font color=#6c3e67>-dobind</font> 0  <font color=#6c3e67>-multiline</font> 1 <font color=#6c3e67>-seen</font> 500 <font color=#6c3e67>-plaintext</font> no <font color=#6c3e67>-plaincom</font> {} <font color=#6c3e67>-insertwidth</font> 2 <font color=#6c3e67>-keywords</font> {}} {
+  <i><font color=#4b5d50># get default options from text's ones</font></i>
+  <b><font color=#3a6797>set</font></b> defopts [<b><font color=#3a6797>list</font></b> <font color=#6c3e67>-insertwidth</font>]
+  <b><font color=#3a6797>foreach</font></b> defopt <font color=#1b1baa>$defopts</font> {
+    <b><font color=#3a6797>set</font></b> opt [OptName <font color=#1b1baa>$txt</font> <font color=#1b1baa>$defopt</font>]
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists ::hl_tcl::my::data(<font color=#1b1baa>$opt</font>)]} {
+      <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(<font color=#1b1baa>$opt</font>,DEFAULT) [<font color=#1b1baa>$txt</font> cget <font color=#1b1baa>$defopt</font>]
+    }
+  }
+  <b><font color=#3a6797>foreach</font></b> {opt val} {<font color=#6c3e67>-dark</font> 0 <font color=#6c3e67>-readonly</font> 0 <font color=#6c3e67>-cmd</font> {} <font color=#6c3e67>-cmdpos</font> {} <font color=#6c3e67>-optRE</font> 1 <font color=#6c3e67>-dobind</font> 0  <font color=#6c3e67>-multiline</font> 1 <font color=#6c3e67>-seen</font> 500 <font color=#6c3e67>-plaintext</font> no <font color=#6c3e67>-plaincom</font> {} <font color=#6c3e67>-insertwidth</font> {} <font color=#6c3e67>-keywords</font> {}} {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$args</font> <font color=#1b1baa>$opt</font>]} {
       <b><font color=#3a6797>set</font></b> val [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$args</font> <font color=#1b1baa>$opt</font>]
     } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$setonly</font>} {
       <b><font color=#ca14ca>continue</font></b>  ;<i><font color=#4b5d50># only those set in args are taken into account</font></i>
     }
-    <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data([<b><font color=#3a6797>string</font></b> toupper [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$opt</font> 1 end]],<font color=#1b1baa>$txt</font>) <font color=#1b1baa>$val</font>
+    <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data([OptName <font color=#1b1baa>$txt</font> <font color=#1b1baa>$opt</font>]) <font color=#1b1baa>$val</font>
+  }
+  <i><font color=#4b5d50># reget default options from text's ones</font></i>
+  <b><font color=#3a6797>foreach</font></b> defopt <font color=#1b1baa>$defopts</font> {
+    <b><font color=#3a6797>set</font></b> opt [OptName <font color=#1b1baa>$txt</font> <font color=#1b1baa>$defopt</font>]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists ::hl_tcl::my::data(<font color=#1b1baa>$opt</font>)] && <font color=#1b1baa>$::hl_tcl::my::data($opt)</font> eq {}} {
+      <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(<font color=#1b1baa>$opt</font>) <font color=#1b1baa>$::hl_tcl::my::data($opt,DEFAULT)</font>
+    }
   }
   <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(CMD_TK_EXP) [<b><font color=#3a6797>lsort</font></b> [<b><font color=#3a6797>list</font></b>  {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$::hl_tcl::my::data(CMD_TK)</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$::hl_tcl::my::data(KEYWORDS,$txt)</font>]]
   <b><font color=#3a6797>unset</font></b> ::hl_tcl::my::data(KEYWORDS,<font color=#1b1baa>$txt</font>)
@@ -913,6 +928,22 @@ padding: 0%;
 
   <b><font color=#3a6797>variable</font></b> my::data
   <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>info</font></b> exist my::data(REG_TXT,<font color=#1b1baa>$txt</font>)] && <font color=#1b1baa>$my::data(REG_TXT,$txt)</font> ne {}}]
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::hl_tcl::OptName'>OptName</a><span class='ns_scope'> [<a href="hl_tcl.html#::hl_tcl" title="::hl_tcl" class='ruff_cmd'>::hl_tcl</a>]</span><span class='tinylink'><a href='hl_tcl.html#::hl_tcl'>hl_tcl</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Gets hl_tcl option's name.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OptName</span> <span class='ruff_arg'>txt opt</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>txt</code></code></td><td class='ruff_defitem'>text's path</td></tr>
+<tr><td class='ruff_defitem'><code><code>opt</code></code></td><td class='ruff_defitem'>option</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_hl_tcl_OptName' href="javascript:toggleSource('hl_tcl_OptName')">Show source</a></p>
+<div id='hl_tcl_OptName' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::hl_tcl::OptName {txt opt} {
+  <i><font color=#4b5d50># Gets hl_tcl option's name.</font></i>
+  <i><font color=#4b5d50>#   txt - text's path</font></i>
+  <i><font color=#4b5d50>#   opt - option</font></i>
+
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> toupper [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$opt</font> 1 end]],<font color=#1b1baa>$txt</font>
 }<br><br></code></pre></div>
 </div><br><br><h1 class='ruff'><a name='::hl_tcl::my'></a>::hl_tcl::my<span class='tinylink'><a href='#top'>Top</a></span></h1>
 <div style='clear:both;'></div>
@@ -2059,6 +2090,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::hl_text'>hl_text</a><span class='tooltiptext'>Highlights Tcl code of a text widget.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::iscurline'>iscurline</a><span class='tooltiptext'>Sets / gets &quot;highlight a current line&quot; flag for a text.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::isdone'>isdone</a><span class='tooltiptext'>Checks if the highlighting of the text is done.
+</span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::OptName'>OptName</a><span class='tooltiptext'>Gets hl_tcl option's name.
 </span></h4><h1><a href='#::hl_tcl::my'>hl_tcl::my</a></h1><h2><a href='#::hl_tcl::my-Commands'>Commands</a></h2><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::AuxEnding'>AuxEnding</a><span class='tooltiptext'>Auxiliary procedure to process the ending comments in the line.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::BindToEvent'>BindToEvent</a><span class='tooltiptext'>Binds an event on a widget to a command.
 </span></h4><h4 class='tooltip'><a href='hl_tcl.html#::hl_tcl::my::CoroHighlightAll'>CoroHighlightAll</a><span class='tooltiptext'>Highlights all of a text as a coroutine.

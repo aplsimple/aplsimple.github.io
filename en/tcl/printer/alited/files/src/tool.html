@@ -151,7 +151,7 @@ The e_menu is run as an external application.</span></div></li></ul>
 opts - options of e_menu
 The e_menu is run as an internal procedure.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#tool::e_menu3">e_menu3</a><span class=tooltiptext> tool::e_menu3 : Prepares TF= argument for e_menu and runs e_menu's main menu.</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#tool::PrepareRunCommand">PrepareRunCommand</a><span class=tooltiptext> tool::PrepareRunCommand : prepares a command to run. The command can include wildcards.
+<ul class=toc><li><div class=tooltip><a href="#tool::PrepareRunCommand">PrepareRunCommand</a><span class=tooltiptext> tool::PrepareRunCommand : Prepares a command to run. The command can include wildcards.
 com - command
 fname - current file name</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#tool::_run">_run</a><span class=tooltiptext> tool::_run : Runs e_menu's item of menu.em.
@@ -530,10 +530,13 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$al(WIN)</font>] x+] w h x y
     <b><font color=#3a6797>set</font></b> al(EM,geometry) [obj EXPORT CenteredXY <font color=#1b1baa>$w</font> <font color=#1b1baa>$h</font> <font color=#1b1baa>$x</font> <font color=#1b1baa>$y</font> 300 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$h</font>/2}]]
   }
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$al(EM,tt)</font>] tt
+  <b><font color=#3a6797>if</font></b> {[::isunix] && [<b><font color=#3a6797>auto_execok</font></b> <font color=#1b1baa>$tt</font>] eq {}} {
+    alited::Balloon [msgcat::mc {Set a Linux terminal in Preferences/Tools}] yes
+  }
   <b><font color=#3a6797>set</font></b> ed [<b><font color=#3a6797>info</font></b> nameofexecutable]\ <font color=#1b1baa>$SCRIPTNORMAL</font>\ <font color=#1b1baa>$CONFIGDIR</font>
-
   <b><font color=#3a6797>set</font></b> R [<b><font color=#3a6797>list</font></b> md=<font color=#1b1baa>$al(EM,mnudir)</font> m=<font color=#1b1baa>$al(EM,mnu)</font> f=<font color=#1b1baa>$f</font> d=<font color=#1b1baa>$d</font> l=<font color=#1b1baa>$l</font> \
-    PD=<font color=#1b1baa>$al(EM,PD=)</font> pd=<font color=#1b1baa>$al(prjroot)</font> h=<font color=#1b1baa>$al(EM,h=)</font> tt=<font color=#1b1baa>$al(EM,tt=)</font> s=<font color=#1b1baa>$sel</font> \
+    PD=<font color=#1b1baa>$al(EM,PD=)</font> pd=<font color=#1b1baa>$al(prjroot)</font> h=<font color=#1b1baa>$al(EM,h=)</font> tt=<font color=#1b1baa>$al(EM,tt)</font> s=<font color=#1b1baa>$sel</font> \
     o=-1 om=0 {<b><font color=#3a6797>*</font></b>}g=<font color=#1b1baa>$al(EM,geometry)</font> <font color=#1b1baa>$z6</font> <font color=#1b1baa>$z7</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$ls</font> <font color=#1b1baa>$df</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font> \
     {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$dirvar</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$filvar</font> td=<font color=#1b1baa>$tdir</font> ed=<font color=#1b1baa>$ed</font> wt=<font color=#1b1baa>$al(EM,wt=)</font> mp=1]
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-glob</font> <font color=#1b1baa>$R</font> th=*]&lt;0} {<b><font color=#3a6797>lappend</font></b> R th=<font color=#1b1baa>$al(THEME)</font>}
@@ -823,17 +826,20 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> res {}
   <b><font color=#3a6797>set</font></b> ar {^[[:space:]#/*]*#[ ]?ARGS[0-9]?:[ ]*(.*)}
   <b><font color=#3a6797>set</font></b> rf {^[[:space:]#/*]*#[ ]?RUNF[0-9]?:[ ]*(.*)}
-  <b><font color=#3a6797>set</font></b> AR [<b><font color=#3a6797>set</font></b> RF {}]
+  <b><font color=#3a6797>set</font></b> ex {^[[:space:]#/*]*#[ ]?EXEC[0-9]?:[ ]*(.*)}
+  <b><font color=#3a6797>set</font></b> AR [<b><font color=#3a6797>set</font></b> RF [<b><font color=#3a6797>set</font></b> EX {}]]
   <b><font color=#3a6797>set</font></b> filecontent [<b><font color=#3a6797>split</font></b> [[alited::main::CurrentWTXT] get 1.0 end] \n]
   <b><font color=#3a6797>foreach</font></b> st <font color=#1b1baa>$filecontent</font> {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> <font color=#1b1baa>$ar</font> <font color=#1b1baa>$st</font>] && <font color=#1b1baa>$AR</font> eq {}} {
       <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> <font color=#1b1baa>$ar</font> <font color=#1b1baa>$st</font>] =&gt; AR
     } <b><font color=#3a6797>elseif</font></b> {[<b><font color=#3a6797>regexp</font></b> <font color=#1b1baa>$rf</font> <font color=#1b1baa>$st</font>] && <font color=#1b1baa>$RF</font> eq {}} {
       <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> <font color=#1b1baa>$rf</font> <font color=#1b1baa>$st</font>] =&gt; RF
+    } <b><font color=#3a6797>elseif</font></b> {[<b><font color=#3a6797>regexp</font></b> <font color=#1b1baa>$ex</font> <font color=#1b1baa>$st</font>] && <font color=#1b1baa>$EX</font> eq {}} {
+      <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> <font color=#1b1baa>$ex</font> <font color=#1b1baa>$st</font>] =&gt; EX
     }
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$AR</font> ne {} || <font color=#1b1baa>$RF</font> ne {}} {
-      <b><font color=#3a6797>if</font></b> {<font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>AR<font color=#1b1baa>$</font>RF&quot;</font> ne {OFF}} {
-        <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$AR</font> <font color=#1b1baa>$RF</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>AR<font color=#1b1baa>$</font>RF<font color=#1b1baa>$</font>EX&quot;</font> ne {}} {
+      <b><font color=#3a6797>if</font></b> {<font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>AR<font color=#1b1baa>$</font>RF<font color=#1b1baa>$</font>EX&quot;</font> ne {OFF}} {
+        <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$AR</font> <font color=#1b1baa>$RF</font> <font color=#1b1baa>$EX</font>]
       }
       <b><font color=#ca14ca>break</font></b>
     }
@@ -1050,17 +1056,14 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=tool::PrepareRunCommand></a>
 <b><font color=#ca14ca>proc</font></b> tool::PrepareRunCommand {com fname} {
-  <i><font color=#4b5d50># prepares a command to run. The command can include wildcards.</font></i>
+  <i><font color=#4b5d50># Prepares a command to run. The command can include wildcards.</font></i>
   <i><font color=#4b5d50>#   com - command</font></i>
   <i><font color=#4b5d50>#   fname - current file name</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
-  <b><font color=#3a6797>set</font></b> idi Ns7!-=
   <b><font color=#3a6797>set</font></b> sel [alited::find::GetWordOfText select]
-  <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %% <font color=#1b1baa>$idi</font>] <font color=#1b1baa>$com</font>]
-  <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$::alited::EOL</font> \n %s <font color=#1b1baa>$sel</font> \
-    %f <font color=#1b1baa>$fname</font> %d [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname</font>] %pd <font color=#1b1baa>$al(prjroot)</font> %H [::apave::HomeDir]] <font color=#1b1baa>$com</font>]
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$idi</font> %] <font color=#1b1baa>$com</font>]
+  alited::Map {} <font color=#1b1baa>$com</font> <font color=#1b1baa>$::alited::EOL</font> \n %s <font color=#1b1baa>$sel</font> \
+    %f <font color=#1b1baa>$fname</font> %d [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname</font>] %pd <font color=#1b1baa>$al(prjroot)</font> %H [::apave::HomeDir]
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=tool::_run></a>
