@@ -471,6 +471,9 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50># -topmost attribute of Find/Replace dialog</font></i>
   <b><font color=#3a6797>set</font></b> al(topFindRepl) [::asKDE]
 
+  <i><font color=#4b5d50># flag &quot;middle font size in detached editor&quot;</font></i>
+  <b><font color=#3a6797>set</font></b> al(fontdetach) 1
+
 }
 <a id=Variables></a>
 <i><font color=#4b5d50># ________________________ Variables _________________________ #</font></i>
@@ -611,6 +614,12 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     treecw0        {<b><font color=#3a6797>set</font></b> al(TREE,cw0) <font color=#1b1baa>$val</font>}
     treecw1        {<b><font color=#3a6797>set</font></b> al(TREE,cw1) <font color=#1b1baa>$val</font>}
     runGeometry    {<b><font color=#3a6797>set</font></b> al(runGeometry) <font color=#1b1baa>$val</font>}
+    fontdetach     {<b><font color=#3a6797>set</font></b> al(fontdetach) <font color=#1b1baa>$val</font>}
+    detach*        {
+      <b><font color=#3a6797>set</font></b> id [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$nam</font> 6 end]
+      <b><font color=#3a6797>lassign</font></b> [alited::file::DetachedInfo <font color=#1b1baa>$id</font>] pobj
+      <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$pobj</font> <font color=#1b1baa>$val</font>
+    }
   }
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -1263,6 +1272,20 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#1b1baa>$v</font>=<font color=#1b1baa>$w</font>
   }
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;GEOM=<font color=#1b1baa>[</font>wm geometry <font color=#1b1baa>$</font>al(WIN)<font color=#1b1baa>]</font>&quot;</font>
+  <b><font color=#3a6797>foreach</font></b> id {1 2 3 4 5 6 7 8} {
+    <b><font color=#3a6797>lassign</font></b> [alited::file::DetachedInfo <font color=#1b1baa>$id</font>] pobj win
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists <font color=#1b1baa>$pobj</font>]} {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$win</font>]} {
+        <b><font color=#3a6797>set</font></b> geo [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font>]
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>set</font></b> geo [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$pobj</font>]
+      }
+      <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;detach<font color=#1b1baa>$</font>id=<font color=#1b1baa>$</font>geo&quot;</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#ca14ca>break</font></b>
+    }
+  }
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;fontdetach=<font color=#1b1baa>$</font>al(fontdetach)&quot;</font>
   <b><font color=#3a6797>close</font></b> <font color=#1b1baa>$chan</font>
   SaveIniPrj <font color=#1b1baa>$newproject</font>
   SaveIniGlob

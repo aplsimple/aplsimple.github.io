@@ -147,6 +147,11 @@ nk - index of combobox corresponding to the event
 key - key combination or "-" (for not engaged keys)
 defk - default key combination
 Returns a bound keys for not engaged keys or {} for others.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::BindKey2">BindKey2</a><span class=tooltiptext> pref::BindKey2 : Almost the same as BindKey, but gets a list of upper & lower keys.
+nk - index of combobox corresponding to the event
+key - key combination or "-" (for not engaged keys)
+defk - default key combination
+See also: BindKey</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#pref::IniKeys">IniKeys</a><span class=tooltiptext> pref::IniKeys : Gets key settings at opening "Preferences" dialogue.</span></div></li></ul>
 <li><b><a href="#Units">Units</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#pref::Units_Tab">Units_Tab</a><span class=tooltiptext> pref::Units_Tab : Serves to layout "Units" tab.</span></div></li></ul>
@@ -827,7 +832,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     {.labFsz1 .labFon T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Small font size:}}}
     {.spxFsz1 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} \
       {<font color=#653760>-tvar</font> ::alited::al(FONTSIZE,small) <font color=#653760>-from</font> 6 <font color=#653760>-to</font> 72}}
-    {.labFsz2 .labFsz1 T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {Middle font size:}}}
+    {.labFsz2 .labFsz1 T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,middlefont)</font>}}}
     {.spxFsz2 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-tvar</font> ::alited::al(FONTSIZE,std) <font color=#653760>-from</font> 7 <font color=#653760>-to</font> 72}}
     {seh_2 fra2 T 1 2 {<font color=#653760>-pady</font> 4}}
     {lab + T 1 2 {<font color=#653760>-st</font> w <font color=#653760>-pady</font> 4 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> Notes:}}
@@ -900,8 +905,8 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       {<font color=#653760>-var</font> ::alited::al(PRJDEFAULT) <font color=#653760>-com</font> alited::pref::CheckUseDef \
       <font color=#653760>-afteridle</font> alited::pref::CheckUseDef}}
     {.seh .labDef T 1 10 {<font color=#653760>-st</font> ew <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3}}
-    {.labIgn + T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 8 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,Ign:)</font>}}}
-    {.EntIgn + L 1 9 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 3} {<font color=#653760>-tvar</font> ::alited::al(DEFAULT,prjdirign) <font color=#653760>-w</font> 50}}
+    {.labIgn + T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,Ign:)</font>}}}
+    {.EntIgn + L 1 9 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-tvar</font> ::alited::al(DEFAULT,prjdirign) <font color=#653760>-w</font> 50}}
     {.labEOL .labIgn T 1 1 {<font color=#653760>-st</font> e <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 3} {<font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,EOL:)</font>}}}
     {.CbxEOL + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} \
       {<font color=#653760>-tvar</font> ::alited::al(DEFAULT,prjEOL) <font color=#653760>-values</font> {{} LF CR CRLF} <font color=#653760>-state</font> readonly <font color=#653760>-w</font> 9}}
@@ -1483,6 +1488,23 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     }
   }
   <b><font color=#ca14ca>return</font></b> {}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::BindKey2></a>
+<b><font color=#ca14ca>proc</font></b> pref::BindKey2 {nk {key <font color=#8b2a0e>&quot;&quot;</font>} {defk <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Almost the same as BindKey, but gets a list of upper & lower keys.</font></i>
+  <i><font color=#4b5d50>#   nk - index of combobox corresponding to the event</font></i>
+  <i><font color=#4b5d50>#   key - key combination or &quot;-&quot; (for not engaged keys)</font></i>
+  <i><font color=#4b5d50>#   defk - default key combination</font></i>
+  <i><font color=#4b5d50># See also: BindKey</font></i>
+
+  <b><font color=#3a6797>set</font></b> res [BindKey <font color=#1b1baa>$nk</font> <font color=#1b1baa>$key</font> <font color=#1b1baa>$defk</font>]
+  <b><font color=#3a6797>set</font></b> char [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$res</font> end-1 end]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> {^[-][[:alpha:]]$} <font color=#1b1baa>$char</font>]} {
+    <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$res</font> 0 end-2]
+    <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font>[<b><font color=#3a6797>string</font></b> toupper <font color=#1b1baa>$char</font>] <font color=#1b1baa>$res</font>[<b><font color=#3a6797>string</font></b> tolower <font color=#1b1baa>$char</font>]]
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=pref::IniKeys></a>

@@ -71,6 +71,7 @@ if $firstSave==-1, no "No ask anymore" (if run by "Close" menu item or "x" icon 
 Returns 1 for "yes, needs saving", 2 - "no saving", 0 - "cancel".</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::MakeThemHighlighted">MakeThemHighlighted</a><span class=tooltiptext> file::MakeThemHighlighted : Sets flag "highlight file(s) anyway".
 tabs - list of tabs to set the flag for
+wtxt - text path (if set, it is flagged only)
 Useful when you need update the files' highlightings.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::ToBeHighlighted">ToBeHighlighted</a><span class=tooltiptext> file::ToBeHighlighted : Checks flag "highlight text anyway".
 wtxt - text's path</span></div></li></ul>
@@ -162,6 +163,12 @@ reload - if yes, loads the file even if it has a "strange" extension
 islist - if yes, *fnames* is a file list
 Message - name of procedure for "open file" message
 Returns the file's tab ID if it's loaded, or {} if not loaded.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#file::ChooseMultipleFiles">ChooseMultipleFiles</a><span class=tooltiptext> file::ChooseMultipleFiles : Choose miltiple files to open.
+dosort - if yes, handles the result's sorting</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#file::SaveText">SaveText</a><span class=tooltiptext> file::SaveText : Saves text buffer to file.
+wtxt - text's path
+fname - file name
+enc - encoding options</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::SaveFileByName">SaveFileByName</a><span class=tooltiptext> file::SaveFileByName : Saves a file.
 TID - ID of tab
 fname - file name
@@ -201,7 +208,18 @@ fname - file name</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::CloseAll">CloseAll</a><span class=tooltiptext> file::CloseAll : Closes files.
 func - "1/2/3" means closing "all/to left/to right"
 args - may contain -skipsel to not close selected tabs</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#file::TreeSelFiles">TreeSelFiles</a><span class=tooltiptext> file::TreeSelFiles : Gets a list of file tree's selected files.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#file::SortTreeSelFiles">SortTreeSelFiles</a><span class=tooltiptext> file::SortTreeSelFiles : Sorts a list of file tree's selected files.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::OpenFiles">OpenFiles</a><span class=tooltiptext> file::OpenFiles : Opens files selected in the file tree.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#file::OpenWith">OpenWith</a><span class=tooltiptext> file::OpenWith : Opens files selected in the file tree, with their apps.</span></div></li></ul>
+<li><b><a href="#Detach_file">Detach file</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#file::DetachedInfo">DetachedInfo</a><span class=tooltiptext> file::DetachedInfo : Gets detached editor's object and window.
+id - editor's index</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#file::Detach">Detach</a><span class=tooltiptext> file::Detach : Open file in detached editors
+fnames - file names' list</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#file::OpenDetach">OpenDetach</a><span class=tooltiptext> file::OpenDetach : Choose files and open them in detached editors.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#file::DetachFromTree">DetachFromTree</a><span class=tooltiptext> file::DetachFromTree</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#file::SourceDetach">SourceDetach</a><span class=tooltiptext> file::SourceDetach : Sources detached.tcl.</span></div></li></ul>
 <li><b><a href="#File_tree">File tree</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#file::RecreateFileTree">RecreateFileTree</a><span class=tooltiptext> file::RecreateFileTree : Creates the file tree.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::OpenOfDir">OpenOfDir</a><span class=tooltiptext> file::OpenOfDir : Opens all Tcl files of a directory.
@@ -374,20 +392,24 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=file::MakeThemHighlighted></a>
-<b><font color=#ca14ca>proc</font></b> file::MakeThemHighlighted {{tabs <font color=#8b2a0e>&quot;&quot;</font>}} {
+<b><font color=#ca14ca>proc</font></b> file::MakeThemHighlighted {{tabs <font color=#8b2a0e>&quot;&quot;</font>} {wtxt <font color=#8b2a0e>&quot;&quot;</font>}} {
   <i><font color=#4b5d50># Sets flag &quot;highlight file(s) anyway&quot;.</font></i>
   <i><font color=#4b5d50>#   tabs - list of tabs to set the flag for</font></i>
+  <i><font color=#4b5d50>#   wtxt - text path (if set, it is flagged only)</font></i>
   <i><font color=#4b5d50># Useful when you need update the files' highlightings.</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tabs</font> eq {}} {
-    <b><font color=#3a6797>set</font></b> tabs [alited::bar::BAR listTab]
-  }
-  <b><font color=#3a6797>foreach</font></b> tab <font color=#1b1baa>$tabs</font> {
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> wtxt [alited::main::GetWTXT [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tab</font> 0]]] ne {}} {
-      <b><font color=#3a6797>set</font></b> al(HL,<font color=#1b1baa>$wtxt</font>) {..}
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtxt</font> eq {}} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tabs</font> eq {}} {
+      <b><font color=#3a6797>set</font></b> tabs [alited::bar::BAR listTab]
+    }
+    <b><font color=#3a6797>foreach</font></b> tab <font color=#1b1baa>$tabs</font> {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> w [alited::main::GetWTXT [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tab</font> 0]]] ne {}} {
+        <b><font color=#3a6797>lappend</font></b> wtxt <font color=#1b1baa>$w</font>
+      }
     }
   }
+  <b><font color=#3a6797>foreach</font></b> w <font color=#1b1baa>$wtxt</font> {<b><font color=#3a6797>set</font></b> al(HL,<font color=#1b1baa>$w</font>) ..}
 }
 
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -856,6 +878,10 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>set</font></b> ar -
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> eq {} || [alited::file::IsNoName <font color=#1b1baa>$fname</font>]} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>file</font></b> isfile <font color=#1b1baa>$fname</font>]} {
+    alited::Balloon1 <font color=#1b1baa>$fname</font>
+    <b><font color=#ca14ca>return</font></b>
+  }
   <b><font color=#3a6797>set</font></b> fname2 [CloneFileName <font color=#1b1baa>$fname</font>]
   <b><font color=#3a6797>set</font></b> name [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname2</font>]
   <b><font color=#3a6797>lassign</font></b> [InputFileName <font color=#1b1baa>$al(MC,clonefile)</font> <font color=#1b1baa>$name</font> <font color=#1b1baa>$undermouse</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$ar</font>] res name2
@@ -966,11 +992,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
   <b><font color=#3a6797>variable</font></b> ansOpen
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fnames</font> eq {}} {
-    <b><font color=#3a6797>set</font></b> al(TMPfname) {}
-    <b><font color=#3a6797>set</font></b> fnames [<font color=#1b1baa>$obPav</font> chooser tk_getOpenFile ::alited::al(TMPfname) <font color=#653760>-multiple</font> 1 \
-      <font color=#653760>-initialdir</font> [<b><font color=#3a6797>file</font></b> dirname [alited::bar::CurrentTab 2]] <font color=#653760>-parent</font> <font color=#1b1baa>$al(WIN)</font>]
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(lifo)</font>} {<b><font color=#3a6797>set</font></b> fnames [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-decreasing</font> <font color=#1b1baa>$fnames</font>]}
-    <b><font color=#3a6797>unset</font></b> al(TMPfname)
+    <b><font color=#3a6797>set</font></b> fnames [ChooseMultipleFiles]
   } <b><font color=#3a6797>elseif</font></b> {!<font color=#1b1baa>$islist</font>} {
     <b><font color=#3a6797>set</font></b> fnames [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fnames</font>]
   }
@@ -984,10 +1006,10 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       <b><font color=#3a6797>append</font></b> exts { } <font color=#1b1baa>$al(TextExts)</font>
       <b><font color=#3a6797>set</font></b> sexts [<b><font color=#3a6797>string</font></b> map {. {}} <font color=#8b2a0e>&quot;  <font color=#1b1baa>$</font>al(TclExts)\n  <font color=#1b1baa>$</font>al(ClangExts)\n  <font color=#1b1baa>$</font>al(TextExts)&quot;</font>]
       <b><font color=#3a6797>set</font></b> exts [<b><font color=#3a6797>string</font></b> trim [<b><font color=#3a6797>string</font></b> map {{ } {, } . {}} <font color=#1b1baa>$exts</font>]]
-      <b><font color=#3a6797>lassign</font></b> [alited::ExtTrans <font color=#1b1baa>$fname</font>] ext istrans
+      <b><font color=#3a6797>set</font></b> ext [alited::EditExt <font color=#1b1baa>$fname</font>]
       <b><font color=#3a6797>set</font></b> ext [<b><font color=#3a6797>string</font></b> tolower [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$ext</font> .]]
       <b><font color=#3a6797>set</font></b> esp [<b><font color=#3a6797>split</font></b> [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> { } {} \n ,] <font color=#1b1baa>$exts</font>] ,]
-      <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$reload</font> && <font color=#1b1baa>$ext</font> ni <font color=#1b1baa>$esp</font> && !<font color=#1b1baa>$istrans</font> && <font color=#1b1baa>$ansOpen</font>&lt;11} {
+      <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$reload</font> && <font color=#1b1baa>$ext</font> ni <font color=#1b1baa>$esp</font> && <font color=#1b1baa>$ansOpen</font>&lt;11} {
         <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %f [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>] %s <font color=#1b1baa>$sexts</font>] <font color=#1b1baa>$al(MC,nottoopen)</font>]
         <b><font color=#3a6797>set</font></b> ansOpen [alited::msg yesnocancel warn <font color=#1b1baa>$msg</font> YES <font color=#653760>-ch</font> <font color=#1b1baa>$al(MC,noask)</font>]
         <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$ansOpen</font> || <font color=#1b1baa>$ansOpen</font>==12} <b><font color=#ca14ca>break</font></b>
@@ -1030,6 +1052,37 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$TID</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
+<a id=file::ChooseMultipleFiles></a>
+<b><font color=#ca14ca>proc</font></b> file::ChooseMultipleFiles {{dosort yes}} {
+  <i><font color=#4b5d50># Choose miltiple files to open.</font></i>
+  <i><font color=#4b5d50>#   dosort - if yes, handles the result's sorting</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>set</font></b> al(TMPfname) {}
+  <b><font color=#3a6797>set</font></b> fnames [<font color=#1b1baa>$obPav</font> chooser tk_getOpenFile ::alited::al(TMPfname) <font color=#653760>-multiple</font> 1 \
+    <font color=#653760>-initialdir</font> [<b><font color=#3a6797>file</font></b> dirname [alited::bar::CurrentTab 2]] <font color=#653760>-parent</font> <font color=#1b1baa>$al(WIN)</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dosort</font> && <font color=#1b1baa>$al(lifo)</font>} {<b><font color=#3a6797>set</font></b> fnames [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-decreasing</font> <font color=#1b1baa>$fnames</font>]}
+  <b><font color=#3a6797>unset</font></b> al(TMPfname)
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$fnames</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=file::SaveText></a>
+<b><font color=#ca14ca>proc</font></b> file::SaveText {wtxt fname {enc <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Saves text buffer to file.</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+  <i><font color=#4b5d50>#   fname - file name</font></i>
+  <i><font color=#4b5d50>#   enc - encoding options</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> fcont [<font color=#1b1baa>$wtxt</font> get 1.0 <font color=#8b2a0e>&quot;end - 1 chars&quot;</font>]  ;<i><font color=#4b5d50># last \n excluded</font></i>
+  <b><font color=#3a6797>if</font></b> {![writeTextFile <font color=#1b1baa>$fname</font> fcont 0 1 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$enc</font>]} {
+    alited::msg ok err [::apave::error <font color=#1b1baa>$fname</font>] <font color=#653760>-w</font> 50 <font color=#653760>-text</font> 1
+    <b><font color=#3a6797>unset</font></b> <font color=#653760>-nocomplain</font> al(_NO_OUTWARD_)
+    <b><font color=#ca14ca>return</font></b> 0
+  }
+  <b><font color=#ca14ca>return</font></b> 1
+}
+<i><font color=#4b5d50>#_______________________</font></i>
 <a id=file::SaveFileByName></a>
 <b><font color=#ca14ca>proc</font></b> file::SaveFileByName {TID fname {doit no}} {
   <i><font color=#4b5d50># Saves a file.</font></i>
@@ -1052,10 +1105,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> al(_NO_OUTWARD_) {}
   <b><font color=#3a6797>set</font></b> wtxt [alited::main::GetWTXT <font color=#1b1baa>$TID</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(prjtrailwhite)</font>} {alited::edit::RemoveTrailWhites <font color=#1b1baa>$TID</font> yes <font color=#1b1baa>$doit</font>}
-  <b><font color=#3a6797>set</font></b> fcont [<font color=#1b1baa>$wtxt</font> get 1.0 <font color=#8b2a0e>&quot;end - 1 chars&quot;</font>]  ;<i><font color=#4b5d50># last \n excluded</font></i>
-  <b><font color=#3a6797>if</font></b> {![writeTextFile <font color=#1b1baa>$fname</font> fcont 0 1 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$enc</font>]} {
-    alited::msg ok err [::apave::error <font color=#1b1baa>$fname</font>] <font color=#653760>-w</font> 50 <font color=#653760>-text</font> 1
-    <b><font color=#3a6797>unset</font></b> al(_NO_OUTWARD_)
+  <b><font color=#3a6797>if</font></b> {![SaveText <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$enc</font>]} {
     <b><font color=#ca14ca>return</font></b> 0
   }
   <b><font color=#3a6797>unset</font></b> al(_NO_OUTWARD_)
@@ -1376,9 +1426,9 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>llength</font></b> [alited::bar::BAR listFlag <font color=#8b2a0e>&quot;m&quot;</font>]]==0}]
 }
 <i><font color=#4b5d50>#_______________________</font></i>
-<a id=file::OpenFiles></a>
-<b><font color=#ca14ca>proc</font></b> file::OpenFiles {} {
-  <i><font color=#4b5d50># Opens files selected in the file tree.</font></i>
+<a id=file::TreeSelFiles></a>
+<b><font color=#ca14ca>proc</font></b> file::TreeSelFiles {} {
+  <i><font color=#4b5d50># Gets a list of file tree's selected files.</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
   <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> Tree]
@@ -1387,8 +1437,87 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$selID</font> <font color=#653760>-values</font>] - fname isfile
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$isfile</font>} {<b><font color=#3a6797>lappend</font></b> fnames <font color=#1b1baa>$fname</font>}
   }
-  OpenFile [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-decreasing</font> <font color=#653760>-dictionary</font> <font color=#1b1baa>$fnames</font>] no yes
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$fnames</font>
 }
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=file::SortTreeSelFiles></a>
+<b><font color=#ca14ca>proc</font></b> file::SortTreeSelFiles {} {
+  <i><font color=#4b5d50># Sorts a list of file tree's selected files.</font></i>
+
+  <b><font color=#3a6797>lsort</font></b> <font color=#653760>-decreasing</font> <font color=#653760>-dictionary</font> [TreeSelFiles]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=file::OpenFiles></a>
+<b><font color=#ca14ca>proc</font></b> file::OpenFiles {} {
+  <i><font color=#4b5d50># Opens files selected in the file tree.</font></i>
+
+  OpenFile [SortTreeSelFiles] no yes
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=file::OpenWith></a>
+<b><font color=#ca14ca>proc</font></b> file::OpenWith {} {
+  <i><font color=#4b5d50># Opens files selected in the file tree, with their apps.</font></i>
+
+  <b><font color=#3a6797>foreach</font></b> fn [SortTreeSelFiles] {
+    <b><font color=#3a6797>incr</font></b> i
+    <b><font color=#3a6797>after</font></b> [<b><font color=#3a6797>expr</font></b> {(<font color=#1b1baa>$i</font>-1)*500}] openDoc <font color=#1b1baa>$fn</font> ;<i><font color=#4b5d50># let the app get 0.5 sec pause</font></i>
+  }
+}
+<a id=Detach_file></a>
+<i><font color=#4b5d50># ________________________ Detach file _________________________ #</font></i>
+<a id=file::DetachedInfo></a>
+<b><font color=#ca14ca>proc</font></b> file::DetachedInfo {id} {
+  <i><font color=#4b5d50># Gets detached editor's object and window.</font></i>
+  <i><font color=#4b5d50>#   id - editor's index</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> pobj ::alited::al(detachedObj,<font color=#1b1baa>$id</font>,)
+  <b><font color=#3a6797>set</font></b> win <font color=#1b1baa>$al(WIN)</font>.detachedWin<font color=#1b1baa>$id</font>
+  <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$pobj</font> <font color=#1b1baa>$win</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=file::Detach></a>
+<b><font color=#ca14ca>proc</font></b> file::Detach {{fnames <font color=#8b2a0e>&quot;&quot;</font>} {TID <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Open file in detached editors</font></i>
+  <i><font color=#4b5d50>#   fnames - file names' list</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  SourceDetach
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fnames</font> eq {} || <font color=#1b1baa>$TID</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> fnames [alited::bar::FileName <font color=#1b1baa>$TID</font>]
+    <b><font color=#3a6797>if</font></b> {[alited::file::IsNoName <font color=#1b1baa>$fnames</font>] && ![SaveFileAs <font color=#1b1baa>$TID</font>]} <b><font color=#ca14ca>return</font></b>
+    <b><font color=#3a6797>set</font></b> fnames [alited::bar::FileName <font color=#1b1baa>$TID</font>]
+  }
+  alited::detached::_run <font color=#1b1baa>$fnames</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=file::OpenDetach></a>
+<b><font color=#ca14ca>proc</font></b> file::OpenDetach {} {
+  <i><font color=#4b5d50># Choose files and open them in detached editors.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> fnames [ChooseMultipleFiles no]] eq {}} <b><font color=#ca14ca>return</font></b>
+  SourceDetach
+  alited::detached::_run <font color=#1b1baa>$fnames</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=file::DetachFromTree></a>
+<b><font color=#ca14ca>proc</font></b> file::DetachFromTree {} {
+
+  SourceDetach
+  alited::detached::_run [TreeSelFiles]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=file::SourceDetach></a>
+<b><font color=#ca14ca>proc</font></b> file::SourceDetach {} {
+  <i><font color=#4b5d50># Sources detached.tcl.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>namespace</font></b> exists ::alited::detached]} {
+    <b><font color=#ca14ca>namespace</font></b> eval ::alited {
+      <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$SRCDIR</font> detached.tcl]
+    }
+  }
+}
+
 <a id=File_tree></a>
 <i><font color=#4b5d50># ________________________ File tree _________________________ #</font></i>
 <a id=file::RecreateFileTree></a>

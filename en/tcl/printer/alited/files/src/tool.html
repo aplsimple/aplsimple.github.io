@@ -126,7 +126,7 @@ runs - list of commands</span></div></li></ul>
 w - the text's path</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#tool::AfterStart">AfterStart</a><span class=tooltiptext> tool::AfterStart : Runs commands after starting alited.</span></div></li></ul>
 <li><b><a href="#run_tcl_source">&nbsp;&nbsp;run tcl source</a></b></li>
-<ul class=toc><li><div class=tooltip><a href="#tool::RunArgs">RunArgs</a><span class=tooltiptext> tool::RunArgs : Gets ARGS/RUNF arguments (similar to ::em::get_AR of e_menu.tcl).
+<ul class=toc><li><div class=tooltip><a href="#tool::RunArgs">RunArgs</a><span class=tooltiptext> tool::RunArgs : Gets ARGS/RUNF/EXEC arguments (similar to ::em::get_AR of e_menu.tcl).
 Returns a list of ARGS and RUNF arguments found in the current file.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#tool::CheckTcl">CheckTcl</a><span class=tooltiptext> tool::CheckTcl : Check a current unit for errors, before running Tcl file.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#tool::RunTcl">RunTcl</a><span class=tooltiptext> tool::RunTcl : Try to run tcl source file by means of tkcon utility.
@@ -820,7 +820,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 <i><font color=#4b5d50>## ________________________ run tcl source _________________________ ##</font></i>
 <a id=tool::RunArgs></a>
 <b><font color=#ca14ca>proc</font></b> tool::RunArgs {} {
-  <i><font color=#4b5d50># Gets ARGS/RUNF arguments (similar to ::em::get_AR of e_menu.tcl).</font></i>
+  <i><font color=#4b5d50># Gets ARGS/RUNF/EXEC arguments (similar to ::em::get_AR of e_menu.tcl).</font></i>
   <i><font color=#4b5d50># Returns a list of ARGS and RUNF arguments found in the current file.</font></i>
 
   <b><font color=#3a6797>set</font></b> res {}
@@ -874,17 +874,21 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>if</font></b> {(<font color=#1b1baa>$runmode</font> eq {} && !<font color=#1b1baa>$::alited::al(prjincons)</font>) || <font color=#1b1baa>$runmode</font> eq {tkcon}} {
     <b><font color=#3a6797>lassign</font></b> [RunArgs] ar rf
     <b><font color=#3a6797>set</font></b> tclfile {}
-    <b><font color=#3a6797>catch</font></b> {  ;<i><font color=#4b5d50># ar & rf can be badly formed =&gt; catch</font></i>
-      <b><font color=#3a6797>set</font></b> fname [alited::bar::FileName]
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$ar</font>] || (![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$rf</font>] && [alited::file::IsTcl <font color=#1b1baa>$fname</font>])} {
-        <b><font color=#3a6797>set</font></b> rf <font color=#1b1baa>$fname</font>
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {  ;<i><font color=#4b5d50># ar & rf can be badly formed =&gt; catch</font></i>
+      <b><font color=#3a6797>set</font></b> fnameCur [alited::bar::FileName]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$ar</font>] || (![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$rf</font>] && [alited::file::IsTcl <font color=#1b1baa>$fnameCur</font>])} {
+        <b><font color=#3a6797>set</font></b> rf <font color=#8b2a0e>&quot;\&quot;<font color=#1b1baa>$</font>fnameCur\&quot;&quot;</font>
         <b><font color=#3a6797>append</font></b> rf { } <font color=#1b1baa>$ar</font>
       }
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> tclfile [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$rf</font> 0]] ne {}} {
-        <b><font color=#3a6797>cd</font></b> [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname</font>]
+      <b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$rf</font> 0]
+      <b><font color=#3a6797>set</font></b> fname [PrepareRunCommand <font color=#1b1baa>$fname</font> <font color=#1b1baa>$fnameCur</font>]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> tclfile <font color=#1b1baa>$fname</font>] ne {}} {
+        <b><font color=#3a6797>cd</font></b> [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fnameCur</font>]
         <b><font color=#3a6797>set</font></b> tclfile [<b><font color=#3a6797>file</font></b> normalize <font color=#1b1baa>$tclfile</font>]
         <b><font color=#3a6797>set</font></b> rf [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$rf</font> 0 0]
       }
+    } err]} {
+      alited::Message <font color=#1b1baa>$err</font> 4
     }
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tclfile</font> ne {} && [<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$tclfile</font>]} {
       <i><font color=#4b5d50># run tkcon with file.tcl & argv</font></i>
@@ -1098,6 +1102,21 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>set</font></b> fnameCur [alited::bar::FileName]
     <b><font color=#3a6797>set</font></b> com [PrepareRunCommand <font color=#1b1baa>$al(prjbeforerun)</font> <font color=#1b1baa>$fnameCur</font>]
     Runs {} <font color=#1b1baa>$com</font>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(prjincons)</font>==2} {  ;<i><font color=#4b5d50># run &quot;as is&quot;</font></i>
+      EM_SaveFiles
+      <b><font color=#3a6797>if</font></b> {[ComForced]} {
+        <b><font color=#3a6797>set</font></b> com <font color=#1b1baa>$al(comForce)</font>
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>lassign</font></b> [alited::tool::RunArgs] ar rf ex
+        <b><font color=#3a6797>set</font></b> com <font color=#1b1baa>$ar$rf$ex</font>
+      }
+      <b><font color=#3a6797>set</font></b> com [PrepareRunCommand <font color=#1b1baa>$com</font> <font color=#1b1baa>$fnameCur</font>]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$com</font>] ne {}} {
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$com</font> end] ne {&}} {<b><font color=#3a6797>append</font></b> com { &}}
+        <b><font color=#3a6797>exec</font></b> -- {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$com</font>
+        <b><font color=#ca14ca>return</font></b>
+      }
+    }
     <b><font color=#3a6797>if</font></b> {[alited::file::IsTcl <font color=#1b1baa>$fnameCur</font>]} CheckTcl
     <b><font color=#3a6797>if</font></b> {[ComForced]} {
       <b><font color=#3a6797>set</font></b> com [PrepareRunCommand <font color=#1b1baa>$al(comForce)</font> <font color=#1b1baa>$fnameCur</font>]
@@ -1131,9 +1150,6 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
         <b><font color=#3a6797>set</font></b> tw {}
       } <b><font color=#3a6797>else</font></b> {
         <b><font color=#3a6797>set</font></b> tw <font color=#8b2a0e>&quot;%t <font color=#1b1baa>[</font>alited::Tclexe<font color=#1b1baa>]</font> &quot;</font>
-        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(prjincons)</font>==2} {
-          <b><font color=#3a6797>append</font></b> tw <font color=#1b1baa>$tkconcall</font> ;<i><font color=#4b5d50># combined</font></i>
-        }
       }
     }
   }

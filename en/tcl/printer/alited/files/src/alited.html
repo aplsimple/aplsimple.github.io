@@ -189,12 +189,13 @@ foc - previously focused widget</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#SaveRunOptions">SaveRunOptions</a><span class=tooltiptext> SaveRunOptions : Saves options of "Run..." dialogue.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#RestoreRunOptions">RestoreRunOptions</a><span class=tooltiptext> RestoreRunOptions : Restores options of "Run..." dialogue.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#Source_e_menu">Source_e_menu</a><span class=tooltiptext> Source_e_menu : Sources e_menu.tcl at need.</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#ExtTrans">ExtTrans</a><span class=tooltiptext> ExtTrans : Gets a file's extention and translation attributes (istrans, from, to).
+<ul class=toc><li><div class=tooltip><a href="#EditExt">EditExt</a><span class=tooltiptext> EditExt : Gets an edited file's extention without '.'.
 fname - the file name</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#HighlightAddon">HighlightAddon</a><span class=tooltiptext> HighlightAddon : Tries to highlight add-on extensions.
 wtxt - text's path
 fname - current file's name
-colors - colors of highlighting</span></div></li></ul>
+colors - colors of highlighting
+fontsize - font size</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#Hl_Colors">Hl_Colors</a><span class=tooltiptext> Hl_Colors : Gets highlighting colors.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#Tclexe">Tclexe</a><span class=tooltiptext> Tclexe : Gets Tcl's executable file.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#Run">Run</a><span class=tooltiptext> Run : Runs Tcl/Tk script.
@@ -274,7 +275,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 <i><font color=#4b5d50># License: MIT.</font></i>
 <i><font color=#4b5d50>###########################################################</font></i>
 
-<b><font color=#3a6797>package</font></b> provide alited 1.8.5  ;<i><font color=#4b5d50># for documentation (esp. for Ruff!)</font></i>
+<b><font color=#3a6797>package</font></b> provide alited 1.8.6  ;<i><font color=#4b5d50># for documentation (esp. for Ruff!)</font></i>
 
 <b><font color=#ca14ca>namespace</font></b> eval alited {
 
@@ -424,7 +425,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> al(prjbeforerun) {} ;<i><font color=#4b5d50># a command to be run before &quot;Tools/Run&quot;</font></i>
   <b><font color=#3a6797>set</font></b> al(prjtrailwhite) 0 ;<i><font color=#4b5d50># &quot;remove trailing whitespaces&quot; flag</font></i>
   <b><font color=#3a6797>set</font></b> al(prjincons) 1     ;<i><font color=#4b5d50># &quot;run Tcl scripts in console&quot; flag</font></i>
-  <b><font color=#3a6797>set</font></b> al(prjdirign) {.git .bak} ;<i><font color=#4b5d50># ignored subdirectories of project</font></i>
+  <b><font color=#3a6797>set</font></b> al(prjdirign) {.git .bak .gitignore .fslckout} ;<i><font color=#4b5d50># ignored files of project</font></i>
   <b><font color=#3a6797>set</font></b> al(prjmaxcoms) 20   ;<i><font color=#4b5d50># maximum of &quot;Run...&quot; commands</font></i>
   <b><font color=#3a6797>set</font></b> al(prjuseleafRE) 0  ;<i><font color=#4b5d50># &quot;use leaf's RE&quot;</font></i>
   <b><font color=#3a6797>set</font></b> al(prjleafRE) {}    ;<i><font color=#4b5d50># &quot;leaf's RE&quot;</font></i>
@@ -1268,42 +1269,28 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     }
   }
   <i><font color=#4b5d50>#_______________________</font></i>
-<a id=ExtTrans></a>
-  <b><font color=#ca14ca>proc</font></b> ExtTrans {{fname <font color=#8b2a0e>&quot;&quot;</font>}} {
-    <i><font color=#4b5d50># Gets a file's extention and translation attributes (istrans, from, to).</font></i>
+<a id=EditExt></a>
+  <b><font color=#ca14ca>proc</font></b> EditExt {{fname <font color=#8b2a0e>&quot;&quot;</font>}} {
+    <i><font color=#4b5d50># Gets an edited file's extention without '.'.</font></i>
     <i><font color=#4b5d50>#   fname - the file name</font></i>
 
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> eq {}} {<b><font color=#3a6797>set</font></b> fname [bar::FileName]}
-    <b><font color=#3a6797>set</font></b> ext [<b><font color=#3a6797>string</font></b> trimleft [<b><font color=#3a6797>file</font></b> extension <font color=#1b1baa>$fname</font>] .]
-    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$ext</font> -] from to
-    <b><font color=#3a6797>set</font></b> ismsg [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> tolower <font color=#1b1baa>$ext</font>] eq {msg}}]
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ismsg</font>} {
-      <b><font color=#3a6797>set</font></b> from en  ;<i><font color=#4b5d50># e.g. ru.msg is from English to Russian</font></i>
-      <b><font color=#3a6797>set</font></b> to [<b><font color=#3a6797>file</font></b> rootname [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]]
-    }
-    <b><font color=#3a6797>set</font></b> istrans [<b><font color=#3a6797>regexp</font></b> {^[[:alpha:]][[:alpha:]]-[[:alpha:]][[:alpha:]]$} <font color=#1b1baa>$ext</font>]
-    <b><font color=#3a6797>set</font></b> istrans [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$istrans</font> || <font color=#1b1baa>$ismsg</font>}]
-    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$ext</font> <font color=#1b1baa>$istrans</font> <font color=#1b1baa>$from</font> <font color=#1b1baa>$to</font>]
+    <b><font color=#3a6797>string</font></b> trimleft [<b><font color=#3a6797>file</font></b> extension <font color=#1b1baa>$fname</font>] .
   }
   <i><font color=#4b5d50>#_______________________</font></i>
 <a id=HighlightAddon></a>
-  <b><font color=#ca14ca>proc</font></b> HighlightAddon {wtxt fname colors} {
+  <b><font color=#ca14ca>proc</font></b> HighlightAddon {wtxt fname colors {fontsize <font color=#8b2a0e>&quot;&quot;</font>}} {
     <i><font color=#4b5d50># Tries to highlight add-on extensions.</font></i>
     <i><font color=#4b5d50>#   wtxt - text's path</font></i>
     <i><font color=#4b5d50>#   fname - current file's name</font></i>
     <i><font color=#4b5d50>#   colors - colors of highlighting</font></i>
+    <i><font color=#4b5d50>#   fontsize - font size</font></i>
 
     <b><font color=#3a6797>namespace</font></b> upvar ::alited al al LIBDIR LIBDIR
     <b><font color=#3a6797>set</font></b> res {}
-    <b><font color=#3a6797>lassign</font></b> [ExtTrans <font color=#1b1baa>$fname</font>] ext istrans
+    <b><font color=#3a6797>set</font></b> ext [EditExt <font color=#1b1baa>$fname</font>]
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ext</font> ne {}} {
       <b><font color=#3a6797>catch</font></b> {
-        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$istrans</font>} {
-          <i><font color=#4b5d50># it's a file to translate from language to language</font></i>
-          <b><font color=#3a6797>set</font></b> ext trans
-          HelpMe <font color=#1b1baa>$ext</font> <font color=#653760>-trans</font>
-          <b><font color=#3a6797>after</font></b> idle alited::main::FocusText
-        }
         <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$ext</font> {
           htm - ui - tpl1 {<b><font color=#3a6797>set</font></b> ext html}
           ale - conf {<b><font color=#3a6797>set</font></b> ext ini}
@@ -1318,7 +1305,9 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
           }
         }
         <b><font color=#3a6797>lappend</font></b> colors [FgFgBold]
-        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$al(FONT,txt)</font> <font color=#653760>-size</font>]} {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fontsize</font> ne {}} {
+          <b><font color=#3a6797>set</font></b> fsz <font color=#1b1baa>$fontsize</font>
+        } <b><font color=#3a6797>elseif</font></b> {[<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$al(FONT,txt)</font> <font color=#653760>-size</font>]} {
           <b><font color=#3a6797>set</font></b> fsz [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$al(FONT,txt)</font> <font color=#653760>-size</font>]
         } <b><font color=#3a6797>else</font></b> {
           <b><font color=#3a6797>set</font></b> fsz <font color=#1b1baa>$al(FONTSIZE,std)</font>
@@ -1580,6 +1569,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::SRCDIR</font> unit_tpl.tcl]
     <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::SRCDIR</font> format.tcl]
     <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::SRCDIR</font> printer.tcl]
+    <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::SRCDIR</font> detached.tcl]
     <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::LIBDIR</font> addon hl_md.tcl]
     <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::LIBDIR</font> addon hl_html.tcl]
     <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::LIBDIR</font> addon hl_em.tcl]

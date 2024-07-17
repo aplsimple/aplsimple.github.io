@@ -1,0 +1,367 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<meta name="author" content="aplsimple">
+<meta name="description" content="aplsimple's home page">
+<meta name="keywords" content="aplsimple,home">
+</head>
+<style>
+table{
+background-color: #f9f9f9;
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+box-shadow: none;
+filter: none;
+}
+pre{
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+}
+</style>
+<script>
+function homeLINK() {
+  homelink = document.baseURI;
+  ilen = 19
+  ibase = homelink.indexOf('aplsimple.github');
+  if (ibase<0) { ibase = homelink.indexOf('aplsimple_github'); ilen += 10 };
+  if (ibase>=0) { homelink = homelink.substring(0,ibase+ilen) };
+  return homelink;
+};
+document.write(' \
+<link rel="stylesheet" href="'+homeLINK()+'/en/tcl/printer/zoo/style.css">');
+document.write(' \
+<link rel="icon" type="image/jpg" href="'+homeLINK()+'/zoo/favicon.jpg">');
+document.write('<'+'script src="'+homeLINK()+'/zoo/funcs.js">'+'<'+'/script>');
+document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'+'/script>');
+</script>
+<body>
+<div id="wrapper">
+<div name="divd1" ALIGN="CENTER"> <FONT SIZE=5em color=#b01c20><B>
+<noscript>THIS PAGE IS NOT WORKING WITHOUT JAVASCRIPT!
+<BR>
+<BR>PLEASE, SWITCH ON JAVASCRIPT IN SETTINGS OF YOUR BROWSER AND RELOAD THE PAGE.
+</noscript>
+</B></FONT></div>
+<div id='doc3' class='yui-t2'>
+<section id=sec2>
+<div id='hd' class='banner'>
+
+<title>detached.tcl</title>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#bdd7e7><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
+
+<div id="bodyContent" class="dokuwiki">
+<div id="dw__toc" class="dw__toc">
+<h3 class="toggle open" style="cursor: pointer;">detached.tcl</h3>
+<div aria-expanded="true" style="">
+
+<ul class="toc">
+<li><b><a href="#detached.tcl">detached.tcl</a></b></li>
+<li><b><a href="#detached">detached</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#detached::Options">Options</a><span class=tooltiptext> detached::Options : Gets options of new detached editor.
+Returns a list of index, apave object name, window path, geometry.
+The geometry is of some previously used window or "".</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#detached::Tool">Tool</a><span class=tooltiptext> detached::Tool : Applies tool to text.
+pobj - apave object of detached editor
+tool - tool of toolbar</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#detached::Find">Find</a><span class=tooltiptext> detached::Find : Finds string in text.
+pobj - apave object of detached editor
+wtxt - text's path
+donext - "1" means 'from a current position'</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#detached::DisplayText">DisplayText</a><span class=tooltiptext> detached::DisplayText : Displays file's text.
+pobj - apave object of detached editor
+fname - file name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#detached::Modified">Modified</a><span class=tooltiptext> detached::Modified : Callback for modifying text.
+pobj - apave object of detached editor
+win - window's path
+wtxt - text's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#detached::SaveFile">SaveFile</a><span class=tooltiptext> detached::SaveFile : Saves changed text.
+pobj - apave object of detached editor
+fname - file name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#detached::Close">Close</a><span class=tooltiptext> detached::Close : Closes detached editor.
+id - editor's index
+pobj - apave object
+win - editor's window
+fname - file name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#detached::_create">_create</a><span class=tooltiptext> detached::_create : Handles detached editor.
+fname - edited file's name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#detached::_run">_run</a><span class=tooltiptext> detached::_run : Open files in detached editors.
+fnames - file name list</span></div></li></ul>
+
+</ul>
+
+</div>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1><font color=#ca14ca> alited's source</font></h1>
+</p><p>
+The <a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/about.html">alited/src</a> directory contains alited's own source files.
+</p><p>
+Some additional alited's files are also contained in <a href="https://aplsimple.github.io/en/tcl/printer/alited/files/lib/addon/hl_alm.html">alited/lib/addon</a> directory (<i><font color=#1b1baa>alited/lib</font></i> directory contains all library files).
+</p><p>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/about.html">about.tcl</a> - "About alited" dialogue.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/alited.html">alited.tcl</a> - The alited's main script to start.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/bar.html">bar.tcl</a> - Handles the bar of tabs.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/check.html">check.tcl</a> - "Check Tcl" dialogue and procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/complete.html">complete.tcl</a> - Handles auto-completion.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/edit.html">edit.tcl</a> - "Edit" menu's procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/favor.html">favor.tcl</a> - Handles the favorite and last visited units.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/favor_ls.html">favor_ls.tcl</a> - "Saved lists of favorites" dialogue and procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/file.html">file.tcl</a> - "File" menu's procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/find.html">find.tcl</a> - "Find / Replace" dialogue and procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/format.html">format.tcl</a> - "Edit / Formats" menu's procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/img.html">img.tcl</a> - List of images used by alited.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/indent.html">indent.tcl</a> - Handles text indentation.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/info.html">info.tcl</a> - Handles the info bar.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/ini.html">ini.tcl</a> - Handles initializing alited.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/keys.html">keys.tcl</a> - Handles keyboard (mapping etc.).</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/main.html">main.tcl</a> - Handles the main form of alited.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/menu.html">menu.tcl</a> - Handles alited's menus.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/msgs.html">msgs.tcl</a> - Localized messages used in several places.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/paver.html">paver.tcl</a> - "Tools / Paver" tool.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/pkgIndex.html">pkgIndex.tcl</a> - Includes README.md text (for Ruff doc generator).</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/pref.html">pref.tcl</a> - "Preferences" dialogue and procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/preview.html">preview.tcl</a> - "Preview (theme, CS)" dialogue called by "Preferences".</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/printer.html">printer.tcl</a> - "Tools / Project Printer" dialogue and procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/project.html">project.tcl</a> - "Projects" dialogue and procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/run.html">run.tcl</a> - "Tools / Run..." dialogue and procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/tool.html">tool.tcl</a> - "Tools" menu's procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/tree.html">tree.tcl</a> - Handles the tree of units and files.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/unit.html">unit.tcl</a> - Handles the unit tree.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/unit_tpl.html">unit_tpl.tcl</a> - "Templates" dialogue and procedures.</li>
+</p><p>
+
+</p>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#bdd7e7><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>detached.tcl</b></font></div></td></table>
+
+<pre class="code"><i><font color=#ff0000>#! /usr/bin/env tclsh<a id=detached.tcl></a></font></i>
+<i><font color=#4b5d50>###########################################################</font></i>
+<i><font color=#4b5d50># Name:    detached.tcl</font></i>
+<i><font color=#4b5d50># Author:  Alex Plotnikov  (aplsimple@gmail.com)</font></i>
+<i><font color=#4b5d50># Date:    Jul 10, 2024</font></i>
+<i><font color=#4b5d50># Brief:   Handles file detachments.</font></i>
+<i><font color=#4b5d50># License: MIT.</font></i>
+<i><font color=#4b5d50>###########################################################</font></i>
+<a id=detached></a>
+<i><font color=#4b5d50># _________________________ detached ________________________ #</font></i>
+
+<b><font color=#ca14ca>namespace</font></b> eval detached {
+  <b><font color=#3a6797>variable</font></b> varFind {}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=detached::Options></a>
+<b><font color=#ca14ca>proc</font></b> detached::Options {} {
+  <i><font color=#4b5d50># Gets options of new detached editor.</font></i>
+  <i><font color=#4b5d50># Returns a list of index, apave object name, window path, geometry.</font></i>
+  <i><font color=#4b5d50># The geometry is of some previously used window or &quot;&quot;.</font></i>
+
+  <b><font color=#3a6797>while</font></b> {[<b><font color=#3a6797>incr</font></b> id]&lt;99} {
+    <b><font color=#3a6797>lassign</font></b> [alited::file::DetachedInfo <font color=#1b1baa>$id</font>] pobj win
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists <font color=#1b1baa>$pobj</font>]} {
+      <b><font color=#3a6797>set</font></b> geo {}  ;<i><font color=#4b5d50># vacant yet</font></i>
+    } <b><font color=#3a6797>elseif</font></b> {![<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$win</font>]} {
+      <b><font color=#3a6797>set</font></b> geo [::apave::checkGeometry [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$pobj</font>]] ;<i><font color=#4b5d50># was used</font></i>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#ca14ca>continue</font></b>
+    }
+    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$id</font> <font color=#1b1baa>$pobj</font> <font color=#1b1baa>$win</font> <font color=#1b1baa>$geo</font>]
+  }
+  alited::Balloon <font color=#8b2a0e>&quot;Too many requests for detachments!&quot;</font>
+  <b><font color=#ca14ca>return</font></b> {}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=detached::Tool></a>
+<b><font color=#ca14ca>proc</font></b> detached::Tool {pobj tool} {
+  <i><font color=#4b5d50># Applies tool to text.</font></i>
+  <i><font color=#4b5d50>#   pobj - apave object of detached editor</font></i>
+  <i><font color=#4b5d50>#   tool - tool of toolbar</font></i>
+
+  <b><font color=#134070>event</font></b> generate [<font color=#1b1baa>$pobj</font> Text] &lt;&lt;[<b><font color=#3a6797>string</font></b> totitle <font color=#1b1baa>$tool</font>]&gt;&gt;
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=detached::Find></a>
+<b><font color=#ca14ca>proc</font></b> detached::Find {pobj wtxt {donext 0}} {
+  <i><font color=#4b5d50># Finds string in text.</font></i>
+  <i><font color=#4b5d50>#   pobj - apave object of detached editor</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+  <i><font color=#4b5d50>#   donext - &quot;1&quot; means 'from a current position'</font></i>
+
+  <b><font color=#3a6797>variable</font></b> varFind
+  <b><font color=#3a6797>set</font></b> cbx [<font color=#1b1baa>$pobj</font> CbxFind]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> varFind [<font color=#1b1baa>$cbx</font> get]] ne {}} {
+    <font color=#1b1baa>$pobj</font> findInText <font color=#1b1baa>$donext</font> <font color=#1b1baa>$wtxt</font> ::alited::detached::varFind
+    <b><font color=#3a6797>set</font></b> values [<font color=#1b1baa>$cbx</font> cget <font color=#653760>-values</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$varFind</font> ni <font color=#1b1baa>$values</font>} {
+      <font color=#1b1baa>$cbx</font> configure <font color=#653760>-values</font> [<b><font color=#3a6797>linsert</font></b> <font color=#1b1baa>$values</font> 0 <font color=#1b1baa>$varFind</font>]
+    }
+  }
+  <b><font color=#134070>focus</font></b> [<font color=#1b1baa>$pobj</font> Text]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=detached::DisplayText></a>
+<b><font color=#ca14ca>proc</font></b> detached::DisplayText {pobj fname} {
+  <i><font color=#4b5d50># Displays file's text.</font></i>
+  <i><font color=#4b5d50>#   pobj - apave object of detached editor</font></i>
+  <i><font color=#4b5d50>#   fname - file name</font></i>
+
+  <font color=#1b1baa>$pobj</font> displayText [<font color=#1b1baa>$pobj</font> Text] [readTextFile <font color=#1b1baa>$fname</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=detached::Modified></a>
+<b><font color=#ca14ca>proc</font></b> detached::Modified {pobj win wtxt args} {
+  <i><font color=#4b5d50># Callback for modifying text.</font></i>
+  <i><font color=#4b5d50>#   pobj - apave object of detached editor</font></i>
+  <i><font color=#4b5d50>#   win - window's path</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+
+  <b><font color=#3a6797>catch</font></b> {
+    <b><font color=#3a6797>set</font></b> ttl [<b><font color=#3a6797>string</font></b> trimleft [<b><font color=#134070>wm</font></b> title <font color=#1b1baa>$win</font>] *]
+    <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$wtxt</font> edit modified]} {
+      <b><font color=#3a6797>set</font></b> ttl *<font color=#1b1baa>$ttl</font>
+      <b><font color=#3a6797>set</font></b> state normal
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> state disabled
+    }
+    <b><font color=#134070>wm</font></b> title <font color=#1b1baa>$win</font> <font color=#1b1baa>$ttl</font>
+    [<font color=#1b1baa>$pobj</font> ToolTop].buT_alimg_SaveFile configure <font color=#653760>-state</font> <font color=#1b1baa>$state</font>
+    <b><font color=#3a6797>foreach</font></b> do {undo redo} {
+      <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$wtxt</font> edit can<font color=#1b1baa>$do</font>]} {<b><font color=#3a6797>set</font></b> state normal} <b><font color=#3a6797>else</font></b> {<b><font color=#3a6797>set</font></b> state disabled}
+      [<font color=#1b1baa>$pobj</font> ToolTop].buT_alimg_<font color=#1b1baa>$do</font> configure <font color=#653760>-state</font> <font color=#1b1baa>$state</font>
+    }
+
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=detached::SaveFile></a>
+<b><font color=#ca14ca>proc</font></b> detached::SaveFile {pobj fname} {
+  <i><font color=#4b5d50># Saves changed text.</font></i>
+  <i><font color=#4b5d50>#   pobj - apave object of detached editor</font></i>
+  <i><font color=#4b5d50>#   fname - file name</font></i>
+
+  <b><font color=#3a6797>set</font></b> wtxt [<font color=#1b1baa>$pobj</font> Text]
+  <b><font color=#3a6797>if</font></b> {[alited::file::SaveText <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$fname</font>]} {
+    <font color=#1b1baa>$wtxt</font> edit modified no
+    alited::detached::Modified <font color=#1b1baa>$pobj</font> <font color=#1b1baa>$wtxt</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=detached::Close></a>
+<b><font color=#ca14ca>proc</font></b> detached::Close {id pobj win fname args} {
+  <i><font color=#4b5d50># Closes detached editor.</font></i>
+  <i><font color=#4b5d50>#   id - editor's index</font></i>
+  <i><font color=#4b5d50>#   pobj - apave object</font></i>
+  <i><font color=#4b5d50>#   win - editor's window</font></i>
+  <i><font color=#4b5d50>#   fname - file name</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$id</font>&lt;=8} {
+    <i><font color=#4b5d50># save only first ones' geometry (avoiding fat history)</font></i>
+    <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$pobj</font> [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font>]
+  }
+  <b><font color=#3a6797>set</font></b> wtxt [<font color=#1b1baa>$pobj</font> Text]
+  <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$wtxt</font> edit modified]} {
+    <b><font color=#3a6797>set</font></b> msg [msgcat::mc {Save changes made to the text?}]
+    <b><font color=#3a6797>switch</font></b> [alited::msg yesnocancel warn <font color=#1b1baa>$msg</font> {} <font color=#653760>-centerme</font> <font color=#1b1baa>$win</font>] {
+      1 {SaveFile <font color=#1b1baa>$pobj</font> <font color=#1b1baa>$fname</font>}
+      2 {}
+      <b><font color=#3a6797>default</font></b> {<b><font color=#ca14ca>return</font></b>}
+    }
+  }
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$win</font>}
+  <font color=#1b1baa>$pobj</font> destroy
+  alited::ini::SaveIni
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=detached::_create></a>
+<b><font color=#ca14ca>proc</font></b> detached::_create {fname} {
+  <i><font color=#4b5d50># Handles detached editor.</font></i>
+  <i><font color=#4b5d50>#   fname - edited file's name</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>lassign</font></b> [Options] id pobj win geo
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$id</font> eq {}} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>file</font></b> isfile <font color=#1b1baa>$fname</font>]} {
+    alited::Balloon1 <font color=#1b1baa>$fname</font>
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$pobj</font> <font color=#1b1baa>$geo</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$geo</font> ne {}} {<b><font color=#3a6797>set</font></b> geo <font color=#8b2a0e>&quot;-geometry <font color=#1b1baa>$</font>geo&quot;</font>}
+  <b><font color=#3a6797>set</font></b> al(detachtools) {}
+  <b><font color=#3a6797>foreach</font></b> icon {SaveFile undo redo cut copy paste} {
+    <b><font color=#3a6797>set</font></b> img [alited::ini::CreateIcon <font color=#1b1baa>$icon</font>]
+    <b><font color=#3a6797>append</font></b> al(detachtools) <font color=#8b2a0e>&quot; <font color=#1b1baa>$</font>img \{<font color=#1b1baa>{}</font> &quot;</font>
+    <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$icon</font> {
+      SaveFile {
+        <b><font color=#3a6797>append</font></b> al(detachtools) \
+          <font color=#8b2a0e>&quot;-com <font color=#1b1baa>{</font>alited::detached::SaveFile <font color=#1b1baa>$</font>pobj <font color=#1b1baa>$</font>fname<font color=#1b1baa>}</font> -state disabled&quot;</font>
+        <b><font color=#3a6797>set</font></b> tip <font color=#1b1baa>$::alited::al(MC,ico$icon)</font>
+      }
+      undo - redo - cut - copy - paste {
+        <b><font color=#3a6797>append</font></b> al(detachtools) <font color=#8b2a0e>&quot;-com <font color=#1b1baa>{</font>alited::detached::Tool <font color=#1b1baa>$</font>pobj <font color=#1b1baa>$</font>icon<font color=#1b1baa>}</font>&quot;</font>
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$icon</font> in {undo redo}} {<b><font color=#3a6797>append</font></b> al(detachtools) <font color=#8b2a0e>&quot; -state disabled&quot;</font>}
+        <b><font color=#3a6797>set</font></b> tip [<b><font color=#3a6797>string</font></b> totitle <font color=#1b1baa>$icon</font>]
+      }
+    }
+    <b><font color=#3a6797>append</font></b> al(detachtools) <font color=#8b2a0e>&quot; -tip <font color=#1b1baa>{$</font>tip@@ -under 4<font color=#1b1baa>}</font>\}&quot;</font>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$icon</font> in {SaveFile redo}} {
+      <b><font color=#3a6797>append</font></b> al(detachtools) <font color=#8b2a0e>&quot; sev 6&quot;</font>
+    }
+  }
+  <b><font color=#3a6797>append</font></b> al(detachtools) <font color=#8b2a0e>&quot; sev 16 lab1 <font color=#1b1baa>{{</font>Find: <font color=#1b1baa>}}</font> CbxFind <font color=#1b1baa>{</font>-font <font color=#1b1baa>{$</font>::apave::FONTMAIN<font color=#1b1baa>}}</font>&quot;</font>
+  ::apave::APave create <font color=#1b1baa>$pobj</font> <font color=#1b1baa>$win</font>
+  <font color=#1b1baa>$pobj</font> makeWindow <font color=#1b1baa>$win</font>.fra <font color=#1b1baa>$fname</font>
+  <font color=#1b1baa>$pobj</font> paveWindow <font color=#1b1baa>$win</font>.fra {
+    {fra1 - - 1 1 {<font color=#653760>-st</font> nsew <font color=#653760>-rw</font> 1 <font color=#653760>-cw</font> 1}}
+    {.ToolTop - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> top <font color=#653760>-fill</font> x} {<font color=#653760>-array</font> {<font color=#1b1baa>$::alited::al(detachtools)</font>} <font color=#653760>-relief</font> groove <font color=#653760>-borderwidth</font> 1}}
+    {.GutText - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 0 <font color=#653760>-fill</font> both}}
+    {.FrAText - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both \
+      <font color=#653760>-padx</font> 0 <font color=#653760>-pady</font> 0 <font color=#653760>-ipadx</font> 0 <font color=#653760>-ipady</font> 0} {<font color=#653760>-background</font> <font color=#1b1baa>$::apave::BGMAIN2</font>}}
+    {.frAText.Text - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both} \
+      {<font color=#653760>-w</font> 50 <font color=#653760>-h</font> 20 <font color=#653760>-gutter</font> GutText <font color=#653760>-gutterwidth</font> <font color=#1b1baa>$al(ED,gutterwidth)</font> \
+      <font color=#653760>-guttershift</font> <font color=#1b1baa>$al(ED,guttershift)</font>}}
+    {.sbv + L - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> right <font color=#653760>-fill</font> y}}
+  }
+  <b><font color=#3a6797>set</font></b> wtxt [<font color=#1b1baa>$pobj</font> Text]
+  <b><font color=#3a6797>set</font></b> cbx [<font color=#1b1baa>$pobj</font> CbxFind]
+  <b><font color=#3a6797>foreach</font></b> ev {Return KP_Enter F3} {
+    <b><font color=#134070>bind</font></b> <font color=#1b1baa>$cbx</font> &lt;<font color=#1b1baa>$ev</font>&gt; <font color=#8b2a0e>&quot;alited::detached::Find <font color=#1b1baa>$</font>pobj <font color=#1b1baa>$</font>wtxt&quot;</font>
+  }
+  <b><font color=#3a6797>foreach</font></b> ev {f F} {<b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> &lt;Control-<font color=#1b1baa>$ev</font>&gt; <font color=#8b2a0e>&quot;focus <font color=#1b1baa>$</font>cbx&quot;</font>}
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> &lt;F3&gt; <font color=#8b2a0e>&quot;alited::detached::Find <font color=#1b1baa>$</font>pobj <font color=#1b1baa>$</font>wtxt 1&quot;</font>
+  <b><font color=#3a6797>foreach</font></b> ev [alited::pref::BindKey2 0 -] {
+    <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;<font color=#1b1baa>$ev</font>&gt; <font color=#8b2a0e>&quot;alited::detached::SaveFile <font color=#1b1baa>$</font>pobj <font color=#1b1baa>$</font>fname&quot;</font>
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(fontdetach)</font>} {<b><font color=#3a6797>set</font></b> fsz <font color=#1b1baa>$al(FONTSIZE,std)</font>} {<b><font color=#3a6797>set</font></b> fsz {}}
+  <b><font color=#3a6797>after</font></b> 50 after idle <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pobj fillGutter <font color=#1b1baa>$</font>wtxt;\</font>
+<font color=#8b2a0e>    alited::file::MakeThemHighlighted <font color=#1b1baa>{}</font> <font color=#1b1baa>$</font>wtxt;\</font>
+<font color=#8b2a0e>    alited::detached::DisplayText <font color=#1b1baa>$</font>pobj <font color=#1b1baa>{$</font>fname<font color=#1b1baa>}</font>;\</font>
+<font color=#8b2a0e>    alited::main::HighlightText <font color=#1b1baa>{}</font> <font color=#1b1baa>{$</font>fname<font color=#1b1baa>}</font> <font color=#1b1baa>$</font>wtxt <font color=#1b1baa>{</font>alited::detached::Modified <font color=#1b1baa>$</font>pobj <font color=#1b1baa>$</font>win<font color=#1b1baa>}</font> <font color=#1b1baa>{}</font> <font color=#1b1baa>$</font>fsz;\</font>
+<font color=#8b2a0e>    &quot;</font>
+  <font color=#1b1baa>$pobj</font> showModal <font color=#1b1baa>$win</font> <font color=#653760>-modal</font> no <font color=#653760>-waitvar</font> no <font color=#653760>-resizable</font> 1 <font color=#653760>-minsize</font> {300 200} \
+    <font color=#653760>-onclose</font> <font color=#8b2a0e>&quot;alited::detached::Close <font color=#1b1baa>$</font>id <font color=#1b1baa>$</font>pobj <font color=#1b1baa>$</font>win <font color=#1b1baa>{$</font>fname<font color=#1b1baa>}</font>&quot;</font> <font color=#653760>-focus</font> <font color=#1b1baa>$wtxt</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$geo</font>
+  <b><font color=#3a6797>after</font></b> [<b><font color=#3a6797>expr</font></b> {300+(<font color=#1b1baa>$id</font>%9)*100}] after idle <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pobj fillGutter <font color=#1b1baa>$</font>wtxt&quot;</font> ;<i><font color=#4b5d50># for sure</font></i>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=detached::_run></a>
+<b><font color=#ca14ca>proc</font></b> detached::_run {fnames} {
+  <i><font color=#4b5d50># Open files in detached editors.</font></i>
+  <i><font color=#4b5d50>#   fnames - file name list</font></i>
+
+  <b><font color=#3a6797>foreach</font></b> fn <font color=#1b1baa>$fnames</font> {
+    _create <font color=#1b1baa>$fn</font>
+  }
+}
+
+</pre>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#bdd7e7><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>detached.tcl</b></font></div></td></table>
+
+</section>
+<script>
+  writeFooter('Generated by <a href="'+homeLINK()+'/en/tcl/alited/index.html">alited</a> &amp; <a href="'+homeLINK()+'/en/tcl/mulster/index.html">mulster</a></a>');
+</script>
+</div>
+</body>
+</html>
