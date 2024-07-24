@@ -596,7 +596,7 @@ Note that <a href="https://aplsimple.github.io/en/tcl/hl_tcl/hl_tcl.html">hl_tcl
   <b><font color=#3a6797>foreach</font></b> spch {/ *} {
     <b><font color=#3a6797>incr</font></b> comments [::hl_tcl::my::CountChar <font color=#1b1baa>$st</font> <font color=#1b1baa>$spch</font>]
   }
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$quotes</font> <font color=#1b1baa>$slashes</font> <font color=#1b1baa>$comments</font>]
+  <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$quotes</font> <font color=#1b1baa>$slashes</font> <font color=#1b1baa>$comments</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=my::MemPos1></a>
@@ -893,14 +893,29 @@ Note that <a href="https://aplsimple.github.io/en/tcl/hl_tcl/hl_tcl.html">hl_tcl
   <b><font color=#3a6797>set</font></b> ::hl_c::my::data(REG_TXT,<font color=#1b1baa>$txt</font>) {}  ;<i><font color=#4b5d50># disables Modified at changing the text</font></i>
   <b><font color=#3a6797>set</font></b> ::hl_c::my::data(KEYWORDS,<font color=#1b1baa>$txt</font>) {}
   <b><font color=#3a6797>set</font></b> ::hl_c::my::data(DOBIND,<font color=#1b1baa>$txt</font>) 0
+  <i><font color=#4b5d50># get default options from text's ones</font></i>
+  <b><font color=#3a6797>set</font></b> defopts [<b><font color=#3a6797>list</font></b> <font color=#653760>-insertwidth</font>]
+  <b><font color=#3a6797>foreach</font></b> defopt <font color=#1b1baa>$defopts</font> {
+    <b><font color=#3a6797>set</font></b> opt [::hl_tcl::OptName <font color=#1b1baa>$txt</font> <font color=#1b1baa>$defopt</font>]
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists ::hl_c::my::data(<font color=#1b1baa>$opt</font>)]} {
+      <b><font color=#3a6797>set</font></b> ::hl_c::my::data(<font color=#1b1baa>$opt</font>,DEFAULT) [<font color=#1b1baa>$txt</font> cget <font color=#1b1baa>$defopt</font>]
+    }
+  }
   <b><font color=#3a6797>foreach</font></b> {opt val} {<font color=#653760>-dark</font> 0 <font color=#653760>-readonly</font> 0 <font color=#653760>-cmd</font> {} <font color=#653760>-cmdpos</font> {} <font color=#653760>-optRE</font> 1 <font color=#653760>-dobind</font> 0 \
-  <font color=#653760>-multiline</font> 1 <font color=#653760>-seen</font> 500 <font color=#653760>-plaintext</font> no <font color=#653760>-insertwidth</font> 2 <font color=#653760>-keywords</font> {}} {
+  <font color=#653760>-multiline</font> 1 <font color=#653760>-seen</font> 500 <font color=#653760>-plaintext</font> no <font color=#653760>-insertwidth</font> {} <font color=#653760>-keywords</font> {}} {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$args</font> <font color=#1b1baa>$opt</font>]} {
       <b><font color=#3a6797>set</font></b> val [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$args</font> <font color=#1b1baa>$opt</font>]
     } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$setonly</font>} {
       <b><font color=#ca14ca>continue</font></b>  ;<i><font color=#4b5d50># only those set in args are taken into account</font></i>
     }
-    <b><font color=#3a6797>set</font></b> ::hl_c::my::data([<b><font color=#3a6797>string</font></b> toupper [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$opt</font> 1 end]],<font color=#1b1baa>$txt</font>) <font color=#1b1baa>$val</font>
+    <b><font color=#3a6797>set</font></b> ::hl_c::my::data([::hl_tcl::OptName <font color=#1b1baa>$txt</font> <font color=#1b1baa>$opt</font>]) <font color=#1b1baa>$val</font>
+  }
+  <i><font color=#4b5d50># reget default options from text's ones</font></i>
+  <b><font color=#3a6797>foreach</font></b> defopt <font color=#1b1baa>$defopts</font> {
+    <b><font color=#3a6797>set</font></b> opt [::hl_tcl::OptName <font color=#1b1baa>$txt</font> <font color=#1b1baa>$defopt</font>]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists ::hl_c::my::data(<font color=#1b1baa>$opt</font>)] && <font color=#1b1baa>$::hl_c::my::data($opt)</font> eq {}} {
+      <b><font color=#3a6797>set</font></b> ::hl_c::my::data(<font color=#1b1baa>$opt</font>) <font color=#1b1baa>$::hl_c::my::data($opt,DEFAULT)</font>
+    }
   }
   <b><font color=#3a6797>set</font></b> ::hl_c::my::data(KEYWORDS,<font color=#1b1baa>$txt</font>) [<b><font color=#3a6797>lsort</font></b> <font color=#1b1baa>$::hl_c::my::data(KEYWORDS,$txt)</font>]
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$args</font> <font color=#653760>-colors</font>]} {

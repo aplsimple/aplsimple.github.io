@@ -145,7 +145,8 @@ pwin - default parent</span></div></li></ul>
 geom - geometry
 X - default X-coordinate
 Y - default Y-coordinate
-Returns a list of width, height, X and Y (coordinates are always with + or -).</span></div></li></ul>
+Returns a list of width, height, X and Y (coordinates are always with + or -)
+and also a flag "negative coordinates, calculated from bottom right".</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#focusFirst">focusFirst</a><span class=tooltiptext> focusFirst : Sets a focus on a first widget of a parent widget.
 w - the parent widget
 dofocus - if no, means "only return the widget's path"
@@ -269,7 +270,7 @@ Docs:
 <i><font color=#4b5d50>###########################################################</font></i>
 
 <b><font color=#3a6797>package</font></b> require Tk
-<b><font color=#3a6797>package</font></b> provide apave 4.4.5
+<b><font color=#3a6797>package</font></b> provide apave 4.4.8
 
 <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join [<b><font color=#3a6797>file</font></b> dirname [<b><font color=#3a6797>info</font></b> script]] apavedialog.tcl]
 <a id=Independent_procs></a>
@@ -633,7 +634,8 @@ Docs:
     <i><font color=#4b5d50>#   geom - geometry</font></i>
     <i><font color=#4b5d50>#   X - default X-coordinate</font></i>
     <i><font color=#4b5d50>#   Y - default Y-coordinate</font></i>
-    <i><font color=#4b5d50># Returns a list of width, height, X and Y (coordinates are always with + or -).</font></i>
+    <i><font color=#4b5d50># Returns a list of width, height, X and Y (coordinates are always with + or -)</font></i>
+    <i><font color=#4b5d50># and also a flag &quot;negative coordinates, calculated from bottom right&quot;.</font></i>
 
     <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$geom</font> x+-] w h
     <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-inline</font> <font color=#653760>-all</font> {([+-][[:digit:]]+)} <font color=#1b1baa>$geom</font>] -&gt; x y
@@ -641,9 +643,8 @@ Docs:
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$x</font> in {<font color=#8b2a0e>&quot;&quot;</font> 0} || [<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$x</font>+0}}]} {<b><font color=#3a6797>set</font></b> x <font color=#1b1baa>$X</font>}
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$y</font> in {<font color=#8b2a0e>&quot;&quot;</font> 0} || [<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$y</font>+0}}]} {<b><font color=#3a6797>set</font></b> y <font color=#1b1baa>$Y</font>}
     }
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$x</font> ne {}} {<b><font color=#3a6797>set</font></b> x +[<b><font color=#3a6797>expr</font></b> {max(0,<font color=#1b1baa>$x</font>)}]}
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$y</font> ne {}} {<b><font color=#3a6797>set</font></b> y +[<b><font color=#3a6797>expr</font></b> {max(0,<font color=#1b1baa>$y</font>)}]}
-    <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$w</font> <font color=#1b1baa>$h</font> <font color=#1b1baa>$x</font> <font color=#1b1baa>$y</font>
+    <b><font color=#3a6797>set</font></b> neg [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> first - <font color=#1b1baa>$geom</font>]&gt;=0 && [<b><font color=#3a6797>string</font></b> first + <font color=#1b1baa>$geom</font>]&lt;0}]
+    <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$w</font> <font color=#1b1baa>$h</font> <font color=#1b1baa>$x</font> <font color=#1b1baa>$y</font> <font color=#1b1baa>$neg</font>
   }
   <i><font color=#4b5d50>#_______________________</font></i>
 <a id=focusFirst></a>
@@ -749,7 +750,7 @@ Docs:
     } <b><font color=#3a6797>else</font></b> {
       <b><font color=#3a6797>set</font></b> res <font color=#1b1baa>$W</font>
     }
-    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font> <font color=#1b1baa>$clr</font>]
+    <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font> <font color=#1b1baa>$clr</font>
   }
 <a id=Blinking_widgets></a>
   <i><font color=#4b5d50>### ________________________ Blinking widgets _________________________ ###</font></i>

@@ -1707,7 +1707,7 @@ padding: 0%;
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>set</font></b> res <font color=#1b1baa>$W</font>
   }
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font> <font color=#1b1baa>$clr</font>]
+  <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font> <font color=#1b1baa>$clr</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::IsRoundInt'>IsRoundInt</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -2686,14 +2686,15 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>X</code></code></td><td class='ruff_defitem'>default X-coordinate; <i>optional, default</i> <code>+0</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>Y</code></code></td><td class='ruff_defitem'>default Y-coordinate; <i>optional, default</i> <code>+0</code></td></tr>
 </table>
-<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a list of width, height, X and Y (coordinates are always with + or -).</p>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Returns a list of width, height, X and Y (coordinates are always with + or -) and also a flag &quot;negative coordinates, calculated from bottom right&quot;.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_splitGeometry' href="javascript:toggleSource('apave_splitGeometry')">Show source</a></p>
 <div id='apave_splitGeometry' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::splitGeometry {geom {X +0} {Y +0}} {
   <i><font color=#4b5d50># Gets widget's geometry components.</font></i>
   <i><font color=#4b5d50>#   geom - geometry</font></i>
   <i><font color=#4b5d50>#   X - default X-coordinate</font></i>
   <i><font color=#4b5d50>#   Y - default Y-coordinate</font></i>
-  <i><font color=#4b5d50># Returns a list of width, height, X and Y (coordinates are always with + or -).</font></i>
+  <i><font color=#4b5d50># Returns a list of width, height, X and Y (coordinates are always with + or -)</font></i>
+  <i><font color=#4b5d50># and also a flag &quot;negative coordinates, calculated from bottom right&quot;.</font></i>
 
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$geom</font> x+-] w h
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>regexp</font></b> <font color=#6c3e67>-inline</font> <font color=#6c3e67>-all</font> {([+-][[:digit:]]+)} <font color=#1b1baa>$geom</font>] -&gt; x y
@@ -2701,7 +2702,8 @@ padding: 0%;
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$x</font> in {<font color=#8b2a0e>&quot;&quot;</font> 0} || [<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$x</font>+0}}]} {<b><font color=#3a6797>set</font></b> x <font color=#1b1baa>$X</font>}
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$y</font> in {<font color=#8b2a0e>&quot;&quot;</font> 0} || [<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$y</font>+0}}]} {<b><font color=#3a6797>set</font></b> y <font color=#1b1baa>$Y</font>}
   }
-  <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$w</font> <font color=#1b1baa>$h</font> <font color=#1b1baa>$x</font> <font color=#1b1baa>$y</font>
+  <b><font color=#3a6797>set</font></b> neg [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> first - <font color=#1b1baa>$geom</font>]&gt;=0 && [<b><font color=#3a6797>string</font></b> first + <font color=#1b1baa>$geom</font>]&lt;0}]
+  <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$w</font> <font color=#1b1baa>$h</font> <font color=#1b1baa>$x</font> <font color=#1b1baa>$y</font> <font color=#1b1baa>$neg</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::textChanConfigure'>textChanConfigure</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -2765,7 +2767,7 @@ padding: 0%;
   <i><font color=#4b5d50># Splits a text's contents by EOLs. Those inventors of EOLs...</font></i>
   <i><font color=#4b5d50>#   textcont - text's contents</font></i>
 
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \r\n \n \r \n] <font color=#1b1baa>$textcont</font>] \n]
+  <b><font color=#3a6797>split</font></b> [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \r\n \n \r \n] <font color=#1b1baa>$textcont</font>] \n
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::traceRemove'>traceRemove</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -4748,7 +4750,7 @@ padding: 0%;
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$lab</font> &lt;Leave&gt; <font color=#8b2a0e>&quot;::apave::obj EXPORT HoverLab <font color=#1b1baa>$</font>lab <font color=#1b1baa>{$</font>v<font color=#1b1baa>}</font> no <font color=#1b1baa>$</font>fg <font color=#1b1baa>$</font>bg&quot;</font>
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$lab</font> &lt;Button-1&gt; <font color=#8b2a0e>&quot;::apave::obj EXPORT VisitedLab <font color=#1b1baa>$</font>lab <font color=#1b1baa>{$</font>v<font color=#1b1baa>}</font> yes <font color=#1b1baa>$</font>fg2 <font color=#1b1baa>$</font>bg2;<font color=#1b1baa>$</font>v&quot;</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$doadd</font>} {<b><font color=#3a6797>lappend</font></b> ::apave::_AP_VISITED(ALL) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$lab</font> <font color=#1b1baa>$v</font> <font color=#1b1baa>$inv</font>]}
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fg</font> <font color=#1b1baa>$bg</font> <font color=#1b1baa>$fg2</font> <font color=#1b1baa>$bg2</font>]
+  <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fg</font> <font color=#1b1baa>$bg</font> <font color=#1b1baa>$fg2</font> <font color=#1b1baa>$bg2</font>
 }<br><br></code></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveBase::makePopup'>makePopup</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveBase" title="::apave::APaveBase" class='ruff_cmd'>::apave::APaveBase</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveBase'>APaveBase</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>

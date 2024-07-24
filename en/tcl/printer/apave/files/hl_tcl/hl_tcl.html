@@ -242,6 +242,10 @@ opt - option's name</span></div></li></ul>
 txt - text's path
 opt - option's name
 val - option's value</span></div></li></ul>
+<li><b><a href="#Helpers">Helpers</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#hl_tcl::OptName">OptName</a><span class=tooltiptext> hl_tcl::OptName : Gets hl_tcl option's name.
+txt - text's path
+opt - option</span></div></li></ul>
 <li><b><a href="#EOF">EOF</a></b></li>
 
 </ul>
@@ -439,7 +443,7 @@ Note that <a href="https://aplsimple.github.io/en/tcl/hl_tcl/hl_tcl.html">hl_tcl
 <i><font color=#4b5d50># License: MIT.</font></i>
 <i><font color=#4b5d50>###########################################################</font></i>
 
-<b><font color=#3a6797>package</font></b> provide hl_tcl 1.1.3
+<b><font color=#3a6797>package</font></b> provide hl_tcl 1.1.4
 <a id=Common_data></a>
 <i><font color=#4b5d50># ______________________ Common data ____________________ #</font></i>
 
@@ -452,7 +456,7 @@ Note that <a href="https://aplsimple.github.io/en/tcl/hl_tcl/hl_tcl.html">hl_tcl
     <i><font color=#4b5d50># Tcl commands</font></i>
     <b><font color=#3a6797>set</font></b> data(PROC_TCL) [<b><font color=#3a6797>lsort</font></b> [<b><font color=#3a6797>list</font></b> \
       <b><font color=#ca14ca>return</font></b> proc method self my coroutine yield yieldto constructor destructor \
-      <b><font color=#ca14ca>break</font></b> continue namespace oo::define oo::class oo::objdefine oo::object
+      <b><font color=#ca14ca>break</font></b> continue namespace oo::define oo::class oo::objdefine oo::object test
     ]]
     <b><font color=#3a6797>set</font></b> data(CMD_TCL) [<b><font color=#3a6797>lsort</font></b> [<b><font color=#3a6797>list</font></b> \
       <b><font color=#3a6797>set</font></b> incr if else elseif string expr list lindex lrange llength lappend \
@@ -903,7 +907,7 @@ Note that <a href="https://aplsimple.github.io/en/tcl/hl_tcl/hl_tcl.html">hl_tcl
 
   <b><font color=#3a6797>set</font></b> ln [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$ln</font>)}]
   <b><font color=#3a6797>set</font></b> st [<font color=#1b1baa>$txt</font> get <font color=#1b1baa>$ln</font>.0 <font color=#1b1baa>$ln</font>.end]
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> [CountChar <font color=#1b1baa>$st</font> \&quot;] [CountChar <font color=#1b1baa>$st</font> \\] [CountChar <font color=#1b1baa>$st</font> #]]
+  <b><font color=#3a6797>list</font></b> [CountChar <font color=#1b1baa>$st</font> \&quot;] [CountChar <font color=#1b1baa>$st</font> \\] [CountChar <font color=#1b1baa>$st</font> #]
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=my::IsCurline></a>
@@ -1504,14 +1508,29 @@ Note that <a href="https://aplsimple.github.io/en/tcl/hl_tcl/hl_tcl.html">hl_tcl
   <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(REG_TXT,<font color=#1b1baa>$txt</font>) {}  ;<i><font color=#4b5d50># disables Modified at changing the text</font></i>
   <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(KEYWORDS,<font color=#1b1baa>$txt</font>) {}
   <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(DOBIND,<font color=#1b1baa>$txt</font>) 0
+  <i><font color=#4b5d50># get default options from text's ones</font></i>
+  <b><font color=#3a6797>set</font></b> defopts [<b><font color=#3a6797>list</font></b> <font color=#653760>-insertwidth</font>]
+  <b><font color=#3a6797>foreach</font></b> defopt <font color=#1b1baa>$defopts</font> {
+    <b><font color=#3a6797>set</font></b> opt [OptName <font color=#1b1baa>$txt</font> <font color=#1b1baa>$defopt</font>]
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists ::hl_tcl::my::data(<font color=#1b1baa>$opt</font>)]} {
+      <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(<font color=#1b1baa>$opt</font>,DEFAULT) [<font color=#1b1baa>$txt</font> cget <font color=#1b1baa>$defopt</font>]
+    }
+  }
   <b><font color=#3a6797>foreach</font></b> {opt val} {<font color=#653760>-dark</font> 0 <font color=#653760>-readonly</font> 0 <font color=#653760>-cmd</font> {} <font color=#653760>-cmdpos</font> {} <font color=#653760>-optRE</font> 1 <font color=#653760>-dobind</font> 0 \
-  <font color=#653760>-multiline</font> 1 <font color=#653760>-seen</font> 500 <font color=#653760>-plaintext</font> no <font color=#653760>-plaincom</font> {} <font color=#653760>-insertwidth</font> 2 <font color=#653760>-keywords</font> {}} {
+  <font color=#653760>-multiline</font> 1 <font color=#653760>-seen</font> 500 <font color=#653760>-plaintext</font> no <font color=#653760>-plaincom</font> {} <font color=#653760>-insertwidth</font> {} <font color=#653760>-keywords</font> {}} {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$args</font> <font color=#1b1baa>$opt</font>]} {
       <b><font color=#3a6797>set</font></b> val [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$args</font> <font color=#1b1baa>$opt</font>]
     } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$setonly</font>} {
       <b><font color=#ca14ca>continue</font></b>  ;<i><font color=#4b5d50># only those set in args are taken into account</font></i>
     }
-    <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data([<b><font color=#3a6797>string</font></b> toupper [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$opt</font> 1 end]],<font color=#1b1baa>$txt</font>) <font color=#1b1baa>$val</font>
+    <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data([OptName <font color=#1b1baa>$txt</font> <font color=#1b1baa>$opt</font>]) <font color=#1b1baa>$val</font>
+  }
+  <i><font color=#4b5d50># reget default options from text's ones</font></i>
+  <b><font color=#3a6797>foreach</font></b> defopt <font color=#1b1baa>$defopts</font> {
+    <b><font color=#3a6797>set</font></b> opt [OptName <font color=#1b1baa>$txt</font> <font color=#1b1baa>$defopt</font>]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists ::hl_tcl::my::data(<font color=#1b1baa>$opt</font>)] && <font color=#1b1baa>$::hl_tcl::my::data($opt)</font> eq {}} {
+      <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(<font color=#1b1baa>$opt</font>) <font color=#1b1baa>$::hl_tcl::my::data($opt,DEFAULT)</font>
+    }
   }
   <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(CMD_TK_EXP) [<b><font color=#3a6797>lsort</font></b> [<b><font color=#3a6797>list</font></b> \
     {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$::hl_tcl::my::data(CMD_TK)</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$::hl_tcl::my::data(KEYWORDS,$txt)</font>]]
@@ -1626,7 +1645,7 @@ Note that <a href="https://aplsimple.github.io/en/tcl/hl_tcl/hl_tcl.html">hl_tcl
 <b><font color=#ca14ca>proc</font></b> ::hl_tcl::hl_colorNames {} {
   <i><font color=#4b5d50># Returns a list of color names for syntax highlighting.</font></i>
 
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> clrCOM clrCOMTK clrSTR clrVAR clrCMN clrPROC clrOPT clrBRA]
+  <b><font color=#3a6797>list</font></b> clrCOM clrCOMTK clrSTR clrVAR clrCMN clrPROC clrOPT clrBRA
 }
 
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -1708,7 +1727,7 @@ Note that <a href="https://aplsimple.github.io/en/tcl/hl_tcl/hl_tcl.html">hl_tcl
   <i><font color=#4b5d50># Lists all Tcl/Tk commands registered here.</font></i>
 
   <b><font color=#3a6797>variable</font></b> my::data
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$my::data(PROC_TCL)</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$my::data(CMD_TCL)</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$my::data(CMD_TK)</font>]
+  <b><font color=#3a6797>list</font></b> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$my::data(PROC_TCL)</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$my::data(CMD_TCL)</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$my::data(CMD_TK)</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=hl_tcl::iscurline></a>
@@ -1767,6 +1786,16 @@ Note that <a href="https://aplsimple.github.io/en/tcl/hl_tcl/hl_tcl.html">hl_tcl
   <b><font color=#3a6797>variable</font></b> my::data
   <b><font color=#3a6797>set</font></b> opt [<b><font color=#3a6797>string</font></b> toupper [<b><font color=#3a6797>string</font></b> trimleft <font color=#1b1baa>$opt</font> -]]
   <b><font color=#3a6797>set</font></b> my::data(<font color=#1b1baa>$opt</font>,<font color=#1b1baa>$txt</font>) <font color=#1b1baa>$val</font>
+}
+<a id=Helpers></a>
+<i><font color=#4b5d50># ________________________ Helpers _________________________ #</font></i>
+<a id=hl_tcl::OptName></a>
+<b><font color=#ca14ca>proc</font></b> ::hl_tcl::OptName {txt opt} {
+  <i><font color=#4b5d50># Gets hl_tcl option's name.</font></i>
+  <i><font color=#4b5d50>#   txt - text's path</font></i>
+  <i><font color=#4b5d50>#   opt - option</font></i>
+
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>string</font></b> toupper [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$opt</font> 1 end]],<font color=#1b1baa>$txt</font>
 }
 <a id=EOF></a>
 <i><font color=#4b5d50># _________________________________ EOF _________________________________ #</font></i>

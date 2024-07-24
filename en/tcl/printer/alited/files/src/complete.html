@@ -210,7 +210,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>incr</font></b> Y <font color=#1b1baa>$y</font>
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> p [<b><font color=#134070>winfo</font></b> parent <font color=#1b1baa>$p</font>]}] || <font color=#1b1baa>$p</font> in {{} {.}}} <b><font color=#ca14ca>break</font></b>
   }
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$X</font> <font color=#1b1baa>$Y</font> <font color=#1b1baa>$ch</font>]
+  <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$X</font> <font color=#1b1baa>$Y</font> <font color=#1b1baa>$ch</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=complete::TextCursorCoordinates></a>
@@ -285,6 +285,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     }
   }
   <b><font color=#3a6797>set</font></b> idx1 [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$wtxt</font> index insert])}].<font color=#1b1baa>$idx1</font>
+  <i><font color=#4b5d50># check for $ dollar char</font></i>
   <b><font color=#3a6797>set</font></b> isdol [<b><font color=#3a6797>expr</font></b> {[<font color=#1b1baa>$wtxt</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idx1 -1 c&quot;</font>] eq {$}}]
   <b><font color=#3a6797>set</font></b> isdol1 [<b><font color=#3a6797>expr</font></b> {[<font color=#1b1baa>$wtxt</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idx1 -2 c&quot;</font> <font color=#1b1baa>$idx1</font>] eq {<font color=#1b1baa>$:</font>}}]
   <b><font color=#3a6797>set</font></b> isdol2 [<b><font color=#3a6797>expr</font></b> {[<font color=#1b1baa>$wtxt</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idx1 -3 c&quot;</font> <font color=#1b1baa>$idx1</font>] eq {<font color=#1b1baa>$::</font>}}]
@@ -293,11 +294,8 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$v</font>]==1} {<b><font color=#3a6797>lappend</font></b> res \$<font color=#1b1baa>$v</font>}
     }
   }
-  <i><font color=#4b5d50># if it's not a variable's value, add also commands</font></i>
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$isdol</font> || <font color=#1b1baa>$isdol1</font> || <font color=#1b1baa>$isdol2</font>} {
-    <b><font color=#3a6797>set</font></b> withcomm no
-  } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>set</font></b> withcomm yes
+  <i><font color=#4b5d50># if it isn't a variable's value, add also commands</font></i>
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> withcom [<b><font color=#3a6797>expr</font></b> {!<font color=#1b1baa>$isdol</font> && !<font color=#1b1baa>$isdol1</font> && !<font color=#1b1baa>$isdol2</font>}]]} {
     <i><font color=#4b5d50># get commands available in files of current session</font></i>
     <b><font color=#3a6797>foreach</font></b> tab [alited::SessionList] {
       <b><font color=#3a6797>set</font></b> TID [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tab</font> 0]
@@ -320,7 +318,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     }
   }
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$isread</font>} {alited::info::Clear end}
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font> <font color=#1b1baa>$withcomm</font>]
+  <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font> <font color=#1b1baa>$withcom</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=complete::IsMatch></a>
@@ -329,9 +327,8 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50>#   curword - the word</font></i>
   <i><font color=#4b5d50>#   com - the command</font></i>
 
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> match <font color=#1b1baa>${curword}<b><font color=#3a6797></font>*</font></b> <font color=#1b1baa>$com</font>] || \
-    [<b><font color=#3a6797>string</font></b> match <font color=#1b1baa>${curword}<b><font color=#3a6797></font>*</font></b> [<b><font color=#3a6797>namespace</font></b> tail <font color=#1b1baa>$com</font>]] || \
-    [<b><font color=#3a6797>regexp</font></b> <font color=#8b2a0e>&quot;^\[\$\]?<font color=#1b1baa>${</font>curword<font color=#1b1baa>}</font>&quot;</font> <font color=#1b1baa>$com</font>]}]
+  <b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> match <font color=#1b1baa>$curword</font>* <font color=#1b1baa>$com</font>] || [<b><font color=#3a6797>string</font></b> match <font color=#1b1baa>$curword</font>* \
+    [<b><font color=#3a6797>namespace</font></b> tail <font color=#1b1baa>$com</font>]] || [<b><font color=#3a6797>regexp</font></b> <font color=#8b2a0e>&quot;^\[\$\]?<font color=#1b1baa>$</font>curword&quot;</font> <font color=#1b1baa>$com</font>]}
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=complete::MatchedCommands></a>
@@ -376,7 +373,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   }
   <b><font color=#3a6797>set</font></b> commsorig <font color=#1b1baa>$comms</font>
   <b><font color=#3a6797>set</font></b> comms [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-dictionary</font> <font color=#653760>-unique</font> <font color=#1b1baa>$comms</font>]
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$curword</font> <font color=#1b1baa>$idx1</font> <font color=#1b1baa>$idx2</font>]
+  <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$curword</font> <font color=#1b1baa>$idx1</font> <font color=#1b1baa>$idx2</font>
 }
 <a id=GUI></a>
 <i><font color=#4b5d50># ________________________ GUI _________________________ #</font></i>
