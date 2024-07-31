@@ -532,14 +532,13 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#134070>pack</font></b> [<font color=#1b1baa>$obPav</font> BtTRenT] <font color=#653760>-side</font> left <font color=#653760>-after</font> [<font color=#1b1baa>$obPav</font> BtTAddT]  ;<i><font color=#4b5d50># show file buttons</font></i>
     <b><font color=#134070>pack</font></b> [<font color=#1b1baa>$obPav</font> BtTCloT] <font color=#653760>-side</font> left <font color=#653760>-after</font> [<font color=#1b1baa>$obPav</font> BtTDelT]
     <b><font color=#134070>pack</font></b> [<font color=#1b1baa>$obPav</font> BtTOpen] <font color=#653760>-side</font> left <font color=#653760>-after</font> [<font color=#1b1baa>$obPav</font> BtTCloT]
-    <i><font color=#4b5d50># for file tree: get its current &quot;open branch&quot; flags</font></i>
-    <i><font color=#4b5d50># in order to check them in CreateFilesTree</font></i>
-    <b><font color=#3a6797>set</font></b> al(SAVED_FILE_TREE) [<b><font color=#3a6797>list</font></b>]
+    <i><font color=#4b5d50># get file tree's current &quot;open branch&quot; flags to check in CreateFilesTree</font></i>
+    <b><font color=#3a6797>set</font></b> al(FILETREE_BRANCH_OPEN) [<b><font color=#3a6797>dict</font></b> create]
     <b><font color=#3a6797>foreach</font></b> item [GetTree] {
       <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$item</font> - - ID - values
       <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$values</font> -&gt; fname isfile
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is false <font color=#653760>-strict</font> <font color=#1b1baa>$isfile</font>]} {
-        <b><font color=#3a6797>lappend</font></b> al(SAVED_FILE_TREE) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fname</font> [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$ID</font> <font color=#653760>-open</font>]]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is false <font color=#653760>-strict</font> <font color=#1b1baa>$isfile</font>] && [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$ID</font> <font color=#653760>-open</font>]} {
+        <b><font color=#3a6797>dict</font></b> set al(FILETREE_BRANCH_OPEN) <font color=#1b1baa>$fname</font> 1
       }
     }
   }
@@ -558,7 +557,6 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     CreateUnitsTree <font color=#1b1baa>$TID</font> <font color=#1b1baa>$wtree</font>
   } <b><font color=#3a6797>else</font></b> {
     CreateFilesTree <font color=#1b1baa>$wtree</font>
-    <b><font color=#3a6797>unset</font></b> al(SAVED_FILE_TREE)
   }
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -699,7 +697,6 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <font color=#1b1baa>$wtree</font> heading #0 <font color=#653760>-text</font> <font color=#8b2a0e>&quot;:: <font color=#1b1baa>$</font>al(prjname) ::&quot;</font>
   <font color=#1b1baa>$wtree</font> heading #1 <font color=#653760>-text</font> <font color=#1b1baa>$al(MC,files)</font>
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtree</font> &lt;Return&gt; {::alited::tree::OpenFile}
-  <b><font color=#3a6797>set</font></b> selID <font color=#8b2a0e>&quot;&quot;</font>
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> selfile [alited::bar::FileName]}]} {
     <b><font color=#3a6797>set</font></b> selfile {} ;<i><font color=#4b5d50># at closing by Ctrl+W with file tree open: no current file</font></i>
   }
@@ -708,7 +705,6 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>foreach</font></b> item [GetDirectoryContents <font color=#1b1baa>$al(prjroot)</font>] {
     <b><font color=#3a6797>set</font></b> itemID  [alited::tree::NewItemID [<b><font color=#3a6797>incr</font></b> iit]]
     <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$item</font> lev isfile fname fcount iroot
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$selfile</font> eq <font color=#1b1baa>$fname</font>} {<b><font color=#3a6797>set</font></b> selID <font color=#1b1baa>$itemID</font>}
     <b><font color=#3a6797>set</font></b> title [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$iroot</font>&lt;0} {
       <b><font color=#3a6797>set</font></b> parent {}
@@ -726,18 +722,15 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       <i><font color=#4b5d50># get the directory's flag of expanded branch (in the file tree)</font></i>
     }
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fcount</font>} {<b><font color=#3a6797>set</font></b> fc <font color=#1b1baa>$fcount</font>} {<b><font color=#3a6797>set</font></b> fc {}}
+    <b><font color=#3a6797>set</font></b> isopen [<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$al(FILETREE_BRANCH_OPEN)</font> <font color=#1b1baa>$fname</font>]
     <font color=#1b1baa>$wtree</font> insert <font color=#1b1baa>$parent</font> end <font color=#653760>-id</font> <font color=#1b1baa>$itemID</font> <font color=#653760>-text</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>title&quot;</font> \
-      <font color=#653760>-values</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fc</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$isfile</font> <font color=#1b1baa>$itemID</font>] <font color=#653760>-open</font> no {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$imgopt</font>
+      <font color=#653760>-values</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fc</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$isfile</font> <font color=#1b1baa>$itemID</font>] <font color=#653760>-open</font> <font color=#1b1baa>$isopen</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$imgopt</font>
     <font color=#1b1baa>$wtree</font> tag add tagNorm <font color=#1b1baa>$itemID</font>
     <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$isfile</font>} {
       <font color=#1b1baa>$wtree</font> tag add tagBranch <font color=#1b1baa>$itemID</font>
     } <b><font color=#3a6797>elseif</font></b> {[alited::bar::FileTID <font color=#1b1baa>$fname</font> <font color=#1b1baa>$filesTIDs</font>] ne {}} {
       <font color=#1b1baa>$wtree</font> tag add tagSel <font color=#1b1baa>$itemID</font>
     }
-  }
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$selID</font> ne {}} {
-    <font color=#1b1baa>$wtree</font> see <font color=#1b1baa>$selID</font>
-    <font color=#1b1baa>$wtree</font> selection set <font color=#1b1baa>$selID</font>
   }
 }
 <i><font color=#4b5d50>#_______________________</font></i>

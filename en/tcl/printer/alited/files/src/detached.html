@@ -77,7 +77,8 @@ win - window's path
 wtxt - text's path</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#detached::SaveFile">SaveFile</a><span class=tooltiptext> detached::SaveFile : Saves changed text.
 pobj - apave object of detached editor
-fname - file name</span></div></li></ul>
+fname - file name
+win - window's path</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#detached::Close">Close</a><span class=tooltiptext> detached::Close : Closes detached editor.
 id - editor's index
 pobj - apave object
@@ -236,15 +237,16 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=detached::SaveFile></a>
-<b><font color=#ca14ca>proc</font></b> detached::SaveFile {pobj fname} {
+<b><font color=#ca14ca>proc</font></b> detached::SaveFile {pobj fname win} {
   <i><font color=#4b5d50># Saves changed text.</font></i>
   <i><font color=#4b5d50>#   pobj - apave object of detached editor</font></i>
   <i><font color=#4b5d50>#   fname - file name</font></i>
+  <i><font color=#4b5d50>#   win - window's path</font></i>
 
   <b><font color=#3a6797>set</font></b> wtxt [<font color=#1b1baa>$pobj</font> Text]
   <b><font color=#3a6797>if</font></b> {[alited::file::SaveText <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$fname</font>]} {
     <font color=#1b1baa>$wtxt</font> edit modified no
-    alited::detached::Modified <font color=#1b1baa>$pobj</font> <font color=#1b1baa>$wtxt</font>
+    alited::detached::Modified <font color=#1b1baa>$pobj</font> <font color=#1b1baa>$win</font> <font color=#1b1baa>$wtxt</font>
   }
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -264,7 +266,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>if</font></b> {[<font color=#1b1baa>$wtxt</font> edit modified]} {
     <b><font color=#3a6797>set</font></b> msg [msgcat::mc {Save changes made to the text?}]
     <b><font color=#3a6797>switch</font></b> [alited::msg yesnocancel warn <font color=#1b1baa>$msg</font> {} <font color=#653760>-centerme</font> <font color=#1b1baa>$win</font>] {
-      1 {SaveFile <font color=#1b1baa>$pobj</font> <font color=#1b1baa>$fname</font>}
+      1 {SaveFile <font color=#1b1baa>$pobj</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$win</font>}
       2 {}
       <b><font color=#3a6797>default</font></b> {<b><font color=#ca14ca>return</font></b>}
     }
@@ -295,7 +297,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$icon</font> {
       SaveFile {
         <b><font color=#3a6797>append</font></b> al(detachtools) \
-          <font color=#8b2a0e>&quot;-com <font color=#1b1baa>{</font>alited::detached::SaveFile <font color=#1b1baa>$</font>pobj <font color=#1b1baa>$</font>fname<font color=#1b1baa>}</font> -state disabled&quot;</font>
+          <font color=#8b2a0e>&quot;-com <font color=#1b1baa>{</font>alited::detached::SaveFile <font color=#1b1baa>$</font>pobj <font color=#1b1baa>$</font>fname <font color=#1b1baa>$</font>win<font color=#1b1baa>}</font> -state disabled&quot;</font>
         <b><font color=#3a6797>set</font></b> tip <font color=#1b1baa>$::alited::al(MC,ico$icon)</font>
       }
       undo - redo - cut - copy - paste {
@@ -331,7 +333,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>foreach</font></b> ev {f F} {<b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> &lt;Control-<font color=#1b1baa>$ev</font>&gt; <font color=#8b2a0e>&quot;focus <font color=#1b1baa>$</font>cbx&quot;</font>}
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> &lt;F3&gt; <font color=#8b2a0e>&quot;alited::detached::Find <font color=#1b1baa>$</font>pobj <font color=#1b1baa>$</font>wtxt 1&quot;</font>
   <b><font color=#3a6797>foreach</font></b> ev [alited::pref::BindKey2 0 -] {
-    <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;<font color=#1b1baa>$ev</font>&gt; <font color=#8b2a0e>&quot;alited::detached::SaveFile <font color=#1b1baa>$</font>pobj <font color=#1b1baa>$</font>fname&quot;</font>
+    <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;<font color=#1b1baa>$ev</font>&gt; <font color=#8b2a0e>&quot;alited::detached::SaveFile <font color=#1b1baa>$</font>pobj <font color=#1b1baa>$</font>fname <font color=#1b1baa>$</font>win&quot;</font>
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(fontdetach)</font>} {<b><font color=#3a6797>set</font></b> fsz <font color=#1b1baa>$al(FONTSIZE,std)</font>} {<b><font color=#3a6797>set</font></b> fsz {}}
   <b><font color=#3a6797>after</font></b> 50 after idle <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pobj fillGutter <font color=#1b1baa>$</font>wtxt;\</font>
