@@ -8326,7 +8326,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   Message - name of procedure for &quot;open file&quot; message</font></i>
   <i><font color=#4b5d50># Returns the file's tab ID if it's loaded, or {} if not loaded.</font></i>
 
-  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   <b><font color=#3a6797>variable</font></b> ansOpen
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fnames</font> eq {}} {
     <b><font color=#3a6797>set</font></b> fnames [ChooseMultipleFiles]
@@ -8385,7 +8385,8 @@ padding: 0%;
     alited::bar::BAR <font color=#1b1baa>$TID</font> show <font color=#1b1baa>$many</font> <font color=#1b1baa>$many</font>
   }
   RecreateFileTree
-  alited::FocusText
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$islist</font>} {alited::tree::SeeFile [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$fnames</font> 0]}
+  <b><font color=#3a6797>after</font></b> 20 alited::FocusText
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$TID</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::file::OpenFiles'>OpenFiles</a><span class='ns_scope'> [<a href="alited.html#::alited::file" title="::alited::file" class='ruff_cmd'>::alited::file</a>]</span><span class='tinylink'><a href='alited.html#::alited::file'>file</a>, <a href='#top'>Top</a></span></h4>
@@ -8911,6 +8912,7 @@ padding: 0%;
     alited::edit::Modified <font color=#1b1baa>$TID</font> <font color=#1b1baa>$wtxt</font>
     alited::main::HighlightText <font color=#1b1baa>$TID</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$wtxt</font>
     RecreateFileTree
+    alited::tree::SeeFile <font color=#1b1baa>$fname</font>
   }
   <b><font color=#ca14ca>return</font></b> 1
 }<br><br></code></pre></div>
@@ -8972,6 +8974,25 @@ padding: 0%;
     }
   }
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::file::SearchInFileTree'>SearchInFileTree</a><span class='ns_scope'> [<a href="alited.html#::alited::file" title="::alited::file" class='ruff_cmd'>::alited::file</a>]</span><span class='tinylink'><a href='alited.html#::alited::file'>file</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Searches a file name in file tree.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>SearchInFileTree</span> <span class='ruff_arg'>fname ?ID?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>fname</code></code></td><td class='ruff_defitem'>file name</td></tr>
+<tr><td class='ruff_defitem'><code><code>ID</code></code></td><td class='ruff_defitem'>returned ID if file name isn't found; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_file_SearchInFileTree' href="javascript:toggleSource('alited_file_SearchInFileTree')">Show source</a></p>
+<div id='alited_file_SearchInFileTree' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::file::SearchInFileTree {fname {ID {}}} {
+  <i><font color=#4b5d50># Searches a file name in file tree.</font></i>
+  <i><font color=#4b5d50>#   fname - file name</font></i>
+  <i><font color=#4b5d50>#   ID - returned ID if file name isn't found</font></i>
+
+  <b><font color=#3a6797>set</font></b> ltree [alited::tree::GetTree]
+  <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#6c3e67>-exact</font> <font color=#6c3e67>-index</font> {4 1} <font color=#1b1baa>$ltree</font> <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i</font>&gt;-1} {<b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$ltree</font> <font color=#1b1baa>$i</font> 2]} {<b><font color=#3a6797>set</font></b> res <font color=#1b1baa>$ID</font>}
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::file::SelectFileInTree'>SelectFileInTree</a><span class='ns_scope'> [<a href="alited.html#::alited::file" title="::alited::file" class='ruff_cmd'>::alited::file</a>]</span><span class='tinylink'><a href='alited.html#::alited::file'>file</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Finds a file in file tree and selects it.</p>
@@ -8989,10 +9010,7 @@ padding: 0%;
   <i><font color=#4b5d50>#   ID - ID of default item to select (if the file not found)</font></i>
 
   alited::tree::RecreateTree <font color=#1b1baa>$wtree</font> -
-  <b><font color=#3a6797>set</font></b> ltree [alited::tree::GetTree]
-  <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#6c3e67>-exact</font> <font color=#6c3e67>-index</font> {4 1} <font color=#1b1baa>$ltree</font> <font color=#1b1baa>$fname</font>]
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i</font>&gt;-1} {<b><font color=#3a6797>set</font></b> ID [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$ltree</font> <font color=#1b1baa>$i</font> 2]}
-  SelectInTree <font color=#1b1baa>$wtree</font> <font color=#1b1baa>$ID</font>
+  SelectInTree <font color=#1b1baa>$wtree</font> [SearchInFileTree <font color=#1b1baa>$fname</font> <font color=#1b1baa>$ID</font>]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::file::SelectInTree'>SelectInTree</a><span class='ns_scope'> [<a href="alited.html#::alited::file" title="::alited::file" class='ruff_cmd'>::alited::file</a>]</span><span class='tinylink'><a href='alited.html#::alited::file'>file</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -9010,9 +9028,9 @@ padding: 0%;
 
   <b><font color=#3a6797>catch</font></b> {
     <font color=#1b1baa>$wtree</font> selection add <font color=#1b1baa>$id</font>
-    <font color=#1b1baa>$wtree</font> see <font color=#1b1baa>$id</font>
+    alited::tree::ExpandSelection <font color=#1b1baa>$id</font> <font color=#1b1baa>$wtree</font>
   }
-  <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> after 200  <font color=#8b2a0e>&quot;catch <font color=#1b1baa>{</font>focus <font color=#1b1baa>$</font>wtree ;  <font color=#1b1baa>$</font>wtree selection set <font color=#1b1baa>$</font>id ; <font color=#1b1baa>$</font>wtree focus <font color=#1b1baa>$</font>id<font color=#1b1baa>}</font>&quot;</font>]
+  <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> after 200  <font color=#8b2a0e>&quot;catch <font color=#1b1baa>{</font>focus <font color=#1b1baa>$</font>wtree ;  <font color=#1b1baa>$</font>wtree selection set <font color=#1b1baa>$</font>id ; alited::tree::ExpandSelection <font color=#1b1baa>$</font>id <font color=#1b1baa>$</font>wtree ; <font color=#1b1baa>$</font>wtree focus <font color=#1b1baa>$</font>id<font color=#1b1baa>}</font>&quot;</font>]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::file::SortTreeSelFiles'>SortTreeSelFiles</a><span class='ns_scope'> [<a href="alited.html#::alited::file" title="::alited::file" class='ruff_cmd'>::alited::file</a>]</span><span class='tinylink'><a href='alited.html#::alited::file'>file</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -16189,7 +16207,7 @@ FtcEguWyAAAAAElFTkSuQmCC}
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> itemID [alited::tree::NewSelection]] ne {}} {
     <i><font color=#4b5d50># if a new unit is selected, show it in the unit tree</font></i>
     <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> Tree]
-    <font color=#1b1baa>$wtree</font> see <font color=#1b1baa>$itemID</font>
+    alited::tree::ExpandSelection <font color=#1b1baa>$itemID</font> <font color=#1b1baa>$wtree</font>
     <i><font color=#4b5d50># this code below redraws the tree's scrollbar</font></i>
     <font color=#1b1baa>$wtree</font> configure <font color=#6c3e67>-yscrollcommand</font> [<font color=#1b1baa>$wtree</font> cget <font color=#6c3e67>-yscrollcommand</font>]
   }
@@ -25890,6 +25908,7 @@ README.md}
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(TREE,isunits)</font>} {
     <b><font color=#3a6797>lassign</font></b> [CurrentItemByLine <font color=#1b1baa>$pos</font> 1] itemID
   } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> al(TREE,isexpand) <font color=#1b1baa>$isexp</font>
     <b><font color=#3a6797>set</font></b> itemID [CurrentItem]
   }
   <b><font color=#3a6797>set</font></b> branch [<b><font color=#3a6797>set</font></b> selbranch {}]
@@ -25907,6 +25926,26 @@ README.md}
   } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$selbranch</font> ne {}} {
     <font color=#1b1baa>$wtree</font> selection set <font color=#1b1baa>$selbranch</font>
     SeeSelection
+  }
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::tree::ExpandSelection'>ExpandSelection</a><span class='ns_scope'> [<a href="alited.html#::alited::tree" title="::alited::tree" class='ruff_cmd'>::alited::tree</a>]</span><span class='tinylink'><a href='alited.html#::alited::tree'>tree</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Expands the tree selection, counting the file tree expanded mode.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>ExpandSelection</span> <span class='ruff_arg'>selID ?wtree?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>selID</code></code></td><td class='ruff_defitem'>ID of selection</td></tr>
+<tr><td class='ruff_defitem'><code><code>wtree</code></code></td><td class='ruff_defitem'>tree's path; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_tree_ExpandSelection' href="javascript:toggleSource('alited_tree_ExpandSelection')">Show source</a></p>
+<div id='alited_tree_ExpandSelection' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::tree::ExpandSelection {selID {wtree {}}} {
+  <i><font color=#4b5d50># Expands the tree selection, counting the file tree expanded mode.</font></i>
+  <i><font color=#4b5d50>#   selID - ID of selection</font></i>
+  <i><font color=#4b5d50>#   wtree - tree's path</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(TREE,isunits)</font> || <font color=#1b1baa>$al(TREE,isexpand)</font>} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtree</font> eq {}} {<b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> Tree]}
+    <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$wtree</font> see <font color=#1b1baa>$selID</font>}
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::tree::ForEach'>ForEach</a><span class='ns_scope'> [<a href="alited.html#::alited::tree" title="::alited::tree" class='ruff_cmd'>::alited::tree</a>]</span><span class='tinylink'><a href='alited.html#::alited::tree'>tree</a>, <a href='#top'>Top</a></span></h4>
@@ -26287,7 +26326,7 @@ README.md}
       <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$wtree</font> selection add <font color=#1b1baa>$item</font>}
     }
   }
-  <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$wtree</font> see [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$selection</font> 0]}
+  <b><font color=#3a6797>catch</font></b> {ExpandSelection [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$selection</font> 0] <font color=#1b1baa>$wtree</font>}
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::tree::SaveCursorPos'>SaveCursorPos</a><span class='ns_scope'> [<a href="alited.html#::alited::tree" title="::alited::tree" class='ruff_cmd'>::alited::tree</a>]</span><span class='tinylink'><a href='alited.html#::alited::tree'>tree</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -26318,6 +26357,24 @@ README.md}
   }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$pos</font>
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::tree::SeeFile'>SeeFile</a><span class='ns_scope'> [<a href="alited.html#::alited::tree" title="::alited::tree" class='ruff_cmd'>::alited::tree</a>]</span><span class='tinylink'><a href='alited.html#::alited::tree'>tree</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Sees file name in file tree.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>SeeFile</span> <span class='ruff_arg'>fname</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>fname</code></code></td><td class='ruff_defitem'>file name</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_tree_SeeFile' href="javascript:toggleSource('alited_tree_SeeFile')">Show source</a></p>
+<div id='alited_tree_SeeFile' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::tree::SeeFile {fname} {
+  <i><font color=#4b5d50># Sees file name in file tree.</font></i>
+  <i><font color=#4b5d50>#   fname - file name</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited obPav obPav
+  <b><font color=#3a6797>set</font></b> id [alited::file::SearchInFileTree <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$id</font> ne {}} {
+    <b><font color=#3a6797>after</font></b> 10 <font color=#8b2a0e>&quot;<font color=#1b1baa>[$</font>obPav Tree<font color=#1b1baa>]</font> selection add <font color=#1b1baa>$</font>id; alited::tree::ExpandSelection <font color=#1b1baa>$</font>id&quot;</font>
+  }
+}<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::tree::SeeSelection'>SeeSelection</a><span class='ns_scope'> [<a href="alited.html#::alited::tree" title="::alited::tree" class='ruff_cmd'>::alited::tree</a>]</span><span class='tinylink'><a href='alited.html#::alited::tree'>tree</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Sees (makes visible) a current selected item in the tree.</p>
@@ -26333,7 +26390,7 @@ README.md}
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtree</font> eq {}} {<b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> Tree]}
   <b><font color=#3a6797>set</font></b> selection [<font color=#1b1baa>$wtree</font> selection]
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$selection</font>]==1} {<font color=#1b1baa>$wtree</font> see <font color=#1b1baa>$selection</font>}
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$selection</font>]==1} {ExpandSelection <font color=#1b1baa>$selection</font> <font color=#1b1baa>$wtree</font>}
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::tree::SelectUnits'>SelectUnits</a><span class='ns_scope'> [<a href="alited.html#::alited::tree" title="::alited::tree" class='ruff_cmd'>::alited::tree</a>]</span><span class='tinylink'><a href='alited.html#::alited::tree'>tree</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -28468,6 +28525,7 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::file::SaveFileByName'>SaveFileByName</a><span class='tooltiptext'>Saves a file.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::file::SaveText'>SaveText</a><span class='tooltiptext'>Saves text buffer to file.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::file::SbhText'>SbhText</a><span class='tooltiptext'>Shows/hides the horizontal scrollbar of the text.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::file::SearchInFileTree'>SearchInFileTree</a><span class='tooltiptext'>Searches a file name in file tree.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::file::SelectFileInTree'>SelectFileInTree</a><span class='tooltiptext'>Finds a file in file tree and selects it.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::file::SelectInTree'>SelectInTree</a><span class='tooltiptext'>Selects an item in the file tree.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::file::SortTreeSelFiles'>SortTreeSelFiles</a><span class='tooltiptext'>Sorts a list of file tree's selected files.
@@ -29039,6 +29097,7 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::DirContents'>DirContents</a><span class='tooltiptext'>Reads a directory's contents.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::DropItems'>DropItems</a><span class='tooltiptext'>Drops (moves) selected items to a current position.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::ExpandContractTree'>ExpandContractTree</a><span class='tooltiptext'>Expands or contracts the tree.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::ExpandSelection'>ExpandSelection</a><span class='tooltiptext'>Expands the tree selection, counting the file tree expanded mode.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::ForEach'>ForEach</a><span class='tooltiptext'>Scans all items of the tree.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::GetDirectoryContents'>GetDirectoryContents</a><span class='tooltiptext'>Gets a directory's contents.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::GetTooltip'>GetTooltip</a><span class='tooltiptext'>Gets a tip for unit / file tree's item.
@@ -29051,6 +29110,7 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::PrepareDirectoryContents'>PrepareDirectoryContents</a><span class='tooltiptext'>Prepares reading a directory's contents.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::RecreateTree'>RecreateTree</a><span class='tooltiptext'>Recreates the tree and restores its selections.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::SaveCursorPos'>SaveCursorPos</a><span class='tooltiptext'>Saves current unit's cursor position.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::SeeFile'>SeeFile</a><span class='tooltiptext'>Sees file name in file tree.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::SeeSelection'>SeeSelection</a><span class='tooltiptext'>Sees (makes visible) a current selected item in the tree.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::SelectUnits'>SelectUnits</a><span class='tooltiptext'>Selects units at Ctrl/Shift clicking the unit tree.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::ShowPopupMenu'>ShowPopupMenu</a><span class='tooltiptext'>Creates and opens a popup menu at right clicking the tree.

@@ -114,6 +114,9 @@ comm - the command
 fname - 1st file name
 fname2 - 2nd file name
 Returns yes, if success.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#file::SearchInFileTree">SearchInFileTree</a><span class=tooltiptext> file::SearchInFileTree : Searches a file name in file tree.
+fname - file name
+ID - returned ID if file name isn't found</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::SelectFileInTree">SelectFileInTree</a><span class=tooltiptext> file::SelectFileInTree : Finds a file in file tree and selects it.
 wtree - file tree's path
 fname - file name
@@ -743,6 +746,18 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#ca14ca>return</font></b> yes
 }
 <i><font color=#4b5d50>#_______________________</font></i>
+<a id=file::SearchInFileTree></a>
+<b><font color=#ca14ca>proc</font></b> file::SearchInFileTree {fname {ID {}}} {
+  <i><font color=#4b5d50># Searches a file name in file tree.</font></i>
+  <i><font color=#4b5d50>#   fname - file name</font></i>
+  <i><font color=#4b5d50>#   ID - returned ID if file name isn't found</font></i>
+
+  <b><font color=#3a6797>set</font></b> ltree [alited::tree::GetTree]
+  <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-exact</font> <font color=#653760>-index</font> {4 1} <font color=#1b1baa>$ltree</font> <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i</font>&gt;-1} {<b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$ltree</font> <font color=#1b1baa>$i</font> 2]} {<b><font color=#3a6797>set</font></b> res <font color=#1b1baa>$ID</font>}
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
 <a id=file::SelectFileInTree></a>
 <b><font color=#ca14ca>proc</font></b> file::SelectFileInTree {wtree fname ID} {
   <i><font color=#4b5d50># Finds a file in file tree and selects it.</font></i>
@@ -751,10 +766,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50>#   ID - ID of default item to select (if the file not found)</font></i>
 
   alited::tree::RecreateTree <font color=#1b1baa>$wtree</font> -
-  <b><font color=#3a6797>set</font></b> ltree [alited::tree::GetTree]
-  <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-exact</font> <font color=#653760>-index</font> {4 1} <font color=#1b1baa>$ltree</font> <font color=#1b1baa>$fname</font>]
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i</font>&gt;-1} {<b><font color=#3a6797>set</font></b> ID [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$ltree</font> <font color=#1b1baa>$i</font> 2]}
-  SelectInTree <font color=#1b1baa>$wtree</font> <font color=#1b1baa>$ID</font>
+  SelectInTree <font color=#1b1baa>$wtree</font> [SearchInFileTree <font color=#1b1baa>$fname</font> <font color=#1b1baa>$ID</font>]
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=file::RenameFile></a>
@@ -989,7 +1001,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50>#   Message - name of procedure for &quot;open file&quot; message</font></i>
   <i><font color=#4b5d50># Returns the file's tab ID if it's loaded, or {} if not loaded.</font></i>
 
-  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   <b><font color=#3a6797>variable</font></b> ansOpen
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fnames</font> eq {}} {
     <b><font color=#3a6797>set</font></b> fnames [ChooseMultipleFiles]
@@ -1048,7 +1060,8 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     alited::bar::BAR <font color=#1b1baa>$TID</font> show <font color=#1b1baa>$many</font> <font color=#1b1baa>$many</font>
   }
   RecreateFileTree
-  alited::FocusText
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$islist</font>} {alited::tree::SeeFile [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$fnames</font> 0]}
+  <b><font color=#3a6797>after</font></b> 20 alited::FocusText
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$TID</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -1117,6 +1130,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     alited::edit::Modified <font color=#1b1baa>$TID</font> <font color=#1b1baa>$wtxt</font>
     alited::main::HighlightText <font color=#1b1baa>$TID</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$wtxt</font>
     RecreateFileTree
+    alited::tree::SeeFile <font color=#1b1baa>$fname</font>
   }
   <b><font color=#ca14ca>return</font></b> 1
 }
@@ -1899,10 +1913,10 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 
   <b><font color=#3a6797>catch</font></b> {
     <font color=#1b1baa>$wtree</font> selection add <font color=#1b1baa>$id</font>
-    <font color=#1b1baa>$wtree</font> see <font color=#1b1baa>$id</font>
+    alited::tree::ExpandSelection <font color=#1b1baa>$id</font> <font color=#1b1baa>$wtree</font>
   }
   <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> after 200 \
-    <font color=#8b2a0e>&quot;catch <font color=#1b1baa>{</font>focus <font color=#1b1baa>$</font>wtree ;  <font color=#1b1baa>$</font>wtree selection set <font color=#1b1baa>$</font>id ; <font color=#1b1baa>$</font>wtree focus <font color=#1b1baa>$</font>id<font color=#1b1baa>}</font>&quot;</font>]
+    <font color=#8b2a0e>&quot;catch <font color=#1b1baa>{</font>focus <font color=#1b1baa>$</font>wtree ;  <font color=#1b1baa>$</font>wtree selection set <font color=#1b1baa>$</font>id ; alited::tree::ExpandSelection <font color=#1b1baa>$</font>id <font color=#1b1baa>$</font>wtree ; <font color=#1b1baa>$</font>wtree focus <font color=#1b1baa>$</font>id<font color=#1b1baa>}</font>&quot;</font>]
 }
 <a id=Recent_files></a>
 <i><font color=#4b5d50># ________________________ Recent files _________________________ #</font></i>

@@ -317,6 +317,11 @@ width - width of the gutter, in chars
 shift - addition to the width (to shift from the left side)
 args - additional arguments for tracing
 The code is borrowed from open source tedit project.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#bindGutter">bindGutter</a><span class=tooltiptext> bindGutter : Makes bindings for a text and its gutter.
+txt - path to the text widget
+canvas - canvas of the gutter
+width - width of the gutter, in chars
+shift - addition to the width (to shift from the left side)</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#gutterContents">gutterContents</a><span class=tooltiptext> gutterContents : Gets contents of a text's gutter
 txt - text's path</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#AuxSetChooserGeometry">AuxSetChooserGeometry</a><span class=tooltiptext> AuxSetChooserGeometry : Auxiliary method to set some Tk choosers' geometry.
@@ -2220,6 +2225,22 @@ Docs:
     }
   }
   <i><font color=#4b5d50>#_______________________</font></i>
+<a id=bindGutter></a>
+  <b><font color=#ca14ca>method</font></b> bindGutter {txt canvas {width 5} {shift 3}} {
+    <i><font color=#4b5d50># Makes bindings for a text and its gutter.</font></i>
+    <i><font color=#4b5d50>#  txt - path to the text widget</font></i>
+    <i><font color=#4b5d50>#  canvas - canvas of the gutter</font></i>
+    <i><font color=#4b5d50>#  width - width of the gutter, in chars</font></i>
+    <i><font color=#4b5d50>#  shift - addition to the width (to shift from the left side)</font></i>
+
+    <b><font color=#3a6797>set</font></b> bind [<b><font color=#3a6797>list</font></b> [<b><font color=#ca14ca>self</font></b>] fillGutter <font color=#1b1baa>$txt</font> <font color=#1b1baa>$canvas</font> <font color=#1b1baa>$width</font> <font color=#1b1baa>$shift</font>]
+    <b><font color=#134070>bind</font></b> <font color=#1b1baa>$txt</font> &lt;Configure&gt; <font color=#1b1baa>$bind</font>
+    <b><font color=#134070>bind</font></b> <font color=#1b1baa>$txt</font> &lt;Motion&gt; [<b><font color=#3a6797>list</font></b> after idle <font color=#1b1baa>$bind</font>]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>trace</font></b> info execution <font color=#1b1baa>$txt</font>] eq {}} {
+      <b><font color=#3a6797>trace</font></b> add execution <font color=#1b1baa>$txt</font> leave <font color=#1b1baa>$bind</font>
+    }
+  }
+  <i><font color=#4b5d50>#_______________________</font></i>
 <a id=gutterContents></a>
   <b><font color=#ca14ca>method</font></b> gutterContents {txt} {
     <i><font color=#4b5d50># Gets contents of a text's gutter</font></i>
@@ -3281,11 +3302,7 @@ Docs:
         <font color=#653760>-gutter</font> {
           <b><font color=#3a6797>lassign</font></b> [::apave::parseOptions <font color=#1b1baa>$v</font> <font color=#653760>-canvas</font> Gut <font color=#653760>-width</font> 5 <font color=#653760>-shift</font> 6] canvas width shift
           <b><font color=#3a6797>if</font></b> {![<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$canvas</font>]} {<b><font color=#3a6797>set</font></b> canvas [<b><font color=#ca14ca>my</font></b> <font color=#1b1baa>$canvas</font>]}
-          <b><font color=#3a6797>set</font></b> bind [<b><font color=#3a6797>list</font></b> [<b><font color=#ca14ca>self</font></b>] fillGutter <font color=#1b1baa>$w</font> <font color=#1b1baa>$canvas</font> <font color=#1b1baa>$width</font> <font color=#1b1baa>$shift</font>]
-          <b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> &lt;Configure&gt; <font color=#1b1baa>$bind</font>
-          <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>trace</font></b> info execution <font color=#1b1baa>$w</font>] eq {}} {
-            <b><font color=#3a6797>trace</font></b> add execution <font color=#1b1baa>$w</font> leave <font color=#1b1baa>$bind</font>
-          }
+          <b><font color=#ca14ca>my</font></b> bindGutter <font color=#1b1baa>$w</font> <font color=#1b1baa>$canvas</font> <font color=#1b1baa>$width</font> <font color=#1b1baa>$shift</font>
         }
         <font color=#653760>-onReturn</font> {   ;<i><font color=#4b5d50># makes a command run at Enter key pressing</font></i>
           <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$v</font> cmd from to
