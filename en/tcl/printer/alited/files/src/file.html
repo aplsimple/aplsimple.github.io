@@ -182,6 +182,7 @@ doit - flag "do save now, without any GUI"
 See also: ini::SaveCurrentIni</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::SaveFileAs">SaveFileAs</a><span class=tooltiptext> file::SaveFileAs : Saves the current file "as".
 TID - ID of tab</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#file::AfterSaving">AfterSaving</a><span class=tooltiptext> file::AfterSaving : Actions after saving files.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::SaveAndClose">SaveAndClose</a><span class=tooltiptext> file::SaveAndClose : Saves and closes a file.
 TID - tab's ID
 This handles pressing Ctrl+W.
@@ -901,7 +902,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>set</font></b> fname2 [<b><font color=#3a6797>file</font></b> join [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname2</font>] <font color=#1b1baa>$name2</font>]
     <b><font color=#3a6797>if</font></b> {![CommandForFile2 copy <font color=#1b1baa>$fname</font> <font color=#1b1baa>$fname2</font>]} <b><font color=#ca14ca>return</font></b>
     OpenFile <font color=#1b1baa>$fname2</font>
-    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(TREE,isunits)</font>} RecreateFileTree
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(TREE,isunits)</font>} {RecreateFileTree; AfterSaving}
   }
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -1060,7 +1061,6 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     alited::bar::BAR <font color=#1b1baa>$TID</font> show <font color=#1b1baa>$many</font> <font color=#1b1baa>$many</font>
   }
   RecreateFileTree
-  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$islist</font>} {alited::tree::SeeFile [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$fnames</font> 0]}
   <b><font color=#3a6797>after</font></b> 20 alited::FocusText
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$TID</font>
 }
@@ -1130,7 +1130,6 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     alited::edit::Modified <font color=#1b1baa>$TID</font> <font color=#1b1baa>$wtxt</font>
     alited::main::HighlightText <font color=#1b1baa>$TID</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$wtxt</font>
     RecreateFileTree
-    alited::tree::SeeFile <font color=#1b1baa>$fname</font>
   }
   <b><font color=#ca14ca>return</font></b> 1
 }
@@ -1150,12 +1149,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   }
   <b><font color=#3a6797>set</font></b> res [SaveFileByName <font color=#1b1baa>$TID</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$doit</font>]
   alited::ini::SaveCurrentIni <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>res && <font color=#1b1baa>$</font>al(INI,save_onsave)&quot;</font> <font color=#1b1baa>$doit</font>
-  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$doit</font>} {
-    alited::main::ShowHeader yes
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(TREE,isunits)</font>} {<b><font color=#3a6797>set</font></b> fname {}}
-    alited::tree::RecreateTree {} <font color=#1b1baa>$fname</font>
-    alited::tree::SeeSelection
-  }
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$doit</font>} AfterSaving
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -1184,12 +1178,18 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   } <b><font color=#3a6797>elseif</font></b> {[<b><font color=#3a6797>set</font></b> res [SaveFileByName <font color=#1b1baa>$TID</font> <font color=#1b1baa>$fname</font>]]} {
     AddRecent <font color=#1b1baa>$fnameorig</font>
     RenameFile <font color=#1b1baa>$TID</font> <font color=#1b1baa>$fname</font>
-    alited::main::ShowHeader yes
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(TREE,isunits)</font>} {<b><font color=#3a6797>set</font></b> fname {}}
-    alited::tree::RecreateTree {} <font color=#1b1baa>$fname</font>
-    alited::tree::SeeSelection
+    AfterSaving
   }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=file::AfterSaving></a>
+<b><font color=#ca14ca>proc</font></b> file::AfterSaving {} {
+  <i><font color=#4b5d50># Actions after saving files.</font></i>
+
+  alited::main::ShowHeader yes
+  alited::main::UpdateAll
+  alited::tree::SeeTreeItem
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=file::SaveAndClose></a>
@@ -1542,7 +1542,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(TREE,isunits)</font> && ![<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$::alited::project::win</font>]} {
     [<font color=#1b1baa>$obPav</font> Tree] selection set {}
     <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>after</font></b> cancel <font color=#1b1baa>$al(_AFT_RECR_)</font>}
-    <b><font color=#3a6797>set</font></b> al(_AFT_RECR_) [<b><font color=#3a6797>after</font></b> 100 ::alited::tree::RecreateTree]
+    <b><font color=#3a6797>set</font></b> al(_AFT_RECR_) [<b><font color=#3a6797>after</font></b> 100 {alited::tree::RecreateTree; alited::tree::SeeSelection}]
   }
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -1901,7 +1901,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$in1</font>&gt;=[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$ltree</font>]} {<b><font color=#3a6797>set</font></b> in1 end}
     <b><font color=#3a6797>set</font></b> id1 [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$ltree</font> <font color=#1b1baa>$in1</font> 2]
     <font color=#1b1baa>$wtree</font> selection set {}
-    SelectInTree <font color=#1b1baa>$wtree</font> <font color=#1b1baa>$id1</font>
+    AfterSaving
   }
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -1913,10 +1913,10 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 
   <b><font color=#3a6797>catch</font></b> {
     <font color=#1b1baa>$wtree</font> selection add <font color=#1b1baa>$id</font>
-    alited::tree::ExpandSelection <font color=#1b1baa>$id</font> <font color=#1b1baa>$wtree</font>
+    <font color=#1b1baa>$wtree</font> see <font color=#1b1baa>$id</font>
   }
   <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> after 200 \
-    <font color=#8b2a0e>&quot;catch <font color=#1b1baa>{</font>focus <font color=#1b1baa>$</font>wtree ;  <font color=#1b1baa>$</font>wtree selection set <font color=#1b1baa>$</font>id ; alited::tree::ExpandSelection <font color=#1b1baa>$</font>id <font color=#1b1baa>$</font>wtree ; <font color=#1b1baa>$</font>wtree focus <font color=#1b1baa>$</font>id<font color=#1b1baa>}</font>&quot;</font>]
+    <font color=#8b2a0e>&quot;catch <font color=#1b1baa>{</font>focus <font color=#1b1baa>$</font>wtree ;  <font color=#1b1baa>$</font>wtree selection set <font color=#1b1baa>$</font>id ; <font color=#1b1baa>$</font>wtree see <font color=#1b1baa>$</font>id ; <font color=#1b1baa>$</font>wtree focus <font color=#1b1baa>$</font>id<font color=#1b1baa>}</font>&quot;</font>]
 }
 <a id=Recent_files></a>
 <i><font color=#4b5d50># ________________________ Recent files _________________________ #</font></i>

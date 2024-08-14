@@ -7141,6 +7141,18 @@ padding: 0%;
     FillRecent
   }
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::file::AfterSaving'>AfterSaving</a><span class='ns_scope'> [<a href="alited.html#::alited::file" title="::alited::file" class='ruff_cmd'>::alited::file</a>]</span><span class='tinylink'><a href='alited.html#::alited::file'>file</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Actions after saving files.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>AfterSaving</span> </div>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_file_AfterSaving' href="javascript:toggleSource('alited_file_AfterSaving')">Show source</a></p>
+<div id='alited_file_AfterSaving' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::file::AfterSaving {} {
+  <i><font color=#4b5d50># Actions after saving files.</font></i>
+
+  alited::main::ShowHeader yes
+  alited::main::UpdateAll
+  alited::tree::SeeTreeItem
+}<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::file::AllSaved'>AllSaved</a><span class='ns_scope'> [<a href="alited.html#::alited::file" title="::alited::file" class='ruff_cmd'>::alited::file</a>]</span><span class='tinylink'><a href='alited.html#::alited::file'>file</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Checks whether all files are saved. Saves them if not.</p>
@@ -7302,7 +7314,7 @@ padding: 0%;
     <b><font color=#3a6797>set</font></b> fname2 [<b><font color=#3a6797>file</font></b> join [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname2</font>] <font color=#1b1baa>$name2</font>]
     <b><font color=#3a6797>if</font></b> {![CommandForFile2 copy <font color=#1b1baa>$fname</font> <font color=#1b1baa>$fname2</font>]} <b><font color=#ca14ca>return</font></b>
     OpenFile <font color=#1b1baa>$fname2</font>
-    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(TREE,isunits)</font>} RecreateFileTree
+    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(TREE,isunits)</font>} {RecreateFileTree; AfterSaving}
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::file::CloneFileName'>CloneFileName</a><span class='ns_scope'> [<a href="alited.html#::alited::file" title="::alited::file" class='ruff_cmd'>::alited::file</a>]</span><span class='tinylink'><a href='alited.html#::alited::file'>file</a>, <a href='#top'>Top</a></span></h4>
@@ -7537,7 +7549,7 @@ padding: 0%;
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$in1</font>&gt;=[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$ltree</font>]} {<b><font color=#3a6797>set</font></b> in1 end}
     <b><font color=#3a6797>set</font></b> id1 [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$ltree</font> <font color=#1b1baa>$in1</font> 2]
     <font color=#1b1baa>$wtree</font> selection set {}
-    SelectInTree <font color=#1b1baa>$wtree</font> <font color=#1b1baa>$id1</font>
+    AfterSaving
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::file::DeleteFile'>DeleteFile</a><span class='ns_scope'> [<a href="alited.html#::alited::file" title="::alited::file" class='ruff_cmd'>::alited::file</a>]</span><span class='tinylink'><a href='alited.html#::alited::file'>file</a>, <a href='#top'>Top</a></span></h4>
@@ -8385,7 +8397,6 @@ padding: 0%;
     alited::bar::BAR <font color=#1b1baa>$TID</font> show <font color=#1b1baa>$many</font> <font color=#1b1baa>$many</font>
   }
   RecreateFileTree
-  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$islist</font>} {alited::tree::SeeFile [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$fnames</font> 0]}
   <b><font color=#3a6797>after</font></b> 20 alited::FocusText
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$TID</font>
 }<br><br></code></pre></div>
@@ -8560,7 +8571,7 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(TREE,isunits)</font> && ![<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$::alited::project::win</font>]} {
     [<font color=#1b1baa>$obPav</font> Tree] selection set {}
     <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>after</font></b> cancel <font color=#1b1baa>$al(_AFT_RECR_)</font>}
-    <b><font color=#3a6797>set</font></b> al(_AFT_RECR_) [<b><font color=#3a6797>after</font></b> 100 ::alited::tree::RecreateTree]
+    <b><font color=#3a6797>set</font></b> al(_AFT_RECR_) [<b><font color=#3a6797>after</font></b> 100 {alited::tree::RecreateTree; alited::tree::SeeSelection}]
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::file::Reload1'>Reload1</a><span class='ns_scope'> [<a href="alited.html#::alited::file" title="::alited::file" class='ruff_cmd'>::alited::file</a>]</span><span class='tinylink'><a href='alited.html#::alited::file'>file</a>, <a href='#top'>Top</a></span></h4>
@@ -8823,12 +8834,7 @@ padding: 0%;
   }
   <b><font color=#3a6797>set</font></b> res [SaveFileByName <font color=#1b1baa>$TID</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$doit</font>]
   alited::ini::SaveCurrentIni <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>res && <font color=#1b1baa>$</font>al(INI,save_onsave)&quot;</font> <font color=#1b1baa>$doit</font>
-  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$doit</font>} {
-    alited::main::ShowHeader yes
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(TREE,isunits)</font>} {<b><font color=#3a6797>set</font></b> fname {}}
-    alited::tree::RecreateTree {} <font color=#1b1baa>$fname</font>
-    alited::tree::SeeSelection
-  }
+  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$doit</font>} AfterSaving
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::file::SaveFileAs'>SaveFileAs</a><span class='ns_scope'> [<a href="alited.html#::alited::file" title="::alited::file" class='ruff_cmd'>::alited::file</a>]</span><span class='tinylink'><a href='alited.html#::alited::file'>file</a>, <a href='#top'>Top</a></span></h4>
@@ -8862,10 +8868,7 @@ padding: 0%;
   } <b><font color=#3a6797>elseif</font></b> {[<b><font color=#3a6797>set</font></b> res [SaveFileByName <font color=#1b1baa>$TID</font> <font color=#1b1baa>$fname</font>]]} {
     AddRecent <font color=#1b1baa>$fnameorig</font>
     RenameFile <font color=#1b1baa>$TID</font> <font color=#1b1baa>$fname</font>
-    alited::main::ShowHeader yes
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(TREE,isunits)</font>} {<b><font color=#3a6797>set</font></b> fname {}}
-    alited::tree::RecreateTree {} <font color=#1b1baa>$fname</font>
-    alited::tree::SeeSelection
+    AfterSaving
   }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }<br><br></code></pre></div>
@@ -8912,7 +8915,6 @@ padding: 0%;
     alited::edit::Modified <font color=#1b1baa>$TID</font> <font color=#1b1baa>$wtxt</font>
     alited::main::HighlightText <font color=#1b1baa>$TID</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$wtxt</font>
     RecreateFileTree
-    alited::tree::SeeFile <font color=#1b1baa>$fname</font>
   }
   <b><font color=#ca14ca>return</font></b> 1
 }<br><br></code></pre></div>
@@ -9028,9 +9030,9 @@ padding: 0%;
 
   <b><font color=#3a6797>catch</font></b> {
     <font color=#1b1baa>$wtree</font> selection add <font color=#1b1baa>$id</font>
-    alited::tree::ExpandSelection <font color=#1b1baa>$id</font> <font color=#1b1baa>$wtree</font>
+    <font color=#1b1baa>$wtree</font> see <font color=#1b1baa>$id</font>
   }
-  <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> after 200  <font color=#8b2a0e>&quot;catch <font color=#1b1baa>{</font>focus <font color=#1b1baa>$</font>wtree ;  <font color=#1b1baa>$</font>wtree selection set <font color=#1b1baa>$</font>id ; alited::tree::ExpandSelection <font color=#1b1baa>$</font>id <font color=#1b1baa>$</font>wtree ; <font color=#1b1baa>$</font>wtree focus <font color=#1b1baa>$</font>id<font color=#1b1baa>}</font>&quot;</font>]
+  <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> after 200  <font color=#8b2a0e>&quot;catch <font color=#1b1baa>{</font>focus <font color=#1b1baa>$</font>wtree ;  <font color=#1b1baa>$</font>wtree selection set <font color=#1b1baa>$</font>id ; <font color=#1b1baa>$</font>wtree see <font color=#1b1baa>$</font>id ; <font color=#1b1baa>$</font>wtree focus <font color=#1b1baa>$</font>id<font color=#1b1baa>}</font>&quot;</font>]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::file::SortTreeSelFiles'>SortTreeSelFiles</a><span class='ns_scope'> [<a href="alited.html#::alited::file" title="::alited::file" class='ruff_cmd'>::alited::file</a>]</span><span class='tinylink'><a href='alited.html#::alited::file'>file</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -13339,9 +13341,7 @@ padding: 0%;
       obj basicDefFont [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$al(FONT)</font> <font color=#6c3e67>-family</font>]
     }
     <b><font color=#3a6797>set</font></b> smallfont <font color=#1b1baa>$al(FONT)</font>
-    <b><font color=#3a6797>catch</font></b> {
-      <b><font color=#3a6797>set</font></b> smallfont [<b><font color=#3a6797>dict</font></b> set smallfont <font color=#6c3e67>-size</font> <font color=#1b1baa>$al(FONTSIZE,small)</font>]
-    }
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>dict</font></b> set smallfont <font color=#6c3e67>-size</font> <font color=#1b1baa>$al(FONTSIZE,small)</font>}
     <b><font color=#3a6797>foreach</font></b> font {TkDefaultFont TkMenuFont TkHeadingFont TkCaptionFont} {
       <b><font color=#134070>font</font></b> configure <font color=#1b1baa>$font</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$al(FONT)</font>
     }
@@ -13351,9 +13351,7 @@ padding: 0%;
     ::baltip::configure <font color=#6c3e67>-font</font> <font color=#1b1baa>$smallfont</font>
   }
   <b><font color=#3a6797>set</font></b> statusfont [obj basicSmallFont]
-  <b><font color=#3a6797>catch</font></b> {
-    <b><font color=#3a6797>set</font></b> statusfont [<b><font color=#3a6797>dict</font></b> set statusfont <font color=#6c3e67>-size</font> <font color=#1b1baa>$al(FONTSIZE,small)</font>]
-  }
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>dict</font></b> set statusfont <font color=#6c3e67>-size</font> <font color=#1b1baa>$al(FONTSIZE,small)</font>}
   obj basicSmallFont <font color=#1b1baa>$statusfont</font>
   obj basicFontSize <font color=#1b1baa>$al(FONTSIZE,std)</font>
   <b><font color=#3a6797>set</font></b> gl [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$MSGSDIR</font> <font color=#1b1baa>$al(LOCAL)</font>]
@@ -13918,6 +13916,7 @@ FtcEguWyAAAAAElFTkSuQmCC}
   <b><font color=#3a6797>set</font></b> al(curtab) 0
   <b><font color=#3a6797>set</font></b> al(_check_menu_state_) 1
   <b><font color=#3a6797>set</font></b> al(comForce) [<b><font color=#3a6797>set</font></b> al(comForceLs) {}]
+  <b><font color=#3a6797>set</font></b> al(expandFT) 1
   <b><font color=#3a6797>set</font></b> al(FAV,current) [<b><font color=#3a6797>list</font></b>]
   <b><font color=#3a6797>set</font></b> al(FAV,visited) [<b><font color=#3a6797>list</font></b>]
   alited::favor::InitFavorites [<b><font color=#3a6797>list</font></b>]
@@ -14086,6 +14085,7 @@ FtcEguWyAAAAAElFTkSuQmCC}
     comforce   {<b><font color=#3a6797>set</font></b> al(comForce) <font color=#1b1baa>$val</font>}
     comforcech {<b><font color=#3a6797>set</font></b> al(comForceCh) <font color=#1b1baa>$val</font>}
     comforcels {<b><font color=#3a6797>set</font></b> al(comForceLs) <font color=#1b1baa>$val</font>}
+    expandFT   {<b><font color=#3a6797>set</font></b> al(expandFT) <font color=#1b1baa>$val</font>}
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::ini::ReadPrjOptions'>ReadPrjOptions</a><span class='ns_scope'> [<a href="alited.html#::alited::ini" title="::alited::ini" class='ruff_cmd'>::alited::ini</a>]</span><span class='tinylink'><a href='alited.html#::alited::ini'>ini</a>, <a href='#top'>Top</a></span></h4>
@@ -14129,6 +14129,10 @@ FtcEguWyAAAAAElFTkSuQmCC}
         <b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$val</font> 0]
         <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lsearch</font></b> <font color=#6c3e67>-exact</font> <font color=#6c3e67>-index</font> 0 <font color=#1b1baa>$al(tabs)</font> <font color=#1b1baa>$fname</font>]&lt;0} {
           <b><font color=#3a6797>lappend</font></b> al(tabs) <font color=#1b1baa>$val</font>
+          <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$val</font> \t] - - isexp
+          <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is boolean <font color=#6c3e67>-strict</font> <font color=#1b1baa>$isexp</font>]} {
+            <b><font color=#3a6797>dict</font></b> set al(expandUT) <font color=#1b1baa>$fname</font> <font color=#1b1baa>$isexp</font>
+          }
         }
       }
       recent {alited::file::InsertRecent <font color=#1b1baa>$val</font> end}
@@ -14425,7 +14429,8 @@ FtcEguWyAAAAAElFTkSuQmCC}
       } <b><font color=#3a6797>else</font></b> {
         <b><font color=#3a6797>set</font></b> pos [alited::bar::GetTabState <font color=#1b1baa>$TID</font> <font color=#6c3e67>--pos</font>]
       }
-      <b><font color=#3a6797>append</font></b> tab \t <font color=#1b1baa>$pos</font>  ;<i><font color=#4b5d50># save the current cursor position (fit to all files)</font></i>
+      <i><font color=#4b5d50># save the current cursor position (fit to all files)</font></i>
+      <b><font color=#3a6797>append</font></b> tab \t <font color=#1b1baa>$pos</font> \t [alited::tree::IsExpandUT <font color=#1b1baa>$tab</font>]
       <b><font color=#3a6797>catch</font></b> {
         <b><font color=#3a6797>set</font></b> wrap [[alited::main::GetWTXT <font color=#1b1baa>$TID</font>] cget <font color=#6c3e67>-wrap</font>]
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wrap</font> ne {word}} {
@@ -14481,6 +14486,7 @@ FtcEguWyAAAAAElFTkSuQmCC}
     <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> comforce=<font color=#1b1baa>$al(comForce)</font>
     <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> comforcech=<font color=#1b1baa>$al(comForceCh)</font>
     <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> comforcels=<font color=#1b1baa>$al(comForceLs)</font>
+    <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> expandFT=<font color=#1b1baa>$al(expandFT)</font>
   }
   <b><font color=#3a6797>puts</font></b> \n
   <b><font color=#3a6797>close</font></b> <font color=#1b1baa>$chan</font>
@@ -16203,15 +16209,13 @@ FtcEguWyAAAAAElFTkSuQmCC}
     <b><font color=#3a6797>set</font></b> al(TREE,units) no
     alited::tree::Create
   }
+  <i><font color=#4b5d50># this code below redraws the tree's scrollbar</font></i>
+  <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> Tree]
+  <font color=#1b1baa>$wtree</font> configure <font color=#6c3e67>-yscrollcommand</font> [<font color=#1b1baa>$wtree</font> cget <font color=#6c3e67>-yscrollcommand</font>]
   FocusText <font color=#1b1baa>$TID</font> <font color=#1b1baa>$pos</font>
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> itemID [alited::tree::NewSelection]] ne {}} {
-    <i><font color=#4b5d50># if a new unit is selected, show it in the unit tree</font></i>
-    <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> Tree]
-    alited::tree::ExpandSelection <font color=#1b1baa>$itemID</font> <font color=#1b1baa>$wtree</font>
-    <i><font color=#4b5d50># this code below redraws the tree's scrollbar</font></i>
-    <font color=#1b1baa>$wtree</font> configure <font color=#6c3e67>-yscrollcommand</font> [<font color=#1b1baa>$wtree</font> cget <font color=#6c3e67>-yscrollcommand</font>]
-  }
   <b><font color=#134070>focus</font></b> <font color=#1b1baa>$wtxt</font>
+  alited::tree::SeeTreeItem
+  alited::tree::IconContract
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$selrange</font> ne {}} {
     <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$wtxt</font> tag add sel {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$selrange</font>}
   }
@@ -22334,7 +22338,7 @@ FtcEguWyAAAAAElFTkSuQmCC}
   <b><font color=#3a6797>after</font></b> 200 {<b><font color=#3a6797>after</font></b> idle alited::main::FocusText}
   <b><font color=#3a6797>set</font></b> _dirtree [<b><font color=#3a6797>list</font></b>] ;<i><font color=#4b5d50># free its memory</font></i>
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(TREE,isunits)</font>} {
-    <b><font color=#3a6797>after</font></b> 200 {<b><font color=#3a6797>after</font></b> idle alited::tree::RecreateTree}
+    <b><font color=#3a6797>after</font></b> 200 {<b><font color=#3a6797>after</font></b> idle {alited::tree::RecreateTree; alited::tree::SeeTreeItem}}
   }
   <b><font color=#3a6797>set</font></b> updateGUI no ;<i><font color=#4b5d50># GUI will be updating anyway</font></i>
   <font color=#1b1baa>$obPrj</font> res <font color=#1b1baa>$win</font> 1
@@ -25532,14 +25536,6 @@ README.md}
     <b><font color=#134070>pack</font></b> [<font color=#1b1baa>$obPav</font> BtTCloT] <font color=#6c3e67>-side</font> left <font color=#6c3e67>-after</font> [<font color=#1b1baa>$obPav</font> BtTDelT]
     <b><font color=#134070>pack</font></b> [<font color=#1b1baa>$obPav</font> BtTOpen] <font color=#6c3e67>-side</font> left <font color=#6c3e67>-after</font> [<font color=#1b1baa>$obPav</font> BtTCloT]
     <i><font color=#4b5d50># get file tree's current &quot;open branch&quot; flags to check in CreateFilesTree</font></i>
-    <b><font color=#3a6797>set</font></b> al(FILETREE_BRANCH_OPEN) [<b><font color=#3a6797>dict</font></b> create]
-    <b><font color=#3a6797>foreach</font></b> item [GetTree] {
-      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$item</font> - - ID - values
-      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$values</font> -&gt; fname isfile
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is false <font color=#6c3e67>-strict</font> <font color=#1b1baa>$isfile</font>] && [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$ID</font> <font color=#6c3e67>-open</font>]} {
-        <b><font color=#3a6797>dict</font></b> set al(FILETREE_BRANCH_OPEN) <font color=#1b1baa>$fname</font> 1
-      }
-    }
   }
   <b><font color=#3a6797>set</font></b> TID [alited::bar::CurrentTabID]
   Delete <font color=#1b1baa>$wtree</font> {} <font color=#1b1baa>$TID</font>
@@ -25606,8 +25602,7 @@ README.md}
       <i><font color=#4b5d50># get the directory's flag of expanded branch (in the file tree)</font></i>
     }
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fcount</font>} {<b><font color=#3a6797>set</font></b> fc <font color=#1b1baa>$fcount</font>} {<b><font color=#3a6797>set</font></b> fc {}}
-    <b><font color=#3a6797>set</font></b> isopen [<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$al(FILETREE_BRANCH_OPEN)</font> <font color=#1b1baa>$fname</font>]
-    <font color=#1b1baa>$wtree</font> insert <font color=#1b1baa>$parent</font> end <font color=#6c3e67>-id</font> <font color=#1b1baa>$itemID</font> <font color=#6c3e67>-text</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>title&quot;</font>  <font color=#6c3e67>-values</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fc</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$isfile</font> <font color=#1b1baa>$itemID</font>] <font color=#6c3e67>-open</font> <font color=#1b1baa>$isopen</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$imgopt</font>
+    <font color=#1b1baa>$wtree</font> insert <font color=#1b1baa>$parent</font> end <font color=#6c3e67>-id</font> <font color=#1b1baa>$itemID</font> <font color=#6c3e67>-text</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>title&quot;</font>  <font color=#6c3e67>-values</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fc</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$isfile</font> <font color=#1b1baa>$itemID</font>] <font color=#6c3e67>-open</font> <font color=#1b1baa>$al(expandFT)</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$imgopt</font>
     <font color=#1b1baa>$wtree</font> tag add tagNorm <font color=#1b1baa>$itemID</font>
     <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$isfile</font>} {
       <font color=#1b1baa>$wtree</font> tag add tagBranch <font color=#1b1baa>$itemID</font>
@@ -25659,8 +25654,8 @@ README.md}
       <b><font color=#3a6797>set</font></b> isopen no
     } <b><font color=#3a6797>else</font></b> {
       <b><font color=#3a6797>set</font></b> imgopt <font color=#8b2a0e>&quot;-image alimg_gulls&quot;</font>
-      <b><font color=#3a6797>set</font></b> levtmp [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$al(_unittree,$TID)</font> <font color=#1b1baa>$iiuni</font> 0]
-      <b><font color=#3a6797>set</font></b> isopen [<b><font color=#3a6797>expr</font></b> (<font color=#1b1baa>$levtmp</font>+0)&gt;<font color=#1b1baa>$lev</font>]
+      <b><font color=#3a6797>set</font></b> levtmp [<b><font color=#3a6797>expr</font></b> ([<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$al(_unittree,$TID)</font> <font color=#1b1baa>$iiuni</font> 0]+0)]
+      <b><font color=#3a6797>set</font></b> isopen [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$levtmp</font>&gt;<font color=#1b1baa>$lev</font> && [IsExpandUT]}]
     }
     <font color=#1b1baa>$wtree</font> insert <font color=#1b1baa>$parent</font> end <font color=#6c3e67>-id</font> <font color=#1b1baa>$itemID</font> <font color=#6c3e67>-text</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>title&quot;</font>  <font color=#6c3e67>-values</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$l1</font> <font color=#1b1baa>$l2</font> {} <font color=#1b1baa>$itemID</font> <font color=#1b1baa>$lev</font> <font color=#1b1baa>$leaf</font> <font color=#1b1baa>$fl1</font>] <font color=#6c3e67>-open</font> <font color=#1b1baa>$isopen</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$imgopt</font>
     <font color=#1b1baa>$wtree</font> tag add tagNorm <font color=#1b1baa>$itemID</font>
@@ -25904,13 +25899,15 @@ README.md}
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
   <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> <font color=#1b1baa>$Tree</font>]
-  <b><font color=#3a6797>set</font></b> pos [[alited::main::CurrentWTXT] index insert]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(TREE,isunits)</font>} {
+    <b><font color=#3a6797>set</font></b> pos [[alited::main::CurrentWTXT] index insert]
     <b><font color=#3a6797>lassign</font></b> [CurrentItemByLine <font color=#1b1baa>$pos</font> 1] itemID
+    <b><font color=#3a6797>dict</font></b> set al(expandUT) [alited::bar::FileName] <font color=#1b1baa>$isexp</font>
   } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>set</font></b> al(TREE,isexpand) <font color=#1b1baa>$isexp</font>
+    <b><font color=#3a6797>set</font></b> al(expandFT) <font color=#1b1baa>$isexp</font>
     <b><font color=#3a6797>set</font></b> itemID [CurrentItem]
   }
+  IconContract
   <b><font color=#3a6797>set</font></b> branch [<b><font color=#3a6797>set</font></b> selbranch {}]
   <b><font color=#3a6797>foreach</font></b> item [GetTree {} <font color=#1b1baa>$Tree</font>] {
     <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$item</font> lev cnt ID
@@ -25930,7 +25927,7 @@ README.md}
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::tree::ExpandSelection'>ExpandSelection</a><span class='ns_scope'> [<a href="alited.html#::alited::tree" title="::alited::tree" class='ruff_cmd'>::alited::tree</a>]</span><span class='tinylink'><a href='alited.html#::alited::tree'>tree</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
-<p class='ruff'>Expands the tree selection, counting the file tree expanded mode.</p>
+<p class='ruff'>Expands the tree selection, counting the tree expanded mode.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>ExpandSelection</span> <span class='ruff_arg'>selID ?wtree?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>selID</code></code></td><td class='ruff_defitem'>ID of selection</td></tr>
@@ -25938,12 +25935,12 @@ README.md}
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_tree_ExpandSelection' href="javascript:toggleSource('alited_tree_ExpandSelection')">Show source</a></p>
 <div id='alited_tree_ExpandSelection' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::tree::ExpandSelection {selID {wtree {}}} {
-  <i><font color=#4b5d50># Expands the tree selection, counting the file tree expanded mode.</font></i>
+  <i><font color=#4b5d50># Expands the tree selection, counting the tree expanded mode.</font></i>
   <i><font color=#4b5d50>#   selID - ID of selection</font></i>
   <i><font color=#4b5d50>#   wtree - tree's path</font></i>
 
-  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(TREE,isunits)</font> || <font color=#1b1baa>$al(TREE,isexpand)</font>} {
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited obPav obPav
+  <b><font color=#3a6797>if</font></b> {[IsExpandedTree]} {
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtree</font> eq {}} {<b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> Tree]}
     <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$wtree</font> see <font color=#1b1baa>$selID</font>}
   }
@@ -26091,6 +26088,22 @@ README.md}
   }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$tree</font>
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::tree::IconContract'>IconContract</a><span class='ns_scope'> [<a href="alited.html#::alited::tree" title="::alited::tree" class='ruff_cmd'>::alited::tree</a>]</span><span class='tinylink'><a href='alited.html#::alited::tree'>tree</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Sets &quot;Contract All&quot; toolbar action's icon.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>IconContract</span> </div>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_tree_IconContract' href="javascript:toggleSource('alited_tree_IconContract')">Show source</a></p>
+<div id='alited_tree_IconContract' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::tree::IconContract {} {
+  <i><font color=#4b5d50># Sets &quot;Contract All&quot; toolbar action's icon.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited obPav obPav
+  <b><font color=#3a6797>if</font></b> {[IsExpandedTree]} {
+    <b><font color=#3a6797>set</font></b> ico alimg_minus
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> ico alimg_actions
+  }
+  [<font color=#1b1baa>$obPav</font> PanL].fraBot.panBM.fraTree.fra1.btTCtr configure <font color=#6c3e67>-image</font> <font color=#1b1baa>$ico</font>
+}<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::tree::IgnoredDir'>IgnoredDir</a><span class='ns_scope'> [<a href="alited.html#::alited::tree" title="::alited::tree" class='ruff_cmd'>::alited::tree</a>]</span><span class='tinylink'><a href='alited.html#::alited::tree'>tree</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Checks if a directory is in the list of the ignored ones.</p>
@@ -26106,6 +26119,33 @@ README.md}
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   <b><font color=#3a6797>set</font></b> dir [<b><font color=#3a6797>string</font></b> toupper [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$dir</font>]]
   <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>lsearch</font></b> <font color=#6c3e67>-exact</font> <font color=#1b1baa>$al(_dirignore)</font> <font color=#1b1baa>$dir</font>]&gt;-1}]
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::tree::IsExpandedTree'>IsExpandedTree</a><span class='ns_scope'> [<a href="alited.html#::alited::tree" title="::alited::tree" class='ruff_cmd'>::alited::tree</a>]</span><span class='tinylink'><a href='alited.html#::alited::tree'>tree</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Gets a flag &quot;the tree is in expanded mode&quot;.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>IsExpandedTree</span> </div>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_tree_IsExpandedTree' href="javascript:toggleSource('alited_tree_IsExpandedTree')">Show source</a></p>
+<div id='alited_tree_IsExpandedTree' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::tree::IsExpandedTree {} {
+  <i><font color=#4b5d50># Gets a flag &quot;the tree is in expanded mode&quot;.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$al(TREE,isunits)</font> && [IsExpandUT] || !<font color=#1b1baa>$al(TREE,isunits)</font> && <font color=#1b1baa>$al(expandFT)</font>}
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::tree::IsExpandUT'>IsExpandUT</a><span class='ns_scope'> [<a href="alited.html#::alited::tree" title="::alited::tree" class='ruff_cmd'>::alited::tree</a>]</span><span class='tinylink'><a href='alited.html#::alited::tree'>tree</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Gets a flag &quot;expanding unit tree of text&quot;.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>IsExpandUT</span> <span class='ruff_arg'>?fname?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>fname</code></code></td><td class='ruff_defitem'>file name; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_tree_IsExpandUT' href="javascript:toggleSource('alited_tree_IsExpandUT')">Show source</a></p>
+<div id='alited_tree_IsExpandUT' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::tree::IsExpandUT {{fname {}}} {
+  <i><font color=#4b5d50># Gets a flag &quot;expanding unit tree of text&quot;.</font></i>
+  <i><font color=#4b5d50>#   fname - file name</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> eq {}} {<b><font color=#3a6797>set</font></b> fname [alited::bar::FileName]}
+  <b><font color=#3a6797>expr</font></b> {![<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$al(expandUT)</font> <font color=#1b1baa>$fname</font>] || [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$al(expandUT)</font> <font color=#1b1baa>$fname</font>]}
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::tree::MoveItem'>MoveItem</a><span class='ns_scope'> [<a href="alited.html#::alited::tree" title="::alited::tree" class='ruff_cmd'>::alited::tree</a>]</span><span class='tinylink'><a href='alited.html#::alited::tree'>tree</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -26326,7 +26366,7 @@ README.md}
       <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$wtree</font> selection add <font color=#1b1baa>$item</font>}
     }
   }
-  <b><font color=#3a6797>catch</font></b> {ExpandSelection [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$selection</font> 0] <font color=#1b1baa>$wtree</font>}
+  <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$wtree</font> see [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$selection</font> 0]}
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::tree::SaveCursorPos'>SaveCursorPos</a><span class='ns_scope'> [<a href="alited.html#::alited::tree" title="::alited::tree" class='ruff_cmd'>::alited::tree</a>]</span><span class='tinylink'><a href='alited.html#::alited::tree'>tree</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -26359,20 +26399,21 @@ README.md}
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::tree::SeeFile'>SeeFile</a><span class='ns_scope'> [<a href="alited.html#::alited::tree" title="::alited::tree" class='ruff_cmd'>::alited::tree</a>]</span><span class='tinylink'><a href='alited.html#::alited::tree'>tree</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
-<p class='ruff'>Sees file name in file tree.</p>
+<p class='ruff'>Sees file name in tree.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>SeeFile</span> <span class='ruff_arg'>fname</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code><code>fname</code></code></td><td class='ruff_defitem'>file name</td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_tree_SeeFile' href="javascript:toggleSource('alited_tree_SeeFile')">Show source</a></p>
 <div id='alited_tree_SeeFile' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::tree::SeeFile {fname} {
-  <i><font color=#4b5d50># Sees file name in file tree.</font></i>
+  <i><font color=#4b5d50># Sees file name in tree.</font></i>
   <i><font color=#4b5d50>#   fname - file name</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited obPav obPav
   <b><font color=#3a6797>set</font></b> id [alited::file::SearchInFileTree <font color=#1b1baa>$fname</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$id</font> ne {}} {
-    <b><font color=#3a6797>after</font></b> 10 <font color=#8b2a0e>&quot;<font color=#1b1baa>[$</font>obPav Tree<font color=#1b1baa>]</font> selection add <font color=#1b1baa>$</font>id; alited::tree::ExpandSelection <font color=#1b1baa>$</font>id&quot;</font>
+    <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> Tree]
+    <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> after 100 <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>wtree selection set <font color=#1b1baa>$</font>id; <font color=#1b1baa>$</font>wtree see <font color=#1b1baa>$</font>id&quot;</font>]
   }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::tree::SeeSelection'>SeeSelection</a><span class='ns_scope'> [<a href="alited.html#::alited::tree" title="::alited::tree" class='ruff_cmd'>::alited::tree</a>]</span><span class='tinylink'><a href='alited.html#::alited::tree'>tree</a>, <a href='#top'>Top</a></span></h4>
@@ -26391,6 +26432,31 @@ README.md}
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtree</font> eq {}} {<b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> Tree]}
   <b><font color=#3a6797>set</font></b> selection [<font color=#1b1baa>$wtree</font> selection]
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$selection</font>]==1} {ExpandSelection <font color=#1b1baa>$selection</font> <font color=#1b1baa>$wtree</font>}
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::tree::SeeTreeItem'>SeeTreeItem</a><span class='ns_scope'> [<a href="alited.html#::alited::tree" title="::alited::tree" class='ruff_cmd'>::alited::tree</a>]</span><span class='tinylink'><a href='alited.html#::alited::tree'>tree</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Sees item in tree.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>SeeTreeItem</span> </div>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_tree_SeeTreeItem' href="javascript:toggleSource('alited_tree_SeeTreeItem')">Show source</a></p>
+<div id='alited_tree_SeeTreeItem' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::tree::SeeTreeItem {} {
+  <i><font color=#4b5d50># Sees item in tree.</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::alited::al(TREE,isunits)</font>} {
+    alited::tree::SeeUnit
+  } <b><font color=#3a6797>else</font></b> {
+    alited::tree::SeeFile [alited::bar::FileName]
+  }
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::tree::SeeUnit'>SeeUnit</a><span class='ns_scope'> [<a href="alited.html#::alited::tree" title="::alited::tree" class='ruff_cmd'>::alited::tree</a>]</span><span class='tinylink'><a href='alited.html#::alited::tree'>tree</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Sees unit name in tree.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>SeeUnit</span> </div>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_tree_SeeUnit' href="javascript:toggleSource('alited_tree_SeeUnit')">Show source</a></p>
+<div id='alited_tree_SeeUnit' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::tree::SeeUnit {} {
+  <i><font color=#4b5d50># Sees unit name in tree.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited obPav obPav
+  <b><font color=#3a6797>catch</font></b> {[<font color=#1b1baa>$obPav</font> Tree] see [CurrentItemByLine]}
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::tree::SelectUnits'>SelectUnits</a><span class='ns_scope'> [<a href="alited.html#::alited::tree" title="::alited::tree" class='ruff_cmd'>::alited::tree</a>]</span><span class='tinylink'><a href='alited.html#::alited::tree'>tree</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -26524,12 +26590,15 @@ README.md}
     <b><font color=#3a6797>unset</font></b> al(widthPanBM)  ;<i><font color=#4b5d50># the variable used to save the panel's size</font></i>
     [<font color=#1b1baa>$obPav</font> PanL] add [<font color=#1b1baa>$obPav</font> FraFV]
     RecreateTree
+    SeeUnit
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>set</font></b> al(widthPanBM) [<b><font color=#134070>winfo</font></b> geometry [<font color=#1b1baa>$::alited::obPav</font> PanBM]]
     [<font color=#1b1baa>$obPav</font> PanL] forget [<font color=#1b1baa>$obPav</font> FraFV]
     <b><font color=#3a6797>set</font></b> al(TREE,files) no
     Create
+    SeeFile [alited::bar::FileName]
   }
+  IconContract
   alited::main::FocusText
   <b><font color=#3a6797>update</font></b> idletasks
 }<br><br></code></pre></div>
@@ -28466,7 +28535,8 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::favor_ls::Split'>Split</a><span class='tooltiptext'>Splits a saved list by the list's dividers.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::favor_ls::Text'>Text</a><span class='tooltiptext'>Gets the text widget's content.
 </span></h4><h1><a href='#::alited::file'>alited::file</a></h1><h2><a href='#::alited::file-Commands'>Commands</a></h2><h4 class='tooltip'><a href='alited.html#::alited::file::Add'>Add</a><span class='tooltiptext'>Creates a file at the file tree.
-</span></h4><h4><a href='alited.html#::alited::file::AddRecent'>AddRecent</a></h4><h4 class='tooltip'><a href='alited.html#::alited::file::AllSaved'>AllSaved</a><span class='tooltiptext'>Checks whether all files are saved. Saves them if not.
+</span></h4><h4><a href='alited.html#::alited::file::AddRecent'>AddRecent</a></h4><h4 class='tooltip'><a href='alited.html#::alited::file::AfterSaving'>AfterSaving</a><span class='tooltiptext'>Actions after saving files.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::file::AllSaved'>AllSaved</a><span class='tooltiptext'>Checks whether all files are saved. Saves them if not.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::file::CheckForNew'>CheckForNew</a><span class='tooltiptext'>Checks if there is a file in bar of tabs and creates &quot;No name&quot; tab, if no tab exists.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::file::ChooseMultipleFiles'>ChooseMultipleFiles</a><span class='tooltiptext'>Choose miltiple files to open.
 </span></h4><h4><a href='alited.html#::alited::file::ChooseRecent'>ChooseRecent</a></h4><h4 class='tooltip'><a href='alited.html#::alited::file::ClearupAlTag'>ClearupAlTag</a><span class='tooltiptext'>Clears <em>al</em> array of <em>tag,tab</em> data.
@@ -29097,12 +29167,15 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::DirContents'>DirContents</a><span class='tooltiptext'>Reads a directory's contents.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::DropItems'>DropItems</a><span class='tooltiptext'>Drops (moves) selected items to a current position.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::ExpandContractTree'>ExpandContractTree</a><span class='tooltiptext'>Expands or contracts the tree.
-</span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::ExpandSelection'>ExpandSelection</a><span class='tooltiptext'>Expands the tree selection, counting the file tree expanded mode.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::ExpandSelection'>ExpandSelection</a><span class='tooltiptext'>Expands the tree selection, counting the tree expanded mode.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::ForEach'>ForEach</a><span class='tooltiptext'>Scans all items of the tree.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::GetDirectoryContents'>GetDirectoryContents</a><span class='tooltiptext'>Gets a directory's contents.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::GetTooltip'>GetTooltip</a><span class='tooltiptext'>Gets a tip for unit / file tree's item.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::GetTree'>GetTree</a><span class='tooltiptext'>Gets a tree or its branch.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::IconContract'>IconContract</a><span class='tooltiptext'>Sets &quot;Contract All&quot; toolbar action's icon.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::IgnoredDir'>IgnoredDir</a><span class='tooltiptext'>Checks if a directory is in the list of the ignored ones.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::IsExpandedTree'>IsExpandedTree</a><span class='tooltiptext'>Gets a flag &quot;the tree is in expanded mode&quot;.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::IsExpandUT'>IsExpandUT</a><span class='tooltiptext'>Gets a flag &quot;expanding unit tree of text&quot;.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::MoveItem'>MoveItem</a><span class='tooltiptext'>Moves items of the tree (units or files)
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::NewItemID'>NewItemID</a><span class='tooltiptext'>Gets a new ID for the tree item.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::NewSelection'>NewSelection</a><span class='tooltiptext'>Selects a new item of the unit tree.
@@ -29110,8 +29183,10 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::PrepareDirectoryContents'>PrepareDirectoryContents</a><span class='tooltiptext'>Prepares reading a directory's contents.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::RecreateTree'>RecreateTree</a><span class='tooltiptext'>Recreates the tree and restores its selections.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::SaveCursorPos'>SaveCursorPos</a><span class='tooltiptext'>Saves current unit's cursor position.
-</span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::SeeFile'>SeeFile</a><span class='tooltiptext'>Sees file name in file tree.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::SeeFile'>SeeFile</a><span class='tooltiptext'>Sees file name in tree.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::SeeSelection'>SeeSelection</a><span class='tooltiptext'>Sees (makes visible) a current selected item in the tree.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::SeeTreeItem'>SeeTreeItem</a><span class='tooltiptext'>Sees item in tree.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::SeeUnit'>SeeUnit</a><span class='tooltiptext'>Sees unit name in tree.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::SelectUnits'>SelectUnits</a><span class='tooltiptext'>Selects units at Ctrl/Shift clicking the unit tree.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::ShowPopupMenu'>ShowPopupMenu</a><span class='tooltiptext'>Creates and opens a popup menu at right clicking the tree.
 </span></h4><h4><a href='alited.html#::alited::tree::SwitchTree'>SwitchTree</a></h4><h4 class='tooltip'><a href='alited.html#::alited::tree::syOption'>syOption</a><span class='tooltiptext'>Gets -geometry option of dialogues.

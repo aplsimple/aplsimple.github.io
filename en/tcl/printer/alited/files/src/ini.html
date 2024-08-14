@@ -244,12 +244,13 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> al(ED,btsbd) 0        ;<i><font color=#4b5d50># borderwidth for bartabs</font></i>
   <b><font color=#3a6797>set</font></b> al(ED,BlinkCurs) 1    ;<i><font color=#4b5d50># blinking cursor</font></i>
   <b><font color=#3a6797>set</font></b> al(TREE,isunits) yes  ;<i><font color=#4b5d50># current mode of tree: units/files</font></i>
-  <b><font color=#3a6797>set</font></b> al(TREE,isexpand) 1   ;<i><font color=#4b5d50># current mode of tree: expanded or not</font></i>
   <b><font color=#3a6797>set</font></b> al(TREE,units) no     ;<i><font color=#4b5d50># flag &quot;is a unit tree created&quot;</font></i>
   <b><font color=#3a6797>set</font></b> al(TREE,files) no     ;<i><font color=#4b5d50># flag &quot;is a file tree created&quot;</font></i>
   <b><font color=#3a6797>set</font></b> al(TREE,cw0) 200      ;<i><font color=#4b5d50># tree column #0 width</font></i>
   <b><font color=#3a6797>set</font></b> al(TREE,cw1) 70       ;<i><font color=#4b5d50># tree column #1 width</font></i>
   <b><font color=#3a6797>set</font></b> al(TREE,showinfo) 0   ;<i><font color=#4b5d50># flag &quot;show info on a file in tips&quot;</font></i>
+  <b><font color=#3a6797>set</font></b> al(expandUT) [<b><font color=#3a6797>dict</font></b> create] ;<i><font color=#4b5d50># current mode of unit tree: expanded or not</font></i>
+  <b><font color=#3a6797>set</font></b> al(expandFT) 1        ;<i><font color=#4b5d50># current mode of file tree: expanded or not</font></i>
   <b><font color=#3a6797>set</font></b> al(FONT) {}           ;<i><font color=#4b5d50># default font's options</font></i>
   <b><font color=#3a6797>set</font></b> al(FONT,txt)          TkFixedFont
   <b><font color=#3a6797>set</font></b> al(FONT,defsmall)     TkDefaultFont
@@ -941,6 +942,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> al(curtab) 0
   <b><font color=#3a6797>set</font></b> al(_check_menu_state_) 1
   <b><font color=#3a6797>set</font></b> al(comForce) [<b><font color=#3a6797>set</font></b> al(comForceLs) {}]
+  <b><font color=#3a6797>set</font></b> al(expandFT) 1
   <b><font color=#3a6797>set</font></b> al(FAV,current) [<b><font color=#3a6797>list</font></b>]
   <b><font color=#3a6797>set</font></b> al(FAV,visited) [<b><font color=#3a6797>list</font></b>]
   alited::favor::InitFavorites [<b><font color=#3a6797>list</font></b>]
@@ -1005,6 +1007,10 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
         <b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$val</font> 0]
         <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-exact</font> <font color=#653760>-index</font> 0 <font color=#1b1baa>$al(tabs)</font> <font color=#1b1baa>$fname</font>]&lt;0} {
           <b><font color=#3a6797>lappend</font></b> al(tabs) <font color=#1b1baa>$val</font>
+          <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$val</font> \t] - - isexp
+          <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is boolean <font color=#653760>-strict</font> <font color=#1b1baa>$isexp</font>]} {
+            <b><font color=#3a6797>dict</font></b> set al(expandUT) <font color=#1b1baa>$fname</font> <font color=#1b1baa>$isexp</font>
+          }
         }
       }
       recent {alited::file::InsertRecent <font color=#1b1baa>$val</font> end}
@@ -1063,6 +1069,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     comforce   {<b><font color=#3a6797>set</font></b> al(comForce) <font color=#1b1baa>$val</font>}
     comforcech {<b><font color=#3a6797>set</font></b> al(comForceCh) <font color=#1b1baa>$val</font>}
     comforcels {<b><font color=#3a6797>set</font></b> al(comForceLs) <font color=#1b1baa>$val</font>}
+    expandFT   {<b><font color=#3a6797>set</font></b> al(expandFT) <font color=#1b1baa>$val</font>}
   }
 }
 <a id=Saving_settings></a>
@@ -1319,7 +1326,8 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       } <b><font color=#3a6797>else</font></b> {
         <b><font color=#3a6797>set</font></b> pos [alited::bar::GetTabState <font color=#1b1baa>$TID</font> <font color=#653760>--pos</font>]
       }
-      <b><font color=#3a6797>append</font></b> tab \t <font color=#1b1baa>$pos</font>  ;<i><font color=#4b5d50># save the current cursor position (fit to all files)</font></i>
+      <i><font color=#4b5d50># save the current cursor position (fit to all files)</font></i>
+      <b><font color=#3a6797>append</font></b> tab \t <font color=#1b1baa>$pos</font> \t [alited::tree::IsExpandUT <font color=#1b1baa>$tab</font>]
       <b><font color=#3a6797>catch</font></b> {
         <b><font color=#3a6797>set</font></b> wrap [[alited::main::GetWTXT <font color=#1b1baa>$TID</font>] cget <font color=#653760>-wrap</font>]
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wrap</font> ne {word}} {
@@ -1375,6 +1383,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> comforce=<font color=#1b1baa>$al(comForce)</font>
     <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> comforcech=<font color=#1b1baa>$al(comForceCh)</font>
     <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> comforcels=<font color=#1b1baa>$al(comForceLs)</font>
+    <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> expandFT=<font color=#1b1baa>$al(expandFT)</font>
   }
   <b><font color=#3a6797>puts</font></b> \n
   <b><font color=#3a6797>close</font></b> <font color=#1b1baa>$chan</font>
@@ -1747,9 +1756,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       obj basicDefFont [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$al(FONT)</font> <font color=#653760>-family</font>]
     }
     <b><font color=#3a6797>set</font></b> smallfont <font color=#1b1baa>$al(FONT)</font>
-    <b><font color=#3a6797>catch</font></b> {
-      <b><font color=#3a6797>set</font></b> smallfont [<b><font color=#3a6797>dict</font></b> set smallfont <font color=#653760>-size</font> <font color=#1b1baa>$al(FONTSIZE,small)</font>]
-    }
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>dict</font></b> set smallfont <font color=#653760>-size</font> <font color=#1b1baa>$al(FONTSIZE,small)</font>}
     <b><font color=#3a6797>foreach</font></b> font {TkDefaultFont TkMenuFont TkHeadingFont TkCaptionFont} {
       <b><font color=#134070>font</font></b> configure <font color=#1b1baa>$font</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$al(FONT)</font>
     }
@@ -1759,9 +1766,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     ::baltip::configure <font color=#653760>-font</font> <font color=#1b1baa>$smallfont</font>
   }
   <b><font color=#3a6797>set</font></b> statusfont [obj basicSmallFont]
-  <b><font color=#3a6797>catch</font></b> {
-    <b><font color=#3a6797>set</font></b> statusfont [<b><font color=#3a6797>dict</font></b> set statusfont <font color=#653760>-size</font> <font color=#1b1baa>$al(FONTSIZE,small)</font>]
-  }
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>dict</font></b> set statusfont <font color=#653760>-size</font> <font color=#1b1baa>$al(FONTSIZE,small)</font>}
   obj basicSmallFont <font color=#1b1baa>$statusfont</font>
   obj basicFontSize <font color=#1b1baa>$al(FONTSIZE,std)</font>
   <b><font color=#3a6797>set</font></b> gl [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$MSGSDIR</font> <font color=#1b1baa>$al(LOCAL)</font>]
