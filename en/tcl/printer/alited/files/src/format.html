@@ -933,7 +933,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al DIR DIR
   <b><font color=#3a6797>lassign</font></b> [BeforeFormatting] wtxt value
   <b><font color=#3a6797>set</font></b> value [alited::edit::EscapeValue <font color=#1b1baa>$value</font>]
-  <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$args</font> -&gt; fname
+  <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$args</font> fn1 fn2 modal
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists <font color=#1b1baa>$cont</font>]} {
     <b><font color=#3a6797>set</font></b> cont [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$cont</font>]
   }
@@ -953,7 +953,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       }
       <i><font color=#4b5d50># map format's own and template's woildcards</font></i>
       <b><font color=#3a6797>set</font></b> com [alited::Map {} \
-        <font color=#1b1baa>$com</font> %W <font color=#1b1baa>$wtxt</font> %v <font color=#1b1baa>$value</font> %f <font color=#1b1baa>$fname</font> \
+        <font color=#1b1baa>$com</font> %W <font color=#1b1baa>$wtxt</font> %v <font color=#1b1baa>$value</font> %f [alited::bar::FileName] \
         %d <font color=#1b1baa>$al(TPL,%d)</font> \
         %t <font color=#1b1baa>$al(TPL,%t)</font> \
         %u <font color=#1b1baa>$al(TPL,%u)</font> \
@@ -973,7 +973,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ending</font>} <b><font color=#ca14ca>break</font></b>
     }
   }
-  alited::FocusText
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is true <font color=#1b1baa>$modal</font>]} alited::FocusText
 }
 <a id=pluginable></a>
 <i><font color=#4b5d50>## ________________________ pluginable _________________________ ##</font></i>
@@ -994,10 +994,13 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> bind6(<font color=#1b1baa>$fform</font>) [<b><font color=#3a6797>list</font></b>]
   <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>set</font></b> icon {}]
   <b><font color=#3a6797>set</font></b> sep 0
+  <b><font color=#3a6797>set</font></b> modal 1
   <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$cont</font> {
     <b><font color=#3a6797>incr</font></b> il
-    <b><font color=#3a6797>set</font></b> sp [alited::edit::IniParameter sep <font color=#1b1baa>$line</font> <font color=#653760>-nocase</font>]
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is true <font color=#653760>-strict</font> <font color=#1b1baa>$sp</font>]} {<b><font color=#3a6797>set</font></b> sep 1}
+    <b><font color=#3a6797>foreach</font></b> o {sep modal} {
+      <b><font color=#3a6797>set</font></b> v [alited::edit::IniParameter <font color=#1b1baa>$o</font> <font color=#1b1baa>$line</font> <font color=#653760>-nocase</font>]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is boolean <font color=#653760>-strict</font> <font color=#1b1baa>$v</font>]} {<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$o</font> <font color=#1b1baa>$v</font>}
+    }
     <b><font color=#3a6797>set</font></b> ic [alited::edit::IniParameter icon <font color=#1b1baa>$line</font> <font color=#653760>-nocase</font>]
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ic</font> ne {}} {<b><font color=#3a6797>set</font></b> icon <font color=#1b1baa>$ic</font>}
     <b><font color=#3a6797>set</font></b> events [alited::edit::IniParameter events <font color=#1b1baa>$line</font> <font color=#653760>-nocase</font>]
@@ -1006,6 +1009,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ev</font> ne {}} {
           <b><font color=#3a6797>set</font></b> wasacc [<b><font color=#3a6797>info</font></b> exist cont6(<font color=#1b1baa>$fform</font>)]
           <b><font color=#3a6797>if</font></b> {[EventOK <font color=#1b1baa>$fullformname</font> <font color=#1b1baa>$fform</font> <font color=#1b1baa>$ev</font> <font color=#1b1baa>$wasacc</font>]} {
+            <b><font color=#3a6797>lappend</font></b> com <font color=#1b1baa>$modal</font>
             <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$ev</font> <font color=#1b1baa>$com</font>}
             <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$bind6($fform)</font>]} {<b><font color=#3a6797>set</font></b> res <font color=#1b1baa>$ev</font>}
             <b><font color=#3a6797>lappend</font></b> bind6(<font color=#1b1baa>$fform</font>) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$ev</font> <font color=#1b1baa>$com</font>]
@@ -1023,7 +1027,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     CreateFormatIcon <font color=#1b1baa>$icon</font> <font color=#1b1baa>$sep</font> <font color=#1b1baa>$com</font> <font color=#1b1baa>$fform</font>
   } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$res</font> eq {}} {
     <i><font color=#4b5d50># no event encountered - run the formatter once</font></i>
-    Mode5 <font color=#1b1baa>$cont</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>
+    Mode5 <font color=#1b1baa>$cont</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font> <font color=#1b1baa>$modal</font>
   }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }
@@ -1044,9 +1048,9 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>foreach</font></b> key <font color=#1b1baa>$keys</font> {
     <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$key</font> ev1
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ev1</font> eq <font color=#1b1baa>$ev2</font>} {
-      <b><font color=#3a6797>set</font></b> mitem [alited::menu::FormatsItemName <font color=#1b1baa>$fform</font>]
+      <b><font color=#3a6797>set</font></b> fn [alited::menu::FormatsItemName <font color=#1b1baa>$fform</font>]
       <b><font color=#3a6797>set</font></b> msg [msgcat::mc {%e is overlapped by formatter <font color=#8b2a0e>&quot;%f&quot;</font>}]
-      <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %e <font color=#1b1baa>$ev</font> %f <font color=#1b1baa>$mitem</font>] <font color=#1b1baa>$msg</font>]
+      <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %e <font color=#1b1baa>$ev</font> %f <font color=#1b1baa>$fn</font>] <font color=#1b1baa>$msg</font>]
       alited::MessageError <font color=#1b1baa>$msg</font>
       <b><font color=#ca14ca>return</font></b> no
     }
