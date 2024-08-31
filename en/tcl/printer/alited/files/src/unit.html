@@ -136,6 +136,25 @@ posi - cursor position</span></div></li></ul>
 wtree - unit tree's path
 fname - file name
 sy - relative Y-coordinate for a query</span></div></li></ul>
+<li><b><a href="#Type_templates">&nbsp;&nbsp;Type templates</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#unit::PutTypeTemplate">PutTypeTemplate</a><span class=tooltiptext> unit::PutTypeTemplate : Inserts a type template depending on a current chars at the cursor.
+wtxt - text's path</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#unit::InsertTypeTemplate">InsertTypeTemplate</a><span class=tooltiptext> unit::InsertTypeTemplate : Inserts a type template at the cursor.
+word - template's word</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#unit::AfterInsertingTypeTemplate">AfterInsertingTypeTemplate</a><span class=tooltiptext> unit::AfterInsertingTypeTemplate : Actions after inserting type template.
+wtxt - text's path
+idxl - insertion index
+tpl - template's contents</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#unit::GetTypeTemplate">GetTypeTemplate</a><span class=tooltiptext> unit::GetTypeTemplate : Gets a template's content.
+word - template's word</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#unit::TypeTemplateFiles">TypeTemplateFiles</a><span class=tooltiptext> unit::TypeTemplateFiles : Lists files of type template directory.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#unit::CreateTypeTemplateFiles">CreateTypeTemplateFiles</a><span class=tooltiptext> unit::CreateTypeTemplateFiles : Creates type template files, if they don't exist.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#unit::ReadTypeTemplate">ReadTypeTemplate</a><span class=tooltiptext> unit::ReadTypeTemplate : Reads all template contents for the current edited file.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#unit::CheckTypeTemplate">CheckTypeTemplate</a><span class=tooltiptext> unit::CheckTypeTemplate : Checks the type template's version.
+If it's obsolete, updates it from alited's source.
+fname - type template file name</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#unit::OpenTypeTemplate">OpenTypeTemplate</a><span class=tooltiptext> unit::OpenTypeTemplate : Opens type template(s) for editing.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#unit::FillTypeTplMenu">FillTypeTplMenu</a><span class=tooltiptext> unit::FillTypeTplMenu : Fills "Type Templates" submenu.</span></div></li></ul>
 <li><b><a href="#Moving_units">Moving units</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#unit::DropUnits">DropUnits</a><span class=tooltiptext> unit::DropUnits : Moves unit(s) from one location in the unit tree to other.
 wtree - unit tree's path
@@ -778,6 +797,198 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
         <b><font color=#3a6797>set</font></b> ind2 [<font color=#1b1baa>$wtxt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>l2.end +1 char&quot;</font>]
         <font color=#1b1baa>$wtxt</font> delete <font color=#1b1baa>$l1</font>.0 <font color=#1b1baa>$ind2</font>
         <b><font color=#3a6797>set</font></b> wasdel yes
+      }
+    }
+  }
+}
+<a id=Type_templates></a>
+<i><font color=#4b5d50>## ________________________ Type templates _________________________ ##</font></i>
+<a id=unit::PutTypeTemplate></a>
+<b><font color=#ca14ca>proc</font></b> unit::PutTypeTemplate {wtxt} {
+  <i><font color=#4b5d50># Inserts a type template depending on a current chars at the cursor.</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> word [alited::find::GetWordOfText]] ne {}} {
+    <b><font color=#3a6797>set</font></b> idxr [<font color=#1b1baa>$wtxt</font> index insert]
+    <b><font color=#3a6797>set</font></b> idxl <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idxr -<font color=#1b1baa>[</font>string length <font color=#1b1baa>$</font>word<font color=#1b1baa>]</font> c&quot;</font>
+    <b><font color=#3a6797>set</font></b> wordleft [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$idxl</font> <font color=#1b1baa>$idxr</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wordleft</font> eq <font color=#1b1baa>$word</font> && [<b><font color=#3a6797>set</font></b> tpl [GetTypeTemplate <font color=#1b1baa>$word</font>]] ne {}} {
+      undoIn <font color=#1b1baa>$wtxt</font>
+      <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$idxl</font> <font color=#1b1baa>$idxr</font> <font color=#1b1baa>$tpl</font>
+      AfterInsertingTypeTemplate <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$idxl</font> <font color=#1b1baa>$tpl</font>
+      <b><font color=#ca14ca>return</font></b> <font color=#653760>-code</font> break
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=unit::InsertTypeTemplate></a>
+<b><font color=#ca14ca>proc</font></b> unit::InsertTypeTemplate {word} {
+  <i><font color=#4b5d50># Inserts a type template at the cursor.</font></i>
+  <i><font color=#4b5d50>#   word - template's word</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> tpl [GetTypeTemplate <font color=#1b1baa>$word</font>]] ne {}} {
+    <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+    <b><font color=#3a6797>set</font></b> idxl [<font color=#1b1baa>$wtxt</font> index insert]
+    undoIn <font color=#1b1baa>$wtxt</font>
+    <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$idxl</font> <font color=#1b1baa>$tpl</font>
+    AfterInsertingTypeTemplate <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$idxl</font> <font color=#1b1baa>$tpl</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=unit::AfterInsertingTypeTemplate></a>
+<b><font color=#ca14ca>proc</font></b> unit::AfterInsertingTypeTemplate {wtxt idxl tpl} {
+  <i><font color=#4b5d50># Actions after inserting type template.</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+  <i><font color=#4b5d50>#   idxl - insertion index</font></i>
+  <i><font color=#4b5d50>#   tpl - template's contents</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>string</font></b> first `` <font color=#1b1baa>$tpl</font>]]&gt;-1} {
+    <b><font color=#3a6797>set</font></b> idxl [<font color=#1b1baa>$wtxt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idxl +<font color=#1b1baa>$</font>i c&quot;</font>]
+    <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$idxl</font> [<font color=#1b1baa>$wtxt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idxl +2 c&quot;</font>] {}
+    ::tk::TextSetCursor <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$idxl</font>
+  }
+  undoOut <font color=#1b1baa>$wtxt</font>
+  alited::main::UpdateAll
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=unit::GetTypeTemplate></a>
+<b><font color=#ca14ca>proc</font></b> unit::GetTypeTemplate {word} {
+  <i><font color=#4b5d50># Gets a template's content.</font></i>
+  <i><font color=#4b5d50>#   word - template's word</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> res {}
+  <b><font color=#3a6797>set</font></b> ttdict [ReadTypeTemplate]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$ttdict</font> <font color=#1b1baa>$word</font>]} {
+    <b><font color=#3a6797>foreach</font></b> line [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$ttdict</font> <font color=#1b1baa>$word</font>] {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> ne {}} {<b><font color=#3a6797>append</font></b> res \n}
+      <b><font color=#3a6797>append</font></b> res <font color=#1b1baa>$line</font>
+    }
+  }
+  <b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> ``` {}] <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=unit::TypeTemplateFiles></a>
+<b><font color=#ca14ca>proc</font></b> unit::TypeTemplateFiles {} {
+  <i><font color=#4b5d50># Lists files of type template directory.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists al(_TypeTemplateDir)]} {
+    <b><font color=#3a6797>set</font></b> tpldir [CreateTypeTemplateFiles]
+    <b><font color=#3a6797>set</font></b> al(_TypeTemplateDir) [<b><font color=#3a6797>list</font></b>]
+    <b><font color=#3a6797>foreach</font></b> fn [<b><font color=#3a6797>glob</font></b> <font color=#653760>-nocomplain</font> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$tpldir</font> *]] {
+      <b><font color=#3a6797>lappend</font></b> al(_TypeTemplateDir) <font color=#1b1baa>$fn</font>
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$al(_TypeTemplateDir)</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=unit::CreateTypeTemplateFiles></a>
+<b><font color=#ca14ca>proc</font></b> unit::CreateTypeTemplateFiles {} {
+  <i><font color=#4b5d50># Creates type template files, if they don't exist.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited DATADIR DATADIR USERDIR USERDIR
+  <b><font color=#3a6797>set</font></b> aledir [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$DATADIR</font> typetpl]
+  <b><font color=#3a6797>set</font></b> tpldir [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$USERDIR</font> typetpl]
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$tpldir</font>]} {
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>file</font></b> copy <font color=#1b1baa>$aledir</font> <font color=#1b1baa>$tpldir</font>} err]} {
+      alited::Message <font color=#1b1baa>$err</font> 4
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$tpldir</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=unit::ReadTypeTemplate></a>
+<b><font color=#ca14ca>proc</font></b> unit::ReadTypeTemplate {} {
+  <i><font color=#4b5d50># Reads all template contents for the current edited file.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> type [alited::EditExt]
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists al(_TypeTemplateFile,<font color=#1b1baa>$type</font>)]} {
+    <b><font color=#3a6797>set</font></b> al(_TypeTemplateFile,<font color=#1b1baa>$type</font>) [<b><font color=#3a6797>dict</font></b> create]
+    <b><font color=#3a6797>set</font></b> ttsection \[alited:
+    <b><font color=#3a6797>foreach</font></b> fn [TypeTemplateFiles] {
+      <i><font color=#4b5d50># find the current file type among template files:</font></i>
+      <i><font color=#4b5d50># template file rootname can be &quot;htm,html,css&quot;</font></i>
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>regexp</font></b> <font color=#8b2a0e>&quot;\(^|,\)<font color=#1b1baa>$</font>type\(,|<font color=#1b1baa>$</font>\)&quot;</font> [<b><font color=#3a6797>file</font></b> rootname <font color=#1b1baa>$fn</font>]]} {
+        <b><font color=#3a6797>set</font></b> fcont [CheckTypeTemplate <font color=#1b1baa>$fn</font>]
+        <b><font color=#3a6797>set</font></b> tt {}
+        <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$fcont</font> {
+          <b><font color=#3a6797>set</font></b> linetr [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$line</font>]
+          <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first <font color=#1b1baa>$ttsection</font> <font color=#1b1baa>$linetr</font>]==0 \
+          && [<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$linetr</font> end] eq <font color=#8b2a0e>&quot;\]&quot;</font>} {
+            <b><font color=#3a6797>set</font></b> tt [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$linetr</font> [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$ttsection</font>] end-1]
+            <b><font color=#3a6797>set</font></b> tt [<b><font color=#3a6797>set</font></b> ttl [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$tt</font>]]
+            <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>string</font></b> first { } <font color=#1b1baa>$tt</font>]]&gt;0} {
+              <b><font color=#3a6797>set</font></b> tt [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$tt</font> 0 <font color=#1b1baa>$i</font>]
+            }
+            <b><font color=#3a6797>set</font></b> tt [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$tt</font>]
+            <b><font color=#3a6797>dict</font></b> set al(_TypeTemplateFile,<font color=#1b1baa>$type</font>) <font color=#1b1baa>$tt</font> [<b><font color=#3a6797>list</font></b>]   ;<i><font color=#4b5d50># template's contents</font></i>
+            <b><font color=#3a6797>dict</font></b> set al(_TypeTemplateFile,<font color=#1b1baa>$type</font>) <font color=#1b1baa>$tt</font>,ttl <font color=#1b1baa>$ttl</font> ;<i><font color=#4b5d50># template's title</font></i>
+          } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$tt</font> ne {}} {
+            <b><font color=#3a6797>dict</font></b> lappend al(_TypeTemplateFile,<font color=#1b1baa>$type</font>) <font color=#1b1baa>$tt</font> <font color=#1b1baa>$line</font>
+          }
+        }
+        <b><font color=#ca14ca>break</font></b>
+      }
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$al(_TypeTemplateFile,$type)</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=unit::CheckTypeTemplate></a>
+<b><font color=#ca14ca>proc</font></b> unit::CheckTypeTemplate {fname} {
+  <i><font color=#4b5d50># Checks the type template's version.</font></i>
+  <i><font color=#4b5d50># If it's obsolete, updates it from alited's source.</font></i>
+  <i><font color=#4b5d50>#   fname - type template file name</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited DATADIR DATADIR
+  <b><font color=#3a6797>set</font></b> fcont [textsplit [readTextFile <font color=#1b1baa>$fname</font>]]
+  <b><font color=#3a6797>set</font></b> alefn [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$DATADIR</font> typetpl [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$alefn</font>]} {
+    <b><font color=#3a6797>set</font></b> acont [textsplit [readTextFile <font color=#1b1baa>$alefn</font>]]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$acont</font> 0] &gt; [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$fcont</font> 0]} {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>file</font></b> copy <font color=#653760>-force</font> <font color=#1b1baa>$alefn</font> <font color=#1b1baa>$fname</font>} err]} {
+        alited::Message <font color=#1b1baa>$err</font> 4
+      }
+      <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$acont</font>
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$fcont</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=unit::OpenTypeTemplate></a>
+<b><font color=#ca14ca>proc</font></b> unit::OpenTypeTemplate {} {
+  <i><font color=#4b5d50># Opens type template(s) for editing.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>set</font></b> tpldir [CreateTypeTemplateFiles]
+  <b><font color=#3a6797>set</font></b> ::alited::al(TMPfname) {}
+  <b><font color=#3a6797>set</font></b> fnames [<font color=#1b1baa>$obPav</font> chooser tk_getOpenFile ::alited::al(TMPfname) \
+    <font color=#653760>-initialdir</font> <font color=#1b1baa>$tpldir</font> <font color=#653760>-parent</font> <font color=#1b1baa>$al(WIN)</font> <font color=#653760>-multiple</font> 1]
+  <b><font color=#3a6797>unset</font></b> ::alited::al(TMPfname)
+  <b><font color=#3a6797>foreach</font></b> fn [<b><font color=#3a6797>lreverse</font></b> [<b><font color=#3a6797>lsort</font></b> <font color=#1b1baa>$fnames</font>]] {
+    alited::file::OpenFile <font color=#1b1baa>$fn</font> yes
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=unit::FillTypeTplMenu></a>
+<b><font color=#ca14ca>proc</font></b> unit::FillTypeTplMenu {} {
+  <i><font color=#4b5d50># Fills &quot;Type Templates&quot; submenu.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>set</font></b> ttdict [ReadTypeTemplate]
+  <b><font color=#3a6797>set</font></b> m <font color=#1b1baa>$al(TYPETPLMENU)</font>
+  <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$m</font> delete 2 end}
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ttdict</font> ne {}} {
+    <font color=#1b1baa>$m</font> add separator
+    <b><font color=#3a6797>foreach</font></b> ttl [<b><font color=#3a6797>lsort</font></b> [<b><font color=#3a6797>dict</font></b> keys <font color=#1b1baa>$ttdict</font>]] {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>string</font></b> first ,ttl <font color=#1b1baa>$ttl</font>]]&gt;0} {
+        <b><font color=#3a6797>set</font></b> tt [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$ttl</font> 0 [<b><font color=#3a6797>incr</font></b> i -1]]
+        <b><font color=#3a6797>set</font></b> it [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$ttdict</font> <font color=#1b1baa>$ttl</font>]
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> idx] % 25} {<b><font color=#3a6797>set</font></b> cbr {}} {<b><font color=#3a6797>set</font></b> cbr {<font color=#653760>-columnbreak</font> 1}}
+        <font color=#1b1baa>$m</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$it</font> \
+          <font color=#653760>-command</font> [<b><font color=#3a6797>list</font></b> alited::unit::InsertTypeTemplate <font color=#1b1baa>$tt</font>] {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$cbr</font>
       }
     }
   }

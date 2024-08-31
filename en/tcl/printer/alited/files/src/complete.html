@@ -327,8 +327,10 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50>#   curword - the word</font></i>
   <i><font color=#4b5d50>#   com - the command</font></i>
 
-  <b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> match <font color=#1b1baa>$curword</font>* <font color=#1b1baa>$com</font>] || [<b><font color=#3a6797>string</font></b> match <font color=#1b1baa>$curword</font>* \
-    [<b><font color=#3a6797>namespace</font></b> tail <font color=#1b1baa>$com</font>]] || [<b><font color=#3a6797>regexp</font></b> <font color=#8b2a0e>&quot;^\[\$\]?<font color=#1b1baa>$</font>curword&quot;</font> <font color=#1b1baa>$com</font>]}
+  <b><font color=#3a6797>set</font></b> res 0
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> match <font color=#1b1baa>$curword</font>* <font color=#1b1baa>$com</font>] || [<b><font color=#3a6797>string</font></b> match <font color=#1b1baa>$curword</font>* \
+    [<b><font color=#3a6797>namespace</font></b> tail <font color=#1b1baa>$com</font>]] || [<b><font color=#3a6797>regexp</font></b> <font color=#8b2a0e>&quot;^\[\$\]?<font color=#1b1baa>$</font>curword&quot;</font> <font color=#1b1baa>$com</font>]}]}
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=complete::MatchedCommands></a>
@@ -394,13 +396,14 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 
   <b><font color=#3a6797>variable</font></b> win
   <b><font color=#3a6797>update</font></b>
-  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font>] x+] w h
   <b><font color=#3a6797>lassign</font></b> [TextCursorCoordinates] x y
-  <b><font color=#3a6797>set</font></b> w2 [<b><font color=#134070>winfo</font></b> reqwidth <font color=#1b1baa>$win</font>]
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$w2</font>&gt;<font color=#1b1baa>$w</font>} {<b><font color=#3a6797>set</font></b> w <font color=#1b1baa>$w2</font>}
-  <b><font color=#3a6797>set</font></b> h2 [<b><font color=#134070>winfo</font></b> reqheight <font color=#1b1baa>$win</font>]
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$h2</font>&gt;20} {
-    <b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font> <font color=#1b1baa>${w}</font>x<font color=#1b1baa>${h2}</font>+<font color=#1b1baa>${x}</font>+<font color=#1b1baa>${y}</font>
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font>] x+] w h
+  <b><font color=#3a6797>set</font></b> w2 [<b><font color=#134070>winfo</font></b> reqwidth <font color=#1b1baa>$win</font>] ; <b><font color=#3a6797>set</font></b> w3 [<b><font color=#134070>winfo</font></b> width <font color=#1b1baa>$win</font>]
+  <b><font color=#3a6797>set</font></b> h2 [<b><font color=#134070>winfo</font></b> reqheight <font color=#1b1baa>$win</font>]; <b><font color=#3a6797>set</font></b> h3 [<b><font color=#134070>winfo</font></b> height <font color=#1b1baa>$win</font>]
+  <b><font color=#3a6797>set</font></b> w [<b><font color=#3a6797>expr</font></b> {max(<font color=#1b1baa>$w</font>,<font color=#1b1baa>$w2</font>,<font color=#1b1baa>$w3</font>)}]
+  <b><font color=#3a6797>set</font></b> h [<b><font color=#3a6797>expr</font></b> {max(<font color=#1b1baa>$h</font>,<font color=#1b1baa>$h2</font>,<font color=#1b1baa>$h3</font>)}]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$w</font>&gt;20 && <font color=#1b1baa>$h</font>&gt;20} {
+    <b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font> <font color=#1b1baa>${w}</font>x<font color=#1b1baa>${h}</font>+<font color=#1b1baa>${x}</font>+<font color=#1b1baa>${y}</font>
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font> 220x325+<font color=#1b1baa>${x}</font>+<font color=#1b1baa>${y}</font>
   }
@@ -444,8 +447,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$::alited::al(IsWindows)</font>} {
     <b><font color=#134070>toplevel</font></b> <font color=#1b1baa>$win</font>
   } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#134070>frame</font></b> <font color=#1b1baa>$win</font>
-    <b><font color=#134070>wm</font></b> manage <font color=#1b1baa>$win</font>
+    <b><font color=#134070>toplevel</font></b> <font color=#1b1baa>$win</font>
     <i><font color=#4b5d50># the line below is of an issue in kubuntu (KDE?): small sizes of the popup window</font></i>
     <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> ::alited::complete::WinGeometry <font color=#1b1baa>$lht</font>]
   }
@@ -453,7 +455,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#134070>wm</font></b> overrideredirect <font color=#1b1baa>$win</font> 1
   ::apave::APave create <font color=#1b1baa>$obj</font> <font color=#1b1baa>$win</font>
   <b><font color=#3a6797>set</font></b> lwidgets [<b><font color=#3a6797>list</font></b> \
-    <font color=#8b2a0e>&quot;Ent - - - - <font color=#1b1baa>{</font>pack -expand 1 -fill x<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>-w <font color=#1b1baa>$</font>::alited::complete::maxwidth \</font>
+    <font color=#8b2a0e>&quot;Ent - - - - <font color=#1b1baa>{</font>pack -fill x<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>-w <font color=#1b1baa>$</font>::alited::complete::maxwidth \</font>
 <font color=#8b2a0e>    -tvar ::alited::complete::word -validate key \</font>
 <font color=#8b2a0e>    -validatecommand <font color=#1b1baa>{</font>alited::complete::PickValid <font color=#1b1baa>$</font>wtxt %V %d %i %s %S<font color=#1b1baa>}}</font>&quot;</font> \
     <font color=#8b2a0e>&quot;fra - - - - <font color=#1b1baa>{</font>pack -expand 1 -fill both<font color=#1b1baa>}</font>&quot;</font> \
