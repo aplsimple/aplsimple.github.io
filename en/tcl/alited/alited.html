@@ -3782,8 +3782,7 @@ padding: 0%;
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(fontdetach)</font>} {<b><font color=#3a6797>set</font></b> fsz <font color=#1b1baa>$al(FONTSIZE,std)</font>} {<b><font color=#3a6797>set</font></b> fsz {}}
   <b><font color=#3a6797>after</font></b> 50 after idle <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pobj fillGutter <font color=#1b1baa>$</font>wtxt; alited::file::MakeThemHighlighted <font color=#1b1baa>{}</font> <font color=#1b1baa>$</font>wtxt; alited::detached::DisplayText <font color=#1b1baa>$</font>pobj <font color=#1b1baa>{$</font>fname<font color=#1b1baa>}</font>; alited::main::HighlightText <font color=#1b1baa>{}</font> <font color=#1b1baa>{$</font>fname<font color=#1b1baa>}</font> <font color=#1b1baa>$</font>wtxt <font color=#1b1baa>{</font>alited::detached::Modified <font color=#1b1baa>$</font>pobj <font color=#1b1baa>$</font>win<font color=#1b1baa>}</font> <font color=#1b1baa>{}</font> <font color=#1b1baa>$</font>fsz; &quot;</font>
-  <font color=#1b1baa>$pobj</font> showModal <font color=#1b1baa>$win</font> <font color=#6c3e67>-modal</font> no <font color=#6c3e67>-waitvar</font> no <font color=#6c3e67>-resizable</font> 1 <font color=#6c3e67>-minsize</font> {300 200}  <font color=#6c3e67>-onclose</font> <font color=#8b2a0e>&quot;alited::detached::Close <font color=#1b1baa>$</font>id <font color=#1b1baa>$</font>pobj <font color=#1b1baa>$</font>win <font color=#1b1baa>{$</font>fname<font color=#1b1baa>}</font>&quot;</font> <font color=#6c3e67>-focus</font> <font color=#1b1baa>$wtxt</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$geo</font>
-  <b><font color=#3a6797>after</font></b> [<b><font color=#3a6797>expr</font></b> {300+(<font color=#1b1baa>$id</font>%9)*100}] after idle <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pobj fillGutter <font color=#1b1baa>$</font>wtxt&quot;</font> ;<i><font color=#4b5d50># for sure</font></i>
+  <font color=#1b1baa>$pobj</font> showModal <font color=#1b1baa>$win</font> <font color=#6c3e67>-modal</font> no <font color=#6c3e67>-waitvar</font> no <font color=#6c3e67>-resizable</font> 1 <font color=#6c3e67>-minsize</font> {300 200}  <font color=#6c3e67>-onclose</font> [<b><font color=#3a6797>list</font></b> alited::detached::Close <font color=#1b1baa>$id</font> <font color=#1b1baa>$pobj</font> <font color=#1b1baa>$win</font> <font color=#1b1baa>$fname</font>] <font color=#6c3e67>-focus</font> <font color=#1b1baa>$wtxt</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$geo</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::detached::_run'>_run</a><span class='ns_scope'> [<a href="alited.html#::alited::detached" title="::alited::detached" class='ruff_cmd'>::alited::detached</a>]</span><span class='tinylink'><a href='alited.html#::alited::detached'>detached</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -26863,15 +26862,14 @@ README.md}
   <i><font color=#4b5d50>#   fname - type template file name</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited DATADIR DATADIR
-  <b><font color=#3a6797>set</font></b> fcont [textsplit [readTextFile <font color=#1b1baa>$fname</font>]]
-  <b><font color=#3a6797>set</font></b> alefn [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$DATADIR</font> typetpl [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]]
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$alefn</font>]} {
-    <b><font color=#3a6797>set</font></b> acont [textsplit [readTextFile <font color=#1b1baa>$alefn</font>]]
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$acont</font> 0] &gt; [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$fcont</font> 0]} {
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>file</font></b> copy <font color=#6c3e67>-force</font> <font color=#1b1baa>$alefn</font> <font color=#1b1baa>$fname</font>} err]} {
-        alited::Message <font color=#1b1baa>$err</font> 4
-      }
-      <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$acont</font>
+  <b><font color=#3a6797>set</font></b> fcont [textsplit [<b><font color=#3a6797>string</font></b> trimleft [readTextFile <font color=#1b1baa>$fname</font>]]]
+  <b><font color=#3a6797>set</font></b> fverAle 1.1
+  <b><font color=#3a6797>set</font></b> fverCur [<b><font color=#3a6797>string</font></b> trim [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$fcont</font> 0] { []}]
+  <b><font color=#3a6797>set</font></b> fnameAle [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$DATADIR</font> typetpl [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname</font>]]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fverAle</font> &gt; <font color=#1b1baa>$fverCur</font> && [<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fnameAle</font>]} {
+    <b><font color=#3a6797>set</font></b> fcont [textsplit [readTextFile <font color=#1b1baa>$fnameAle</font>]]
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>file</font></b> copy <font color=#6c3e67>-force</font> <font color=#1b1baa>$fnameAle</font> <font color=#1b1baa>$fname</font>} err]} {
+      alited::Message <font color=#1b1baa>$err</font> 4
     }
   }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$fcont</font>

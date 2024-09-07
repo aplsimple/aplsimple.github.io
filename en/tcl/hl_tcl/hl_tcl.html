@@ -699,7 +699,6 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code>-font</code></td><td class='ruff_defitem'>attributes of font</td></tr>
 <tr><td class='ruff_defitem'><code>-seen</code></td><td class='ruff_defitem'>lines seen at start</td></tr>
 <tr><td class='ruff_defitem'><code>-keywords</code></td><td class='ruff_defitem'>additional commands to highlight (as Tk ones)</td></tr>
-<tr><td class='ruff_defitem'><code>-dobind</code></td><td class='ruff_defitem'>if yes, forces key bindings</td></tr>
 </table>
 <p class='ruff'>This procedure has to be called before writing a text in the text widget.</p>
 <h5 class='ruff'>See also</h5><p class='ruff'><a href="hl_tcl.html#::hl_tcl::hl_colorNames" title="hl_colorNames" class='ruff_cmd'>hl_colorNames</a></p>
@@ -720,7 +719,6 @@ padding: 0%;
   <i><font color=#4b5d50>#   -font - attributes of font</font></i>
   <i><font color=#4b5d50>#   -seen - lines seen at start</font></i>
   <i><font color=#4b5d50>#   -keywords - additional commands to highlight (as Tk ones)</font></i>
-  <i><font color=#4b5d50>#   -dobind - if yes, forces key bindings</font></i>
   <i><font color=#4b5d50># This procedure has to be called before writing a text in the text widget.</font></i>
   <i><font color=#4b5d50># See also: hl_colorNames</font></i>
 
@@ -730,7 +728,6 @@ padding: 0%;
   iscurline <font color=#1b1baa>$txt</font> 1
   <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(REG_TXT,<font color=#1b1baa>$txt</font>) {}  ;<i><font color=#4b5d50># disables Modified at changing the text</font></i>
   <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(KEYWORDS,<font color=#1b1baa>$txt</font>) {}
-  <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(DOBIND,<font color=#1b1baa>$txt</font>) 0
   <i><font color=#4b5d50># get default options from text's ones</font></i>
   <b><font color=#3a6797>set</font></b> defopts [<b><font color=#3a6797>list</font></b> <font color=#6c3e67>-insertwidth</font>]
   <b><font color=#3a6797>foreach</font></b> defopt <font color=#1b1baa>$defopts</font> {
@@ -739,7 +736,7 @@ padding: 0%;
       <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(<font color=#1b1baa>$opt</font>,DEFAULT) [<font color=#1b1baa>$txt</font> cget <font color=#1b1baa>$defopt</font>]
     }
   }
-  <b><font color=#3a6797>foreach</font></b> {opt val} {<font color=#6c3e67>-dark</font> 0 <font color=#6c3e67>-readonly</font> 0 <font color=#6c3e67>-cmd</font> {} <font color=#6c3e67>-cmdpos</font> {} <font color=#6c3e67>-optRE</font> 1 <font color=#6c3e67>-dobind</font> 0  <font color=#6c3e67>-multiline</font> 1 <font color=#6c3e67>-seen</font> 500 <font color=#6c3e67>-plaintext</font> no <font color=#6c3e67>-plaincom</font> {} <font color=#6c3e67>-insertwidth</font> {} <font color=#6c3e67>-keywords</font> {}} {
+  <b><font color=#3a6797>foreach</font></b> {opt val} {<font color=#6c3e67>-dark</font> 0 <font color=#6c3e67>-readonly</font> 0 <font color=#6c3e67>-cmd</font> {} <font color=#6c3e67>-cmdpos</font> {} <font color=#6c3e67>-optRE</font> 1  <font color=#6c3e67>-multiline</font> 1 <font color=#6c3e67>-seen</font> 500 <font color=#6c3e67>-plaintext</font> no <font color=#6c3e67>-plaincom</font> {} <font color=#6c3e67>-insertwidth</font> {} <font color=#6c3e67>-keywords</font> {}} {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$args</font> <font color=#1b1baa>$opt</font>]} {
       <b><font color=#3a6797>set</font></b> val [<b><font color=#3a6797>dict</font></b> get <font color=#1b1baa>$args</font> <font color=#1b1baa>$opt</font>]
     } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$setonly</font>} {
@@ -877,16 +874,12 @@ padding: 0%;
   <font color=#1b1baa>$txt</font> tag raise tagBRACKETERR
   <b><font color=#3a6797>catch</font></b> {<font color=#1b1baa>$txt</font> tag raise hilited;  <font color=#1b1baa>$txt</font> tag raise hilited2} ;<i><font color=#4b5d50># for apave package</font></i>
   my::HighlightAll <font color=#1b1baa>$txt</font>
-  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists ::hl_tcl::my::data(BIND_TXT,<font color=#1b1baa>$txt</font>)] ||
-  [<b><font color=#3a6797>info</font></b> exists ::hl_tcl::my::data(DOBIND,<font color=#1b1baa>$txt</font>)] && <font color=#1b1baa>$::hl_tcl::my::data(DOBIND,$txt)</font>} {
-    my::BindToEvent <font color=#1b1baa>$txt</font> &lt;FocusIn&gt; ::hl_tcl::my::MemPos <font color=#1b1baa>$txt</font>
-    my::BindToEvent <font color=#1b1baa>$txt</font> &lt;KeyPress&gt; ::hl_tcl::my::MemPos1 <font color=#1b1baa>$txt</font> yes %K %s
-    my::BindToEvent <font color=#1b1baa>$txt</font> &lt;KeyRelease&gt; ::hl_tcl::my::MemPos <font color=#1b1baa>$txt</font>
-    my::BindToEvent <font color=#1b1baa>$txt</font> &lt;ButtonRelease-1&gt; ::hl_tcl::my::MemPos <font color=#1b1baa>$txt</font>
-    <b><font color=#3a6797>foreach</font></b> ev {Enter KeyRelease ButtonRelease-1} {
-      my::BindToEvent <font color=#1b1baa>$txt</font> &lt;<font color=#1b1baa>$ev</font>&gt; ::hl_tcl::my::HighlightBrackets <font color=#1b1baa>$txt</font>
-    }
-    <b><font color=#3a6797>set</font></b> ::hl_tcl::my::data(BIND_TXT,<font color=#1b1baa>$txt</font>) yes
+  my::BindToEvent <font color=#1b1baa>$txt</font> &lt;FocusIn&gt; ::hl_tcl::my::MemPos <font color=#1b1baa>$txt</font>
+  my::BindToEvent <font color=#1b1baa>$txt</font> &lt;KeyPress&gt; ::hl_tcl::my::MemPos1 <font color=#1b1baa>$txt</font> yes %K %s
+  my::BindToEvent <font color=#1b1baa>$txt</font> &lt;KeyRelease&gt; ::hl_tcl::my::MemPos <font color=#1b1baa>$txt</font>
+  my::BindToEvent <font color=#1b1baa>$txt</font> &lt;ButtonRelease-1&gt; ::hl_tcl::my::MemPos <font color=#1b1baa>$txt</font>
+  <b><font color=#3a6797>foreach</font></b> ev {Enter KeyRelease ButtonRelease-1} {
+    my::BindToEvent <font color=#1b1baa>$txt</font> &lt;<font color=#1b1baa>$ev</font>&gt; ::hl_tcl::my::HighlightBrackets <font color=#1b1baa>$txt</font>
   }
   <b><font color=#3a6797>set</font></b> ro <font color=#1b1baa>$::hl_tcl::my::data(READONLY,$txt)</font>
   <b><font color=#3a6797>set</font></b> com2 <font color=#1b1baa>$::hl_tcl::my::data(CMD,$txt)</font>
