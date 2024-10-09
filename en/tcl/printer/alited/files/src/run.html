@@ -72,6 +72,7 @@ cbx - compobox's path</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#run::FillTex1">FillTex1</a><span class=tooltiptext> run::FillTex1 : Fills command content text.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#run::FillTex2">FillTex2</a><span class=tooltiptext> run::FillTex2 : Fills "commands before running" text.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#run::FillCbx">FillCbx</a><span class=tooltiptext> run::FillCbx : Fill the command combobox.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#run::GetRUNFEXEC">GetRUNFEXEC</a><span class=tooltiptext> run::GetRUNFEXEC : Gets value of RUNF/EXEC entry.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#run::DeleteForcedRun">DeleteForcedRun</a><span class=tooltiptext> run::DeleteForcedRun : Clears current combobox' value.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#run::ValidatePath">ValidatePath</a><span class=tooltiptext> run::ValidatePath : Validates a path chosen from the file picker.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#run::ChbForced">ChbForced</a><span class=tooltiptext> run::ChbForced : Checks states & values of widgets.</span></div></li></ul>
@@ -223,7 +224,8 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 <b><font color=#ca14ca>proc</font></b> run::Help {} {
   <i><font color=#4b5d50># Shows Run's help.</font></i>
 
-  alited::HelpAlited #runme
+  <b><font color=#3a6797>variable</font></b> win
+  alited::Help <font color=#1b1baa>$win</font>
 }
 <a id=GUI></a>
 <i><font color=#4b5d50># ________________________ GUI _________________________ #</font></i>
@@ -339,6 +341,15 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   ValidatePath
 }
 <i><font color=#4b5d50>#_______________________</font></i>
+<a id=run::GetRUNFEXEC></a>
+<b><font color=#ca14ca>proc</font></b> run::GetRUNFEXEC {} {
+  <i><font color=#4b5d50># Gets value of RUNF/EXEC entry.</font></i>
+
+  <b><font color=#3a6797>variable</font></b> vent
+  <b><font color=#3a6797>lassign</font></b> [alited::tool::RunArgs] ar rf ex
+  <b><font color=#3a6797>set</font></b> vent <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>ar<font color=#1b1baa>$</font>rf<font color=#1b1baa>$</font>ex&quot;</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
 <a id=run::DeleteForcedRun></a>
 <b><font color=#ca14ca>proc</font></b> run::DeleteForcedRun {} {
   <i><font color=#4b5d50># Clears current combobox' value.</font></i>
@@ -375,14 +386,21 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50># Checks states & values of widgets.</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obRun obRun
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(comForceCh)</font>} {<b><font color=#3a6797>set</font></b> state normal} {<b><font color=#3a6797>set</font></b> state disabled}
   <b><font color=#3a6797>set</font></b> cbx [<font color=#1b1baa>$obRun</font> CbxfiL]
   <b><font color=#3a6797>set</font></b> but [<b><font color=#3a6797>string</font></b> map {.cbx .btT} <font color=#1b1baa>$cbx</font>] ;<i><font color=#4b5d50># path to combobox' button</font></i>
-  <font color=#1b1baa>$cbx</font> configure <font color=#653760>-state</font> <font color=#1b1baa>$state</font>
-  <font color=#1b1baa>$but</font> configure <font color=#653760>-state</font> <font color=#1b1baa>$state</font>
-  [<font color=#1b1baa>$obRun</font> Tex1] configure <font color=#653760>-state</font> <font color=#1b1baa>$state</font>
+  <b><font color=#3a6797>set</font></b> tex [<font color=#1b1baa>$obRun</font> Tex1]
+  <font color=#1b1baa>$obRun</font> readonlyWidget <font color=#1b1baa>$tex</font> no
+  GetRUNFEXEC
   FillTex1
   ValidatePath
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(comForceCh)</font>} {
+    <b><font color=#3a6797>set</font></b> state normal
+  } <b><font color=#3a6797>else</font></b> {
+    <font color=#1b1baa>$obRun</font> readonlyWidget <font color=#1b1baa>$tex</font> yes
+    <b><font color=#3a6797>set</font></b> state disabled
+  }
+  <font color=#1b1baa>$cbx</font> configure <font color=#653760>-state</font> <font color=#1b1baa>$state</font>
+  <font color=#1b1baa>$but</font> configure <font color=#653760>-state</font> <font color=#1b1baa>$state</font>
 }<a id=Main></a>
 <i><font color=#4b5d50># ________________________ Main _________________________ #</font></i>
 <a id=run::_create></a>
@@ -391,7 +409,6 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obRun obRun
   <b><font color=#3a6797>variable</font></b> win
-  <b><font color=#3a6797>variable</font></b> vent
   alited::SaveRunOptions
   <b><font color=#3a6797>set</font></b> al(_startRunDialogue) yes
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {
@@ -410,8 +427,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$al(comForceLs)</font>] && <font color=#1b1baa>$fname</font> ne <font color=#1b1baa>$al(MC,nofile)</font>} {
     <b><font color=#3a6797>set</font></b> al(comForceLs) [<b><font color=#3a6797>list</font></b> {} <font color=#1b1baa>$fname</font>]
   }
-  <b><font color=#3a6797>lassign</font></b> [alited::tool::RunArgs] ar rf ex
-  <b><font color=#3a6797>set</font></b> vent <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>ar<font color=#1b1baa>$</font>rf<font color=#1b1baa>$</font>ex&quot;</font>
+  GetRUNFEXEC
   <b><font color=#3a6797>set</font></b> run [::alited::ProcEOL <font color=#1b1baa>$al(prjbeforerun)</font> in]
   <font color=#1b1baa>$obRun</font> makeWindow <font color=#1b1baa>$win</font>.fra <font color=#1b1baa>$al(MC,run)</font>
   <font color=#1b1baa>$obRun</font> paveWindow <font color=#1b1baa>$win</font>.fra {

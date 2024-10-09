@@ -68,6 +68,8 @@ varname - name of variable used in the current namespace</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#main::SetTabs">SetTabs</a><span class=tooltiptext> main::SetTabs : Configures tabs of a text.
 wtxt - text's path
 indent - indentation (= tab's length)</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#main::Help">Help</a><span class=tooltiptext> main::Help : Display context helps.
+suff - suffix of file name</span></div></li></ul>
 <li><b><a href="#Get_and_show_text_widget">Get and show text widget</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#main::GetText">GetText</a><span class=tooltiptext> main::GetText : Creates or gets a text widget for a tab.
 TID - tab's ID
@@ -79,6 +81,7 @@ pos (cursor's position), doinit (flag "initialized")
 dopack (flag "packed")
 selrange (selected text's range)</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#main::ShowText">ShowText</a><span class=tooltiptext> main::ShowText : Displays a current text.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#main::UpdateHighlighting">UpdateHighlighting</a><span class=tooltiptext> main::UpdateHighlighting : Updates the current text's highlighting.</span></div></li></ul>
 <li><b><a href="#Updating_gutter_&_text">Updating gutter & text</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#main::UpdateGutter">UpdateGutter</a><span class=tooltiptext> main::UpdateGutter : Redraws the gutter.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#main::GutterAttrs">GutterAttrs</a><span class=tooltiptext> main::GutterAttrs : Returns list of gutter's data (canvas widget, width, shift)</span></div></li></ul>
@@ -308,6 +311,14 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> texttabs [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$indent</font> * [<b><font color=#134070>font</font></b> measure <font color=#1b1baa>$al(FONT,txt)</font> 0]}]
   <font color=#1b1baa>$wtxt</font> configure <font color=#653760>-tabs</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>texttabs left&quot;</font> <font color=#653760>-tabstyle</font> wordprocessor
 }
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=main::Help></a>
+<b><font color=#ca14ca>proc</font></b> main::Help {{suff <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Display context helps.</font></i>
+  <i><font color=#4b5d50>#   suff - suffix of file name</font></i>
+
+  alited::Help <font color=#1b1baa>$::alited::al(WIN)</font> <font color=#1b1baa>$suff</font>
+}
 <a id=Get_and_show_text_widget></a>
 <i><font color=#4b5d50># ________________________ Get and show text widget _________________________ #</font></i>
 <a id=main::GetText></a>
@@ -434,6 +445,15 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50># fill Type Templates menu</font></i>
   <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>after</font></b> cancel <font color=#1b1baa>$al(afterFillTTMenu)</font>}
   <b><font color=#3a6797>set</font></b> al(afterFillTTMenu) [<b><font color=#3a6797>after</font></b> 500 {<b><font color=#3a6797>after</font></b> idle alited::unit::FillTypeTplMenu}]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=main::UpdateHighlighting></a>
+<b><font color=#ca14ca>proc</font></b> main::UpdateHighlighting {} {
+  <i><font color=#4b5d50># Updates the current text's highlighting.</font></i>
+
+  <b><font color=#3a6797>set</font></b> TID [alited::bar::CurrentTabID]
+  <b><font color=#3a6797>lassign</font></b> [GetText <font color=#1b1baa>$TID</font>] curfile wtxt
+  HighlightText <font color=#1b1baa>$TID</font> <font color=#1b1baa>$curfile</font> <font color=#1b1baa>$wtxt</font>
 }
 <a id=Updating_gutter_&_text></a>
 <i><font color=#4b5d50># ________________________ Updating gutter & text _________________________ #</font></i>
@@ -632,7 +652,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <font color=#1b1baa>$popm</font> add command <font color=#653760>-label</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>lab +&quot;</font> <font color=#653760>-command</font> <font color=#8b2a0e>&quot;alited::main::MarkWidth 1&quot;</font>
     <font color=#1b1baa>$popm</font> add command <font color=#653760>-label</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>lab -&quot;</font> <font color=#653760>-command</font> <font color=#8b2a0e>&quot;alited::main::MarkWidth -1&quot;</font>
     <font color=#1b1baa>$popm</font> add separator
-    <font color=#1b1baa>$popm</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,help)</font> <font color=#653760>-command</font> {alited::HelpAlited #bookmark}
+    <font color=#1b1baa>$popm</font> add command <font color=#653760>-label</font> <font color=#1b1baa>$al(MC,help)</font> <font color=#653760>-command</font> {alited::main::Help mark}
     <b><font color=#134070>tk_popup</font></b> <font color=#1b1baa>$popm</font> <font color=#1b1baa>$X</font> <font color=#1b1baa>$Y</font>
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$disabletips</font> && ![<b><font color=#3a6797>info</font></b> exists al(MARK_TIPOFF)]} {
@@ -1001,7 +1021,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>set</font></b> ::alited::main::gotoline1 {}
     <b><font color=#3a6797>set</font></b> ::alited::main::gotolineTID <font color=#1b1baa>$TID</font>
   }
-  <b><font color=#3a6797>after</font></b> 300 {<b><font color=#3a6797>catch</font></b> {<b><font color=#134070>bind</font></b> [apave::dlgPath] &lt;F1&gt; {alited::HelpAlited #units5}}}
+  <b><font color=#3a6797>after</font></b> 300 {<b><font color=#3a6797>catch</font></b> {<b><font color=#134070>bind</font></b> [apave::dlgPath] &lt;F1&gt; {alited::main::Help goline}}}
   <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$obDl2</font> input {} <font color=#1b1baa>$head</font> [<b><font color=#3a6797>list</font></b> \
     spx <font color=#8b2a0e>&quot;<font color=#1b1baa>{$</font>prompt1<font color=#1b1baa>}</font> <font color=#1b1baa>{}</font> <font color=#1b1baa>{</font>-from 1 -to <font color=#1b1baa>$</font>lmax -selected yes<font color=#1b1baa>}</font>&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>{$</font>ln<font color=#1b1baa>}</font>&quot;</font> \
     cbx <font color=#8b2a0e>&quot;<font color=#1b1baa>{$</font>prompt2<font color=#1b1baa>}</font> <font color=#1b1baa>{}</font> <font color=#1b1baa>{</font>-tvar ::alited::main::gotoline1 -state readonly -h 16 -w 25<font color=#1b1baa>}</font>&quot;</font> \
