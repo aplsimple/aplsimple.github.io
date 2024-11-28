@@ -2911,6 +2911,7 @@ padding: 0%;
   <b><font color=#3a6797>variable</font></b> fileerrors
   alited::info::Clear
   alited::info::Put <font color=#1b1baa>$al(MC,wait)</font> {} yes yes
+  alited::main::UpdateUnitTree
   <b><font color=#3a6797>set</font></b> errors [<b><font color=#3a6797>set</font></b> fileerrors 0]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$atopen</font> || <font color=#1b1baa>$what</font>==1} {  ;<i><font color=#4b5d50># at start, check a current file</font></i>
     CheckFile
@@ -13922,7 +13923,12 @@ FtcEguWyAAAAAElFTkSuQmCC}
     CKeyWords     {<b><font color=#3a6797>set</font></b> al(ED,CKeyWords) <font color=#1b1baa>$val</font>}
     clrDark       {<b><font color=#3a6797>set</font></b> al(ED,Dark) <font color=#1b1baa>$val</font>}
     save_onadd - save_onclose - save_onsave {<b><font color=#3a6797>set</font></b> al(INI,<font color=#1b1baa>$nam</font>) <font color=#1b1baa>$val</font>}
-    TclExts       {<b><font color=#3a6797>set</font></b> al(TclExts) <font color=#1b1baa>$val</font>}
+    TclExts       {
+      <b><font color=#3a6797>set</font></b> al(TclExts) [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$val</font>]
+      <b><font color=#3a6797>foreach</font></b> e <font color=#1b1baa>$al(TclExtsDef)</font> {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$e</font> ni <font color=#1b1baa>$al(TclExts)</font>} {<b><font color=#3a6797>lappend</font></b> al(TclExts) <font color=#1b1baa>$e</font>}
+      }
+    }
     ClangExts     {<b><font color=#3a6797>set</font></b> al(ClangExts) <font color=#1b1baa>$val</font>}
     TextExts      {<b><font color=#3a6797>set</font></b> al(TextExts) <font color=#1b1baa>$val</font>}
     REbranch      {<b><font color=#3a6797>set</font></b> al(RE,branch) <font color=#1b1baa>$val</font>}
@@ -24261,6 +24267,7 @@ README.md}
 <div id='alited_tool_CheckTcl' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::tool::CheckTcl {} {
   <i><font color=#4b5d50># Check a current unit for errors, before running Tcl file.</font></i>
 
+  alited::main::UpdateUnitTree
   <b><font color=#3a6797>lassign</font></b> [alited::tree::CurrentItemByLine {} 1] - - leaf - name l1 l2
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is true <font color=#6c3e67>-strict</font> <font color=#1b1baa>$leaf</font>] && <font color=#1b1baa>$name</font> ne {}} {
     alited::CheckSource
@@ -26135,7 +26142,7 @@ README.md}
   <b><font color=#3a6797>set</font></b> children [<font color=#1b1baa>$wtree</font> children <font color=#1b1baa>$branch</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$lev</font>} {
     <b><font color=#3a6797>set</font></b> proc [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b>  %level <font color=#1b1baa>$lev</font>  %children [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$children</font>]  %item <font color=#1b1baa>$branch</font>  %text [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$branch</font> <font color=#6c3e67>-text</font>]  %values [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$branch</font> <font color=#6c3e67>-values</font>]]  <font color=#1b1baa>$aproc</font>]
-    <b><font color=#3a6797>uplevel</font></b> [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$lev</font>+1}] <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>proc&quot;</font>
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>uplevel</font></b> [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$lev</font>+1}] <font color=#1b1baa>$proc</font>}
   }
   <b><font color=#3a6797>incr</font></b> lev
   <b><font color=#3a6797>foreach</font></b> child <font color=#1b1baa>$children</font> {
