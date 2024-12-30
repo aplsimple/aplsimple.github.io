@@ -1250,14 +1250,14 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> &lt;FocusIn&gt; [<b><font color=#3a6797>list</font></b> after 500 <font color=#8b2a0e>&quot;::alited::main::FocusInText <font color=#1b1baa>$</font>TID <font color=#1b1baa>$</font>wtxt&quot;</font>]
   }
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> &lt;Control-ButtonRelease-1&gt; <font color=#8b2a0e>&quot;::alited::find::LookDecl ; break&quot;</font>
-  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> &lt;Control-Shift-ButtonRelease-1&gt; {::alited::find::SearchWordInSession ; <b><font color=#ca14ca>break</font></b>}
-  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> &lt;Control-Tab&gt; {::alited::bar::ControlTab}
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> &lt;Control-Shift-ButtonRelease-1&gt; {alited::find::SearchWordInSession ; <b><font color=#ca14ca>break</font></b>}
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> &lt;Control-Tab&gt; {alited::bar::ControlTab}
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(IsWindows)</font>} {
     <i><font color=#4b5d50># unlike Unix, Shift+Key doesn't work in Windows</font></i>
     <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> &lt;Tab&gt; \
       [<b><font color=#3a6797>list</font></b> + if {{%K} eq {Tab} && {%s}==1} <font color=#8b2a0e>&quot;focus <font color=#1b1baa>[$</font>obPav LbxInfo<font color=#1b1baa>]</font>; break&quot;</font>]
   }
-  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> &lt;Alt-BackSpace&gt; {::alited::unit::SwitchUnits ; <b><font color=#ca14ca>break</font></b>}
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> &lt;Alt-BackSpace&gt; {alited::unit::SwitchUnits ; <b><font color=#ca14ca>break</font></b>}
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> &lt;space&gt; <font color=#8b2a0e>&quot;+ alited::unit::PutTypeTemplate <font color=#1b1baa>$</font>wtxt&quot;</font>
   ::apave::bindToEvent <font color=#1b1baa>$wtxt</font> &lt;ButtonRelease-1&gt; alited::main::SaveVisitInfo <font color=#1b1baa>$wtxt</font>
   ::apave::bindToEvent <font color=#1b1baa>$wtxt</font> &lt;KeyRelease&gt; alited::main::SaveVisitInfo <font color=#1b1baa>$wtxt</font> %K %s
@@ -1360,11 +1360,9 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=main::ProcMessage></a>
-<b><font color=#ca14ca>proc</font></b> main::ProcMessage {} {
+<b><font color=#ca14ca>proc</font></b> main::ProcMessage {lab} {
   <i><font color=#4b5d50># Handles clicking on message label.</font></i>
 
-  <b><font color=#3a6797>namespace</font></b> upvar ::alited obPav obPav
-  <b><font color=#3a6797>set</font></b> lab [<font color=#1b1baa>$obPav</font> Labstat3]
   <b><font color=#3a6797>set</font></b> msg [baltip cget <font color=#1b1baa>$lab</font> <font color=#653760>-text</font>]
   alited::Message <font color=#1b1baa>$msg</font> 3 <font color=#1b1baa>$lab</font>
 }
@@ -1397,10 +1395,12 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 <i><font color=#4b5d50>### ________________________ Main pan _________________________ ###</font></i>
 }
     {frat - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> both}}
-    {frat.ToolTop - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> top} \
-      {<font color=#653760>-relief</font> flat <font color=#653760>-borderwidth</font> 0 <font color=#653760>-array</font> {<font color=#1b1baa>$::alited::al(atools)</font>}}}
+    {frat.ToolTop - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> top}
+      {<font color=#653760>-relief</font> flat <font color=#653760>-borderwidth</font> 0 <font color=#653760>-array</font> {<font color=#1b1baa>$::alited::al(atools)</font>}
+      <font color=#653760>-onevent</font> {&lt;ButtonPress-3&gt; <font color=#8b2a0e>&quot;alited::tool::PopupBar %X %Y&quot;</font>}}}
     {fra - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> top <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1 <font color=#653760>-pady</font> 0}}
-    {fra.Pan - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> top <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} {<font color=#653760>-orient</font> horizontal <font color=#1b1baa>$::alited::Pan_wh</font>}}
+    {fra.Pan - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> top <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} {<font color=#653760>-orient</font> horizontal
+      <font color=#1b1baa>$::alited::Pan_wh</font> <font color=#653760>-onevent</font> {&lt;ButtonRelease&gt; alited::tree::AdjustWidth}}}
     {fra.pan.PanL - - - - {add} {<font color=#653760>-orient</font> vertical <font color=#1b1baa>$::alited::PanL_wh</font>}}
     {.fraBot - - - - {add}}
 {#<a id=Tree_pan></a>
@@ -1412,32 +1412,32 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 {#<a id=Tree's_toolbar></a>
 <i><font color=#4b5d50>#### ________________________ Tree's toolbar _________________________ ####</font></i>
 }
-    {.fraBot.panBM.fraTree.fra1.BtTswitch - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x} \
+    {.fraBot.panBM.fraTree.fra1.BtTswitch - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x}
       {<font color=#653760>-image</font> alimg_gulls <font color=#653760>-com</font> alited::tree::SwitchTree}}
-    {.fraBot.panBM.fraTree.fra1.BtTUpdT - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x} \
+    {.fraBot.panBM.fraTree.fra1.BtTUpdT - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x}
       {<font color=#653760>-image</font> alimg_retry <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,updtree)</font>}
     <font color=#653760>-command</font> alited::main::UpdateAll}}
     {.fraBot.panBM.fraTree.fra1.sev1 - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> y <font color=#653760>-padx</font> 5}}
-    {.fraBot.panBM.fraTree.fra1.BtTUp - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x} \
+    {.fraBot.panBM.fraTree.fra1.BtTUp - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x}
       {<font color=#653760>-image</font> alimg_up <font color=#653760>-com</font> {alited::tree::MoveItem up}}}
-    {.fraBot.panBM.fraTree.fra1.BtTDown - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x} \
+    {.fraBot.panBM.fraTree.fra1.BtTDown - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x}
       {<font color=#653760>-image</font> alimg_down <font color=#653760>-com</font> {alited::tree::MoveItem down}}}
     {.fraBot.panBM.fraTree.fra1.sev2 - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> y <font color=#653760>-padx</font> 5}}
-    {.fraBot.panBM.fraTree.fra1.BtTAddT - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x} \
+    {.fraBot.panBM.fraTree.fra1.BtTAddT - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x}
       {<font color=#653760>-image</font> alimg_add <font color=#653760>-com</font> alited::tree::AddItem}}
-    {.fraBot.panBM.fraTree.fra1.BtTRenT - - - - {<b><font color=#134070>pack</font></b> forget <font color=#653760>-side</font> left <font color=#653760>-fill</font> x} \
-      {<font color=#653760>-image</font> alimg_change <font color=#653760>-tip</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(MC,renamefile)\nF2&quot;</font> \
-      <font color=#653760>-com</font> {::alited::file::RenameFileInTree 0 <font color=#653760>-geometry</font> pointer+10+10}}}
-    {.fraBot.panBM.fraTree.fra1.BtTDelT - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x} \
+    {.fraBot.panBM.fraTree.fra1.BtTRenT - - - - {<b><font color=#134070>pack</font></b> forget <font color=#653760>-side</font> left <font color=#653760>-fill</font> x}
+      {<font color=#653760>-image</font> alimg_change <font color=#653760>-tip</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(MC,renamefile)\nF2&quot;</font>
+      <font color=#653760>-com</font> {alited::file::RenameFileInTree 0 <font color=#653760>-geometry</font> pointer+10+10}}}
+    {.fraBot.panBM.fraTree.fra1.BtTDelT - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x}
       {<font color=#653760>-image</font> alimg_delete <font color=#653760>-com</font> alited::tree::DelItem}}
-    {.fraBot.panBM.fraTree.fra1.BtTCloT - - - - {<b><font color=#134070>pack</font></b> forget <font color=#653760>-side</font> left <font color=#653760>-fill</font> x} \
+    {.fraBot.panBM.fraTree.fra1.BtTCloT - - - - {<b><font color=#134070>pack</font></b> forget <font color=#653760>-side</font> left <font color=#653760>-fill</font> x}
       {<font color=#653760>-image</font> alimg_copy <font color=#653760>-com</font> alited::file::CloneFile <font color=#653760>-tip</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(MC,clonefile)&quot;</font>}}
-    {.fraBot.panBM.fraTree.fra1.BtTOpen - - - - {<b><font color=#134070>pack</font></b> forget <font color=#653760>-side</font> left <font color=#653760>-fill</font> x} \
+    {.fraBot.panBM.fraTree.fra1.BtTOpen - - - - {<b><font color=#134070>pack</font></b> forget <font color=#653760>-side</font> left <font color=#653760>-fill</font> x}
       {<font color=#653760>-image</font> alimg_OpenFile <font color=#653760>-com</font> ::alited::file::OpenWith <font color=#653760>-tip</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(MC,openwith)&quot;</font>}}
     {.fraBot.panBM.fraTree.fra1.h_ - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-anchor</font> center <font color=#653760>-side</font> left <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1}}
-    {.fraBot.panBM.fraTree.fra1.btTCtr - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x} \
+    {.fraBot.panBM.fraTree.fra1.btTCtr - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x}
       {<font color=#653760>-image</font> alimg_minus <font color=#653760>-com</font> {alited::tree::ExpandContractTree Tree no} <font color=#653760>-tip</font> <font color=#8b2a0e>&quot;Contract All&quot;</font>}}
-    {.fraBot.panBM.fraTree.fra1.btTExp - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x} \
+    {.fraBot.panBM.fraTree.fra1.btTExp - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x}
       {<font color=#653760>-image</font> alimg_plus <font color=#653760>-com</font> {alited::tree::ExpandContractTree Tree} <font color=#653760>-tip</font> <font color=#8b2a0e>&quot;Expand All&quot;</font>}}
 {#<a id=Tree></a>
 <i><font color=#4b5d50>#### ________________________ Tree _________________________ ####</font></i>
@@ -1447,12 +1447,12 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     {.fraBot.panBM.fraTree.fra.Tree - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1}
       {<font color=#653760>-columns</font> {L1 L2 PRL ID LEV LEAF FL1} <font color=#653760>-displaycolumns</font> {L1} <font color=#653760>-columnoptions</font> <font color=#8b2a0e>&quot;#0 \</font>
 <font color=#8b2a0e>      <font color=#1b1baa>{</font>-width <font color=#1b1baa>$</font>al(TREE,cw0)<font color=#1b1baa>}</font> L1 <font color=#1b1baa>{</font>-width <font color=#1b1baa>$</font>al(TREE,cw1) -anchor e<font color=#1b1baa>}</font>&quot;</font> <font color=#653760>-style</font> TreeNoHL \
-      <font color=#653760>-takefocus</font> 0 <font color=#653760>-selectmode</font> extended <font color=#653760>-tip</font> {<font color=#653760>-BALTIP</font> {alited::tree::GetTooltip %i %c} \
-      <font color=#653760>-SHIFTX</font> 10}}}
+      <font color=#653760>-takefocus</font> 0 <font color=#653760>-selectmode</font> extended
+      <font color=#653760>-tip</font> {<font color=#653760>-BALTIP</font> {alited::tree::GetTooltip %i %c} <font color=#653760>-SHIFTX</font> 10}}}
 {#<a id=Favorites></a>
 <i><font color=#4b5d50>### ________________________ Favorites _________________________ ###</font></i>
 }
-    {.fraBot.panBM.fraTree.fra.SbvTree .fraBot.panBM.fraTree.fra.Tree L - - \
+    {.fraBot.panBM.fraTree.fra.SbvTree .fraBot.panBM.fraTree.fra.Tree L - -
       {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> right <font color=#653760>-fill</font> both}}
     {.FraFV - - - - {add}}
     {.fraFV.v_ - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> top <font color=#653760>-fill</font> x} {<font color=#653760>-h</font> 5}}
@@ -1461,19 +1461,19 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 {#<a id=Favorites'_toolbar></a>
 <i><font color=#4b5d50>#### ________________________ Favorites' toolbar _________________________ ####</font></i>
 }
-    {.fraFV.fra1.BtTVisitF - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x} \
+    {.fraFV.fra1.BtTVisitF - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x}
       {<font color=#653760>-image</font> alimg_misc <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,lastvisit)</font>} <font color=#653760>-com</font> alited::favor::SwitchFavVisit}}
     {.fraFV.fra1.sev0 - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> y <font color=#653760>-padx</font> 5}}
-    {.fraFV.fra1.BtTListF - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x} \
+    {.fraFV.fra1.BtTListF - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x}
       {<font color=#653760>-image</font> alimg_SaveFile <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,FavLists)</font>} <font color=#653760>-com</font> alited::favor::Lists}}
     {.fraFV.fra1.SevF - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> y <font color=#653760>-padx</font> 5}}
-    {.fraFV.fra1.BtTAddF - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x} \
+    {.fraFV.fra1.BtTAddF - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x}
       {<font color=#653760>-image</font> alimg_add <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,favoradd)</font>} <font color=#653760>-com</font> alited::favor::Add}}
-    {.fraFV.fra1.BtTRenF - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x} \
+    {.fraFV.fra1.BtTRenF - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x}
       {<font color=#653760>-image</font> alimg_change <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,favorren)</font>} <font color=#653760>-command</font> ::alited::favor::Rename}}
-    {.fraFV.fra1.btTDelF - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x} \
+    {.fraFV.fra1.btTDelF - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x}
       {<font color=#653760>-image</font> alimg_delete <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,favordel)</font>} <font color=#653760>-com</font> alited::favor::Delete}}
-    {.fraFV.fra1.btTDelAllF - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x} \
+    {.fraFV.fra1.btTDelAllF - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x}
       {<font color=#653760>-image</font> alimg_trash <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,favordelall)</font>} <font color=#653760>-com</font> alited::favor::DeleteAll}}
     {.fraFV.fra1.h_2 - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-anchor</font> center <font color=#653760>-side</font> left <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1}}
     {.fraFV.fra1.sev2 - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> right <font color=#653760>-fill</font> y <font color=#653760>-padx</font> 0}}
@@ -1481,8 +1481,8 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 {#<a id=Favorites'_list></a>
 <i><font color=#4b5d50>#### ________________________ Favorites' list _________________________ ####</font></i>
 }
-    {.fraFV.fra.TreeFavor - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} \
-      {<font color=#653760>-h</font> 5 <font color=#653760>-style</font> TreeNoHL <font color=#653760>-columns</font> {C1 C2 C3 C4} <font color=#653760>-displaycolumns</font> C1 \
+    {.fraFV.fra.TreeFavor - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1}
+      {<font color=#653760>-h</font> 5 <font color=#653760>-style</font> TreeNoHL <font color=#653760>-columns</font> {C1 C2 C3 C4} <font color=#653760>-displaycolumns</font> C1
       <font color=#653760>-show</font> headings <font color=#653760>-takefocus</font> 0 <font color=#653760>-tip</font> {<font color=#653760>-BALTIP</font> {alited::favor::GetTooltip %i} <font color=#653760>-SHIFTX</font> 10}}}
     {.fraFV.fra.SbvFavor .fraFV.fra.TreeFavor L - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> both}}
     {fra.pan.PanR - - - - {add} {<font color=#653760>-orient</font> vertical <font color=#1b1baa>$::alited::PanR_wh</font>}}
@@ -1492,14 +1492,14 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     {.fraTop - - - - {add}}
     {.fraTop.PanTop - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} {<font color=#1b1baa>$::alited::PanTop_wh</font>}}
     {.fraTop.panTop.BtsBar  - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> top <font color=#653760>-fill</font> x <font color=#653760>-pady</font> 3}}
-    {.fraTop.panTop.canmark - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 0 <font color=#653760>-fill</font> both \
-      <font color=#653760>-padx</font> 0 <font color=#653760>-pady</font> 0 <font color=#653760>-ipadx</font> 0 <font color=#653760>-ipady</font> 0} {<font color=#653760>-w</font> <font color=#1b1baa>$al(markwidth)</font> \
+    {.fraTop.panTop.canmark - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 0 <font color=#653760>-fill</font> both
+      <font color=#653760>-padx</font> 0 <font color=#653760>-pady</font> 0 <font color=#653760>-ipadx</font> 0 <font color=#653760>-ipady</font> 0} {<font color=#653760>-w</font> <font color=#1b1baa>$al(markwidth)</font>
       <font color=#653760>-afteridle</font> {alited::main::FillMarkBar %w}}}
     {.fraTop.panTop.GutText - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 0 <font color=#653760>-fill</font> both}}
-    {.fraTop.panTop.FrAText - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both \
+    {.fraTop.panTop.FrAText - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both
       <font color=#653760>-padx</font> 0 <font color=#653760>-pady</font> 0 <font color=#653760>-ipadx</font> 0 <font color=#653760>-ipady</font> 0} {<font color=#653760>-background</font> <font color=#1b1baa>$::apave::BGMAIN2</font>}}
-    {.fraTop.panTop.frAText.Text - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both} \
-      {<font color=#653760>-w</font> 80 <font color=#653760>-h</font> 30 <font color=#653760>-gutter</font> GutText <font color=#653760>-gutterwidth</font> <font color=#1b1baa>$al(ED,gutterwidth)</font> \
+    {.fraTop.panTop.frAText.Text - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both}
+      {<font color=#653760>-w</font> 80 <font color=#653760>-h</font> 30 <font color=#653760>-gutter</font> GutText <font color=#653760>-gutterwidth</font> <font color=#1b1baa>$al(ED,gutterwidth)</font>
       <font color=#653760>-guttershift</font> <font color=#1b1baa>$al(ED,guttershift)</font>}}
     {.fraTop.panTop.fraSbv - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> right <font color=#653760>-fill</font> y}}
 {#<a id=Find_units></a>
@@ -1508,16 +1508,16 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     {.fraTop.panTop.fraSbv.SbvText .fraTop.panTop.frAText.text L - - {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> y}}
     {.fraTop.FraSbh  - - - - {<b><font color=#134070>pack</font></b> forget <font color=#653760>-fill</font> x}}
     {.fraTop.fraSbh.SbhText .fraTop.panTop.frAText.text T - - {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> x}}
-    {.fraTop.FraHead  - - - - {<b><font color=#134070>pack</font></b> forget <font color=#653760>-side</font> bottom <font color=#653760>-fill</font> x} \
+    {.fraTop.FraHead  - - - - {<b><font color=#134070>pack</font></b> forget <font color=#653760>-side</font> bottom <font color=#653760>-fill</font> x}
       {<font color=#653760>-padding</font> {4 4 4 4} <font color=#653760>-relief</font> groove}}
     {.fraTop.fraHead.labFind - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-t</font> {    Unit: }}}
-    {.fraTop.fraHead.CbxFindSTD - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} \
+    {.fraTop.fraHead.CbxFindSTD - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left}
       {<font color=#653760>-tvar</font> ::alited::al(findunit) <font color=#653760>-values</font> {<font color=#1b1baa>$al(findunitvals)</font>} <font color=#653760>-w</font> 30 <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,findunit)</font>}}}
-    {.fraTop.fraHead.btT - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 4} \
+    {.fraTop.fraHead.btT - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 4}
       {<font color=#653760>-t</font> {Find: } <font color=#653760>-com</font> alited::find::DoFindUnit <font color=#653760>-w</font> 8 <font color=#653760>-anchor</font> e <font color=#653760>-tip</font> {Find Unit}}}
-    {.fraTop.fraHead.rad1 - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 4} \
+    {.fraTop.fraHead.rad1 - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 4}
       {<font color=#653760>-takefocus</font> 0 <font color=#653760>-var</font> ::alited::main::findunits <font color=#653760>-t</font> {in all} <font color=#653760>-value</font> 1}}
-    {.fraTop.fraHead.rad2 - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 4} \
+    {.fraTop.fraHead.rad2 - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 4}
       {<font color=#653760>-takefocus</font> 0 <font color=#653760>-var</font> ::alited::main::findunits <font color=#653760>-t</font> {in current} <font color=#653760>-value</font> 2}}
     {.fraTop.fraHead.h_ - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> x <font color=#653760>-expand</font> 1}}
     {.fraTop.fraHead.btTno - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-command</font> {alited::find::HideFindUnit}}}
@@ -1526,8 +1526,11 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 }
     {.fraBot - - - - {add}}
     {.fraBot.fra - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1}}
-    {.fraBot.fra.LbxInfo - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1} \
-      {<font color=#653760>-h</font> 1 <font color=#653760>-w</font> 40 <font color=#653760>-lvar</font> ::alited::info::list <font color=#653760>-font</font> <font color=#1b1baa>$al(FONT,defsmall)</font> <font color=#653760>-highlightthickness</font> 0}}
+    {.fraBot.fra.LbxInfo - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> both <font color=#653760>-expand</font> 1}
+      {<font color=#653760>-h</font> 1 <font color=#653760>-w</font> 40 <font color=#653760>-lvar</font> ::alited::info::list <font color=#653760>-font</font> <font color=#1b1baa>$al(FONT,defsmall)</font>
+      <font color=#653760>-highlightthickness</font> 0 <font color=#653760>-onevent</font> {
+      &lt;&lt;ListboxSelect&gt;&gt; <font color=#8b2a0e>&quot;alited::info::ListboxSelect %w&quot;</font>
+      &lt;ButtonPress-3&gt; <font color=#8b2a0e>&quot;alited::info::PopupMenu %X %Y&quot;</font>}}}
     {.fraBot.fra.sbv .fraBot.fra.LbxInfo L - - pack}
     {.fraBot.fra.SbhInfo .fraBot.fra.LbxInfo T - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> bottom <font color=#653760>-before</font> %w}}
     {.fraBot.stat - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> bottom} {<font color=#653760>-array</font> {
@@ -1541,16 +1544,12 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50># a pause (and cycles) must be enough for FillBar to have proper -wbar option</font></i>
   <b><font color=#3a6797>after</font></b> idle after 50 after idle after 50 after idle after 50 after idle after 50 \
     alited::main::InitActions
-  <b><font color=#134070>bind</font></b> [<font color=#1b1baa>$obPav</font> Pan] &lt;ButtonRelease&gt; ::alited::tree::AdjustWidth
   <b><font color=#3a6797>set</font></b> sbhi [<font color=#1b1baa>$obPav</font> SbhInfo]
   <b><font color=#3a6797>set</font></b> lbxi [<font color=#1b1baa>$obPav</font> LbxInfo]
   <b><font color=#134070>pack</font></b> forget <font color=#1b1baa>$sbhi</font>
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$lbxi</font> &lt;FocusIn&gt; <font color=#8b2a0e>&quot;alited::info::FocusIn <font color=#1b1baa>$</font>sbhi <font color=#1b1baa>$</font>lbxi&quot;</font>
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$lbxi</font> &lt;FocusOut&gt; <font color=#8b2a0e>&quot;alited::info::FocusOut <font color=#1b1baa>$</font>sbhi&quot;</font>
-  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$lbxi</font> &lt;&lt;ListboxSelect&gt;&gt; {alited::info::ListboxSelect %W}
-  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$lbxi</font> &lt;ButtonPress-3&gt; {alited::info::PopupMenu %X %Y}
-  <b><font color=#134070>bind</font></b> [<font color=#1b1baa>$obPav</font> ToolTop] &lt;ButtonPress-3&gt; {::alited::tool::PopupBar %X %Y}
-  <b><font color=#134070>bind</font></b> [<font color=#1b1baa>$obPav</font> Labstat3] &lt;Button-1&gt; alited::main::ProcMessage
+  <b><font color=#134070>bind</font></b> [<font color=#1b1baa>$obPav</font> Labstat3] &lt;Button-1&gt; {alited::main::ProcMessage %W}
   ::baltip tip [<font color=#1b1baa>$obPav</font> Labstat4] = <font color=#653760>-command</font> ::alited::main::TipStatus <font color=#653760>-per10</font> 0
 }<a id=Main__run></a>
 <i><font color=#4b5d50># ________________________ Main _run _________________________ #</font></i>

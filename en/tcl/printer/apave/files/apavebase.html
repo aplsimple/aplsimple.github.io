@@ -2376,7 +2376,8 @@ Docs:
     } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$choosname</font> in {<b><font color=#134070>tk_getOpenFile</font></b> tk_getSaveFile}} {
       <b><font color=#3a6797>set</font></b> vargeo <font color=#1b1baa>$filvar</font>
       <b><font color=#3a6797>set</font></b> widname [<b><font color=#ca14ca>my</font></b> AuxSetChooserGeometry <font color=#1b1baa>$vargeo</font> <font color=#1b1baa>$dirvar</font> <font color=#1b1baa>$parent</font> __tk_filedialog]
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> fn [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$tvar</font>]] eq {}} {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> fn [<b><font color=#3a6797>set</font></b> <font color=#1b1baa>$tvar</font>]}]} {<b><font color=#3a6797>set</font></b> fn {}}
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fn</font> eq {}} {
         <b><font color=#3a6797>set</font></b> dn [<b><font color=#3a6797>pwd</font></b>]
       } <b><font color=#3a6797>else</font></b> {
         <b><font color=#3a6797>set</font></b> dn [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fn</font>]
@@ -3186,7 +3187,7 @@ Docs:
         <font color=#653760>-entrypop</font> - <font color=#653760>-entrypopRO</font> - <font color=#653760>-textpop</font> - <font color=#653760>-textpopRO</font> - <font color=#653760>-ListboxSel</font> - \
         <font color=#653760>-callF2</font> - <font color=#653760>-timeout</font> - <font color=#653760>-bartabs</font> - <font color=#653760>-onReturn</font> - <font color=#653760>-linkcom</font> - <font color=#653760>-selcombobox</font> - \
         <font color=#653760>-afteridle</font> - <font color=#653760>-gutter</font> - <font color=#653760>-propagate</font> - <font color=#653760>-columnoptions</font> - <font color=#653760>-selborderwidth</font> -
-        <font color=#653760>-selected</font> - <font color=#653760>-popup</font> - <font color=#653760>-bindEC</font> - <font color=#653760>-tags</font> - <font color=#653760>-debug</font> - <font color=#653760>-clearcom</font> {
+        <font color=#653760>-selected</font> - <font color=#653760>-popup</font> - <font color=#653760>-bindEC</font> - <font color=#653760>-tags</font> - <font color=#653760>-debug</font> - <font color=#653760>-clearcom</font> - <font color=#653760>-onevent</font> {
           <i><font color=#4b5d50># attributes specific to apave, processed below in &quot;Post&quot;</font></i>
           <b><font color=#3a6797>set</font></b> v2 [<b><font color=#3a6797>string</font></b> trimleft <font color=#1b1baa>$v</font> \{]
           <b><font color=#3a6797>set</font></b> v2 [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$v2</font> 0 end-[<b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$v</font>]-[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$v2</font>]}]]
@@ -3390,6 +3391,12 @@ Docs:
               <b><font color=#3a6797>set</font></b> method {}
             }
             <b><font color=#3a6797>puts</font></b> <font color=#8b2a0e>&quot;WIDGET: <font color=#1b1baa>$</font>w <font color=#1b1baa>$</font>method&quot;</font>
+          }
+        }
+        <font color=#653760>-onevent</font> {
+          <b><font color=#3a6797>set</font></b> v [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %w <font color=#1b1baa>$w</font>] <font color=#1b1baa>$v</font>]
+          <b><font color=#3a6797>foreach</font></b> {ev proc} <font color=#1b1baa>$v</font> {
+            <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> bind <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font> [<b><font color=#3a6797>subst</font></b> <font color=#1b1baa>$proc</font>]]
           }
         }
       }
@@ -3758,7 +3765,7 @@ Docs:
           <b><font color=#ca14ca>return</font></b> <font color=#653760>-code</font> break
         }
       }
-    braceright {
+    braceright - <font color=#8b2a0e>&quot;\}&quot;</font> {
         <i><font color=#4b5d50># right brace pressed: shift the brace to left</font></i>
         <b><font color=#3a6797>set</font></b> idx1 [<font color=#1b1baa>$w</font> index insert]
         <b><font color=#3a6797>set</font></b> st [<font color=#1b1baa>$w</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idx1 linestart&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idx1 lineend&quot;</font>]
