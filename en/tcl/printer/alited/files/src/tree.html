@@ -446,7 +446,8 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$itnew</font> <font color=#653760>-values</font>] l1 l2
   AddTagSel <font color=#1b1baa>$wtree</font> <font color=#1b1baa>$itnew</font>
   <i><font color=#4b5d50># get saved pos</font></i>
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists al(CPOS,<font color=#1b1baa>$ctab</font>,<font color=#1b1baa>$header</font>)]} {
+  <b><font color=#3a6797>set</font></b> issaved [<b><font color=#3a6797>info</font></b> exists al(CPOS,<font color=#1b1baa>$ctab</font>,<font color=#1b1baa>$header</font>)]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$issaved</font>} {
     <b><font color=#3a6797>set</font></b> pos [::apave::p+ <font color=#1b1baa>$l1</font> <font color=#1b1baa>$al(CPOS,$ctab,$header)</font>]
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$wtxt</font> index insert]
@@ -460,8 +461,16 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       <b><font color=#3a6797>set</font></b> pos [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$l1</font>+<font color=#1b1baa>$line</font>}]
     } <b><font color=#3a6797>else</font></b> {
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$pos</font>&lt;<font color=#1b1baa>$l1</font> || <font color=#1b1baa>$pos</font>&gt;=(<font color=#1b1baa>$l2</font>+1)} {
-        <i><font color=#4b5d50># if not saved, get it from 1st line</font></i>
+        <i><font color=#4b5d50># if not saved, get it from 1st line or TODO</font></i>
         <b><font color=#3a6797>set</font></b> pos <font color=#1b1baa>$l1</font>.0
+        <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$issaved</font>} {
+          <b><font color=#3a6797>foreach</font></b> {ltd1 ltd2} [<font color=#1b1baa>$wtxt</font> tag ranges tagCMN2] {
+            <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ltd1</font>&gt;=<font color=#1b1baa>$l1</font> && <font color=#1b1baa>$ltd1</font>&lt;=<font color=#1b1baa>$l2</font>} {
+              <b><font color=#3a6797>set</font></b> pos <font color=#1b1baa>$ltd1</font>
+              <b><font color=#ca14ca>break</font></b>
+            }
+          }
+        }
       }
     }
   }
