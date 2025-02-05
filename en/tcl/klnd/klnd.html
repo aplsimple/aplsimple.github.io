@@ -364,7 +364,7 @@ padding: 0%;
   <i><font color=#4b5d50># if no geometry option, show the calendar under the mouse pointer</font></i>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$geo</font> ne {}} {
     <b><font color=#3a6797>set</font></b> geo <font color=#8b2a0e>&quot;-geometry <font color=#1b1baa>$</font>geo&quot;</font>
-  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$entry</font> ne {}} {
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$entry</font> ne {} && [<b><font color=#3a6797>string</font></b> first GEO <font color=#1b1baa>$entry</font>]&lt;0} {
     <b><font color=#3a6797>set</font></b> x [<b><font color=#134070>winfo</font></b> rootx <font color=#1b1baa>$entry</font>]
     <b><font color=#3a6797>set</font></b> y [<b><font color=#3a6797>expr</font></b> {[<b><font color=#134070>winfo</font></b> rooty <font color=#1b1baa>$entry</font>]+32}]
     <b><font color=#3a6797>set</font></b> geo <font color=#8b2a0e>&quot;-geometry +<font color=#1b1baa>$</font>x+<font color=#1b1baa>$</font>y&quot;</font>
@@ -427,7 +427,7 @@ padding: 0%;
   <i><font color=#4b5d50># Removes specific options from args.</font></i>
   <i><font color=#4b5d50>#   args - list of options</font></i>
 
-  ::apave::removeOptions <font color=#1b1baa>$args</font> <font color=#6c3e67>-title</font> <font color=#6c3e67>-value</font> <font color=#6c3e67>-tvar</font> <font color=#6c3e67>-locale</font> <font color=#6c3e67>-parent</font> <font color=#6c3e67>-dateformat</font> <font color=#6c3e67>-weekday</font> <font color=#6c3e67>-com</font> <font color=#6c3e67>-command</font> <font color=#6c3e67>-currentmonth</font> <font color=#6c3e67>-united</font> <font color=#6c3e67>-daylist</font> <font color=#6c3e67>-hllist</font> <font color=#6c3e67>-popup</font> <font color=#6c3e67>-tip</font> <font color=#6c3e67>-weeks</font>
+  ::apave::removeOptions <font color=#1b1baa>$args</font> <font color=#6c3e67>-title</font> <font color=#6c3e67>-value</font> <font color=#6c3e67>-tvar</font> <font color=#6c3e67>-locale</font> <font color=#6c3e67>-parent</font>  <font color=#6c3e67>-dateformat</font> <font color=#6c3e67>-weekday</font> <font color=#6c3e67>-com</font> <font color=#6c3e67>-command</font> <font color=#6c3e67>-currentmonth</font> <font color=#6c3e67>-united</font> <font color=#6c3e67>-daylist</font>  <font color=#6c3e67>-hllist</font> <font color=#6c3e67>-popup</font> <font color=#6c3e67>-tip</font> <font color=#6c3e67>-weeks</font> <font color=#6c3e67>-hlweeks</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::klnd::clearup'>clearup</a><span class='ns_scope'> [<a href="klnd.html#::klnd" title="::klnd" class='ruff_cmd'>::klnd</a>]</span><span class='tinylink'><a href='klnd.html#::klnd'>klnd</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -591,7 +591,8 @@ padding: 0%;
   <b><font color=#3a6797>variable</font></b> p
   <b><font color=#3a6797>if</font></b> {![IsDay <font color=#1b1baa>$i</font>]} {<b><font color=#ca14ca>return</font></b> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$ret</font>}
   Leave
-  [<b><font color=#3a6797>set</font></b> w [<font color=#1b1baa>$p(obj)</font> BuT_KLNDSTD<font color=#1b1baa>$i</font>]] configure <font color=#6c3e67>-fg</font> <font color=#1b1baa>$p(fgsel)</font> <font color=#6c3e67>-bg</font> <font color=#1b1baa>$p(bgsel)</font>
+  <b><font color=#3a6797>lassign</font></b> [fgHL <font color=#1b1baa>$i</font> <font color=#1b1baa>$p(fgsel)</font>] w fg fg2
+  <font color=#1b1baa>$w</font> configure <font color=#6c3e67>-fg</font> <font color=#1b1baa>$fg</font> <font color=#6c3e67>-bg</font> <font color=#1b1baa>$p(bgsel)</font>
   <b><font color=#3a6797>set</font></b> p(ienter) <font color=#1b1baa>$i</font>
   <b><font color=#3a6797>set</font></b> p(dvis) [<font color=#1b1baa>$w</font> cget <font color=#6c3e67>-text</font>]
   <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>after</font></b> cancel <font color=#1b1baa>$p(after2)</font>}
@@ -599,6 +600,74 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$focusin</font> && <font color=#1b1baa>$p(com)</font> ne {}} {
     <b><font color=#3a6797>eval</font></b> [MapYMD <font color=#1b1baa>$p(com)</font> <font color=#1b1baa>$p(yvis)</font> <font color=#1b1baa>$p(mvis)</font> <font color=#1b1baa>$p(dvis)</font>]
   }
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::klnd::my::fgHL'>fgHL</a><span class='ns_scope'> [<a href="klnd.html#::klnd::my" title="::klnd::my" class='ruff_cmd'>::klnd::my</a>]</span><span class='tinylink'><a href='klnd.html#::klnd::my'>my</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Highlights day from -hllist option.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>fgHL</span> <span class='ruff_arg'>n fg</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>n</code></code></td><td class='ruff_defitem'>day button's index</td></tr>
+<tr><td class='ruff_defitem'><code><code>fg</code></code></td><td class='ruff_defitem'>default fg color</td></tr>
+</table>
+<h5 class='ruff'>Return value</h5><p class='ruff'>Returns list of button path, fg for day, fg for week</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_klnd_my_fgHL' href="javascript:toggleSource('klnd_my_fgHL')">Show source</a></p>
+<div id='klnd_my_fgHL' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::klnd::my::fgHL {n fg} {
+  <i><font color=#4b5d50># Highlights day from -hllist option.</font></i>
+  <i><font color=#4b5d50>#   n - day button's index</font></i>
+  <i><font color=#4b5d50>#   fg - default fg color</font></i>
+  <i><font color=#4b5d50># Returns list of button path, fg for day, fg for week</font></i>
+
+  <b><font color=#3a6797>variable</font></b> p
+  <b><font color=#3a6797>set</font></b> but [<font color=#1b1baa>$p(obj)</font> BuT_KLNDSTD<font color=#1b1baa>$n</font>]
+  <b><font color=#3a6797>set</font></b> d [<font color=#1b1baa>$but</font> cget <font color=#6c3e67>-text</font>]
+  <b><font color=#3a6797>lassign</font></b> [fgMayHL <font color=#1b1baa>$fg</font> <font color=#1b1baa>$p(yvis)</font> <font color=#1b1baa>$p(mvis)</font> <font color=#1b1baa>$d</font>] fg fg2
+  <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$but</font> <font color=#1b1baa>$fg</font> <font color=#1b1baa>$fg2</font>
+}<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::klnd::my::fgMayHL'>fgMayHL</a><span class='ns_scope'> [<a href="klnd.html#::klnd::my" title="::klnd::my" class='ruff_cmd'>::klnd::my</a>]</span><span class='tinylink'><a href='klnd.html#::klnd::my'>my</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Gets -fg option for day cell &amp; week number.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>fgMayHL</span> <span class='ruff_arg'>fg1 y m d</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>fg1</code></code></td><td class='ruff_defitem'>default fg color</td></tr>
+<tr><td class='ruff_defitem'><code><code>y</code></code></td><td class='ruff_defitem'>year</td></tr>
+<tr><td class='ruff_defitem'><code><code>m</code></code></td><td class='ruff_defitem'>month</td></tr>
+<tr><td class='ruff_defitem'><code><code>d</code></code></td><td class='ruff_defitem'>day</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_klnd_my_fgMayHL' href="javascript:toggleSource('klnd_my_fgMayHL')">Show source</a></p>
+<div id='klnd_my_fgMayHL' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::klnd::my::fgMayHL {fg1 y m d} {
+  <i><font color=#4b5d50># Gets -fg option for day cell & week number.</font></i>
+  <i><font color=#4b5d50>#   fg1 - default fg color</font></i>
+  <i><font color=#4b5d50>#   y - year</font></i>
+  <i><font color=#4b5d50>#   m - month</font></i>
+  <i><font color=#4b5d50>#   d - day</font></i>
+
+  <b><font color=#3a6797>variable</font></b> p
+  <b><font color=#3a6797>set</font></b> fg [<b><font color=#3a6797>set</font></b> fgw <font color=#1b1baa>$fg1</font>]
+  <b><font color=#3a6797>set</font></b> d [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$d</font>]
+  <b><font color=#3a6797>set</font></b> m [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$m</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$d</font> ni {0 <font color=#8b2a0e>&quot;&quot;</font>}} {
+    <b><font color=#3a6797>set</font></b> fmt %Y/%N/%e
+    <b><font color=#3a6797>set</font></b> day1 <font color=#1b1baa>$y</font>/<font color=#1b1baa>$m</font>/<font color=#1b1baa>$d</font>
+    <b><font color=#3a6797>set</font></b> week1 [<b><font color=#3a6797>clock</font></b> format [<b><font color=#3a6797>clock</font></b> scan <font color=#1b1baa>$y</font>/<font color=#1b1baa>$m</font>/<font color=#1b1baa>$d</font> <font color=#6c3e67>-format</font> <font color=#1b1baa>$fmt</font>] <font color=#6c3e67>-format</font> %V]
+    <b><font color=#3a6797>foreach</font></b> day <font color=#1b1baa>$p(hllist)</font> {
+      <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$day</font> /] y2 m2 d2
+      <b><font color=#3a6797>set</font></b> y2 [<b><font color=#3a6797>string</font></b> range 20<font color=#1b1baa>$y2</font> end-3 end]
+      <b><font color=#3a6797>set</font></b> m2 [<b><font color=#3a6797>string</font></b> trimleft <font color=#1b1baa>$m2</font> 0]
+      <b><font color=#3a6797>set</font></b> d2 [<b><font color=#3a6797>string</font></b> trimleft <font color=#1b1baa>$d2</font> 0]
+      <b><font color=#3a6797>set</font></b> day2 <font color=#1b1baa>$y2</font>/<font color=#1b1baa>$m2</font>/<font color=#1b1baa>$d2</font>
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$p(hlweeks)</font>} {
+        <b><font color=#3a6797>set</font></b> week2 [<b><font color=#3a6797>clock</font></b> format [<b><font color=#3a6797>clock</font></b> scan <font color=#1b1baa>$day2</font> <font color=#6c3e67>-format</font> <font color=#1b1baa>$fmt</font>] <font color=#6c3e67>-format</font> %V]
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$week1</font> eq <font color=#1b1baa>$week2</font>} {
+          <b><font color=#3a6797>set</font></b> fgw red
+          <b><font color=#ca14ca>break</font></b>
+        }
+      } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$day1</font> eq <font color=#1b1baa>$day2</font>} {
+        <b><font color=#3a6797>set</font></b> fg red
+        <b><font color=#ca14ca>break</font></b>
+      }
+    }
+  }
+  <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fg</font> <font color=#1b1baa>$fgw</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::klnd::my::GoMonth'>GoMonth</a><span class='ns_scope'> [<a href="klnd.html#::klnd::my" title="::klnd::my" class='ruff_cmd'>::klnd::my</a>]</span><span class='tinylink'><a href='klnd.html#::klnd::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -648,7 +717,10 @@ padding: 0%;
   <i><font color=#4b5d50># Highlights the current day's button.</font></i>
 
   <b><font color=#3a6797>variable</font></b> p
-  <b><font color=#3a6797>catch</font></b> {[<font color=#1b1baa>$p(obj)</font> BuT_KLNDSTD<font color=#1b1baa>$p(icurr)</font>] configure <font color=#6c3e67>-fg</font> <font color=#1b1baa>$p(fg2)</font> <font color=#6c3e67>-bg</font> <font color=#1b1baa>$p(bg2)</font>}
+  <b><font color=#3a6797>catch</font></b> {
+    <b><font color=#3a6797>lassign</font></b> [fgHL <font color=#1b1baa>$p(icurr)</font> <font color=#1b1baa>$p(fg2)</font>] but fg fg2
+    <font color=#1b1baa>$but</font> configure <font color=#6c3e67>-fg</font> <font color=#1b1baa>$fg</font> <font color=#6c3e67>-bg</font> <font color=#1b1baa>$p(bg2)</font>
+  }
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::klnd::my::InitCalendar'>InitCalendar</a><span class='ns_scope'> [<a href="klnd.html#::klnd::my" title="::klnd::my" class='ruff_cmd'>::klnd::my</a>]</span><span class='tinylink'><a href='klnd.html#::klnd::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -664,7 +736,7 @@ padding: 0%;
   <b><font color=#3a6797>variable</font></b> p
   <b><font color=#3a6797>variable</font></b> locales
   InitSettings
-  <b><font color=#3a6797>lassign</font></b> [::apave::parseOptions <font color=#1b1baa>$args</font> <font color=#6c3e67>-locale</font> [::msgcat::mclocale]  <font color=#6c3e67>-title</font> {} <font color=#6c3e67>-value</font> {} <font color=#6c3e67>-tvar</font> {} <font color=#6c3e67>-parent</font> {} <font color=#6c3e67>-dateformat</font> %D <font color=#6c3e67>-weeks</font> 0  <font color=#6c3e67>-weekday</font> {} <font color=#6c3e67>-centerme</font> {} <font color=#6c3e67>-geometry</font> {} <font color=#6c3e67>-entry</font> {} <font color=#6c3e67>-com</font> {} <font color=#6c3e67>-command</font> {}  <font color=#6c3e67>-currentmonth</font> {} <font color=#6c3e67>-united</font> no <font color=#6c3e67>-daylist</font> {-} <font color=#6c3e67>-hllist</font> {} <font color=#6c3e67>-popup</font> {} <font color=#6c3e67>-tip</font> {} <font color=#6c3e67>-width</font> 2]  loc title datevalue tvar parent p(dformat) p(weeks)  p(weekday) centerme geo entry com1 com2  p(currentmonth) p(united) p(daylist) p(hllist) p(popup) p(tip) p(width)
+  <b><font color=#3a6797>lassign</font></b> [::apave::parseOptions <font color=#1b1baa>$args</font> <font color=#6c3e67>-locale</font> [::msgcat::mclocale]  <font color=#6c3e67>-title</font> {} <font color=#6c3e67>-value</font> {} <font color=#6c3e67>-tvar</font> {} <font color=#6c3e67>-parent</font> {} <font color=#6c3e67>-dateformat</font> %D <font color=#6c3e67>-weeks</font> 0  <font color=#6c3e67>-weekday</font> {} <font color=#6c3e67>-centerme</font> {} <font color=#6c3e67>-geometry</font> {} <font color=#6c3e67>-entry</font> {} <font color=#6c3e67>-com</font> {} <font color=#6c3e67>-command</font> {}  <font color=#6c3e67>-currentmonth</font> {} <font color=#6c3e67>-united</font> no <font color=#6c3e67>-daylist</font> {-} <font color=#6c3e67>-hllist</font> {} <font color=#6c3e67>-popup</font> {} <font color=#6c3e67>-tip</font> {}  <font color=#6c3e67>-width</font> 2 <font color=#6c3e67>-hlweeks</font> 0]  loc title datevalue tvar parent p(dformat) p(weeks)  p(weekday) centerme geo entry com1 com2  p(currentmonth) p(united) p(daylist) p(hllist) p(popup) p(tip)  p(width) p(hlweeks)
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$com2</font> eq {}} {<b><font color=#3a6797>set</font></b> p(com) <font color=#1b1baa>$com1</font>} {<b><font color=#3a6797>set</font></b> p(com) <font color=#1b1baa>$com2</font>}
   <i><font color=#4b5d50># get localized week day names</font></i>
   <b><font color=#3a6797>lassign</font></b> [::klnd::weekdays <font color=#1b1baa>$loc</font>] p(days) p(weekday)
@@ -790,7 +862,10 @@ padding: 0%;
   <b><font color=#3a6797>variable</font></b> p
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$i</font> && ![[<font color=#1b1baa>$p(obj)</font> BuT_KLNDSTD<font color=#1b1baa>$i</font>] cget <font color=#6c3e67>-takefocus</font>]} <b><font color=#ca14ca>return</font></b>
   <b><font color=#3a6797>foreach</font></b> n [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$i</font> <font color=#1b1baa>$p(ienter)</font>] {
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$n</font>} {[<font color=#1b1baa>$p(obj)</font> BuT_KLNDSTD<font color=#1b1baa>$n</font>] configure <font color=#6c3e67>-fg</font> <font color=#1b1baa>$p(fg1)</font> <font color=#6c3e67>-bg</font> <font color=#1b1baa>$p(bg1)</font>}
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$n</font>} {
+      <b><font color=#3a6797>lassign</font></b> [fgHL <font color=#1b1baa>$n</font> <font color=#1b1baa>$p(fg1)</font>] but fg fg2
+      <font color=#1b1baa>$but</font> configure <font color=#6c3e67>-fg</font> <font color=#1b1baa>$fg</font> <font color=#6c3e67>-bg</font> <font color=#1b1baa>$p(bg1)</font>
+    }
   }
   HighlightCurrentDay
 }<br><br></code></pre></div>
@@ -957,17 +1032,24 @@ padding: 0%;
       }
     }
     <b><font color=#3a6797>lappend</font></b> ttls [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$ttl</font>]
+    <b><font color=#3a6797>lassign</font></b> [fgMayHL <font color=#1b1baa>$p(fg1)</font> <font color=#1b1baa>$y</font> <font color=#1b1baa>$m</font> <font color=#1b1baa>$iday</font>] fg fg2
+    <b><font color=#3a6797>append</font></b> weeksfg([<b><font color=#3a6797>expr</font></b> {(<font color=#1b1baa>$i</font>-1)/7}]) <font color=#1b1baa>$fg2</font>
     <b><font color=#3a6797>set</font></b> wbut [<font color=#1b1baa>$p(obj)</font> BuT_KLNDSTD<font color=#1b1baa>$i</font>]
-    <font color=#1b1baa>$wbut</font> configure {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$att</font> <font color=#6c3e67>-fg</font> <font color=#1b1baa>$p(fg1)</font> <font color=#6c3e67>-bg</font> <font color=#1b1baa>$p(bg1)</font> <font color=#6c3e67>-relief</font> flat <font color=#6c3e67>-text</font> <font color=#1b1baa>$ttl</font>
+    <font color=#1b1baa>$wbut</font> configure {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$att</font> <font color=#6c3e67>-fg</font> <font color=#1b1baa>$fg</font> <font color=#6c3e67>-bg</font> <font color=#1b1baa>$p(bg1)</font> <font color=#6c3e67>-relief</font> flat <font color=#6c3e67>-text</font> <font color=#1b1baa>$ttl</font>
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dopopup</font> && <font color=#1b1baa>$p(popup)</font> ne {}} {
       <b><font color=#134070>bind</font></b> <font color=#1b1baa>$wbut</font> &lt;Button-3&gt; <font color=#1b1baa>$script</font>
     }
   }
   <b><font color=#3a6797>set</font></b> wnums [WeekNumbers <font color=#1b1baa>$day1st</font> <font color=#1b1baa>$ttls</font>]
   <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;6} {} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$p(hlweeks)</font> && [<b><font color=#3a6797>string</font></b> match *red* <font color=#1b1baa>$weeksfg($i)</font>]} {
+      <b><font color=#3a6797>set</font></b> fg red
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> fg <font color=#1b1baa>$p(fgh)</font>
+    }
     <b><font color=#3a6797>set</font></b> wnum [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$wnums</font> <font color=#1b1baa>$i</font>]
     <b><font color=#3a6797>set</font></b> wbut [<font color=#1b1baa>$p(obj)</font> BuTW[<b><font color=#3a6797>incr</font></b> i]]
-    <font color=#1b1baa>$wbut</font> configure {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$::klnd::TMPATTW</font> <font color=#6c3e67>-text</font> <font color=#1b1baa>$wnum</font>
+    <font color=#1b1baa>$wbut</font> configure {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$::klnd::TMPATTW</font> <font color=#6c3e67>-text</font> <font color=#1b1baa>$wnum</font> <font color=#6c3e67>-foreground</font> <font color=#1b1baa>$fg</font>
   }
   <b><font color=#3a6797>set</font></b> p(mvis) <font color=#1b1baa>$m</font>  ;<i><font color=#4b5d50># month & year currently visible</font></i>
   <b><font color=#3a6797>set</font></b> p(yvis) <font color=#1b1baa>$y</font>
@@ -1043,6 +1125,8 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='klnd.html#::klnd::my::CurrentDate'>CurrentDate</a><span class='tooltiptext'>Gets the current date.
 </span></h4><h4 class='tooltip'><a href='klnd.html#::klnd::my::DefaultLocale'>DefaultLocale</a><span class='tooltiptext'>Gets a default locale currently used in a system.
 </span></h4><h4 class='tooltip'><a href='klnd.html#::klnd::my::Enter'>Enter</a><span class='tooltiptext'>Highlights a button and makes it current.
+</span></h4><h4 class='tooltip'><a href='klnd.html#::klnd::my::fgHL'>fgHL</a><span class='tooltiptext'>Highlights day from -hllist option.
+</span></h4><h4 class='tooltip'><a href='klnd.html#::klnd::my::fgMayHL'>fgMayHL</a><span class='tooltiptext'>Gets -fg option for day cell &amp; week number.
 </span></h4><h4 class='tooltip'><a href='klnd.html#::klnd::my::GoMonth'>GoMonth</a><span class='tooltiptext'>Shifts the month backward/forward.
 </span></h4><h4 class='tooltip'><a href='klnd.html#::klnd::my::GoYear'>GoYear</a><span class='tooltiptext'>Shifts the year backward/forward.
 </span></h4><h4 class='tooltip'><a href='klnd.html#::klnd::my::HighlightCurrentDay'>HighlightCurrentDay</a><span class='tooltiptext'>Highlights the current day's button.

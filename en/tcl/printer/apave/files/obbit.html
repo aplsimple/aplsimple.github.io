@@ -203,7 +203,7 @@ If fname is {}, disables logging.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#apave::logMessage">logMessage</a><span class=tooltiptext> apave::logMessage : Logs messages to a log file.
 msg - the message
 lev - maximum level for [info level] to introspect calls
-A log file's name is set by _PU_opts(_LOGFILE_). If it's blank,
+A log file's name is set by _PU_opts(_LOGFILE). If it's blank,
 no logging is made.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#apave::readTextFile">readTextFile</a><span class=tooltiptext> apave::readTextFile : Reads a text file.
 fname - file name
@@ -527,7 +527,7 @@ Docs:
   <b><font color=#3a6797>variable</font></b> _AP_Properties; <b><font color=#3a6797>array</font></b> set _AP_Properties [<b><font color=#3a6797>list</font></b>]
   <b><font color=#3a6797>set</font></b> _PU_opts(_ERROR_) {}
   <b><font color=#3a6797>set</font></b> _PU_opts(_EOL_) {}
-  <b><font color=#3a6797>set</font></b> _PU_opts(_LOGFILE_) {}
+  <b><font color=#3a6797>set</font></b> _PU_opts(_LOGFILE) {}
   <b><font color=#3a6797>set</font></b> _PU_opts(_MODALWIN_) [<b><font color=#3a6797>list</font></b>]
   <i><font color=#4b5d50># - main color scheme data</font></i>
   <b><font color=#3a6797>variable</font></b> _C_
@@ -1282,7 +1282,7 @@ Docs:
   <i><font color=#4b5d50># If fname is {}, disables logging.</font></i>
 
   <b><font color=#3a6797>variable</font></b> _PU_opts;
-  <b><font color=#3a6797>set</font></b> _PU_opts(_LOGFILE_) [<b><font color=#3a6797>file</font></b> normalize <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>set</font></b> _PU_opts(_LOGFILE) [<b><font color=#3a6797>file</font></b> normalize <font color=#1b1baa>$fname</font>]
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=apave::logMessage></a>
@@ -1290,12 +1290,12 @@ Docs:
   <i><font color=#4b5d50># Logs messages to a log file.</font></i>
   <i><font color=#4b5d50>#   msg - the message</font></i>
   <i><font color=#4b5d50>#   lev - maximum level for [info level] to introspect calls</font></i>
-  <i><font color=#4b5d50># A log file's name is set by _PU_opts(_LOGFILE_). If it's blank,</font></i>
+  <i><font color=#4b5d50># A log file's name is set by _PU_opts(_LOGFILE). If it's blank,</font></i>
   <i><font color=#4b5d50># no logging is made.</font></i>
 
   <b><font color=#3a6797>variable</font></b> _PU_opts;
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$_PU_opts(_LOGFILE_)</font> eq {}} <b><font color=#ca14ca>return</font></b>
-  <b><font color=#3a6797>set</font></b> chan [<b><font color=#3a6797>open</font></b> <font color=#1b1baa>$_PU_opts(_LOGFILE_)</font> a]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$_PU_opts(_LOGFILE)</font> eq {}} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>set</font></b> chan [<b><font color=#3a6797>open</font></b> <font color=#1b1baa>$_PU_opts(_LOGFILE)</font> a]
   <b><font color=#3a6797>set</font></b> dt [<b><font color=#3a6797>clock</font></b> format [<b><font color=#3a6797>clock</font></b> seconds] <font color=#653760>-format</font> {%d%b'%y %T}]
   <b><font color=#3a6797>set</font></b> msg <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>dt <font color=#1b1baa>$</font>msg&quot;</font>
   <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i <font color=#1b1baa>$lev</font>} {<font color=#1b1baa>$i</font>&gt;0} {<b><font color=#3a6797>incr</font></b> i -1} {
@@ -1307,7 +1307,8 @@ Docs:
   }
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#1b1baa>$msg</font>
   <b><font color=#3a6797>close</font></b> <font color=#1b1baa>$chan</font>
-  <b><font color=#3a6797>puts</font></b> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>_PU_opts(_LOGFILE_) - <font color=#1b1baa>$</font>msg&quot;</font>
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> _PU_opts(_LOGNN)]==1} {<b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$_PU_opts(_LOGFILE)</font>:}
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$_PU_opts(_LOGNN)</font>:\ <font color=#1b1baa>$msg</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=apave::readTextFile></a>
@@ -2434,6 +2435,7 @@ Docs:
     <b><font color=#134070>ttk::style</font></b> map <font color=#8b2a0e>&quot;.&quot;</font> \
       <font color=#653760>-background</font> [<b><font color=#3a6797>list</font></b> disabled <font color=#1b1baa>$bD</font> active <font color=#1b1baa>$bA</font>] \
       <font color=#653760>-foreground</font> [<b><font color=#3a6797>list</font></b> disabled grey active <font color=#1b1baa>$fA</font>]
+    . configure <font color=#653760>-bg</font> <font color=#1b1baa>$tbg1</font>
   }
   <i><font color=#4b5d50>#_______________________</font></i>
 <a id=themeMandatory></a>

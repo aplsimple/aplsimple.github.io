@@ -1771,18 +1771,18 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>msg</code></code></td><td class='ruff_defitem'>the message</td></tr>
 <tr><td class='ruff_defitem'><code><code>lev</code></code></td><td class='ruff_defitem'>maximum level for [info level] to introspect calls; <i>optional, default</i> <code>16</code></td></tr>
 </table>
-<h5 class='ruff'>Description</h5><p class='ruff'>A log file's name is set by _PU_opts(_LOGFILE_). If it's blank, no logging is made.</p>
+<h5 class='ruff'>Description</h5><p class='ruff'>A log file's name is set by _PU_opts(_LOGFILE). If it's blank, no logging is made.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_logMessage' href="javascript:toggleSource('apave_logMessage')">Show source</a></p>
 <div id='apave_logMessage' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::apave::logMessage {msg {lev 16}} {
   <i><font color=#4b5d50># Logs messages to a log file.</font></i>
   <i><font color=#4b5d50>#   msg - the message</font></i>
   <i><font color=#4b5d50>#   lev - maximum level for [info level] to introspect calls</font></i>
-  <i><font color=#4b5d50># A log file's name is set by _PU_opts(_LOGFILE_). If it's blank,</font></i>
+  <i><font color=#4b5d50># A log file's name is set by _PU_opts(_LOGFILE). If it's blank,</font></i>
   <i><font color=#4b5d50># no logging is made.</font></i>
 
   <b><font color=#3a6797>variable</font></b> _PU_opts;
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$_PU_opts(_LOGFILE_)</font> eq {}} <b><font color=#ca14ca>return</font></b>
-  <b><font color=#3a6797>set</font></b> chan [<b><font color=#3a6797>open</font></b> <font color=#1b1baa>$_PU_opts(_LOGFILE_)</font> a]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$_PU_opts(_LOGFILE)</font> eq {}} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>set</font></b> chan [<b><font color=#3a6797>open</font></b> <font color=#1b1baa>$_PU_opts(_LOGFILE)</font> a]
   <b><font color=#3a6797>set</font></b> dt [<b><font color=#3a6797>clock</font></b> format [<b><font color=#3a6797>clock</font></b> seconds] <font color=#6c3e67>-format</font> {%d%b'%y %T}]
   <b><font color=#3a6797>set</font></b> msg <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>dt <font color=#1b1baa>$</font>msg&quot;</font>
   <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i <font color=#1b1baa>$lev</font>} {<font color=#1b1baa>$i</font>&gt;0} {<b><font color=#3a6797>incr</font></b> i -1} {
@@ -1794,7 +1794,8 @@ padding: 0%;
   }
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#1b1baa>$msg</font>
   <b><font color=#3a6797>close</font></b> <font color=#1b1baa>$chan</font>
-  <b><font color=#3a6797>puts</font></b> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>_PU_opts(_LOGFILE_) - <font color=#1b1baa>$</font>msg&quot;</font>
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> _PU_opts(_LOGNN)]==1} {<b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$_PU_opts(_LOGFILE)</font>:}
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$_PU_opts(_LOGNN)</font>:\ <font color=#1b1baa>$msg</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::logName'>logName</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -1811,7 +1812,7 @@ padding: 0%;
   <i><font color=#4b5d50># If fname is {}, disables logging.</font></i>
 
   <b><font color=#3a6797>variable</font></b> _PU_opts;
-  <b><font color=#3a6797>set</font></b> _PU_opts(_LOGFILE_) [<b><font color=#3a6797>file</font></b> normalize <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>set</font></b> _PU_opts(_LOGFILE) [<b><font color=#3a6797>file</font></b> normalize <font color=#1b1baa>$fname</font>]
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::apave::lsearchFile'>lsearchFile</a><span class='ns_scope'> [<a href="apave.html#::apave" title="::apave" class='ruff_cmd'>::apave</a>]</span><span class='tinylink'><a href='apave.html#::apave'>apave</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -4040,7 +4041,7 @@ padding: 0%;
     <b><font color=#3a6797>source</font></b> [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::apave::apaveDir</font> pickers color clrpick.tcl]
   }
   <b><font color=#3a6797>lassign</font></b> [apave::extractOptions args <font color=#6c3e67>-entry</font> {} <font color=#6c3e67>-inifile</font> {} <font color=#6c3e67>-ontop</font> 0] ent ini top
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ent</font> ne {}} {
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ent</font> ne {} && [<b><font color=#3a6797>string</font></b> first GEO <font color=#1b1baa>$ent</font>]&lt;0} {
     <b><font color=#3a6797>set</font></b> ent [<b><font color=#ca14ca>my</font></b> [<b><font color=#ca14ca>my</font></b> ownWName <font color=#1b1baa>$ent</font>]]
     <b><font color=#3a6797>set</font></b> x [<b><font color=#134070>winfo</font></b> rootx <font color=#1b1baa>$ent</font>]
     <b><font color=#3a6797>set</font></b> y [<b><font color=#3a6797>expr</font></b> {[<b><font color=#134070>winfo</font></b> rooty <font color=#1b1baa>$ent</font>]+32}]
@@ -5497,11 +5498,11 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><code>ontop</code></code></td><td class='ruff_defitem'>yes at showing the window as topmost</td></tr>
 <tr><td class='ruff_defitem'><code><code>var</code></code></td><td class='ruff_defitem'>variable's name to receive a result (tkwait's variable); <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>minsize</code></code></td><td class='ruff_defitem'>list {minwidth minheight} or {}; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
-<tr><td class='ruff_defitem'><code><code>waitvar</code></code></td><td class='ruff_defitem'>if yes, force tkwait variable (mostly for non-modal windows); <i>optional, default</i> <code>1</code></td></tr>
+<tr><td class='ruff_defitem'><code><code>waitvar</code></code></td><td class='ruff_defitem'>if yes, force tkwait variable (mostly for non-modal windows); <i>optional, default</i> <code>0</code></td></tr>
 <tr><td class='ruff_defitem'><code><code>waitme</code></code></td><td class='ruff_defitem'>if empty, deiconify immediately, otherwise after waiting a variable or &quot;timeout and/or idle&quot; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_APaveBase_showWindow' href="javascript:toggleSource('apave_APaveBase_showWindow')">Show source</a></p>
-<div id='apave_APaveBase_showWindow' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> showWindow {win modal ontop {var {}} {minsize {}} {waitvar 1} {waitme {}}} {
+<div id='apave_APaveBase_showWindow' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> showWindow {win modal ontop {var {}} {minsize {}} {waitvar 0} {waitme {}}} {
   <i><font color=#4b5d50># Displays a windows and goes in tkwait cycle to interact with a user.</font></i>
   <i><font color=#4b5d50>#   win - the window's path</font></i>
   <i><font color=#4b5d50>#   modal - yes at showing the window as modal</font></i>
@@ -5522,9 +5523,6 @@ padding: 0%;
     }
   } <b><font color=#3a6797>else</font></b> {
     ::apave::deiconify <font color=#1b1baa>$win</font>
-  }
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$minsize</font> eq {}} {
-    <b><font color=#3a6797>set</font></b> minsize [<b><font color=#3a6797>list</font></b> [<b><font color=#134070>winfo</font></b> width <font color=#1b1baa>$win</font>] [<b><font color=#134070>winfo</font></b> height <font color=#1b1baa>$win</font>]]
   }
   <b><font color=#134070>wm</font></b> minsize <font color=#1b1baa>$win</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$minsize</font>
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;Configure&gt; <font color=#8b2a0e>&quot;<font color=#1b1baa>[</font>namespace current<font color=#1b1baa>]</font>::WinResize <font color=#1b1baa>$</font>win&quot;</font>
