@@ -167,7 +167,8 @@ islist - if yes, *fnames* is a file list
 Message - name of procedure for "open file" message
 Returns the file's tab ID if it's loaded, or {} if not loaded.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::ChooseMultipleFiles">ChooseMultipleFiles</a><span class=tooltiptext> file::ChooseMultipleFiles : Choose miltiple files to open.
-dosort - if yes, handles the result's sorting</span></div></li></ul>
+dosort - if yes, handles the result's sorting
+inidir - initial dir</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::SaveText">SaveText</a><span class=tooltiptext> file::SaveText : Saves text buffer to file.
 wtxt - text's path
 fname - file name
@@ -1068,14 +1069,16 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=file::ChooseMultipleFiles></a>
-<b><font color=#ca14ca>proc</font></b> file::ChooseMultipleFiles {{dosort yes}} {
+<b><font color=#ca14ca>proc</font></b> file::ChooseMultipleFiles {{dosort yes} {inidir <font color=#8b2a0e>&quot;&quot;</font>}} {
   <i><font color=#4b5d50># Choose miltiple files to open.</font></i>
   <i><font color=#4b5d50>#   dosort - if yes, handles the result's sorting</font></i>
+  <i><font color=#4b5d50>#   inidir - initial dir</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
   <b><font color=#3a6797>set</font></b> al(TMPfname) {}
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$inidir</font> eq {}} {<b><font color=#3a6797>set</font></b> inidir [<b><font color=#3a6797>file</font></b> dirname [alited::bar::CurrentTab 2]]}
   <b><font color=#3a6797>set</font></b> fnames [<font color=#1b1baa>$obPav</font> chooser tk_getOpenFile ::alited::al(TMPfname) <font color=#653760>-multiple</font> 1 \
-    <font color=#653760>-initialdir</font> [<b><font color=#3a6797>file</font></b> dirname [alited::bar::CurrentTab 2]] <font color=#653760>-parent</font> <font color=#1b1baa>$al(WIN)</font>]
+    <font color=#653760>-initialdir</font> <font color=#1b1baa>$inidir</font> <font color=#653760>-parent</font> <font color=#1b1baa>$al(WIN)</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dosort</font> && <font color=#1b1baa>$al(lifo)</font>} {<b><font color=#3a6797>set</font></b> fnames [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-decreasing</font> <font color=#1b1baa>$fnames</font>]}
   <b><font color=#3a6797>unset</font></b> al(TMPfname)
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$fnames</font>
