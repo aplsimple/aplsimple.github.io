@@ -2400,6 +2400,8 @@ Docs:
         <b><font color=#3a6797>set</font></b> rootname 1
         <b><font color=#3a6797>set</font></b> dn [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$dn</font> 1 end]
       }
+      <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$dn</font>] 0] ;<i><font color=#4b5d50># command for initialdir</font></i>
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> [<b><font color=#3a6797>info</font></b> commands <font color=#1b1baa>$com</font>]]} {<b><font color=#3a6797>set</font></b> dn [<b><font color=#3a6797>eval</font></b> <font color=#1b1baa>$dn</font>]}
       <b><font color=#3a6797>set</font></b> args [<b><font color=#3a6797>list</font></b> <font color=#653760>-initialfile</font> <font color=#1b1baa>$fn</font> <font color=#653760>-initialdir</font> <font color=#1b1baa>$dn</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$parent</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
       <b><font color=#3a6797>incr</font></b> isfilename
     } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$nchooser</font> eq {<b><font color=#134070>tk_chooseDirectory</font></b>}} {
@@ -2753,6 +2755,7 @@ Docs:
         <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$args</font>
       }
     }
+    <b><font color=#3a6797>set</font></b> orvert 0
     <b><font color=#3a6797>set</font></b> attcur [<b><font color=#3a6797>list</font></b>]
     <b><font color=#3a6797>set</font></b> namvar [<b><font color=#3a6797>list</font></b>]
     <i><font color=#4b5d50># get array of pairs (e.g. image-command for toolbar)</font></i>
@@ -2766,6 +2769,8 @@ Docs:
           <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$name</font> eq {<b><font color=#134070>menu</font></b>}} {<b><font color=#3a6797>set</font></b> v2 [<b><font color=#3a6797>list</font></b> [<b><font color=#ca14ca>my</font></b> MC <font color=#1b1baa>$v2</font>]]}
           <b><font color=#3a6797>lappend</font></b> namvar [<b><font color=#3a6797>namespace</font></b> current]::<font color=#1b1baa>$typ</font>[<b><font color=#3a6797>incr</font></b> ind] <font color=#1b1baa>$v1</font> <font color=#1b1baa>$v2</font>
         }
+      } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$nam</font> eq {<font color=#653760>-orient</font>}} {
+        <b><font color=#3a6797>set</font></b> orvert [<b><font color=#3a6797>string</font></b> match vert* <font color=#1b1baa>$val</font>]
       } <b><font color=#3a6797>else</font></b> {
         <b><font color=#3a6797>lappend</font></b> attcur <font color=#1b1baa>$nam</font> <font color=#1b1baa>$val</font>
       }
@@ -2795,11 +2800,19 @@ Docs:
     <b><font color=#3a6797>set</font></b> k [<b><font color=#3a6797>set</font></b> j [<b><font color=#3a6797>set</font></b> j2 [<b><font color=#3a6797>set</font></b> wasmenu 0]]]
     <b><font color=#3a6797>foreach</font></b> {nam v1 v2} <font color=#1b1baa>$namvar</font> {
       <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first # <font color=#1b1baa>$v1</font>]==0} <b><font color=#ca14ca>continue</font></b>
-      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$v1</font> eq {h_}} {  ;<i><font color=#4b5d50># horisontal space</font></i>
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$v1</font> eq {h_}} {
         <b><font color=#3a6797>set</font></b> ntmp [<b><font color=#ca14ca>my</font></b> Transname fra <font color=#1b1baa>${name}</font>[<b><font color=#3a6797>incr</font></b> j2]]
         <b><font color=#3a6797>set</font></b> wid1 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$ntmp</font> - - - - <font color=#8b2a0e>&quot;pack -side left -in <font color=#1b1baa>$</font>w.<font color=#1b1baa>$</font>name -fill y&quot;</font>]
         <b><font color=#3a6797>set</font></b> wid2 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$ntmp</font>.[<b><font color=#ca14ca>my</font></b> ownWName [<b><font color=#ca14ca>my</font></b> Transname h_ <font color=#1b1baa>$name$j</font>]] - - - - <font color=#8b2a0e>&quot;pack -fill y -expand 1 -padx <font color=#1b1baa>$</font>v2&quot;</font>]
-      } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$v1</font> eq {sev}} {   ;<i><font color=#4b5d50># vertical separator</font></i>
+      } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$v1</font> eq {v_}} {
+        <b><font color=#3a6797>set</font></b> ntmp [<b><font color=#ca14ca>my</font></b> Transname fra <font color=#1b1baa>${name}</font>[<b><font color=#3a6797>incr</font></b> j2]]
+        <b><font color=#3a6797>set</font></b> wid1 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$ntmp</font> - - - - <font color=#8b2a0e>&quot;pack -in <font color=#1b1baa>$</font>w.<font color=#1b1baa>$</font>name -fill x&quot;</font>]
+        <b><font color=#3a6797>set</font></b> wid2 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$ntmp</font>.[<b><font color=#ca14ca>my</font></b> ownWName [<b><font color=#ca14ca>my</font></b> Transname h_ <font color=#1b1baa>$name$j</font>]] - - - - <font color=#8b2a0e>&quot;pack -fill x -expand 1 -pady <font color=#1b1baa>$</font>v2&quot;</font>]
+      } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$v1</font> eq {seh}} {
+        <b><font color=#3a6797>set</font></b> ntmp [<b><font color=#ca14ca>my</font></b> Transname fra <font color=#1b1baa>${name}</font>[<b><font color=#3a6797>incr</font></b> j2]]
+        <b><font color=#3a6797>set</font></b> wid1 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$ntmp</font> - - - - <font color=#8b2a0e>&quot;pack -in <font color=#1b1baa>$</font>w.<font color=#1b1baa>$</font>name -fill x&quot;</font>]
+        <b><font color=#3a6797>set</font></b> wid2 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$ntmp</font>.[<b><font color=#ca14ca>my</font></b> ownWName [<b><font color=#ca14ca>my</font></b> Transname seh <font color=#1b1baa>$name$j</font>]] - - - - <font color=#8b2a0e>&quot;pack -fill x -expand 1 -pady <font color=#1b1baa>$</font>v2&quot;</font>]
+      } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$v1</font> eq {sev}} {
         <b><font color=#3a6797>set</font></b> ntmp [<b><font color=#ca14ca>my</font></b> Transname fra <font color=#1b1baa>${name}</font>[<b><font color=#3a6797>incr</font></b> j2]]
         <b><font color=#3a6797>set</font></b> wid1 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$ntmp</font> - - - - <font color=#8b2a0e>&quot;pack -side left -in <font color=#1b1baa>$</font>w.<font color=#1b1baa>$</font>name -fill y&quot;</font>]
         <b><font color=#3a6797>set</font></b> wid2 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$ntmp</font>.[<b><font color=#ca14ca>my</font></b> ownWName [<b><font color=#ca14ca>my</font></b> Transname sev <font color=#1b1baa>$name$j</font>]] - - - - <font color=#8b2a0e>&quot;pack -fill y -expand 1 -padx <font color=#1b1baa>$</font>v2&quot;</font>]
@@ -2846,6 +2859,11 @@ Docs:
               <b><font color=#ca14ca>my</font></b> MakeWidgetName <font color=#1b1baa>$w</font>.<font color=#1b1baa>$name</font> [<b><font color=#3a6797>string</font></b> totitle <font color=#1b1baa>$v1</font> 0 0]
             }
           }
+        }
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$orvert</font>} {
+          <b><font color=#3a6797>set</font></b> wid1 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$name</font>.<font color=#1b1baa>$v1</font> - - - - <font color=#8b2a0e>&quot;pack <font color=#1b1baa>$</font>packreq&quot;</font> <font color=#1b1baa>$v2</font>]
+          <b><font color=#3a6797>set</font></b> lwidgets [<b><font color=#3a6797>linsert</font></b> <font color=#1b1baa>$lwidgets</font> [<b><font color=#3a6797>incr</font></b> itmp] <font color=#1b1baa>$wid1</font>]
+          <b><font color=#ca14ca>continue</font></b>
         }
         <b><font color=#3a6797>set</font></b> wid1 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$name</font>.<font color=#1b1baa>$v1</font> - - - - <font color=#8b2a0e>&quot;pack -side left <font color=#1b1baa>$</font>packreq&quot;</font> <font color=#1b1baa>$v2</font>]
         <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> wasseh]==1} {
