@@ -92,6 +92,16 @@ args - additional arguments for tkcon</span></div></li></ul>
 onwhat - what to be helped</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#tool::AddTooltipRun">AddTooltipRun</a><span class=tooltiptext> tool::AddTooltipRun : Addition to Run's tooltip.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#tool::TooltipRun">TooltipRun</a><span class=tooltiptext> tool::TooltipRun : Gets a tip for "Run" tool.</span></div></li></ul>
+<li><b><a href="#dockingFW">dockingFW</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#tool::DFWtool">DFWtool</a><span class=tooltiptext> tool::DFWtool : Handles DockingFrameWork tool.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::DFWdocklayout">DFWdocklayout</a><span class=tooltiptext> tool::DFWdocklayout : Runs dockingFW layout.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::DFWapavelayout">DFWapavelayout</a><span class=tooltiptext> tool::DFWapavelayout : Runs apave FW layout.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::DFWscript">DFWscript</a><span class=tooltiptext> tool::DFWscript : Gets path to dockingFW.tcl.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::DFWSaveGeometry">DFWSaveGeometry</a><span class=tooltiptext> tool::DFWSaveGeometry : Saves dockingFW window's geometry.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::DFWokay">DFWokay</a><span class=tooltiptext> tool::DFWokay : Handles hitting "OK" button of dockingFW.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::DFWcancel">DFWcancel</a><span class=tooltiptext> tool::DFWcancel : Handles hitting "Cancel" button of dockingFW.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::DFWopen">DFWopen</a><span class=tooltiptext> tool::DFWopen : Opens layout files.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tool::DFWhelp">DFWhelp</a><span class=tooltiptext> tool::DFWhelp : Shows docs on DFW.</span></div></li></ul>
 <li><b><a href="#emenu_support">emenu support</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#tool::EM_Options">EM_Options</a><span class=tooltiptext> tool::EM_Options : Returns e_menu's general options.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#tool::EM_dir">EM_dir</a><span class=tooltiptext> tool::EM_dir : Returns a directory of e_menu's menus.</span></div></li></ul>
@@ -225,6 +235,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 <i><font color=#4b5d50>###########################################################</font></i>
 
 <b><font color=#ca14ca>namespace</font></b> eval tool {
+  <b><font color=#3a6797>variable</font></b> winFW <font color=#1b1baa>$::alited::al(WIN)</font>.dockFW
 }
 
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -518,6 +529,127 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>set</font></b> res <font color=#1b1baa>$al(comForce)</font>\n[<b><font color=#3a6797>lindex</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$res</font> \n] 1]
   }
   <b><font color=#3a6797>append</font></b> res [AddTooltipRun]
+}
+<a id=dockingFW></a>
+<i><font color=#4b5d50># ________________________ dockingFW _________________________ #</font></i>
+<a id=tool::DFWtool></a>
+<b><font color=#ca14ca>proc</font></b> tool::DFWtool {} {
+  <i><font color=#4b5d50># Handles DockingFrameWork tool.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obDFW obDFW
+  <b><font color=#3a6797>variable</font></b> winFW
+  <b><font color=#3a6797>set</font></b> head {
+  DockingFrameWork allows to get a paned GUI using <font color=#8b2a0e>&quot;drag-and-drop&quot;</font> moves
+  of ttk::notebook tabs.
+
+  The two entries below mean the output file paths the resulting layouts will
+  be written to.
+
+  If an output file's directory doesn't exist, it will be created.
+}
+  <b><font color=#3a6797>set</font></b> geo <font color=#1b1baa>$al(DockGeo)</font>
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obDFW obDFW
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$winFW</font>}
+  <font color=#1b1baa>$obDFW</font> makeWindow <font color=#1b1baa>$winFW</font>.fra [msgcat::mc Setup]
+  <font color=#1b1baa>$obDFW</font> paveWindow <font color=#1b1baa>$winFW</font>.fra {
+    {v_ - -}
+    {labHead v_ T 1 1 {<font color=#653760>-st</font> w <font color=#653760>-pady</font> 4 <font color=#653760>-padx</font> 8} {<font color=#653760>-t</font> {<font color=#1b1baa>$head</font>}}}
+    {fra + T 1 1 {<font color=#653760>-st</font> nsew <font color=#653760>-pady</font> 0 <font color=#653760>-padx</font> 3} {<font color=#653760>-padding</font> {5 5 5 5} <font color=#653760>-relief</font> groove}}
+    {.lab1 - - - - {<font color=#653760>-st</font> e} {<font color=#653760>-t</font> {DFW Layout:}}}
+    {.fil1 + L 1 1 {<font color=#653760>-st</font> w} {<font color=#653760>-w</font> 50 <font color=#653760>-tvar</font> ::alited::al(DockLayout)}}
+    {.lab2 .lab1 T 1 1 {<font color=#653760>-st</font> e} {<font color=#653760>-t</font> {apave Layout:}}}
+    {.fil2 + L 1 1 {<font color=#653760>-st</font> w} {<font color=#653760>-w</font> 50 <font color=#653760>-tvar</font> ::alited::al(ApaveLayout)}}
+    {fra2 fra T 1 1 {<font color=#653760>-st</font> nsew <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-padding</font> {5 5 5 5} <font color=#653760>-relief</font> groove}}
+    {.h_ - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both}}
+    {.ButOK - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 2} {<font color=#653760>-t</font> OK <font color=#653760>-com</font> ::alited::tool::DFWokay}}
+    {.butClose - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-t</font> Close <font color=#653760>-com</font> ::alited::tool::DFWcancel}}
+  }
+  <font color=#1b1baa>$obDFW</font> showModal <font color=#1b1baa>$winFW</font> <font color=#653760>-modal</font> no <font color=#653760>-waitvar</font> no <font color=#653760>-onclose</font> alited::tool::DFWcancel \
+    <font color=#653760>-focus</font> [<font color=#1b1baa>$obDFW</font> ButOK] <font color=#653760>-geometry</font> <font color=#1b1baa>$geo</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::DFWdocklayout></a>
+<b><font color=#ca14ca>proc</font></b> tool::DFWdocklayout {} {
+  <i><font color=#4b5d50># Runs dockingFW layout.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$al(DockLayout)</font>]} {
+    alited::Message <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(DockLayout) doesn't exists&quot;</font> 4
+    <b><font color=#ca14ca>return</font></b>
+  }
+  alited::Run [DFWscript] <font color=#1b1baa>$al(DockLayout)</font> <font color=#653760>-load</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::DFWapavelayout></a>
+<b><font color=#ca14ca>proc</font></b> tool::DFWapavelayout {} {
+  <i><font color=#4b5d50># Runs apave FW layout.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$al(ApaveLayout)</font>]} {
+    alited::Message <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(ApaveLayout) doesn't exists&quot;</font> 4
+    <b><font color=#ca14ca>return</font></b>
+  }
+  alited::Run <font color=#1b1baa>$al(ApaveLayout)</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::DFWscript></a>
+<b><font color=#ca14ca>proc</font></b> tool::DFWscript {} {
+  <i><font color=#4b5d50># Gets path to dockingFW.tcl.</font></i>
+
+  <b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$::alited::LIBDIR</font> util dockingFW.tcl
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::DFWSaveGeometry></a>
+<b><font color=#ca14ca>proc</font></b> tool::DFWSaveGeometry {} {
+  <i><font color=#4b5d50># Saves dockingFW window's geometry.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> winFW
+  <b><font color=#3a6797>catch</font></b> {
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$winFW</font>] x+] - - x y
+    <b><font color=#3a6797>set</font></b> al(DockGeo) +<font color=#1b1baa>$x</font>+<font color=#1b1baa>$y</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::DFWokay></a>
+<b><font color=#ca14ca>proc</font></b> tool::DFWokay {} {
+   <i><font color=#4b5d50># Handles hitting &quot;OK&quot; button of dockingFW.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al PAVEDIR PAVEDIR
+  DFWSaveGeometry
+  alited::Run [DFWscript] <font color=#1b1baa>$al(DockLayout)</font> <font color=#1b1baa>$al(ApaveLayout)</font> <font color=#1b1baa>$PAVEDIR</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::DFWcancel></a>
+<b><font color=#ca14ca>proc</font></b> tool::DFWcancel {args} {
+  <i><font color=#4b5d50># Handles hitting &quot;Cancel&quot; button of dockingFW.</font></i>
+
+  <b><font color=#3a6797>variable</font></b> winFW
+  DFWSaveGeometry
+  <b><font color=#134070>destroy</font></b> <font color=#1b1baa>$winFW</font>
+
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::DFWopen></a>
+<b><font color=#ca14ca>proc</font></b> tool::DFWopen {} {
+  <i><font color=#4b5d50># Opens layout files.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>set</font></b> inidir [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$al(DockLayout)</font>]
+  <b><font color=#3a6797>set</font></b> ::alited::al(TMPfname) {}
+  <b><font color=#3a6797>set</font></b> fnames [<font color=#1b1baa>$obPav</font> chooser tk_getOpenFile ::alited::al(TMPfname) \
+    <font color=#653760>-initialdir</font> <font color=#1b1baa>$inidir</font> <font color=#653760>-parent</font> <font color=#1b1baa>$al(WIN)</font> <font color=#653760>-multiple</font> 1]
+  <b><font color=#3a6797>unset</font></b> ::alited::al(TMPfname)
+  <b><font color=#3a6797>foreach</font></b> fn [<b><font color=#3a6797>lreverse</font></b> [<b><font color=#3a6797>lsort</font></b> <font color=#1b1baa>$fnames</font>]] {
+    alited::file::OpenFile <font color=#1b1baa>$fn</font> yes
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tool::DFWhelp></a>
+<b><font color=#ca14ca>proc</font></b> tool::DFWhelp {} {
+  <i><font color=#4b5d50># Shows docs on DFW.</font></i>
+
+  openDoc https://github.com/aplsimple/apave_tools/tree/main/tools/dockingFW
 }
 <a id=emenu_support></a>
 <i><font color=#4b5d50># ________________________ emenu support _________________________ #</font></i>

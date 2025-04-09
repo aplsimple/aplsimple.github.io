@@ -276,14 +276,30 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 <i><font color=#4b5d50># License: MIT.</font></i>
 <i><font color=#4b5d50>###########################################################</font></i>
 
-<b><font color=#3a6797>package</font></b> provide alited 1.8.8.5  ;<i><font color=#4b5d50># for documentation (esp. for Ruff!)</font></i>
+<b><font color=#3a6797>package</font></b> provide alited 1.8.9b5  ;<i><font color=#4b5d50># for documentation (esp. for Ruff!)</font></i>
+
+<b><font color=#ca14ca>namespace</font></b> eval alited {
+  <b><font color=#3a6797>variable</font></b> al; <b><font color=#3a6797>array</font></b> set al [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>set</font></b> DEBUG no  ;<i><font color=#4b5d50># debug mode</font></i>
+}
+
+<i><font color=#4b5d50># firstly, remove alited's options from argv</font></i>
+<b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> _ [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-exact</font> <font color=#1b1baa>$::argv</font> <font color=#653760>-OLDTHEME</font>]]&gt;-1} {
+  <b><font color=#3a6797>set</font></b> ::alited::al(OLDTHEME) [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$::argv</font> <font color=#1b1baa>$_</font>+1]
+  <b><font color=#3a6797>set</font></b> ::argv [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$::argv</font> <font color=#1b1baa>$_</font> [<b><font color=#3a6797>incr</font></b> _]]
+}
+<b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> _ [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-exact</font> <font color=#1b1baa>$::argv</font> DEBUG]]&gt;-1} {
+  <b><font color=#3a6797>set</font></b> ::alited::DEBUG yes
+  <b><font color=#3a6797>set</font></b> ::argv [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$::argv</font> <font color=#1b1baa>$_</font> <font color=#1b1baa>$_</font>]
+}
+<b><font color=#3a6797>set</font></b> ::argc [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$::argv</font>]
 
 <b><font color=#ca14ca>namespace</font></b> eval alited {
 
   <b><font color=#3a6797>variable</font></b> tcltk_version [<b><font color=#3a6797>package</font></b> require Tk]
   <b><font color=#3a6797>variable</font></b> isTcl90 [<b><font color=#3a6797>package</font></b> vsatisfies <font color=#1b1baa>$tcltk_version</font> 9.0-]
-  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>package</font></b> vsatisfies <font color=#1b1baa>$tcltk_version</font> 8.6.10-]} {
-    <b><font color=#134070>tk_messageBox</font></b> <font color=#653760>-message</font> <font color=#8b2a0e>&quot;\nalited needs Tcl/Tk v8.6.10+ \</font>
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>package</font></b> vsatisfies <font color=#1b1baa>$tcltk_version</font> 8.6.9-]} {
+    <b><font color=#134070>tk_messageBox</font></b> <font color=#653760>-message</font> <font color=#8b2a0e>&quot;\nalited needs Tcl/Tk v8.6.9+ \</font>
 <font color=#8b2a0e>      \n\nwhile the current is v<font color=#1b1baa>$</font>tcltk_version\n&quot;</font>
     <b><font color=#3a6797>exit</font></b>
   }
@@ -296,7 +312,6 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> ne {ok}} <b><font color=#3a6797>exit</font></b>
   }
 
-  <b><font color=#3a6797>variable</font></b> al; <b><font color=#3a6797>array</font></b> set al [<b><font color=#3a6797>list</font></b>]
   <b><font color=#3a6797>variable</font></b> al2; <b><font color=#3a6797>array</font></b> set al2 [<b><font color=#3a6797>list</font></b>] ;<i><font color=#4b5d50># alternative array, just to not touch &quot;al&quot;</font></i>
 
   <i><font color=#4b5d50># versions of mnu/ini to update to</font></i>
@@ -324,7 +339,6 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 <a id=Main_variables></a>
   <i><font color=#4b5d50>## ________________________ Main variables _________________________ ##</font></i>
 
-  <b><font color=#3a6797>set</font></b> DEBUG no  ;<i><font color=#4b5d50># debug mode</font></i>
   <b><font color=#3a6797>set</font></b> LOG {}    ;<i><font color=#4b5d50># log file in develop mode</font></i>
 
   <b><font color=#3a6797>set</font></b> al(WIN) .alwin    ;<i><font color=#4b5d50># main form's path</font></i>
@@ -388,6 +402,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>variable</font></b> obDlg ::alited::aliteddlg  ;<i><font color=#4b5d50># dialog of 1st level</font></i>
   <b><font color=#3a6797>variable</font></b> obDl2 ::alited::aliteddl2  ;<i><font color=#4b5d50># dialog of 2nd level</font></i>
   <b><font color=#3a6797>variable</font></b> obCHK ::alited::alitedCHK  ;<i><font color=#4b5d50># dialog of &quot;Check Tcl&quot;</font></i>
+  <b><font color=#3a6797>variable</font></b> obDFW ::alited::alitedDFW  ;<i><font color=#4b5d50># dialog of &quot;DockingFW&quot;</font></i>
   <b><font color=#3a6797>variable</font></b> obFND ::alited::alitedFND  ;<i><font color=#4b5d50># dialog of &quot;Find/Replace&quot;</font></i>
   <b><font color=#3a6797>variable</font></b> obFN2 ::alited::alitedFN2  ;<i><font color=#4b5d50># dialog of &quot;Find by list&quot;</font></i>
   <b><font color=#3a6797>variable</font></b> obRun ::alited::alitedRun  ;<i><font color=#4b5d50># dialog of &quot;Run...&quot;</font></i>
@@ -443,6 +458,10 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> al(TextExts) <font color=#1b1baa>$al(TextExtsDef)</font>
   <b><font color=#3a6797>set</font></b> al(MOVEFG) black
   <b><font color=#3a6797>set</font></b> al(MOVEBG) #7eeeee
+
+  <b><font color=#3a6797>set</font></b> al(DockGeo) root=<font color=#1b1baa>$al(WIN)</font>
+  <b><font color=#3a6797>set</font></b> al(DockLayout) [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$CONFIGDIR</font> alited data dockFW.tcl]
+  <b><font color=#3a6797>set</font></b> al(ApaveLayout) [<b><font color=#3a6797>file</font></b> join <font color=#1b1baa>$CONFIGDIR</font> alited data apaveFW.tcl]
 <a id=Procs_to_raise_the_alited_app></a>
   <i><font color=#4b5d50>## __________________ Procs to raise the alited app ___________________ ##</font></i>
 <a id=raise_window></a>
@@ -537,11 +556,6 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   }
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> _ [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-glob</font> <font color=#1b1baa>$::argv</font> LOG=*]]&gt;-1} {
     <b><font color=#3a6797>set</font></b> ::alited::LOG [<b><font color=#3a6797>string</font></b> range [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$::argv</font> <font color=#1b1baa>$_</font>] 4 end]
-    <b><font color=#3a6797>set</font></b> ::argv [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$::argv</font> <font color=#1b1baa>$_</font> <font color=#1b1baa>$_</font>]
-    <b><font color=#3a6797>incr</font></b> ::argc -1
-  }
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> _ [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-exact</font> <font color=#1b1baa>$::argv</font> DEBUG]]&gt;-1} {
-    <b><font color=#3a6797>set</font></b> ::alited::DEBUG yes
     <b><font color=#3a6797>set</font></b> ::argv [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$::argv</font> <font color=#1b1baa>$_</font> <font color=#1b1baa>$_</font>]
     <b><font color=#3a6797>incr</font></b> ::argc -1
   }
@@ -681,7 +695,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#ca14ca>proc</font></b> ListPaved {} {
     <i><font color=#4b5d50># Returns a list of apave objects for dialogues.</font></i>
 
-    <b><font color=#3a6797>list</font></b> obDlg obDl2 obFND obFN2 obCHK obRun
+    <b><font color=#3a6797>list</font></b> obDlg obDl2 obFND obFN2 obCHK obRun obDFW
   }
   <i><font color=#4b5d50>#_______________________</font></i>
 <a id=SyntaxColors></a>
@@ -1534,6 +1548,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 <font color=#8b2a0e>      \n\nTry to rename/move it or take it from alited's source. \</font>
 <font color=#8b2a0e>      \nThen restart alited.\n\nDetails are in stdout.&quot;</font>
   }
+  <b><font color=#3a6797>set</font></b> OLDTHEME <font color=#1b1baa>$::alited::al(THEME)</font>
   alited::main::_create  ;<i><font color=#4b5d50># create the main form</font></i>
   alited::favor::_init   ;<i><font color=#4b5d50># initialize favorites</font></i>
   alited::tool::AfterStart
@@ -1564,6 +1579,9 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>file</font></b> isfile [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$::alited::ARGV</font> <font color=#1b1baa>$i</font>]]} {  ;<i><font color=#4b5d50># remove file names passed to ALE</font></i>
         <b><font color=#3a6797>set</font></b> ::alited::ARGV [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$::alited::ARGV</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
       }
+    }
+    <b><font color=#3a6797>if</font></b> {{<font color=#653760>-OLDTHEME</font>} ni <font color=#1b1baa>$::alited::ARGV</font>} {
+      <b><font color=#3a6797>lappend</font></b> ::alited::ARGV <font color=#653760>-OLDTHEME</font> <font color=#1b1baa>$OLDTHEME</font>
     }
     <b><font color=#3a6797>exec</font></b> -- [<b><font color=#3a6797>info</font></b> nameofexecutable] <font color=#1b1baa>$::alited::SCRIPT</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$::alited::ARGV</font> &
   } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$::alited::LOG</font> ne {}} {
