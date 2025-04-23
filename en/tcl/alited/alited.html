@@ -2508,6 +2508,7 @@ padding: 0%;
     ::alited::tree::SeeSelection
     ::alited::main::UpdateGutter
     ::alited::favor::SkipVisited no
+    ::alited::main::SaveVisitInfo
   }
   <b><font color=#3a6797>if</font></b> {![alited::file::IsNoName <font color=#1b1baa>$fname</font>] && ![<b><font color=#3a6797>file</font></b> exists <font color=#1b1baa>$fname</font>]} {
     <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> alited::Balloon1 <font color=#1b1baa>$fname</font>]
@@ -10123,10 +10124,7 @@ padding: 0%;
     <b><font color=#3a6797>lassign</font></b> [LookDecl1 <font color=#1b1baa>$wtxt</font> no] found TID
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$found</font> ne {}} {
-    alited::main::SaveVisitInfo
-    alited::favor::SkipVisited yes
-    alited::bar::BAR <font color=#1b1baa>$TID</font> show
-    <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;  alited::main::FocusText <font color=#1b1baa>$</font>TID <font color=#1b1baa>$</font>found.0 ;  alited::tree::NewSelection ;  alited::main::SaveVisitInfo&quot;</font>
+    alited::unit::SwitchToTIDPos <font color=#1b1baa>$TID</font> <font color=#1b1baa>$found</font>.0
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %u <font color=#1b1baa>$what</font>] <font color=#1b1baa>$al(MC,notfndunit)</font>]
     alited::Message <font color=#1b1baa>$msg</font> 4
@@ -11294,22 +11292,41 @@ padding: 0%;
   <i><font color=#4b5d50># Applies a command to selection/current line.</font></i>
   <i><font color=#4b5d50>#   cont - list of config.file's lines</font></i>
 
-  <b><font color=#3a6797>lassign</font></b> [BeforeFormatting] wtxt value pos1 pos2
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtxt</font> eq {}} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
   <b><font color=#3a6797>set</font></b> err 0
   <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$cont</font> {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> com [alited::edit::IniParameter command <font color=#1b1baa>$line</font>]] ne {}} {
-      <b><font color=#3a6797>set</font></b> value [alited::edit::EscapeValue <font color=#1b1baa>$value</font>]
-      <b><font color=#3a6797>set</font></b> com [alited::Map <font color=#6c3e67>-nocase</font> <font color=#1b1baa>$com</font> %v <font color=#1b1baa>$value</font>]
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> value [<b><font color=#3a6797>eval</font></b> <font color=#1b1baa>$com</font>]} e]} {
-        alited::Message <font color=#1b1baa>$e</font> 4
-        <b><font color=#3a6797>set</font></b> err 1
-        <b><font color=#ca14ca>break</font></b>
+      <b><font color=#3a6797>set</font></b> selection [<font color=#1b1baa>$wtxt</font> tag ranges sel]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$selection</font>]==0} {
+        <b><font color=#3a6797>set</font></b> pos [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$wtxt</font> index insert])}]
+        <b><font color=#3a6797>set</font></b> pos1 <font color=#1b1baa>$pos</font>.0
+        <b><font color=#3a6797>set</font></b> pos2 <font color=#1b1baa>$pos</font>.end
+        <b><font color=#3a6797>set</font></b> selection [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font>]
       }
-      <b><font color=#3a6797>set</font></b> value [alited::edit::UnEscapeValue <font color=#1b1baa>$value</font>]
+      <i><font color=#4b5d50># Mode=2 allows a rectangular selection,</font></i>
+      <i><font color=#4b5d50># so we should apply the command ($com)</font></i>
+      <i><font color=#4b5d50># to each line of the rectangular selection</font></i>
+      <b><font color=#3a6797>foreach</font></b> {pos1 pos2} <font color=#1b1baa>$selection</font> {
+        <b><font color=#3a6797>set</font></b> value [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font>]
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$value</font> ne {}} {
+          <b><font color=#3a6797>set</font></b> value [alited::edit::EscapeValue <font color=#1b1baa>$value</font>]
+          <b><font color=#3a6797>set</font></b> comtodo [alited::Map <font color=#6c3e67>-nocase</font> <font color=#1b1baa>$com</font> %v <font color=#1b1baa>$value</font>]
+          <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> value [<b><font color=#3a6797>eval</font></b> <font color=#1b1baa>$comtodo</font>]} e]} {
+            alited::Message <font color=#1b1baa>$e</font> 4
+            <b><font color=#3a6797>set</font></b> err 1
+            <b><font color=#ca14ca>break</font></b>
+          }
+          <b><font color=#3a6797>set</font></b> value [alited::edit::UnEscapeValue <font color=#1b1baa>$value</font>]
+          <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font> <font color=#1b1baa>$value</font>
+          <b><font color=#3a6797>set</font></b> nch [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$value</font>]
+          <font color=#1b1baa>$wtxt</font> tag add sel <font color=#1b1baa>$pos1</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos1 +<font color=#1b1baa>$</font>nch chars&quot;</font>
+        }
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$err</font>} <b><font color=#ca14ca>break</font></b>
     }
   }
-  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$err</font>} {AfterFormatting <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font> <font color=#1b1baa>$value</font>}
+  alited::main::UpdateAll
+  focusByForce <font color=#1b1baa>$wtxt</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::format::Mode3'>Mode3</a><span class='ns_scope'> [<a href="alited.html#::alited::format" title="::alited::format" class='ruff_cmd'>::alited::format</a>]</span><span class='tinylink'><a href='alited.html#::alited::format'>format</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -16296,6 +16313,33 @@ FtcEguWyAAAAAElFTkSuQmCC}
     }
   }
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::main::SaveLast2'>SaveLast2</a><span class='ns_scope'> [<a href="alited.html#::alited::main" title="::alited::main" class='ruff_cmd'>::alited::main</a>]</span><span class='tinylink'><a href='alited.html#::alited::main'>main</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Saves the current text's info in last two visited, to switch them.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>SaveLast2</span> </div>
+<h5 class='ruff'>See also</h5><p class='ruff'><a href="alited.html#::alited::unit::SwitchUnits" title="unit::SwitchUnits" class='ruff_cmd'>unit::SwitchUnits</a></p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_main_SaveLast2' href="javascript:toggleSource('alited_main_SaveLast2')">Show source</a></p>
+<div id='alited_main_SaveLast2' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::main::SaveLast2 {} {
+  <i><font color=#4b5d50># Saves the current text's info in last two visited, to switch them.</font></i>
+  <i><font color=#4b5d50># See also: unit::SwitchUnits</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>catch</font></b> {
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists al(Last2Visited)]} {<b><font color=#3a6797>set</font></b> al(Last2Visited) [<b><font color=#3a6797>list</font></b>]}
+    <b><font color=#3a6797>set</font></b> wtxt [CurrentWTXT]
+    <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$wtxt</font> index insert]
+    <b><font color=#3a6797>set</font></b> TID [alited::bar::CurrentTabID]
+    <b><font color=#3a6797>lassign</font></b> [alited::tree::CurrentItemByLine <font color=#1b1baa>$pos</font> 1] curitem
+    <b><font color=#3a6797>set</font></b> info [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$TID</font> <font color=#1b1baa>$curitem</font> <font color=#1b1baa>$pos</font>]
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$al(Last2Visited)</font> 0] TID2 curitem2
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> eq <font color=#1b1baa>$TID2</font> && <font color=#1b1baa>$curitem</font> eq <font color=#1b1baa>$curitem2</font>} {
+      <b><font color=#3a6797>set</font></b> al(Last2Visited) [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$al(Last2Visited)</font> 0 0 <font color=#1b1baa>$info</font>]
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> al(Last2Visited) [<b><font color=#3a6797>linsert</font></b> <font color=#1b1baa>$al(Last2Visited)</font> 0 <font color=#1b1baa>$info</font>]
+      <b><font color=#3a6797>set</font></b> al(Last2Visited) [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$al(Last2Visited)</font> 0 1]
+    }
+  }
+}<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::main::SaveMarks'>SaveMarks</a><span class='ns_scope'> [<a href="alited.html#::alited::main" title="::alited::main" class='ruff_cmd'>::alited::main</a>]</span><span class='tinylink'><a href='alited.html#::alited::main'>main</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Saves mark data for a text to be closed.</p>
@@ -16338,6 +16382,7 @@ FtcEguWyAAAAAElFTkSuQmCC}
   <i><font color=#4b5d50>#   s - key's state</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  SaveLast2
   <i><font color=#4b5d50># only for unit tree and not navigation key</font></i>
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(TREE,isunits)</font> || [alited::favor::SkipVisited] ||  <font color=#1b1baa>$K</font> in {Tab Up Down Left Right Next Prior Home End Insert} ||  [<b><font color=#3a6797>string</font></b> match *Cont* <font color=#1b1baa>$K</font>]} {
     <b><font color=#ca14ca>return</font></b>
@@ -28503,19 +28548,39 @@ README.md}
     }
   }
 }<br><br></code></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::unit::SwitchToTIDPos'>SwitchToTIDPos</a><span class='ns_scope'> [<a href="alited.html#::alited::unit" title="::alited::unit" class='ruff_cmd'>::alited::unit</a>]</span><span class='tinylink'><a href='alited.html#::alited::unit'>unit</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Switches to tab &amp; text position.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>SwitchToTIDPos</span> <span class='ruff_arg'>TID pos</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code><code>TID</code></code></td><td class='ruff_defitem'>tab's ID</td></tr>
+<tr><td class='ruff_defitem'><code><code>pos</code></code></td><td class='ruff_defitem'>text position</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_unit_SwitchToTIDPos' href="javascript:toggleSource('alited_unit_SwitchToTIDPos')">Show source</a></p>
+<div id='alited_unit_SwitchToTIDPos' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit::SwitchToTIDPos {TID pos} {
+  <i><font color=#4b5d50># Switches to tab & text position.</font></i>
+  <i><font color=#4b5d50>#   TID - tab's ID</font></i>
+  <i><font color=#4b5d50>#   pos - text position</font></i>
+
+  alited::main::SaveVisitInfo
+  alited::favor::SkipVisited yes
+  alited::bar::BAR <font color=#1b1baa>$TID</font> show
+  <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;  alited::main::FocusText <font color=#1b1baa>$</font>TID <font color=#1b1baa>$</font>pos ;  alited::tree::NewSelection ;  alited::main::SaveVisitInfo&quot;</font>
+}<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::unit::SwitchUnits'>SwitchUnits</a><span class='ns_scope'> [<a href="alited.html#::alited::unit" title="::alited::unit" class='ruff_cmd'>::alited::unit</a>]</span><span class='tinylink'><a href='alited.html#::alited::unit'>unit</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Switches between last two active units.</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>SwitchUnits</span> </div>
+<h5 class='ruff'>See also</h5><p class='ruff'><a href="alited.html#::alited::main::SaveLast2" title="main::SaveLast2" class='ruff_cmd'>main::SaveLast2</a></p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_unit_SwitchUnits' href="javascript:toggleSource('alited_unit_SwitchUnits')">Show source</a></p>
 <div id='alited_unit_SwitchUnits' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::unit::SwitchUnits {} {
   <i><font color=#4b5d50># Switches between last two active units.</font></i>
+  <i><font color=#4b5d50># See also: main::SaveLast2</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$al(FAV,visited)</font>]&lt;2} <b><font color=#ca14ca>return</font></b>
-  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$al(FAV,visited)</font> 1 4] name fname header
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> TID [alited::favor::OpenSelectedFile <font color=#1b1baa>$fname</font>]] eq {}} <b><font color=#ca14ca>return</font></b>
-  alited::favor::GoToUnit <font color=#1b1baa>$TID</font> <font color=#1b1baa>$name</font> <font color=#1b1baa>$header</font>
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists al(Last2Visited)] || [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$al(Last2Visited)</font>]&lt;2} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$al(Last2Visited)</font> 1] TID curitem pos
+  SwitchToTIDPos <font color=#1b1baa>$TID</font> <font color=#1b1baa>$pos</font>
 }<br><br></code></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::unit::TemplateData'>TemplateData</a><span class='ns_scope'> [<a href="alited.html#::alited::unit" title="::alited::unit" class='ruff_cmd'>::alited::unit</a>]</span><span class='tinylink'><a href='alited.html#::alited::unit'>unit</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -29857,6 +29922,7 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::main::PackTextWidgets'>PackTextWidgets</a><span class='tooltiptext'>Packs a text and its scrollbar.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::main::ProcMessage'>ProcMessage</a><span class='tooltiptext'>Handles clicking on message label.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::main::RestoreMarks'>RestoreMarks</a><span class='tooltiptext'>Restores mark data for a text to be shown.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::main::SaveLast2'>SaveLast2</a><span class='tooltiptext'>Saves the current text's info in last two visited, to switch them.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::main::SaveMarks'>SaveMarks</a><span class='tooltiptext'>Saves mark data for a text to be closed.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::main::SaveVisitInfo'>SaveVisitInfo</a><span class='tooltiptext'>Remembers data about current unit.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::main::SetMark'>SetMark</a><span class='tooltiptext'>Sets a mark in the mark bar.
@@ -30287,6 +30353,7 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::unit::SearchByHeader'>SearchByHeader</a><span class='tooltiptext'>Gets tree item ID of a units by its header (declaration+initial comment).
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::unit::SearchInBranch'>SearchInBranch</a><span class='tooltiptext'>Checks whether a unit is in a branch.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::unit::Source_unit_tpl'>Source_unit_tpl</a><span class='tooltiptext'>Sources unit_tpl.tcl.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::unit::SwitchToTIDPos'>SwitchToTIDPos</a><span class='tooltiptext'>Switches to tab &amp; text position.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::unit::SwitchUnits'>SwitchUnits</a><span class='tooltiptext'>Switches between last two active units.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::unit::TemplateData'>TemplateData</a><span class='tooltiptext'>Replaces the template wildcards with data of current text and unit.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::unit::TemplateMap'>TemplateMap</a><span class='tooltiptext'>Maps a string using template wildcards.

@@ -150,6 +150,8 @@ search a pair for a bracket highlighted</span></div></li></ul>
 wtxt - text's path
 K - key pressed (to check keypressings)
 s - key's state</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#main::SaveLast2">SaveLast2</a><span class=tooltiptext> main::SaveLast2 : Saves the current text's info in last two visited, to switch them.
+See also: unit::SwitchUnits</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#main::AfterUndoRedo">AfterUndoRedo</a><span class=tooltiptext> main::AfterUndoRedo : Actions after undo/redo.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#main::AfterCut">AfterCut</a><span class=tooltiptext> main::AfterCut : Actions after cutting text: resets the unit tree's selection.</span></div></li></ul>
 <li><b><a href="#GUI">GUI</a></b></li>
@@ -1068,6 +1070,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50>#   s - key's state</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  SaveLast2
   <i><font color=#4b5d50># only for unit tree and not navigation key</font></i>
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(TREE,isunits)</font> || [alited::favor::SkipVisited] || \
   <font color=#1b1baa>$K</font> in {Tab Up Down Left Right Next Prior Home End Insert} || \
@@ -1106,6 +1109,29 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$name</font> eq [alited::tree::UnitTitle <font color=#1b1baa>$title</font> <font color=#1b1baa>$l1</font> <font color=#1b1baa>$l2</font>]} {
       <b><font color=#3a6797>set</font></b> al(CPOS,<font color=#1b1baa>$TID</font>,<font color=#1b1baa>$header</font>) [::apave::p+ <font color=#1b1baa>$pos</font> -<font color=#1b1baa>$l1</font>]
       <b><font color=#ca14ca>return</font></b>
+    }
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=main::SaveLast2></a>
+<b><font color=#ca14ca>proc</font></b> main::SaveLast2 {} {
+  <i><font color=#4b5d50># Saves the current text's info in last two visited, to switch them.</font></i>
+  <i><font color=#4b5d50># See also: unit::SwitchUnits</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>catch</font></b> {
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists al(Last2Visited)]} {<b><font color=#3a6797>set</font></b> al(Last2Visited) [<b><font color=#3a6797>list</font></b>]}
+    <b><font color=#3a6797>set</font></b> wtxt [CurrentWTXT]
+    <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$wtxt</font> index insert]
+    <b><font color=#3a6797>set</font></b> TID [alited::bar::CurrentTabID]
+    <b><font color=#3a6797>lassign</font></b> [alited::tree::CurrentItemByLine <font color=#1b1baa>$pos</font> 1] curitem
+    <b><font color=#3a6797>set</font></b> info [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$TID</font> <font color=#1b1baa>$curitem</font> <font color=#1b1baa>$pos</font>]
+    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$al(Last2Visited)</font> 0] TID2 curitem2
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> eq <font color=#1b1baa>$TID2</font> && <font color=#1b1baa>$curitem</font> eq <font color=#1b1baa>$curitem2</font>} {
+      <b><font color=#3a6797>set</font></b> al(Last2Visited) [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$al(Last2Visited)</font> 0 0 <font color=#1b1baa>$info</font>]
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> al(Last2Visited) [<b><font color=#3a6797>linsert</font></b> <font color=#1b1baa>$al(Last2Visited)</font> 0 <font color=#1b1baa>$info</font>]
+      <b><font color=#3a6797>set</font></b> al(Last2Visited) [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$al(Last2Visited)</font> 0 1]
     }
   }
 }

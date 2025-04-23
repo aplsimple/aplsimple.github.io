@@ -104,7 +104,11 @@ method unit::SelectUnit {} {...}
 regexp {^\s*(proc|method)\s+([[:alnum:]_:]+)\s.+} $line -> type title
 extracts a type (proc/method) and a title (unit::SelectUnit).
 The last non-empty group is taken for the title.</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#unit::SwitchUnits">SwitchUnits</a><span class=tooltiptext> unit::SwitchUnits : Switches between last two active units.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#unit::SwitchUnits">SwitchUnits</a><span class=tooltiptext> unit::SwitchUnits : Switches between last two active units.
+See also: main::SaveLast2</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#unit::SwitchToTIDPos">SwitchToTIDPos</a><span class=tooltiptext> unit::SwitchToTIDPos : Switches to tab & text position.
+TID - tab's ID
+pos - text position</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#unit::RecreateUnits">RecreateUnits</a><span class=tooltiptext> unit::RecreateUnits : Recreates the internal tree of units.
 TID - tab's ID
 wtxt - text's path</span></div></li></ul>
@@ -456,12 +460,27 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 <a id=unit::SwitchUnits></a>
 <b><font color=#ca14ca>proc</font></b> unit::SwitchUnits {} {
   <i><font color=#4b5d50># Switches between last two active units.</font></i>
+  <i><font color=#4b5d50># See also: main::SaveLast2</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$al(FAV,visited)</font>]&lt;2} <b><font color=#ca14ca>return</font></b>
-  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$al(FAV,visited)</font> 1 4] name fname header
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> TID [alited::favor::OpenSelectedFile <font color=#1b1baa>$fname</font>]] eq {}} <b><font color=#ca14ca>return</font></b>
-  alited::favor::GoToUnit <font color=#1b1baa>$TID</font> <font color=#1b1baa>$name</font> <font color=#1b1baa>$header</font>
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists al(Last2Visited)] || [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$al(Last2Visited)</font>]&lt;2} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$al(Last2Visited)</font> 1] TID curitem pos
+  SwitchToTIDPos <font color=#1b1baa>$TID</font> <font color=#1b1baa>$pos</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=unit::SwitchToTIDPos></a>
+<b><font color=#ca14ca>proc</font></b> unit::SwitchToTIDPos {TID pos} {
+  <i><font color=#4b5d50># Switches to tab & text position.</font></i>
+  <i><font color=#4b5d50>#   TID - tab's ID</font></i>
+  <i><font color=#4b5d50>#   pos - text position</font></i>
+
+  alited::main::SaveVisitInfo
+  alited::favor::SkipVisited yes
+  alited::bar::BAR <font color=#1b1baa>$TID</font> show
+  <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot; \</font>
+<font color=#8b2a0e>    alited::main::FocusText <font color=#1b1baa>$</font>TID <font color=#1b1baa>$</font>pos ; \</font>
+<font color=#8b2a0e>    alited::tree::NewSelection ; \</font>
+<font color=#8b2a0e>    alited::main::SaveVisitInfo&quot;</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=unit::RecreateUnits></a>

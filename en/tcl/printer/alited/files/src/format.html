@@ -824,22 +824,41 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50># Applies a command to selection/current line.</font></i>
   <i><font color=#4b5d50>#   cont - list of config.file's lines</font></i>
 
-  <b><font color=#3a6797>lassign</font></b> [BeforeFormatting] wtxt value pos1 pos2
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtxt</font> eq {}} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
   <b><font color=#3a6797>set</font></b> err 0
   <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$cont</font> {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> com [alited::edit::IniParameter command <font color=#1b1baa>$line</font>]] ne {}} {
-      <b><font color=#3a6797>set</font></b> value [alited::edit::EscapeValue <font color=#1b1baa>$value</font>]
-      <b><font color=#3a6797>set</font></b> com [alited::Map <font color=#653760>-nocase</font> <font color=#1b1baa>$com</font> %v <font color=#1b1baa>$value</font>]
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> value [<b><font color=#3a6797>eval</font></b> <font color=#1b1baa>$com</font>]} e]} {
-        alited::Message <font color=#1b1baa>$e</font> 4
-        <b><font color=#3a6797>set</font></b> err 1
-        <b><font color=#ca14ca>break</font></b>
+      <b><font color=#3a6797>set</font></b> selection [<font color=#1b1baa>$wtxt</font> tag ranges sel]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$selection</font>]==0} {
+        <b><font color=#3a6797>set</font></b> pos [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$wtxt</font> index insert])}]
+        <b><font color=#3a6797>set</font></b> pos1 <font color=#1b1baa>$pos</font>.0
+        <b><font color=#3a6797>set</font></b> pos2 <font color=#1b1baa>$pos</font>.end
+        <b><font color=#3a6797>set</font></b> selection [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font>]
       }
-      <b><font color=#3a6797>set</font></b> value [alited::edit::UnEscapeValue <font color=#1b1baa>$value</font>]
+      <i><font color=#4b5d50># Mode=2 allows a rectangular selection,</font></i>
+      <i><font color=#4b5d50># so we should apply the command ($com)</font></i>
+      <i><font color=#4b5d50># to each line of the rectangular selection</font></i>
+      <b><font color=#3a6797>foreach</font></b> {pos1 pos2} <font color=#1b1baa>$selection</font> {
+        <b><font color=#3a6797>set</font></b> value [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font>]
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$value</font> ne {}} {
+          <b><font color=#3a6797>set</font></b> value [alited::edit::EscapeValue <font color=#1b1baa>$value</font>]
+          <b><font color=#3a6797>set</font></b> comtodo [alited::Map <font color=#653760>-nocase</font> <font color=#1b1baa>$com</font> %v <font color=#1b1baa>$value</font>]
+          <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> value [<b><font color=#3a6797>eval</font></b> <font color=#1b1baa>$comtodo</font>]} e]} {
+            alited::Message <font color=#1b1baa>$e</font> 4
+            <b><font color=#3a6797>set</font></b> err 1
+            <b><font color=#ca14ca>break</font></b>
+          }
+          <b><font color=#3a6797>set</font></b> value [alited::edit::UnEscapeValue <font color=#1b1baa>$value</font>]
+          <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font> <font color=#1b1baa>$value</font>
+          <b><font color=#3a6797>set</font></b> nch [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$value</font>]
+          <font color=#1b1baa>$wtxt</font> tag add sel <font color=#1b1baa>$pos1</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos1 +<font color=#1b1baa>$</font>nch chars&quot;</font>
+        }
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$err</font>} <b><font color=#ca14ca>break</font></b>
     }
   }
-  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$err</font>} {AfterFormatting <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font> <font color=#1b1baa>$value</font>}
+  alited::main::UpdateAll
+  focusByForce <font color=#1b1baa>$wtxt</font>
 }
 <a id=on_line_list></a>
 <i><font color=#4b5d50>## ________________________ on line list _________________________ ##</font></i>
