@@ -181,6 +181,8 @@ prj - project's name
 date - date of TODO
 todo - text of TODO
 is - 1 for current day TODO, 2 for "ahead" TODO</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#main::HandleOutdatedTODO">HandleOutdatedTODO</a><span class=tooltiptext> main::HandleOutdatedTODO : Processes clicking the outdated (red) TODOs.
+butt - number of mouse button (1 - left)</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#main::InitActions">InitActions</a><span class=tooltiptext> main::InitActions : Initializes working with a main form of alited.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#main::ProcMessage">ProcMessage</a><span class=tooltiptext> main::ProcMessage : Handles clicking on message label.</span></div></li></ul>
 <li><b><a href="#Main__create">Main _create</a></b></li>
@@ -1337,9 +1339,21 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> todo <font color=#8b2a0e>&quot;\n<font color=#1b1baa>$</font>al(MC,prjName) <font color=#1b1baa>$</font>prj\n\n<font color=#1b1baa>$</font>al(MC,on) <font color=#1b1baa>$</font>date\n\n<font color=#1b1baa>$</font>todo\n&quot;</font>
   <b><font color=#3a6797>set</font></b> opts {}
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first !!! <font color=#1b1baa>$todo</font>]&gt;-1 || (<font color=#1b1baa>$is</font>==1 && <font color=#1b1baa>$al(todoahead)</font>)} {
-    <b><font color=#3a6797>set</font></b> opts {<font color=#653760>-ontop</font> 1 <font color=#653760>-eternal</font> 1 <font color=#653760>-fg</font> white <font color=#653760>-bg</font> red}
+    <b><font color=#3a6797>set</font></b> opts [<b><font color=#3a6797>list</font></b> <font color=#653760>-ontop</font> 1 <font color=#653760>-eternal</font> 1 <font color=#653760>-fg</font> white <font color=#653760>-bg</font> red \
+      <font color=#653760>-onmouse</font> {alited::main::HandleOutdatedTODO %b}]
   }
   ::alited::Balloon <font color=#1b1baa>$todo</font> yes 2500 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=main::HandleOutdatedTODO></a>
+<b><font color=#ca14ca>proc</font></b> main::HandleOutdatedTODO {butt} {
+  <i><font color=#4b5d50># Processes clicking the outdated (red) TODOs.</font></i>
+  <i><font color=#4b5d50>#   butt - number of mouse button (1 - left)</font></i>
+
+  ::baltip::hide <font color=#1b1baa>$::alited::al(WIN)</font> 1
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$butt</font> == 1} {
+    alited::project::_run
+  }
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=main::InitActions></a>
