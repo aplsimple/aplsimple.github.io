@@ -130,7 +130,8 @@ Returns 1st event to run the formatter or {}.</span></div></li></ul>
 fullformname - full path to formatter
 fform - formatter's name
 ev - the event
-wasacc - if true, -accelerator of $fform menu item was made</span></div></li></ul>
+wasacc - if true, -accelerator of $fform menu item was made
+firstin - yes for first check of event</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#format::CreateFormatIcon">CreateFormatIcon</a><span class=tooltiptext> format::CreateFormatIcon : Create icon of formatter in toolbar.
 icon - icon name
 sep - true if separated
@@ -1023,10 +1024,11 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ic</font> ne {}} {<b><font color=#3a6797>set</font></b> icon <font color=#1b1baa>$ic</font>}
     <b><font color=#3a6797>set</font></b> events [alited::edit::IniParameter events <font color=#1b1baa>$line</font> <font color=#653760>-nocase</font>]
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$events</font> ne {}} {
+      <b><font color=#3a6797>set</font></b> firstin yes
       <b><font color=#3a6797>foreach</font></b> ev [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$events</font> { ,}] {
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ev</font> ne {}} {
           <b><font color=#3a6797>set</font></b> wasacc [<b><font color=#3a6797>info</font></b> exist cont6(<font color=#1b1baa>$fform</font>)]
-          <b><font color=#3a6797>if</font></b> {[EventOK <font color=#1b1baa>$fullformname</font> <font color=#1b1baa>$fform</font> <font color=#1b1baa>$ev</font> <font color=#1b1baa>$wasacc</font>]} {
+          <b><font color=#3a6797>if</font></b> {[EventOK <font color=#1b1baa>$fullformname</font> <font color=#1b1baa>$fform</font> <font color=#1b1baa>$ev</font> <font color=#1b1baa>$wasacc</font> <font color=#1b1baa>$firstin</font>]} {
             <b><font color=#3a6797>lappend</font></b> com <font color=#1b1baa>$modal</font>
             <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>bind</font></b> <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$ev</font> <font color=#1b1baa>$com</font>}
             <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$bind6($fform)</font>]} {<b><font color=#3a6797>set</font></b> res <font color=#1b1baa>$ev</font>}
@@ -1035,6 +1037,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
             <b><font color=#3a6797>set</font></b> res {}
             <b><font color=#ca14ca>break</font></b>
           }
+          <b><font color=#3a6797>set</font></b> firstin no
         }
         <b><font color=#3a6797>set</font></b> cont6(<font color=#1b1baa>$fform</font>) [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$cont</font> <font color=#1b1baa>$il</font> end]
       }
@@ -1051,12 +1054,13 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=format::EventOK></a>
-<b><font color=#ca14ca>proc</font></b> format::EventOK {fullformname fform ev wasacc} {
+<b><font color=#ca14ca>proc</font></b> format::EventOK {fullformname fform ev wasacc firstin} {
   <i><font color=#4b5d50># Checks if an event is correct (not overlap alited key mapping).</font></i>
   <i><font color=#4b5d50>#   fullformname - full path to formatter</font></i>
   <i><font color=#4b5d50>#   fform - formatter's name</font></i>
   <i><font color=#4b5d50>#   ev - the event</font></i>
   <i><font color=#4b5d50>#   wasacc - if true, -accelerator of $fform menu item was made</font></i>
+  <i><font color=#4b5d50>#   firstin - yes for first check of event</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   <b><font color=#3a6797>variable</font></b> cont6
@@ -1073,11 +1077,24 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       <b><font color=#ca14ca>return</font></b> no
     }
   }
+  <b><font color=#3a6797>set</font></b> plugkey FORMATS,<font color=#1b1baa>$fform</font>,<font color=#1b1baa>$ev2</font>
+  <b><font color=#3a6797>set</font></b> itemttl [alited::menu::FormatsItemName <font color=#1b1baa>$fform</font>]
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$wasacc</font>} {
     <i><font color=#4b5d50># add -accelerator to Formats menu item of $fform</font></i>
     <b><font color=#3a6797>set</font></b> mnu <font color=#1b1baa>$al(MENUFORMATS)</font>
-    <b><font color=#3a6797>set</font></b> itemttl [alited::menu::FormatsItemName <font color=#1b1baa>$fform</font>]
     alited::edit::PluginAccelerator <font color=#1b1baa>$mnu</font> <font color=#1b1baa>$itemttl</font> <font color=#1b1baa>$ev2</font>
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$firstin</font> && [<b><font color=#3a6797>info</font></b> exists al(<font color=#1b1baa>$plugkey</font>)]} {
+    <b><font color=#3a6797>set</font></b> msg [msgcat::mc <font color=#8b2a0e>&quot;The pluginable % has been registered.\nCancel the registration?&quot;</font>]
+    <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> % <font color=#1b1baa>$itemttl</font>] <font color=#1b1baa>$msg</font>]
+    <b><font color=#3a6797>set</font></b> unreg [alited::msg yesno warn <font color=#1b1baa>$msg</font> NO <font color=#653760>-geometry</font> pointer+40+-100]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$unreg</font>} {
+      <b><font color=#3a6797>foreach</font></b> n [<b><font color=#3a6797>array</font></b> names al <font color=#653760>-glob</font> FORMATS,*] {
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> equal <font color=#653760>-nocase</font> <font color=#1b1baa>$n</font> <font color=#1b1baa>$plugkey</font>]} {
+          <b><font color=#3a6797>unset</font></b> al(<font color=#1b1baa>$n</font>)
+        }
+      }
+      <b><font color=#ca14ca>return</font></b> no
+    }
   }
   <b><font color=#3a6797>set</font></b> al(FORMATS,<font color=#1b1baa>$fform</font>,<font color=#1b1baa>$ev2</font>) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fullformname</font> <font color=#1b1baa>$ev2</font>]
   <b><font color=#ca14ca>return</font></b> yes

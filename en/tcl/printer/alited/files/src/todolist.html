@@ -1,0 +1,781 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<meta name="author" content="aplsimple">
+<meta name="description" content="aplsimple's home page">
+<meta name="keywords" content="aplsimple,home">
+</head>
+<style>
+table{
+background-color: #f9f9f9;
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+box-shadow: none;
+filter: none;
+}
+pre{
+margin: 0%;
+margin-bottom: 2%;
+padding: 0%;
+}
+</style>
+<script>
+function homeLINK() {
+  homelink = document.baseURI;
+  ilen = 19
+  ibase = homelink.indexOf('aplsimple.github');
+  if (ibase<0) { ibase = homelink.indexOf('aplsimple_github'); ilen += 10 };
+  if (ibase>=0) { homelink = homelink.substring(0,ibase+ilen) };
+  return homelink;
+};
+document.write(' \
+<link rel="stylesheet" href="'+homeLINK()+'/en/tcl/printer/zoo/style.css">');
+document.write(' \
+<link rel="icon" type="image/jpg" href="'+homeLINK()+'/zoo/favicon.jpg">');
+document.write('<'+'script src="'+homeLINK()+'/zoo/funcs.js">'+'<'+'/script>');
+document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'+'/script>');
+</script>
+<body>
+<div id="wrapper">
+<div name="divd1" ALIGN="CENTER"> <FONT SIZE=5em color=#b01c20><B>
+<noscript>THIS PAGE IS NOT WORKING WITHOUT JAVASCRIPT!
+<BR>
+<BR>PLEASE, SWITCH ON JAVASCRIPT IN SETTINGS OF YOUR BROWSER AND RELOAD THE PAGE.
+</noscript>
+</B></FONT></div>
+<div id='doc3' class='yui-t2'>
+<section id=sec2>
+<div id='hd' class='banner'>
+
+<title>todolist.tcl</title>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#bdd7e7><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
+
+<div id="bodyContent" class="dokuwiki">
+<div id="dw__toc" class="dw__toc">
+<h3 class="toggle open" style="cursor: pointer;">todolist.tcl</h3>
+<div aria-expanded="true" style="">
+
+<ul class="toc">
+<li><b><a href="#todolist.tcl">todolist.tcl</a></b></li>
+<li><b><a href="#todolist">todolist</a></b></li>
+<li><b><a href="#Common">Common</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#todolist::Message">Message</a><span class=tooltiptext> todolist::Message : Displays a message in statusbar of templates dialogue.
+msg - message
+mode - mode of Message</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::CheckEmpty">CheckEmpty</a><span class=tooltiptext> todolist::CheckEmpty : Checks if the TODO list is empty.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::PrjDateCont">PrjDateCont</a><span class=tooltiptext> todolist::PrjDateCont : Gets project name, date, todo of current tree item and item's index.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::UpdateTree">UpdateTree</a><span class=tooltiptext> todolist::UpdateTree : Updates the list.
+doselect - yes for selecting & focusing current item</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::UpdateInList">UpdateInList</a><span class=tooltiptext> todolist::UpdateInList : Updates tdlist's item.
+isel - item index in tdlist
+prjname - project name
+date - item date
+todo - todo's text
+idtd - ID of item in tdlistOrig (original tdlist)</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::ItemValues">ItemValues</a><span class=tooltiptext> todolist::ItemValues : Gets -values option of tree item.
+item - item ID
+prj - project name
+date - date of todo
+todo - todo text</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::TodoTag">TodoTag</a><span class=tooltiptext> todolist::TodoTag : Gets -tag option for current todo (highlighted or normal).
+date - date of todo</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::ItemIndex">ItemIndex</a><span class=tooltiptext> todolist::ItemIndex : Gets item's index from item's ID.
+item - ID of item</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::Tooltip">Tooltip</a><span class=tooltiptext> todolist::Tooltip : Gets a tip for tree's item.
+ID - ID of treeview item
+nc - column of treeview item</span></div></li></ul>
+<li><b><a href="#Selections">Selections</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#todolist::Select">Select</a><span class=tooltiptext> todolist::Select : Selects an item of the list.
+item - index (ID) of list item</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::Selected">Selected</a><span class=tooltiptext> todolist::Selected : Gets ID or index of currently selected item of the list.
+what - if "index", gets a current item's index
+domsg - if yes, shows a message about the selection</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::onSelect">onSelect</a><span class=tooltiptext> todolist::onSelect : Handles event "selecting a tree item"</span></div></li></ul>
+<li><b><a href="#Modifications">Modifications</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#todolist::TextModified">TextModified</a><span class=tooltiptext> todolist::TextModified : Processes modifications of TODO text.
+wtxt - text's path
+args - not used arguments</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::TODO_save">TODO_save</a><span class=tooltiptext> todolist::TODO_save : Saves a reminder on a date.
+args - may contain project name, new date, todo</span></div></li></ul>
+<li><b><a href="#Filter">Filter</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#todolist::FilterList">FilterList</a><span class=tooltiptext> todolist::FilterList : Filters todo list.
+args - when called on validation, contains current filter value</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::ClearFilter">ClearFilter</a><span class=tooltiptext> todolist::ClearFilter : Clears filter's entry.</span></div></li></ul>
+<li><b><a href="#Tool_buttons">Tool buttons</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#todolist::Tool_button">Tool_button</a><span class=tooltiptext> todolist::Tool_button : Fire an event handler (paste/undo/redo) on a reminder.
+ev - event to fire</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::Paste">Paste</a><span class=tooltiptext> todolist::Paste : Pastes a text to a reminder.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::Undo">Undo</a><span class=tooltiptext> todolist::Undo : Undoes changes of a reminder.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::Redo">Redo</a><span class=tooltiptext> todolist::Redo : Redoes changes of a reminder.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::Delete">Delete</a><span class=tooltiptext> todolist::Delete : Handles "Delete template" button.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::MoveTo">MoveTo</a><span class=tooltiptext> todolist::MoveTo : Shifts current date by *days*.
+days - days to shift</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::CheckSwapItems">CheckSwapItems</a><span class=tooltiptext> todolist::CheckSwapItems : Checks and at need swaps tree items according to dates.
+tree - item tree
+item - current item's ID
+date - current item's date
+days - if positive then swap forward, otherwise backward</span></div></li></ul>
+<li><b><a href="#Buttons">Buttons</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#todolist::Ok">Ok</a><span class=tooltiptext> todolist::Ok : Handles "OK" button.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::Cancel">Cancel</a><span class=tooltiptext> todolist::Cancel : Handles "Cancel" button.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::Help">Help</a><span class=tooltiptext> todolist::Help : Handles "Help" button.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::QuitDialog">QuitDialog</a><span class=tooltiptext> todolist::QuitDialog : Quits the dialog.
+res - result (1/0 for OK/Cancel)</span></div></li></ul>
+<li><b><a href="#UI">UI</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#todolist::_create">_create</a><span class=tooltiptext> todolist::_create : Creates "Pending TODO list" dialogue.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#todolist::_run">_run</a><span class=tooltiptext> todolist::_run : Runs "Pending TODOs" dialogue.
+tdlInput - todo list</span></div></li></ul>
+
+</ul>
+
+</div>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1><font color=#ca14ca> alited's source</font></h1>
+</p><p>
+The <a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/about.html">alited/src</a> directory contains alited's own source files.
+</p><p>
+Some additional alited's files are also contained in <a href="https://aplsimple.github.io/en/tcl/printer/alited/files/lib/addon/hl_alm.html">alited/lib/addon</a> directory (<i><font color=#1b1baa>alited/lib</font></i> directory contains all library files).
+</p><p>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/about.html">about.tcl</a> - "About alited" dialogue.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/alited.html">alited.tcl</a> - The alited's main script to start.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/bar.html">bar.tcl</a> - Handles the bar of tabs.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/check.html">check.tcl</a> - "Check Tcl" dialogue and procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/complete.html">complete.tcl</a> - Handles auto-completion.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/edit.html">edit.tcl</a> - "Edit" menu's procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/favor.html">favor.tcl</a> - Handles the favorite and last visited units.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/favor_ls.html">favor_ls.tcl</a> - "Saved lists of favorites" dialogue and procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/file.html">file.tcl</a> - "File" menu's procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/find.html">find.tcl</a> - "Find / Replace" dialogue and procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/format.html">format.tcl</a> - "Edit / Formats" menu's procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/img.html">img.tcl</a> - List of images used by alited.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/indent.html">indent.tcl</a> - Handles text indentation.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/info.html">info.tcl</a> - Handles the info bar.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/ini.html">ini.tcl</a> - Handles initializing alited.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/keys.html">keys.tcl</a> - Handles keyboard (mapping etc.).</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/main.html">main.tcl</a> - Handles the main form of alited.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/menu.html">menu.tcl</a> - Handles alited's menus.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/msgs.html">msgs.tcl</a> - Localized messages used in several places.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/paver.html">paver.tcl</a> - "Tools / Paver" tool.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/pkgIndex.html">pkgIndex.tcl</a> - Includes README.md text (for Ruff doc generator).</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/pref.html">pref.tcl</a> - "Preferences" dialogue and procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/preview.html">preview.tcl</a> - "Preview (theme, CS)" dialogue called by "Preferences".</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/printer.html">printer.tcl</a> - "Tools / Project Printer" dialogue and procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/project.html">project.tcl</a> - "Projects" dialogue and procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/run.html">run.tcl</a> - "Tools / Run..." dialogue and procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/tool.html">tool.tcl</a> - "Tools" menu's procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/tree.html">tree.tcl</a> - Handles the tree of units and files.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/unit.html">unit.tcl</a> - Handles the unit tree.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/unit_tpl.html">unit_tpl.tcl</a> - "Templates" dialogue and procedures.</li>
+</p><p>
+
+</p>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#bdd7e7><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>todolist.tcl</b></font></div></td></table>
+
+<pre class="code"><i><font color=#ff0000>#! /usr/bin/env tclsh<a id=todolist.tcl></a></font></i>
+<i><font color=#4b5d50>###########################################################</font></i>
+<i><font color=#4b5d50># Name:    todolist.tcl</font></i>
+<i><font color=#4b5d50># Author:  Alex Plotnikov  (aplsimple@gmail.com)</font></i>
+<i><font color=#4b5d50># Date:    Jun 19, 2025</font></i>
+<i><font color=#4b5d50># Brief:   Handles pending TODOs.</font></i>
+<i><font color=#4b5d50># License: MIT.</font></i>
+<i><font color=#4b5d50>###########################################################</font></i>
+<a id=todolist></a>
+<i><font color=#4b5d50># _________________________ todolist ________________________ #</font></i>
+
+<b><font color=#ca14ca>namespace</font></b> eval todolist {
+  <i><font color=#4b5d50># apave object</font></i>
+  <b><font color=#3a6797>variable</font></b> obTdl pavedTODOlist
+
+  <i><font color=#4b5d50># &quot;Templates&quot; dialogue's path</font></i>
+  <b><font color=#3a6797>variable</font></b> win <font color=#1b1baa>$::alited::al(WIN)</font>.todolist
+
+  <i><font color=#4b5d50># todo list</font></i>
+  <b><font color=#3a6797>variable</font></b> tdlist [<b><font color=#3a6797>list</font></b>]
+
+  <i><font color=#4b5d50># list of original dates</font></i>
+  <b><font color=#3a6797>variable</font></b> tdlistOrigDates [<b><font color=#3a6797>list</font></b>]
+
+  <i><font color=#4b5d50># todo filter</font></i>
+  <b><font color=#3a6797>variable</font></b> filter {}
+
+  <i><font color=#4b5d50># 1st item of list</font></i>
+  <b><font color=#3a6797>variable</font></b> item1st {}
+}
+<a id=Common></a>
+<i><font color=#4b5d50># ________________________ Common _________________________ #</font></i>
+<a id=todolist::Message></a>
+<b><font color=#ca14ca>proc</font></b> todolist::Message {msg {mode 2}} {
+  <i><font color=#4b5d50># Displays a message in statusbar of templates dialogue.</font></i>
+  <i><font color=#4b5d50>#   msg - message</font></i>
+  <i><font color=#4b5d50>#   mode - mode of Message</font></i>
+
+  <b><font color=#3a6797>variable</font></b> obTdl
+  alited::Message <font color=#1b1baa>$msg</font> <font color=#1b1baa>$mode</font> [<font color=#1b1baa>$obTdl</font> LabMess]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::CheckEmpty></a>
+<b><font color=#ca14ca>proc</font></b> todolist::CheckEmpty {} {
+  <i><font color=#4b5d50># Checks if the TODO list is empty.</font></i>
+
+  <b><font color=#3a6797>variable</font></b> tdlistOrig
+  <b><font color=#3a6797>variable</font></b> obTdl
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$tdlistOrig</font>]} {
+    <b><font color=#3a6797>set</font></b> txt [<font color=#1b1baa>$obTdl</font> TexTdl]
+    alited::ini::HighlightFileText <font color=#1b1baa>$txt</font> .md 0 <font color=#653760>-cmd</font> ::apave::None
+    <font color=#1b1baa>$obTdl</font> displayText <font color=#1b1baa>$txt</font> <font color=#8b2a0e>&quot;\n#   <font color=#1b1baa>[</font>msgcat::mc <font color=#1b1baa>{</font>No TODO pending!<font color=#1b1baa>}]</font>&quot;</font>
+    alited::ini::HighlightFileText <font color=#1b1baa>$txt</font> .md 1 <font color=#653760>-cmd</font> ::apave::None
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::PrjDateCont></a>
+<b><font color=#ca14ca>proc</font></b> todolist::PrjDateCont {} {
+  <i><font color=#4b5d50># Gets project name, date, todo of current tree item and item's index.</font></i>
+
+  <b><font color=#3a6797>variable</font></b> tdlist
+  <b><font color=#3a6797>set</font></b> isel [Selected index no]
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> is integer <font color=#653760>-strict</font> <font color=#1b1baa>$isel</font>]} {<b><font color=#ca14ca>return</font></b> {}}
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tdlist</font> <font color=#1b1baa>$isel</font>] prjname date todo idtd
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$prjname</font> <font color=#1b1baa>$date</font> <font color=#1b1baa>$todo</font> <font color=#1b1baa>$isel</font> <font color=#1b1baa>$idtd</font>]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::UpdateTree></a>
+<b><font color=#ca14ca>proc</font></b> todolist::UpdateTree {{doselect yes}} {
+  <i><font color=#4b5d50># Updates the list.</font></i>
+  <i><font color=#4b5d50>#   doselect - yes for selecting & focusing current item</font></i>
+
+  <b><font color=#3a6797>variable</font></b> obTdl
+  <b><font color=#3a6797>variable</font></b> tdlist
+  <b><font color=#3a6797>variable</font></b> item1st
+  <b><font color=#3a6797>set</font></b> tree [<font color=#1b1baa>$obTdl</font> TreeTdl]
+  <font color=#1b1baa>$tree</font> delete [<font color=#1b1baa>$tree</font> children {}]
+  <b><font color=#3a6797>set</font></b> item1st {}
+  <b><font color=#3a6797>foreach</font></b> tdl <font color=#1b1baa>$tdlist</font> {
+    <b><font color=#3a6797>set</font></b> item <font color=#8b2a0e>&quot;TDL<font color=#1b1baa>[</font>incr itdl<font color=#1b1baa>]</font>&quot;</font>
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$tdl</font> prj date todo
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$date</font> eq {}} {
+      <i><font color=#4b5d50># tree branch: project name</font></i>
+      <font color=#1b1baa>$tree</font> insert {} end <font color=#653760>-id</font> <font color=#1b1baa>$item</font> <font color=#653760>-text</font> <font color=#1b1baa>$prj</font> <font color=#653760>-open</font> 1 <font color=#653760>-tag</font> tagBranch
+      <b><font color=#3a6797>set</font></b> parent <font color=#1b1baa>$item</font>
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> values [ItemValues <font color=#1b1baa>$item</font> <font color=#1b1baa>$prj</font> <font color=#1b1baa>$date</font> <font color=#1b1baa>$todo</font>]
+      <font color=#1b1baa>$tree</font> insert <font color=#1b1baa>$parent</font> end <font color=#653760>-id</font> <font color=#1b1baa>$item</font> <font color=#653760>-text</font> <font color=#1b1baa>$date</font> <font color=#653760>-values</font> <font color=#1b1baa>$values</font> <font color=#653760>-open</font> 1 \
+        {<b><font color=#3a6797>*</font></b>}[TodoTag <font color=#1b1baa>$date</font>]
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$item1st</font> eq {}} {<b><font color=#3a6797>set</font></b> item1st <font color=#1b1baa>$item</font>}
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$doselect</font>} {
+    <b><font color=#3a6797>after</font></b> 200 [<b><font color=#3a6797>list</font></b> alited::todolist::Select <font color=#1b1baa>$item1st</font>]
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::UpdateInList></a>
+<b><font color=#ca14ca>proc</font></b> todolist::UpdateInList {isel prjname date todo idtd} {
+  <i><font color=#4b5d50># Updates tdlist's item.</font></i>
+  <i><font color=#4b5d50>#   isel - item index in tdlist</font></i>
+  <i><font color=#4b5d50>#   prjname - project name</font></i>
+  <i><font color=#4b5d50>#   date - item date</font></i>
+  <i><font color=#4b5d50>#   todo - todo's text</font></i>
+  <i><font color=#4b5d50>#   idtd - ID of item in tdlistOrig (original tdlist)</font></i>
+
+  <b><font color=#3a6797>variable</font></b> tdlist
+  <b><font color=#3a6797>variable</font></b> tdlistOrig
+  <b><font color=#3a6797>set</font></b> tdlist [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$tdlist</font> <font color=#1b1baa>$isel</font> <font color=#1b1baa>$isel</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$prjname</font> <font color=#1b1baa>$date</font> <font color=#1b1baa>$todo</font> <font color=#1b1baa>$idtd</font>]]
+  <i><font color=#4b5d50># update original tdlist</font></i>
+  <b><font color=#3a6797>set</font></b> ilo [<b><font color=#3a6797>set</font></b> dobreak 0]
+  <b><font color=#3a6797>foreach</font></b> tdinfo <font color=#1b1baa>$tdlistOrig</font> {
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$tdinfo</font> prj rems
+    <b><font color=#3a6797>set</font></b> newrems [<b><font color=#3a6797>list</font></b>]
+    <b><font color=#3a6797>foreach</font></b> rem <font color=#1b1baa>$rems</font> {
+      <b><font color=#3a6797>incr</font></b> idOr
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$idOr</font> == <font color=#1b1baa>$idtd</font>} {
+        <b><font color=#3a6797>set</font></b> rem [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$date</font> <font color=#1b1baa>$todo</font>]
+        <b><font color=#3a6797>set</font></b> dobreak 1
+      }
+      <b><font color=#3a6797>lappend</font></b> newrems <font color=#1b1baa>$rem</font>
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dobreak</font>} {
+      <b><font color=#3a6797>set</font></b> tdlistOrig [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$tdlistOrig</font> <font color=#1b1baa>$ilo</font> <font color=#1b1baa>$ilo</font> [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$prj</font> <font color=#1b1baa>$newrems</font>]]
+      <b><font color=#ca14ca>break</font></b>
+    }
+    <b><font color=#3a6797>incr</font></b> ilo
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::ItemValues></a>
+<b><font color=#ca14ca>proc</font></b> todolist::ItemValues {item prj date todo} {
+  <i><font color=#4b5d50># Gets -values option of tree item.</font></i>
+  <i><font color=#4b5d50>#   item - item ID</font></i>
+  <i><font color=#4b5d50>#   prj - project name</font></i>
+  <i><font color=#4b5d50>#   date - date of todo</font></i>
+  <i><font color=#4b5d50>#   todo - todo text</font></i>
+
+  <b><font color=#3a6797>set</font></b> todo [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \n { }] <font color=#1b1baa>$todo</font>]
+  <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$todo</font> <font color=#1b1baa>$item</font> <font color=#1b1baa>$prj</font> <font color=#1b1baa>$date</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::TodoTag></a>
+<b><font color=#ca14ca>proc</font></b> todolist::TodoTag {date} {
+  <i><font color=#4b5d50># Gets -tag option for current todo (highlighted or normal).</font></i>
+  <i><font color=#4b5d50>#   date - date of todo</font></i>
+
+  <b><font color=#3a6797>set</font></b> datecur [alited::project::ClockFormat [<b><font color=#3a6797>clock</font></b> seconds]]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$date</font> == <font color=#1b1baa>$datecur</font>} {
+    <b><font color=#3a6797>set</font></b> tag {<font color=#653760>-tag</font> tagBold}
+  } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$date</font> &lt; <font color=#1b1baa>$datecur</font>} {
+    <b><font color=#3a6797>set</font></b> tag {<font color=#653760>-tag</font> tagTODO}
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> tag {}
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$tag</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::ItemIndex></a>
+<b><font color=#ca14ca>proc</font></b> todolist::ItemIndex {item} {
+  <i><font color=#4b5d50># Gets item's index from item's ID.</font></i>
+  <i><font color=#4b5d50>#   item - ID of item</font></i>
+
+  <b><font color=#3a6797>expr</font></b> {[<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$item</font> 3 end]-1}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::Tooltip></a>
+<b><font color=#ca14ca>proc</font></b> todolist::Tooltip {ID nc} {
+  <i><font color=#4b5d50># Gets a tip for tree's item.</font></i>
+  <i><font color=#4b5d50>#   ID - ID of treeview item</font></i>
+  <i><font color=#4b5d50>#   nc - column of treeview item</font></i>
+
+  <b><font color=#3a6797>variable</font></b> obTdl
+  <b><font color=#3a6797>variable</font></b> tdlist
+  <b><font color=#3a6797>variable</font></b> tdlistOrig
+  <b><font color=#3a6797>variable</font></b> tdlistOrigDates
+  <b><font color=#3a6797>set</font></b> tree [<font color=#1b1baa>$obTdl</font> TreeTdl]
+  <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$tree</font> item <font color=#1b1baa>$ID</font> <font color=#653760>-values</font>] todo item prj date
+  <b><font color=#3a6797>set</font></b> tip {}
+  <b><font color=#3a6797>switch</font></b> -- <font color=#1b1baa>$nc</font> {
+    {#0} {
+      <b><font color=#3a6797>foreach</font></b> td <font color=#1b1baa>$tdlist</font> {
+        <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$td</font> prj2 date2 todo2 idtd2
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$prj2</font> eq <font color=#1b1baa>$prj</font> && <font color=#1b1baa>$date2</font> eq <font color=#1b1baa>$date</font>} {
+          <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-index</font> 0 <font color=#1b1baa>$tdlistOrigDates</font> <font color=#1b1baa>$idtd2</font>]
+          <b><font color=#3a6797>set</font></b> dateorig [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tdlistOrigDates</font> <font color=#1b1baa>$i</font> 1]
+          <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dateorig</font> ne {} && <font color=#1b1baa>$dateorig</font> ne <font color=#1b1baa>$date</font>} {
+            <b><font color=#3a6797>set</font></b> pad [<b><font color=#3a6797>string</font></b> repeat { } 26]
+            <b><font color=#3a6797>set</font></b> tip <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pad\n <font color=#1b1baa>$</font>dateorig  =&gt;  <font color=#1b1baa>$</font>date \n<font color=#1b1baa>$</font>pad&quot;</font>
+          }
+          <b><font color=#ca14ca>break</font></b>
+        }
+      }
+    }
+    {#1} {
+      <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-exact</font> <font color=#653760>-index</font> 0 <font color=#1b1baa>$tdlistOrig</font> <font color=#1b1baa>$prj</font>]
+      <b><font color=#3a6797>set</font></b> rems [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tdlistOrig</font> <font color=#1b1baa>$i</font> 1]
+      <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-index</font> 0 <font color=#1b1baa>$rems</font> <font color=#1b1baa>$date</font>]
+      <b><font color=#3a6797>set</font></b> tip [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$rems</font> <font color=#1b1baa>$i</font> 1]
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$tip</font>
+}
+<a id=Selections></a>
+<i><font color=#4b5d50># ________________________ Selections _________________________ #</font></i>
+<a id=todolist::Select></a>
+<b><font color=#ca14ca>proc</font></b> todolist::Select {{item <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Selects an item of the list.</font></i>
+  <i><font color=#4b5d50>#   item - index (ID) of list item</font></i>
+
+  <b><font color=#3a6797>variable</font></b> obTdl
+  <b><font color=#3a6797>variable</font></b> item1st
+  <b><font color=#3a6797>catch</font></b> {
+    <b><font color=#3a6797>set</font></b> tree [<font color=#1b1baa>$obTdl</font> TreeTdl]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$item</font> eq {}} {<b><font color=#3a6797>set</font></b> item <font color=#1b1baa>$item1st</font>}
+    <b><font color=#134070>focus</font></b> <font color=#1b1baa>$tree</font>
+    <font color=#1b1baa>$tree</font> focus <font color=#1b1baa>$item</font>
+    <font color=#1b1baa>$tree</font> selection set <font color=#1b1baa>$item</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::Selected></a>
+<b><font color=#ca14ca>proc</font></b> todolist::Selected {what {domsg yes}} {
+  <i><font color=#4b5d50># Gets ID or index of currently selected item of the list.</font></i>
+  <i><font color=#4b5d50>#   what - if &quot;index&quot;, gets a current item's index</font></i>
+  <i><font color=#4b5d50>#   domsg - if yes, shows a message about the selection</font></i>
+
+  <b><font color=#3a6797>variable</font></b> obTdl
+  <b><font color=#3a6797>set</font></b> tree [<font color=#1b1baa>$obTdl</font> TreeTdl]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> isel [<font color=#1b1baa>$tree</font> selection]] eq {} && [<b><font color=#3a6797>set</font></b> isel [<font color=#1b1baa>$tree</font> focus]] eq {} && <font color=#1b1baa>$domsg</font>} {
+    Message <font color=#1b1baa>$::alited::al(MC,prjsel)</font> 4
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$isel</font> ne {} && <font color=#1b1baa>$what</font> eq {index}} {
+    <b><font color=#3a6797>set</font></b> isel [ItemIndex <font color=#1b1baa>$isel</font>]
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$isel</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::onSelect></a>
+<b><font color=#ca14ca>proc</font></b> todolist::onSelect {} {
+  <i><font color=#4b5d50># Handles event &quot;selecting a tree item&quot;</font></i>
+
+  <b><font color=#3a6797>variable</font></b> obTdl
+  <b><font color=#3a6797>lassign</font></b> [PrjDateCont] prjname date todo
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$prjname</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> wtxt [<font color=#1b1baa>$obTdl</font> TexTdl]
+    alited::ini::HighlightFileText <font color=#1b1baa>$wtxt</font> .md 0 <font color=#653760>-cmdpos</font> ::apave::None <font color=#653760>-cmd</font> ::apave::None
+    <font color=#1b1baa>$obTdl</font> displayText <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$todo</font>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$date</font> eq {}} {
+      <b><font color=#3a6797>set</font></b> readonly 1
+      <b><font color=#3a6797>set</font></b> procModified ::apave::None
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> readonly 0
+      <b><font color=#3a6797>set</font></b> procModified alited::todolist::TextModified
+    }
+    alited::ini::HighlightFileText <font color=#1b1baa>$wtxt</font> .md <font color=#1b1baa>$readonly</font> <font color=#653760>-cmd</font> <font color=#1b1baa>$procModified</font>
+  }
+}
+<a id=Modifications></a>
+<i><font color=#4b5d50># ________________________ Modifications _________________________ #</font></i>
+<a id=todolist::TextModified></a>
+<b><font color=#ca14ca>proc</font></b> todolist::TextModified {wtxt args} {
+  <i><font color=#4b5d50># Processes modifications of TODO text.</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+  <i><font color=#4b5d50>#   args - not used arguments</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>lassign</font></b> [PrjDateCont] prjname date - isel idtd
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$prjname</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> todo [<b><font color=#3a6797>string</font></b> trim [<font color=#1b1baa>$wtxt</font> get 1.0 end]]
+    UpdateInList <font color=#1b1baa>$isel</font> <font color=#1b1baa>$prjname</font> <font color=#1b1baa>$date</font> <font color=#1b1baa>$todo</font> <font color=#1b1baa>$idtd</font>
+    <b><font color=#3a6797>set</font></b> aft _TODO_TextModified
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>after</font></b> cancel <font color=#1b1baa>$al($aft)</font>}
+    <b><font color=#3a6797>set</font></b> al(<font color=#1b1baa>$aft</font>) [<b><font color=#3a6797>after</font></b> idle alited::todolist::TODO_save]
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::TODO_save></a>
+<b><font color=#ca14ca>proc</font></b> todolist::TODO_save {args} {
+  <i><font color=#4b5d50># Saves a reminder on a date.</font></i>
+  <i><font color=#4b5d50>#   args - may contain project name, new date, todo</font></i>
+
+  <b><font color=#3a6797>variable</font></b> obTdl
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$args</font>]} {
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$args</font> prjname date todo
+    <b><font color=#3a6797>set</font></b> txt <font color=#1b1baa>$todo</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>lassign</font></b> [PrjDateCont] prjname date todo
+    <b><font color=#3a6797>set</font></b> txt [<font color=#1b1baa>$obTdl</font> TexTdl]
+  }
+  <b><font color=#3a6797>set</font></b> item [Selected item no]
+  <b><font color=#3a6797>set</font></b> values [ItemValues <font color=#1b1baa>$item</font> <font color=#1b1baa>$prjname</font> <font color=#1b1baa>$date</font> <font color=#1b1baa>$todo</font>]
+  [<font color=#1b1baa>$obTdl</font> TreeTdl] item <font color=#1b1baa>$item</font> <font color=#653760>-text</font> <font color=#1b1baa>$date</font> <font color=#653760>-values</font> <font color=#1b1baa>$values</font>
+  alited::project::Klnd_Dosave <font color=#1b1baa>$txt</font> <font color=#1b1baa>$prjname</font> <font color=#1b1baa>$date</font> no
+}
+<a id=Filter></a>
+<i><font color=#4b5d50># ________________________ Filter _________________________ #</font></i>
+<a id=todolist::FilterList></a>
+<b><font color=#ca14ca>proc</font></b> todolist::FilterList {args} {
+  <i><font color=#4b5d50># Filters todo list.</font></i>
+  <i><font color=#4b5d50>#   args - when called on validation, contains current filter value</font></i>
+
+  <b><font color=#3a6797>variable</font></b> tdlist
+  <b><font color=#3a6797>variable</font></b> tdlistOrig
+  <b><font color=#3a6797>variable</font></b> tdlistOrigDates
+  <b><font color=#3a6797>variable</font></b> obTdl
+  <b><font color=#3a6797>set</font></b> tdlist [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>set</font></b> filt [<b><font color=#3a6797>string</font></b> trim [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$args</font> 0]]
+  <b><font color=#3a6797>set</font></b> onvalid [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$args</font>]
+  <b><font color=#3a6797>set</font></b> wasfilter 0
+  <b><font color=#3a6797>foreach</font></b> tdinfo <font color=#1b1baa>$tdlistOrig</font> {
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$tdinfo</font> prj rems
+    <b><font color=#3a6797>lappend</font></b> tdlist <font color=#1b1baa>$prj</font>
+    <b><font color=#3a6797>set</font></b> dofilter 1
+    <b><font color=#3a6797>foreach</font></b> rem <font color=#1b1baa>$rems</font> {
+      <b><font color=#3a6797>incr</font></b> idtd
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$rem</font> date todo
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$filt</font> eq {} || [<b><font color=#3a6797>string</font></b> match <font color=#653760>-nocase</font> *<font color=#1b1baa>$filt</font>* <font color=#1b1baa>$todo</font>]} {
+        <b><font color=#3a6797>lappend</font></b> tdlist [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$prj</font> <font color=#1b1baa>$date</font> <font color=#1b1baa>$todo</font> <font color=#1b1baa>$idtd</font>]
+        <b><font color=#3a6797>set</font></b> dofilter 0
+      }
+      <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$onvalid</font>} {<b><font color=#3a6797>lappend</font></b> tdlistOrigDates [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$idtd</font> <font color=#1b1baa>$date</font>]}
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dofilter</font>} {
+      <b><font color=#3a6797>set</font></b> tdlist [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$tdlist</font> end end]
+      <b><font color=#3a6797>set</font></b> wasfilter 1
+    }
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$onvalid</font>} {  ;<i><font color=#4b5d50># called on validation -&gt; update the list</font></i>
+    UpdateTree no
+    <b><font color=#3a6797>set</font></b> tree [<font color=#1b1baa>$obTdl</font> TreeTdl]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wasfilter</font> || [<font color=#1b1baa>$tree</font> selection] eq {}} {
+      Select
+      <b><font color=#134070>focus</font></b> [<font color=#1b1baa>$obTdl</font> EntFilter]
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> 1
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::ClearFilter></a>
+<b><font color=#ca14ca>proc</font></b> todolist::ClearFilter {} {
+  <i><font color=#4b5d50># Clears filter's entry.</font></i>
+
+  <b><font color=#3a6797>variable</font></b> filter
+  <b><font color=#3a6797>set</font></b> filter {}
+  FilterList <font color=#1b1baa>$filter</font>
+}
+<a id=Tool_buttons></a>
+<i><font color=#4b5d50># ________________________ Tool buttons _________________________ #</font></i>
+<a id=todolist::Tool_button></a>
+<b><font color=#ca14ca>proc</font></b> todolist::Tool_button {ev} {
+  <i><font color=#4b5d50># Fire an event handler (paste/undo/redo) on a reminder.</font></i>
+  <i><font color=#4b5d50>#   ev - event to fire</font></i>
+
+  <b><font color=#3a6797>variable</font></b> obTdl
+  ::apave::eventOnText [<font color=#1b1baa>$obTdl</font> TexTdl] <font color=#1b1baa>$ev</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::Paste></a>
+<b><font color=#ca14ca>proc</font></b> todolist::Paste {} {
+  <i><font color=#4b5d50># Pastes a text to a reminder.</font></i>
+
+  Tool_button &lt;&lt;Paste&gt;&gt;
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::Undo></a>
+<b><font color=#ca14ca>proc</font></b> todolist::Undo {} {
+  <i><font color=#4b5d50># Undoes changes of a reminder.</font></i>
+
+  Tool_button &lt;&lt;Undo&gt;&gt;
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::Redo></a>
+<b><font color=#ca14ca>proc</font></b> todolist::Redo {} {
+  <i><font color=#4b5d50># Redoes changes of a reminder.</font></i>
+
+  Tool_button &lt;&lt;Redo&gt;&gt;
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::Delete></a>
+<b><font color=#ca14ca>proc</font></b> todolist::Delete {} {
+  <i><font color=#4b5d50># Handles &quot;Delete template&quot; button.</font></i>
+
+  <b><font color=#3a6797>variable</font></b> obTdl
+  <b><font color=#3a6797>lassign</font></b> [PrjDateCont] prjname date
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$date</font> ne {}} {[<font color=#1b1baa>$obTdl</font> TexTdl] replace 1.0 end {}}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::MoveTo></a>
+<b><font color=#ca14ca>proc</font></b> todolist::MoveTo {days} {
+  <i><font color=#4b5d50># Shifts current date by *days*.</font></i>
+  <i><font color=#4b5d50>#   days - days to shift</font></i>
+
+  <b><font color=#3a6797>variable</font></b> obTdl
+  <b><font color=#3a6797>variable</font></b> tdlistOrig
+  <b><font color=#3a6797>set</font></b> item [Selected item]
+  <b><font color=#3a6797>lassign</font></b> [PrjDateCont] prjname date todo isel idtd
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$date</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> date2 [alited::project::ClockScan <font color=#1b1baa>$date</font>]
+    <b><font color=#3a6797>set</font></b> date2 [<b><font color=#3a6797>clock</font></b> add <font color=#1b1baa>$date2</font> <font color=#1b1baa>$days</font> days]
+    <b><font color=#3a6797>set</font></b> date2 [alited::project::ClockFormat <font color=#1b1baa>$date2</font>]
+    <i><font color=#4b5d50># check if new day is free of TODO</font></i>
+    <b><font color=#3a6797>foreach</font></b> tdinfo <font color=#1b1baa>$tdlistOrig</font> {
+      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$tdinfo</font> prj1 rems
+      <b><font color=#3a6797>foreach</font></b> rem <font color=#1b1baa>$rems</font> {
+        <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$rem</font> date1
+        <b><font color=#3a6797>incr</font></b> id1
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$prj1</font> eq <font color=#1b1baa>$prjname</font> && <font color=#1b1baa>$date1</font> eq <font color=#1b1baa>$date2</font> && <font color=#1b1baa>$id1</font> != <font color=#1b1baa>$idtd</font>} {
+          <i><font color=#4b5d50># there is TODO on this day</font></i>
+          Message <font color=#1b1baa>$::alited::al(MC,tododupl)</font> 4
+          <b><font color=#ca14ca>return</font></b>
+        }
+      }
+    }
+    TODO_save <font color=#1b1baa>$prjname</font> <font color=#1b1baa>$date</font> {}
+    TODO_save <font color=#1b1baa>$prjname</font> <font color=#1b1baa>$date2</font> <font color=#1b1baa>$todo</font>
+    UpdateInList <font color=#1b1baa>$isel</font> <font color=#1b1baa>$prjname</font> <font color=#1b1baa>$date2</font> <font color=#1b1baa>$todo</font> <font color=#1b1baa>$idtd</font>
+    <b><font color=#3a6797>set</font></b> tree [<font color=#1b1baa>$obTdl</font> TreeTdl]
+    CheckSwapItems <font color=#1b1baa>$tree</font> <font color=#1b1baa>$item</font> <font color=#1b1baa>$date2</font> <font color=#1b1baa>$days</font>
+    <font color=#1b1baa>$tree</font> tag remove tagBold <font color=#1b1baa>$item</font>
+    <font color=#1b1baa>$tree</font> tag remove tagTODO <font color=#1b1baa>$item</font>
+    <b><font color=#3a6797>lassign</font></b> [TodoTag <font color=#1b1baa>$date2</font>] -&gt; tag
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tag</font> ne {}} {<font color=#1b1baa>$tree</font> tag add <font color=#1b1baa>$tag</font> <font color=#1b1baa>$item</font>}
+    Select <font color=#1b1baa>$item</font>
+  }
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::CheckSwapItems></a>
+<b><font color=#ca14ca>proc</font></b> todolist::CheckSwapItems {tree item date days} {
+  <i><font color=#4b5d50># Checks and at need swaps tree items according to dates.</font></i>
+  <i><font color=#4b5d50>#   tree - item tree</font></i>
+  <i><font color=#4b5d50>#   item - current item's ID</font></i>
+  <i><font color=#4b5d50>#   date - current item's date</font></i>
+  <i><font color=#4b5d50>#   days - if positive then swap forward, otherwise backward</font></i>
+
+  <b><font color=#3a6797>set</font></b> paritem [<font color=#1b1baa>$tree</font> parent <font color=#1b1baa>$item</font>]
+  <b><font color=#3a6797>set</font></b> items [<font color=#1b1baa>$tree</font> children <font color=#1b1baa>$paritem</font>]
+  <b><font color=#3a6797>set</font></b> dir [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$days</font>&gt;0? 1 : -1}]
+  <b><font color=#3a6797>set</font></b> i 0
+  <b><font color=#3a6797>foreach</font></b> it <font color=#1b1baa>$items</font> {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$it</font> eq <font color=#1b1baa>$item</font>} {
+      <b><font color=#3a6797>set</font></b> itSwap [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$items</font> [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$i</font>+<font color=#1b1baa>$dir</font>}]]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$itSwap</font> eq {}} <b><font color=#ca14ca>return</font></b>
+      <b><font color=#3a6797>set</font></b> dateSwap [<b><font color=#3a6797>lindex</font></b> [<font color=#1b1baa>$tree</font> item <font color=#1b1baa>$itSwap</font> <font color=#653760>-values</font>] 3]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dir</font>&gt;0 && <font color=#1b1baa>$dateSwap</font> &lt; <font color=#1b1baa>$date</font> || <font color=#1b1baa>$dir</font>&lt;0 && <font color=#1b1baa>$dateSwap</font> &gt; <font color=#1b1baa>$date</font>} {
+        <b><font color=#3a6797>set</font></b> items [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$items</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>]
+        <b><font color=#3a6797>set</font></b> items [<b><font color=#3a6797>linsert</font></b> <font color=#1b1baa>$items</font> [<b><font color=#3a6797>incr</font></b> i <font color=#1b1baa>$dir</font>] <font color=#1b1baa>$item</font>]
+        <b><font color=#ca14ca>break</font></b>
+      }
+    }
+    <b><font color=#3a6797>lappend</font></b> newitems <font color=#1b1baa>$it</font>
+    <b><font color=#3a6797>incr</font></b> i
+  }
+  <font color=#1b1baa>$tree</font> children <font color=#1b1baa>$paritem</font> <font color=#1b1baa>$items</font>
+}
+<a id=Buttons></a>
+<i><font color=#4b5d50># ________________________ Buttons _________________________ #</font></i>
+<a id=todolist::Ok></a>
+<b><font color=#ca14ca>proc</font></b> todolist::Ok {args} {
+  <i><font color=#4b5d50># Handles &quot;OK&quot; button.</font></i>
+
+  <b><font color=#3a6797>lassign</font></b> [PrjDateCont] prjname date todo
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$prjname</font> eq {}} {
+    Message <font color=#1b1baa>$::alited::al(MC,prjsel)</font> 4
+    Select
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <b><font color=#3a6797>after</font></b> 500 [<b><font color=#3a6797>list</font></b> alited::main::ShowOutdatedTODO <font color=#1b1baa>$prjname</font> <font color=#1b1baa>$date</font> <font color=#1b1baa>$todo</font> 1]
+  QuitDialog <font color=#1b1baa>$prjname</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::Cancel></a>
+<b><font color=#ca14ca>proc</font></b> todolist::Cancel {args} {
+  <i><font color=#4b5d50># Handles &quot;Cancel&quot; button.</font></i>
+
+  QuitDialog {}
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::Help></a>
+<b><font color=#ca14ca>proc</font></b> todolist::Help {args} {
+  <i><font color=#4b5d50># Handles &quot;Help&quot; button.</font></i>
+
+  <b><font color=#3a6797>variable</font></b> win
+  alited::Help <font color=#1b1baa>$win</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::QuitDialog></a>
+<b><font color=#ca14ca>proc</font></b> todolist::QuitDialog {res} {
+  <i><font color=#4b5d50># Quits the dialog.</font></i>
+  <i><font color=#4b5d50>#   res - result (1/0 for OK/Cancel)</font></i>
+
+  <b><font color=#3a6797>variable</font></b> obTdl
+  <b><font color=#3a6797>variable</font></b> win
+  <b><font color=#3a6797>set</font></b> ::alited::project::geotodolist [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font>]
+  <font color=#1b1baa>$obTdl</font> res <font color=#1b1baa>$win</font> <font color=#1b1baa>$res</font>
+}
+<a id=UI></a>
+<i><font color=#4b5d50># ________________________ UI _________________________ #</font></i>
+<a id=todolist::_create></a>
+<b><font color=#ca14ca>proc</font></b> todolist::_create {} {
+  <i><font color=#4b5d50># Creates &quot;Pending TODO list&quot; dialogue.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> win
+  <b><font color=#3a6797>variable</font></b> obTdl
+  <b><font color=#3a6797>variable</font></b> tdlist
+  ::apave::APave create <font color=#1b1baa>$obTdl</font> <font color=#1b1baa>$win</font>
+  <font color=#1b1baa>$obTdl</font> makeWindow <font color=#1b1baa>$win</font> <font color=#1b1baa>$al(MC,prjTmore)</font>
+  <font color=#1b1baa>$obTdl</font> paveWindow <font color=#1b1baa>$win</font> {
+    {fraTreeTdl - - 10 10 {<font color=#653760>-st</font> nswe <font color=#653760>-rw</font> 3 <font color=#653760>-pady</font> 8} {}}
+    {.TreeTdl - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both}
+      {<font color=#653760>-h</font> 12 <font color=#653760>-columns</font> {C1 C2 C3} <font color=#653760>-displaycolumns</font> {C1}
+      <font color=#653760>-columnoptions</font> <font color=#8b2a0e>&quot;#0 <font color=#1b1baa>{</font>-minwidth 50 -width 180 -stretch 0<font color=#1b1baa>}</font> C1 <font color=#1b1baa>{</font>-stretch 1<font color=#1b1baa>}</font>&quot;</font>
+      <font color=#653760>-tip</font> {<font color=#653760>-BALTIP</font> {alited::todolist::Tooltip %i %c} <font color=#653760>-SHIFTX</font> 10 <font color=#653760>-PER10</font> 4000}
+      <font color=#653760>-style</font> TreeNoHL <font color=#653760>-onevent</font> {
+      &lt;&lt;TreeviewSelect&gt;&gt; alited::todolist::onSelect
+      &lt;Delete&gt; alited::todolist::Delete
+      &lt;Double-Button-1&gt; alited::todolist::Ok
+      &lt;Return&gt; alited::todolist::Ok}}}
+    {.sbvTdls + L - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> both}}
+    {fra1 fraTreeTdl T 10 10 {<font color=#653760>-st</font> nsew}}
+    {.btTdel - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-image</font> alimg_delete
+      <font color=#653760>-com</font> alited::todolist::Delete <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,prjTdelete)</font>}}}
+    {.btTpaste - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-image</font> alimg_paste
+      <font color=#653760>-com</font> alited::todolist::Paste <font color=#653760>-tip</font> Paste}}
+    {.btTundo - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-image</font> alimg_undo
+      <font color=#653760>-com</font> alited::todolist::Undo <font color=#653760>-tip</font> Undo}}
+    {.btTredo - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-image</font> alimg_redo
+      <font color=#653760>-com</font> alited::todolist::Redo <font color=#653760>-tip</font> Redo}}
+    {.sev - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 8 <font color=#653760>-fill</font> y}}
+    {.btTprevious2 - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-image</font> alimg_previous2
+      <font color=#653760>-com</font> {alited::todolist::MoveTo -7} <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,prjTprevious2)</font>}}}
+    {.btTprevious - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-image</font> alimg_previous
+      <font color=#653760>-com</font> {alited::todolist::MoveTo -1} <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,prjTprevious)</font>}}}
+    {.btTnext - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-image</font> alimg_next
+      <font color=#653760>-com</font> {alited::todolist::MoveTo 1} <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,prjTnext)</font>}}}
+    {.btTnext2 - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-image</font> alimg_next2
+      <font color=#653760>-com</font> {alited::todolist::MoveTo 7} <font color=#653760>-tip</font> {<font color=#1b1baa>$al(MC,prjTnext2)</font>}}}
+    {.h_ - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both <font color=#653760>-padx</font> 8}}
+    {.labFilter - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 8} {<font color=#653760>-anchor</font> center <font color=#653760>-t</font> Filter:}}
+    {.EntFilter - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left}
+      {<font color=#653760>-tvar</font> ::alited::todolist::filter <font color=#653760>-w</font> 20
+      <font color=#653760>-validate</font> key <font color=#653760>-validatecommand</font> {alited::todolist::FilterList %P}}}
+    {.btTno - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-com</font> alited::todolist::ClearFilter}}
+    {fratex fra1 T 10 10 {<font color=#653760>-st</font> nsew <font color=#653760>-rw</font> 1 <font color=#653760>-cw</font> 1} {}}
+    {.TexTdl - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both}
+      {<font color=#653760>-h</font> 6 <font color=#653760>-w</font> 4 <font color=#653760>-wrap</font> none <font color=#653760>-tabnext</font> *.butOK
+      <font color=#653760>-tip</font> {<font color=#653760>-BALTIP</font> {<font color=#1b1baa>$al(MC,prjTtext)</font>} <font color=#653760>-MAXEXP</font> 3}}}
+    {.sbvTdl + L - - pack {}}
+    {LabMess fratex T 1 10 {<font color=#653760>-st</font> nsew <font color=#653760>-pady</font> 0 <font color=#653760>-padx</font> 3} {<font color=#653760>-style</font> TLabelFS
+      <font color=#653760>-onevent</font> {&lt;Button-1&gt; alited::todolist::ProcMessage}}}
+    {fra3 + T 1 10 {<font color=#653760>-st</font> nsew}}
+    {.ButHelp - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left}
+      {<font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,help)</font>} <font color=#653760>-tip</font> F1 <font color=#653760>-com</font> alited::todolist::Help}}
+    {.h_ - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both}}
+    {.butOK - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 2}
+      {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(MC,select)&quot;</font> <font color=#653760>-com</font> alited::todolist::Ok}}
+    {.butCancel - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left}
+      {<font color=#653760>-t</font> Close <font color=#653760>-com</font> alited::todolist::Cancel}}
+  }
+  <b><font color=#3a6797>set</font></b> tree [<font color=#1b1baa>$obTdl</font> TreeTdl]
+  <font color=#1b1baa>$tree</font> heading #0 <font color=#653760>-text</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(MC,project) / <font color=#1b1baa>[</font>msgcat::mc Date<font color=#1b1baa>]</font>&quot;</font>
+  <font color=#1b1baa>$tree</font> heading #1 <font color=#653760>-text</font> [msgcat::mc Reminder]
+  alited::tree::AddTags <font color=#1b1baa>$tree</font>
+  UpdateTree
+  <b><font color=#3a6797>after</font></b> 250 alited::todolist::CheckEmpty
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;F1&gt; <font color=#8b2a0e>&quot;<font color=#1b1baa>[$</font>obTdl ButHelp<font color=#1b1baa>]</font> invoke&quot;</font>
+  <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$obTdl</font> showModal <font color=#1b1baa>$win</font> <font color=#653760>-onclose</font> ::alited::todolist::Cancel \
+    <font color=#653760>-parent</font> <font color=#1b1baa>$::alited::project::win</font> <font color=#653760>-resizable</font> 1 <font color=#653760>-minsize</font> {400 250} \
+    <font color=#653760>-geometry</font> <font color=#1b1baa>$::alited::project::geotodolist</font> <font color=#653760>-focus</font> <font color=#1b1baa>$tree</font>]
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$win</font>}
+  <font color=#1b1baa>$obTdl</font> destroy
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=todolist::_run></a>
+<b><font color=#ca14ca>proc</font></b> todolist::_run {tdlInput} {
+  <i><font color=#4b5d50># Runs &quot;Pending TODOs&quot; dialogue.</font></i>
+  <i><font color=#4b5d50>#   tdlInput - todo list</font></i>
+
+  <b><font color=#3a6797>variable</font></b> win
+  <b><font color=#3a6797>variable</font></b> tdlistOrig
+  <b><font color=#3a6797>variable</font></b> tdlistOrigDates
+  <b><font color=#3a6797>variable</font></b> filter
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$win</font>]} {<b><font color=#ca14ca>return</font></b> {}}
+  <b><font color=#3a6797>set</font></b> filter {}
+  <b><font color=#3a6797>set</font></b> tdlistOrig <font color=#1b1baa>$tdlInput</font>
+  <b><font color=#3a6797>set</font></b> tdlistOrigDates [<b><font color=#3a6797>list</font></b>]
+  FilterList
+  <b><font color=#3a6797>set</font></b> res [_create]
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+
+</pre>
+
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#bdd7e7><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>todolist.tcl</b></font></div></td></table>
+
+</section>
+<script>
+  writeFooter('Generated by <a href="'+homeLINK()+'/en/tcl/alited/index.html">alited</a> &amp; <a href="'+homeLINK()+'/en/tcl/mulster/index.html">mulster</a></a>');
+</script>
+</div>
+</body>
+</html>

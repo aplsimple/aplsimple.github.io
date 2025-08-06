@@ -539,6 +539,7 @@ superclass ::apave::APaveBase
 
   <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(win) .proSplashScreen
   <b><font color=#3a6797>set</font></b> qdlg <font color=#1b1baa>$::apave::_AP_VARS(win)</font>
+  <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions args <font color=#653760>-modal</font> 0 <font color=#653760>-ontop</font> 1] modal ontop
   <b><font color=#3a6797>set</font></b> atr1 <font color=#8b2a0e>&quot;-maximum 100 -value 0 -mode determinate -length 300 -orient horizontal&quot;</font>
   <b><font color=#3a6797>set</font></b> widlist [<b><font color=#3a6797>list</font></b> \
     <font color=#8b2a0e>&quot;fra - - - - pack <font color=#1b1baa>{</font>-h 10<font color=#1b1baa>}</font>&quot;</font> \
@@ -549,7 +550,8 @@ superclass ::apave::APaveBase
   <b><font color=#3a6797>set</font></b> win [<b><font color=#ca14ca>my</font></b> makeWindow <font color=#1b1baa>$qdlg</font>.fra <font color=#1b1baa>$ttl</font>]
   <b><font color=#3a6797>set</font></b> widlist [<b><font color=#ca14ca>my</font></b> paveWindow <font color=#1b1baa>$qdlg</font>.fra <font color=#1b1baa>$widlist</font>]
   ::tk::PlaceWindow <font color=#1b1baa>$win</font> widget <font color=#1b1baa>$wprn</font>
-  <b><font color=#ca14ca>my</font></b> showWindow <font color=#1b1baa>$win</font> 0 1
+  <b><font color=#ca14ca>my</font></b> showWindow <font color=#1b1baa>$win</font> <font color=#1b1baa>$modal</font> <font color=#1b1baa>$ontop</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$modal</font>} {<b><font color=#134070>grab</font></b> set <font color=#1b1baa>$win</font>}
   <b><font color=#3a6797>update</font></b>
   <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(ProSplash,type) <font color=#1b1baa>$type</font>
   <b><font color=#3a6797>set</font></b> ::apave::_AP_VARS(ProSplash,win) <font color=#1b1baa>$win</font>
@@ -1330,9 +1332,9 @@ superclass ::apave::APaveBase
       }
       <font color=#653760>-savetext</font> {<b><font color=#3a6797>set</font></b> savetext <font color=#1b1baa>$val</font>}
       <b><font color=#3a6797>default</font></b> {
-        <b><font color=#3a6797>append</font></b> optsFont <font color=#8b2a0e>&quot; <font color=#1b1baa>$</font>opt <font color=#1b1baa>$</font>val&quot;</font>
+        <b><font color=#3a6797>append</font></b> optsFont <font color=#8b2a0e>&quot; <font color=#1b1baa>$</font>opt <font color=#1b1baa>[</font>list <font color=#1b1baa>$</font>val<font color=#1b1baa>]</font>&quot;</font>
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$opt</font> ne <font color=#8b2a0e>&quot;-family&quot;</font>} {
-          <b><font color=#3a6797>append</font></b> optsFontM <font color=#8b2a0e>&quot; <font color=#1b1baa>$</font>opt <font color=#1b1baa>$</font>val&quot;</font>
+          <b><font color=#3a6797>append</font></b> optsFontM <font color=#8b2a0e>&quot; <font color=#1b1baa>$</font>opt <font color=#1b1baa>[</font>list <font color=#1b1baa>$</font>val<font color=#1b1baa>]</font>&quot;</font>
         }
       }
     }
@@ -1348,7 +1350,7 @@ superclass ::apave::APaveBase
   <b><font color=#3a6797>set</font></b> optsFont [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$optsFont</font>]
   <b><font color=#3a6797>set</font></b> optsHeadFont <font color=#1b1baa>$optsFont</font>
   <b><font color=#3a6797>set</font></b> fs [<b><font color=#ca14ca>my</font></b> basicFontSize]
-  <b><font color=#3a6797>set</font></b> textfont <font color=#8b2a0e>&quot;-family <font color=#1b1baa>{[</font>my basicTextFont<font color=#1b1baa>]}</font>&quot;</font>
+  <b><font color=#3a6797>set</font></b> textfont [<b><font color=#ca14ca>my</font></b> basicTextFont]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$optsFont</font> ne {}} {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first <font color=#8b2a0e>&quot;-size &quot;</font> <font color=#1b1baa>$optsFont</font>]&lt;0} {
       <b><font color=#3a6797>append</font></b> optsFont <font color=#8b2a0e>&quot; -size <font color=#1b1baa>$</font>fs&quot;</font>
@@ -1359,7 +1361,7 @@ superclass ::apave::APaveBase
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first <font color=#8b2a0e>&quot;-family &quot;</font> <font color=#1b1baa>$optsFont</font>]&gt;=0} {
       <b><font color=#3a6797>set</font></b> optsFont <font color=#8b2a0e>&quot;-font \{<font color=#1b1baa>$</font>optsFont&quot;</font>
     } <b><font color=#3a6797>else</font></b> {
-      <b><font color=#3a6797>set</font></b> optsFont <font color=#8b2a0e>&quot;-font \{<font color=#1b1baa>$</font>optsFont -family <font color=#1b1baa>{[</font>my basicDefFont<font color=#1b1baa>]}</font>&quot;</font>
+      <b><font color=#3a6797>set</font></b> optsFont <font color=#8b2a0e>&quot;-font \{<font color=#1b1baa>$</font>optsFont <font color=#1b1baa>[</font>my basicDefFont<font color=#1b1baa>]</font>&quot;</font>
     }
     <b><font color=#3a6797>append</font></b> optsFont <font color=#8b2a0e>&quot;\}&quot;</font>
   } <b><font color=#3a6797>else</font></b> {
@@ -1368,7 +1370,7 @@ superclass ::apave::APaveBase
   }
   <b><font color=#3a6797>set</font></b> msgonly [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$readonly</font> || <font color=#1b1baa>$hidefind</font> || <font color=#1b1baa>$chmsg</font> ne {}}]
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$textmode</font> || <font color=#1b1baa>$msgonly</font>} {
-    <b><font color=#3a6797>set</font></b> textfont <font color=#8b2a0e>&quot;-family <font color=#1b1baa>{[</font>my basicDefFont<font color=#1b1baa>]}</font>&quot;</font>
+    <b><font color=#3a6797>set</font></b> textfont [<b><font color=#ca14ca>my</font></b> basicDefFont]
     <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$textmode</font>} {
       <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \\ \\\\ \{ \\\\\{ \} \\\\\}] <font color=#1b1baa>$msg</font>]
     }

@@ -1087,7 +1087,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#ca14ca>return</font></b>
   }
   <b><font color=#3a6797>set</font></b> wtree [<font color=#1b1baa>$obPav</font> Tree]
-  <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$wtxt</font> index insert]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$wtxt</font> index insert]}]} <b><font color=#ca14ca>return</font></b>
   <b><font color=#3a6797>lassign</font></b> [alited::tree::CurrentItemByLine <font color=#1b1baa>$pos</font> 1] itemID - - - name l1
   <b><font color=#3a6797>set</font></b> header [alited::unit::GetHeader <font color=#1b1baa>$wtree</font> <font color=#1b1baa>$itemID</font>]
   <b><font color=#3a6797>set</font></b> gokeys [<b><font color=#3a6797>list</font></b> {}]
@@ -1336,13 +1336,15 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50>#   is - 1 for current day TODO, 2 for &quot;ahead&quot; TODO</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
-  <b><font color=#3a6797>set</font></b> todo <font color=#8b2a0e>&quot;\n<font color=#1b1baa>$</font>al(MC,prjName) <font color=#1b1baa>$</font>prj\n\n<font color=#1b1baa>$</font>al(MC,on) <font color=#1b1baa>$</font>date\n\n<font color=#1b1baa>$</font>todo\n&quot;</font>
-  <b><font color=#3a6797>set</font></b> opts {}
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first !!! <font color=#1b1baa>$todo</font>]&gt;-1 || (<font color=#1b1baa>$is</font>==1 && <font color=#1b1baa>$al(todoahead)</font>)} {
-    <b><font color=#3a6797>set</font></b> opts [<b><font color=#3a6797>list</font></b> <font color=#653760>-ontop</font> 1 <font color=#653760>-eternal</font> 1 <font color=#653760>-fg</font> white <font color=#653760>-bg</font> red \
-      <font color=#653760>-onmouse</font> {alited::main::HandleOutdatedTODO %b}]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$todo</font>] ne {}} {
+    <b><font color=#3a6797>set</font></b> todo <font color=#8b2a0e>&quot;\n<font color=#1b1baa>$</font>al(MC,prjName) <font color=#1b1baa>$</font>prj\n\n<font color=#1b1baa>$</font>al(MC,on) <font color=#1b1baa>$</font>date\n\n<font color=#1b1baa>$</font>todo\n&quot;</font>
+    <b><font color=#3a6797>set</font></b> opts {}
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first !!! <font color=#1b1baa>$todo</font>]&gt;-1 || (<font color=#1b1baa>$is</font>==1 && <font color=#1b1baa>$al(todoahead)</font>)} {
+      <b><font color=#3a6797>set</font></b> opts [<b><font color=#3a6797>list</font></b> <font color=#653760>-ontop</font> 1 <font color=#653760>-eternal</font> 1 <font color=#653760>-fg</font> white <font color=#653760>-bg</font> red \
+        <font color=#653760>-onmouse</font> {alited::main::HandleOutdatedTODO %b}]
+    }
+    ::alited::Balloon <font color=#1b1baa>$todo</font> yes 2500 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font>
   }
-  ::alited::Balloon <font color=#1b1baa>$todo</font> yes 2500 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$opts</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=main::HandleOutdatedTODO></a>
