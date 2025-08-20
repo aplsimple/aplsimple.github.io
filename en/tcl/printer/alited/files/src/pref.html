@@ -73,6 +73,7 @@ mode - mode of Message</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#pref::MainFrame">MainFrame</a><span class=tooltiptext> pref::MainFrame : Creates a main frame of the dialogue.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#pref::CheckOk">CheckOk</a><span class=tooltiptext> pref::CheckOk : Checker for "OK" button.
 Returns yes if OK button may be handled, else no.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#pref::CheckFonts">CheckFonts</a><span class=tooltiptext> pref::CheckFonts : Checks fonts' correctness.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#pref::Ok">Ok</a><span class=tooltiptext> pref::Ok : Handler of "OK" button.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#pref::Cancel">Cancel</a><span class=tooltiptext> pref::Cancel : Closes Preferences.
 args - not empty, if called by Esc, Alt+F4 or "X" button</span></div></li></ul>
@@ -557,6 +558,24 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#ca14ca>return</font></b> yes
 }
 <i><font color=#4b5d50>#_______________________</font></i>
+<a id=pref::CheckFonts></a>
+<b><font color=#ca14ca>proc</font></b> pref::CheckFonts {} {
+  <i><font color=#4b5d50># Checks fonts' correctness.</font></i>
+
+  fetchVars
+  <b><font color=#3a6797>set</font></b> fonttemp temptestFont
+  <b><font color=#3a6797>foreach</font></b> {var msg} {FONT main FONT,txt editor} {
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>font</font></b> delete <font color=#1b1baa>$fonttemp</font>}
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#134070>font</font></b> create <font color=#1b1baa>$fonttemp</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$al($var)</font>} err]} {
+      <b><font color=#134070>bell</font></b>
+      <b><font color=#134070>tk_messageBox</font></b> <font color=#653760>-icon</font> error <font color=#653760>-title</font> <font color=#8b2a0e>&quot;ERROR&quot;</font> <font color=#653760>-parent</font> <font color=#1b1baa>$win</font> \
+        <font color=#653760>-message</font> <font color=#8b2a0e>&quot;ERROR:\n\nAt setting the <font color=#1b1baa>$</font>msg font:\n\n<font color=#1b1baa>$</font>err&quot;</font>
+      <b><font color=#ca14ca>return</font></b> no
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> yes
+}
+<i><font color=#4b5d50>#_______________________</font></i>
 <a id=pref::Ok></a>
 <b><font color=#ca14ca>proc</font></b> pref::Ok {args} {
   <i><font color=#4b5d50># Handler of &quot;OK&quot; button.</font></i>
@@ -571,6 +590,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> ans [alited::msg okcancel info <font color=#1b1baa>$al(MC,restart)</font> OK <font color=#653760>-centerme</font> <font color=#1b1baa>$win</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$timo</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ans</font>} {
     <i><font color=#4b5d50># check options that can make alited unusable</font></i>
+    <b><font color=#3a6797>if</font></b> {![CheckFonts]} <b><font color=#ca14ca>return</font></b>
     <b><font color=#3a6797>if</font></b> {![::apave::intInRange <font color=#1b1baa>$al(INI,HUE)</font> -50 50]} {<b><font color=#3a6797>set</font></b> al(INI,HUE) 0}
     <b><font color=#3a6797>if</font></b> {![::apave::intInRange <font color=#1b1baa>$al(FONTSIZE,small)</font> 6 72]} {<b><font color=#3a6797>set</font></b> al(FONTSIZE,small) 9}
     <b><font color=#3a6797>if</font></b> {![::apave::intInRange <font color=#1b1baa>$al(FONTSIZE,std)</font> 7 72]} {<b><font color=#3a6797>set</font></b> al(FONTSIZE,std) 10}
