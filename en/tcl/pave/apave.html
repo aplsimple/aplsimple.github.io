@@ -3040,6 +3040,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::dlgPath" title="dlgPath" class='ruff_cmd'>dlgPath</a></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::dlgPath" title="APaveBase.dlgPath" class='ruff_cmd'>APaveBase.dlgPath</a></td></tr>
 <tr><td class='ruff_defitem'><code>doubleText</code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveDialog::doubleText" title="APaveDialog.doubleText" class='ruff_cmd'>APaveDialog.doubleText</a></td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APave::editfile" title="editfile" class='ruff_cmd'>editfile</a></code></td><td class='ruff_defitem'>Edits or views a file with a set of main colors</td></tr>
+<tr><td class='ruff_defitem'><code>enhanceTitle</code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveDialog::enhanceTitle" title="APaveDialog.enhanceTitle" class='ruff_cmd'>APaveDialog.enhanceTitle</a></td></tr>
 <tr><td class='ruff_defitem'><code>fillGutter</code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::fillGutter" title="APaveBase.fillGutter" class='ruff_cmd'>APaveBase.fillGutter</a></td></tr>
 <tr><td class='ruff_defitem'><code>findInText</code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveDialog::findInText" title="APaveDialog.findInText" class='ruff_cmd'>APaveDialog.findInText</a></td></tr>
 <tr><td class='ruff_defitem'><code>findWidPath</code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::findWidPath" title="APaveBase.findWidPath" class='ruff_cmd'>APaveBase.findWidPath</a></td></tr>
@@ -3259,10 +3260,11 @@ padding: 0%;
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$iopts</font> ne {}} {
     <b><font color=#ca14ca>my</font></b> initInput  ;<i><font color=#4b5d50># clear away all internal vars</font></i>
   }
-  <b><font color=#3a6797>set</font></b> pady <font color=#8b2a0e>&quot;-pady 2&quot;</font>
+  <b><font color=#ca14ca>my</font></b> enhanceTitle args
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> focusopt [::apave::getOption <font color=#6c3e67>-focus</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]] ne {}} {
     <b><font color=#3a6797>set</font></b> focusopt <font color=#8b2a0e>&quot;-focus <font color=#1b1baa>$</font>focusopt&quot;</font>
   }
+  <b><font color=#3a6797>set</font></b> pady {<font color=#6c3e67>-pady</font> 2}
   <b><font color=#3a6797>lappend</font></b> inopts [<b><font color=#3a6797>list</font></b> fraM + T 1 98 <font color=#8b2a0e>&quot;-st nsew <font color=#1b1baa>$</font>pady -rw 1&quot;</font>]
   <b><font color=#3a6797>set</font></b> savedvv [<b><font color=#3a6797>list</font></b>]
   <b><font color=#3a6797>set</font></b> frameprev {}
@@ -3443,16 +3445,9 @@ padding: 0%;
   }
   <b><font color=#3a6797>set</font></b> args [::apave::removeOptions <font color=#1b1baa>$args</font>  <font color=#6c3e67>-titleHELP</font> <font color=#6c3e67>-buttons</font> <font color=#6c3e67>-comOK</font> <font color=#6c3e67>-titleOK</font> <font color=#6c3e67>-titleCANCEL</font> <font color=#6c3e67>-centerme</font>]
   <b><font color=#3a6797>lappend</font></b> args {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$focusopt</font>
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {
-    <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> PrepArgs {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] args
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$focusopt</font> 1] in {. <font color=#8b2a0e>&quot;&quot;</font>}} {<b><font color=#3a6797>set</font></b> foc butOK} {<b><font color=#3a6797>set</font></b> foc {}}
-    <b><font color=#3a6797>set</font></b> res [<b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> {}  <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>butHelp <font color=#1b1baa>$</font>buttons butOK <font color=#1b1baa>$</font>titleOK <font color=#1b1baa>$</font>comOK <font color=#1b1baa>$</font>butCancel&quot;</font>  <font color=#1b1baa>$foc</font> <font color=#1b1baa>$inopts</font> <font color=#1b1baa>$args</font> {} {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$centerme</font> <font color=#6c3e67>-input</font> yes]} e]
-  } <b><font color=#3a6797>then</font></b> {
-    <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$Dlgpath</font>}  ;<i><font color=#4b5d50># Query's window</font></i>
-    <b><font color=#3a6797>set</font></b> under \n[<b><font color=#3a6797>string</font></b> repeat _ 80]\n\n
-    ::apave::obj ok err <font color=#8b2a0e>&quot;ERROR&quot;</font> <font color=#8b2a0e>&quot;\n<font color=#1b1baa>$</font>e<font color=#1b1baa>$</font>under <font color=#1b1baa>$</font>inopts<font color=#1b1baa>$</font>under <font color=#1b1baa>$</font>args<font color=#1b1baa>$</font>under <font color=#1b1baa>$</font>centerme&quot;</font>  <font color=#6c3e67>-t</font> 1 <font color=#6c3e67>-head</font> <font color=#8b2a0e>&quot;\nAPave error: \n&quot;</font> <font color=#6c3e67>-hfg</font> red <font color=#6c3e67>-weight</font> bold <font color=#6c3e67>-w</font> 80
-    <b><font color=#ca14ca>return</font></b> 0
-  }
+  <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> PrepArgs {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] args
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$focusopt</font> 1] in {. <font color=#8b2a0e>&quot;&quot;</font>}} {<b><font color=#3a6797>set</font></b> foc butOK} {<b><font color=#3a6797>set</font></b> foc {}}
+  <b><font color=#3a6797>set</font></b> res [<b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> {}  <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>butHelp <font color=#1b1baa>$</font>buttons butOK <font color=#1b1baa>$</font>titleOK <font color=#1b1baa>$</font>comOK <font color=#1b1baa>$</font>butCancel&quot;</font>  <font color=#1b1baa>$foc</font> <font color=#1b1baa>$inopts</font> <font color=#1b1baa>$args</font> {} {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$centerme</font> <font color=#6c3e67>-input</font> yes]
   <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$res</font> 0]} {  ;<i><font color=#4b5d50># restore old values if OK not chosen</font></i>
     <b><font color=#3a6797>foreach</font></b> {vn vv} <font color=#1b1baa>$_savedvv</font> {
       <i><font color=#4b5d50># tk_optionCascade (destroyed now) was tracing its variable =&gt; catch</font></i>
@@ -6096,6 +6091,7 @@ padding: 0%;
 <tr><td class='ruff_defitem'><code>displayText</code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::displayText" title="APaveBase.displayText" class='ruff_cmd'>APaveBase.displayText</a></td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::dlgPath" title="dlgPath" class='ruff_cmd'>dlgPath</a></code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::dlgPath" title="APaveBase.dlgPath" class='ruff_cmd'>APaveBase.dlgPath</a></td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveDialog::doubleText" title="doubleText" class='ruff_cmd'>doubleText</a></code></td><td class='ruff_defitem'>Doubles a current line or a selection of text widget.</td></tr>
+<tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveDialog::enhanceTitle" title="enhanceTitle" class='ruff_cmd'>enhanceTitle</a></code></td><td class='ruff_defitem'>Enhances dialog title font.</td></tr>
 <tr><td class='ruff_defitem'><code>fillGutter</code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::fillGutter" title="APaveBase.fillGutter" class='ruff_cmd'>APaveBase.fillGutter</a></td></tr>
 <tr><td class='ruff_defitem'><code><a href="apave.html#::apave::APaveDialog::findInText" title="findInText" class='ruff_cmd'>findInText</a></code></td><td class='ruff_defitem'>Finds a string in text widget.</td></tr>
 <tr><td class='ruff_defitem'><code>findWidPath</code></td><td class='ruff_defitem'>See <a href="apave.html#::apave::APaveBase::findWidPath" title="APaveBase.findWidPath" class='ruff_cmd'>APaveBase.findWidPath</a></td></tr>
@@ -6331,6 +6327,21 @@ padding: 0%;
   }
   <font color=#1b1baa>$txt</font> insert <font color=#1b1baa>$pos3</font> <font color=#1b1baa>$duptext</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$dobreak</font>} {<b><font color=#ca14ca>return</font></b> <font color=#6c3e67>-code</font> break}
+}</code><br></pre></div>
+</div><br><br><h4 class='ruffmethod'><a name='::apave::APaveDialog::enhanceTitle'>enhanceTitle</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveDialog" title="::apave::APaveDialog" class='ruff_cmd'>::apave::APaveDialog</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveDialog'>APaveDialog</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Enhances dialog title font.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>OBJECT enhanceTitle</span> <span class='ruff_arg'>optsName</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code>optsName</code></td><td class='ruff_defitem'>variable for font options</td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_apave_APaveDialog_enhanceTitle' href="javascript:toggleSource('apave_APaveDialog_enhanceTitle')">Show source</a></p>
+<div id='apave_APaveDialog_enhanceTitle' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>method</font></b> enhanceTitle {optsName} {
+  <i><font color=#4b5d50># Enhances dialog title font.</font></i>
+  <i><font color=#4b5d50>#   optsName - variable for font options</font></i>
+
+  <b><font color=#3a6797>upvar</font></b> <font color=#1b1baa>$optsName</font> opts
+  <b><font color=#3a6797>set</font></b> opts [<b><font color=#3a6797>linsert</font></b> <font color=#1b1baa>$opts</font> 0 {<b><font color=#3a6797>*</font></b>}[<b><font color=#ca14ca>my</font></b> basicTextFont] <font color=#6c3e67>-hsz</font> [<b><font color=#3a6797>expr</font></b> {[<b><font color=#ca14ca>my</font></b> basicFontSize] + 1}]]
 }</code><br></pre></div>
 </div><br><br><h4 class='ruffmethod'><a name='::apave::APaveDialog::findInText'>findInText</a><span class='ns_scope'> [<a href="apave.html#::apave::APaveDialog" title="::apave::APaveDialog" class='ruff_cmd'>::apave::APaveDialog</a>]</span><span class='tinylink'><a href='apave.html#::apave::APaveDialog'>APaveDialog</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -6590,6 +6601,7 @@ padding: 0%;
       <b><font color=#3a6797>set</font></b> defb <font color=#1b1baa>$num</font>
     }
   }
+  <b><font color=#ca14ca>my</font></b> enhanceTitle args
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> PrepArgs {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] args
   <b><font color=#ca14ca>my</font></b> Query <font color=#1b1baa>$icon</font> <font color=#1b1baa>$ttl</font> <font color=#1b1baa>$msg</font> <font color=#1b1baa>$apave_msc_bttns</font> But<font color=#1b1baa>$defb</font> {} <font color=#1b1baa>$args</font>
 }</code><br></pre></div>
@@ -8440,6 +8452,7 @@ padding: 0%;
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveDialog::askForSave'>askForSave</a><span class='tooltiptext'>For a text, sets/gets &quot;ask for save changes&quot; flag.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveDialog::deleteLine'>deleteLine</a><span class='tooltiptext'>Deletes a current line of text widget.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveDialog::doubleText'>doubleText</a><span class='tooltiptext'>Doubles a current line or a selection of text widget.
+</span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveDialog::enhanceTitle'>enhanceTitle</a><span class='tooltiptext'>Enhances dialog title font.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveDialog::findInText'>findInText</a><span class='tooltiptext'>Finds a string in text widget.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveDialog::get_highlighted'>get_highlighted</a><span class='tooltiptext'>Gets a selected word after double-clicking on a text.
 </span></h4><h4 class='tooltip'><a href='apave.html#::apave::APaveDialog::get_HighlightedString'>get_HighlightedString</a><span class='tooltiptext'>Returns a string got from highlighting by Alt+left/right/q/w.
