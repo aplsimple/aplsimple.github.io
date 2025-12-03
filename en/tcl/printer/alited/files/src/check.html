@@ -163,7 +163,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>variable</font></b> what 1
 
   <i><font color=#4b5d50># counts for errors in units and in whole files</font></i>
-  <b><font color=#3a6797>variable</font></b> errors 0 errors1 0 errors2 0 errors3 0 errors4 0 fileerrors 0
+  <b><font color=#3a6797>variable</font></b> fileerrors 0 uniterrors 0 errors1 0 errors2 0 errors3 0 errors4 0
 
   <i><font color=#4b5d50># flag &quot;at opening the dialogue&quot;</font></i>
   <b><font color=#3a6797>variable</font></b> atopen yes
@@ -174,12 +174,12 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 <b><font color=#ca14ca>proc</font></b> check::ShowResults {} {
   <i><font color=#4b5d50># Displays results of checking.</font></i>
 
-  <b><font color=#3a6797>variable</font></b> errors
   <b><font color=#3a6797>variable</font></b> fileerrors
+  <b><font color=#3a6797>variable</font></b> uniterrors
   <b><font color=#3a6797>variable</font></b> atopen
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$errors</font> || <font color=#1b1baa>$fileerrors</font>} {
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fileerrors</font>} {
     <b><font color=#3a6797>set</font></b> msg [msgcat::mc {Found %f file error(s), %u unit error(s).}]
-    <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %f <font color=#1b1baa>$fileerrors</font> %u <font color=#1b1baa>$errors</font>] <font color=#1b1baa>$msg</font>]
+    <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %f <font color=#1b1baa>$fileerrors</font> %u <font color=#1b1baa>$uniterrors</font>] <font color=#1b1baa>$msg</font>]
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$atopen</font>} <b><font color=#134070>bell</font></b>
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>set</font></b> msg [msgcat::mc {No errors found.}]
@@ -232,9 +232,8 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> mapP2 [<b><font color=#3a6797>list</font></b> <font color=#8b2a0e>&quot;<font color=#1b1baa>{</font>\)<font color=#1b1baa>}</font>&quot;</font> {}]
   <b><font color=#3a6797>set</font></b> mapQ [<b><font color=#3a6797>list</font></b> <font color=#8b2a0e>&quot;<font color=#1b1baa>{</font>\&quot;<font color=#1b1baa>}</font>&quot;</font> {}]
   <b><font color=#3a6797>foreach</font></b> line [<b><font color=#3a6797>split</font></b> [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font>] \n] {
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match <font color=#653760>-nocase</font> *#*alited*check* <font color=#1b1baa>$line</font>] \
-    ||  [<b><font color=#3a6797>string</font></b> match <font color=#653760>-nocase</font> *#*check*alited* <font color=#1b1baa>$line</font>]} {
-      <i><font color=#4b5d50># if a line is &quot;checked by alited&quot;, skip this unit as checked by a human</font></i>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> ne {} && [<b><font color=#3a6797>string</font></b> match <font color=#653760>-nocase</font> *#*alited_checked* <font color=#1b1baa>$line</font>]} {
+      <i><font color=#4b5d50># if a line contains &quot;# alited_checked&quot;, skip this unit as checked by a human</font></i>
       <b><font color=#ca14ca>return</font></b> 0
     }
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$chBrace</font>} {
@@ -285,7 +284,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50>#   wtxt - the file's text widget</font></i>
   <i><font color=#4b5d50>#   TID - the file's tab ID</font></i>
 
-  <b><font color=#3a6797>variable</font></b> errors
+  <b><font color=#3a6797>variable</font></b> uniterrors
   <b><font color=#3a6797>variable</font></b> fileerrors
   <b><font color=#3a6797>variable</font></b> errors1
   <b><font color=#3a6797>variable</font></b> errors2
@@ -305,31 +304,28 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> textcont [<font color=#1b1baa>$wtxt</font> get 1.0 end]
   <b><font color=#3a6797>set</font></b> unittree [alited::unit::GetUnits <font color=#1b1baa>$TID</font> <font color=#1b1baa>$textcont</font>]
   <i><font color=#4b5d50># check for errors of a whole file</font></i>
-  <b><font color=#3a6797>set</font></b> errors1 [<b><font color=#3a6797>set</font></b> errors2 [<b><font color=#3a6797>set</font></b> errors3 [<b><font color=#3a6797>set</font></b> errors4 0]]]
-  <b><font color=#3a6797>set</font></b> fileerrs [CheckUnit <font color=#1b1baa>$wtxt</font> 1.0 end]
+  <b><font color=#3a6797>set</font></b> ferr [CheckUnit <font color=#1b1baa>$wtxt</font> 1.0 end]
   <i><font color=#4b5d50># check for duplicate units</font></i>
+  <b><font color=#3a6797>set</font></b> errors1 [<b><font color=#3a6797>set</font></b> errors2 [<b><font color=#3a6797>set</font></b> errors3 [<b><font color=#3a6797>set</font></b> errors4 [<b><font color=#3a6797>set</font></b> duplerrs 0]]]]
   <b><font color=#3a6797>set</font></b> errduplist [<b><font color=#3a6797>list</font></b>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$chDuplUnits</font>} {
     <b><font color=#3a6797>set</font></b> prevtitle <font color=#8b2a0e>&quot;\{\$\}&quot;</font>
     <b><font color=#3a6797>set</font></b> errmsg [msgcat::mc {duplicate unit:}]
-    <b><font color=#3a6797>set</font></b> uniterr 0
     <b><font color=#3a6797>foreach</font></b> item [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-index</font> 3 <font color=#1b1baa>$unittree</font>] {
       <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$item</font> lev leaf fl1 title l1
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$prevtitle</font> eq <font color=#1b1baa>$title</font> && <font color=#1b1baa>$title</font> ni {<b><font color=#ca14ca>constructor</font></b> destructor}} {
-        <b><font color=#3a6797>set</font></b> uniterr 1
+        <b><font color=#3a6797>incr</font></b> uniterrors
+        <b><font color=#3a6797>incr</font></b> duplerrs
         <b><font color=#3a6797>lappend</font></b> errduplist [<b><font color=#3a6797>list</font></b> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>curfile: <font color=#1b1baa>$</font>errmsg <font color=#1b1baa>$</font>title&quot;</font> <font color=#1b1baa>$l1</font>]
       }
       <b><font color=#3a6797>set</font></b> prevtitle <font color=#1b1baa>$title</font>
     }
-    <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$fileerrs</font>} {<b><font color=#3a6797>set</font></b> fileerrs <font color=#1b1baa>$uniterr</font>}
   }
   <i><font color=#4b5d50># put a whole file's statistics on errors</font></i>
-  <b><font color=#3a6797>incr</font></b> fileerrors <font color=#1b1baa>$fileerrs</font>
   <b><font color=#3a6797>set</font></b> und [<b><font color=#3a6797>string</font></b> repeat _ 30]
   <b><font color=#3a6797>set</font></b> pos1 [alited::bar::GetTabState <font color=#1b1baa>$TID</font> <font color=#653760>--pos</font>]
   <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> is double <font color=#653760>-strict</font> $<font color=#1b1baa>$pos1</font>]} {<b><font color=#3a6797>set</font></b> pos1 1.0}
   <b><font color=#3a6797>set</font></b> info [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$TID</font> [<b><font color=#3a6797>expr</font></b> {int(<font color=#1b1baa>$pos1</font>)}]]
-  alited::info::Put <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>und <font color=#1b1baa>$</font>fileerrs (<font color=#1b1baa>$</font>errors1/<font color=#1b1baa>$</font>errors2/<font color=#1b1baa>$</font>errors3/<font color=#1b1baa>$</font>errors4) file errors of <font color=#1b1baa>$</font>curfile <font color=#1b1baa>$</font>und<font color=#1b1baa>$</font>und<font color=#1b1baa>$</font>und&quot;</font> <font color=#1b1baa>$info</font>
   <i><font color=#4b5d50># put a list of duplicate units</font></i>
   <b><font color=#3a6797>foreach</font></b> errdup <font color=#1b1baa>$errduplist</font> {
     <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$errdup</font> msg pos1
@@ -340,11 +336,14 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$item</font> lev leaf fl1 title l1 l2
     <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$leaf</font> || <font color=#1b1baa>$title</font> eq {}} <b><font color=#ca14ca>continue</font></b>
     <b><font color=#3a6797>set</font></b> title <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>curfile: <font color=#1b1baa>$</font>title&quot;</font>
-    <b><font color=#3a6797>set</font></b> err [CheckUnit <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$l1</font>.0 <font color=#1b1baa>$l2</font>.end <font color=#1b1baa>$TID</font> <font color=#1b1baa>$title</font>]
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$err</font>} {
-      <b><font color=#3a6797>incr</font></b> errors <font color=#1b1baa>$err</font>
+    <b><font color=#3a6797>set</font></b> uerr [CheckUnit <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$l1</font>.0 <font color=#1b1baa>$l2</font>.end <font color=#1b1baa>$TID</font> <font color=#1b1baa>$title</font>]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$uerr</font>} {
+      <b><font color=#3a6797>incr</font></b> uniterrors <font color=#1b1baa>$uerr</font>
+      <b><font color=#3a6797>incr</font></b> ferr
     }
   }
+  alited::info::Put <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>und <font color=#1b1baa>$</font>duplerrs (<font color=#1b1baa>$</font>errors1/<font color=#1b1baa>$</font>errors2/<font color=#1b1baa>$</font>errors3/<font color=#1b1baa>$</font>errors4) file errors of <font color=#1b1baa>$</font>curfile <font color=#1b1baa>$</font>und<font color=#1b1baa>$</font>und<font color=#1b1baa>$</font>und&quot;</font> <font color=#1b1baa>$info</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ferr</font>} {<b><font color=#3a6797>incr</font></b> fileerrors}
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=check::CheckAll></a>
@@ -367,12 +366,12 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   <b><font color=#3a6797>variable</font></b> what
   <b><font color=#3a6797>variable</font></b> atopen
-  <b><font color=#3a6797>variable</font></b> errors
+  <b><font color=#3a6797>variable</font></b> uniterrors
   <b><font color=#3a6797>variable</font></b> fileerrors
   alited::info::Clear
   alited::info::Put <font color=#1b1baa>$al(MC,wait)</font> {} yes yes
   alited::main::UpdateUnitTree
-  <b><font color=#3a6797>set</font></b> errors [<b><font color=#3a6797>set</font></b> fileerrors 0]
+  <b><font color=#3a6797>set</font></b> uniterrors [<b><font color=#3a6797>set</font></b> fileerrors 0]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$atopen</font> || <font color=#1b1baa>$what</font>==1} {  ;<i><font color=#4b5d50># at start, check a current file</font></i>
     CheckFile
   } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$what</font>==2} {
@@ -409,19 +408,19 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$win</font>}
   <font color=#1b1baa>$obCHK</font> makeWindow <font color=#1b1baa>$win</font>.fra <font color=#1b1baa>$al(MC,checktcl)</font>
   <font color=#1b1baa>$obCHK</font> paveWindow <font color=#1b1baa>$win</font>.fra {
-    {v_ - -}
-    {labHead v_ T 1 1 {<font color=#653760>-st</font> w <font color=#653760>-pady</font> 4 <font color=#653760>-padx</font> 8} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Checks available:&quot;</font>}}
-    {chb1 labHead T 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 22} {<font color=#653760>-var</font> ::alited::check::chBrace <font color=#653760>-t</font> {Consistency of {} }}}
-    {chb2 + T 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 22} {<font color=#653760>-var</font> ::alited::check::chBracket <font color=#653760>-t</font> {Consistency of []}}}
-    {chb3 + T 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 22} {<font color=#653760>-var</font> ::alited::check::chParenthesis <font color=#653760>-t</font> {Consistency of ()}}}
-    {chb4 + T 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 22} {<font color=#653760>-var</font> ::alited::check::chQuotes <font color=#653760>-t</font> {Consistency of <font color=#8b2a0e>&quot;&quot;</font>}}}
-    {chb9 + T 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 22} {<font color=#653760>-var</font> ::alited::check::chDuplUnits <font color=#653760>-t</font> {Duplicate units}}}
+    {v_ - - 1 2}
+    {labHead v_ T 1 1 {<font color=#653760>-st</font> w <font color=#653760>-pady</font> 4 <font color=#653760>-padx</font> 4} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Checks available:&quot;</font>}}
+    {chb9 + L 1 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 4} {<font color=#653760>-var</font> ::alited::check::chDuplUnits <font color=#653760>-t</font> {Duplicate units}}}
+    {chb1 labHead T 2 1 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 22} {<font color=#653760>-var</font> ::alited::check::chBrace <font color=#653760>-t</font> {Consistency of {} }}}
+    {chb2 + T 1 2 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 22} {<font color=#653760>-var</font> ::alited::check::chBracket <font color=#653760>-t</font> {Consistency of []}}}
+    {chb3 + T 1 2 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 1 <font color=#653760>-padx</font> 22} {<font color=#653760>-var</font> ::alited::check::chParenthesis <font color=#653760>-t</font> {Consistency of ()}}}
+    {chb4 + T 1 2 {<font color=#653760>-st</font> sw <font color=#653760>-pady</font> 5 <font color=#653760>-padx</font> 22} {<font color=#653760>-var</font> ::alited::check::chQuotes <font color=#653760>-t</font> {Consistency of <font color=#8b2a0e>&quot;&quot;</font>}}}
     {v_2 + T}
-    {fra + T 1 1 {<font color=#653760>-st</font> nsew <font color=#653760>-pady</font> 0 <font color=#653760>-padx</font> 3} {<font color=#653760>-padding</font> {5 5 5 5} <font color=#653760>-relief</font> groove}}
+    {fra + T 1 2 {<font color=#653760>-st</font> nsew <font color=#653760>-pady</font> 0 <font color=#653760>-padx</font> 3} {<font color=#653760>-padding</font> {5 5 5 5} <font color=#653760>-relief</font> groove}}
     {fra.lab - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Check:&quot;</font>}}
     {fra.radA - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 9}  {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;current file&quot;</font> <font color=#653760>-var</font> ::alited::check::what <font color=#653760>-value</font> 1}}
     {fra.radB - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 9}  {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;all of session files&quot;</font> <font color=#653760>-var</font> ::alited::check::what <font color=#653760>-value</font> 2}}
-    {fra2 fra T 1 1 {<font color=#653760>-st</font> nsew <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-padding</font> {5 5 5 5} <font color=#653760>-relief</font> groove}}
+    {fra2 fra T 1 2 {<font color=#653760>-st</font> nsew <font color=#653760>-pady</font> 3 <font color=#653760>-padx</font> 3} {<font color=#653760>-padding</font> {5 5 5 5} <font color=#653760>-relief</font> groove}}
     {.ButHelp - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,help)</font>} <font color=#653760>-tip</font> F1 <font color=#653760>-com</font> alited::check::Help}}
     {.h_ - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both}}
     {.ButOK - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 2} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Check&quot;</font> <font color=#653760>-com</font> ::alited::check::Check}}

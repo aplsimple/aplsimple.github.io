@@ -368,14 +368,9 @@ args - options of *::klnd::calendar*
 Returns a selected date.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#Replace_Tcl">Replace_Tcl</a><span class=tooltiptext> Replace_Tcl : Replaces Tcl code with its resulting items in *lwidgets* list.
 r1 - variable name for a current index in *lwidgets* list
-r2 - variable name for a length of *lwidgets* list
-r3 - variable name for *lwidgets* list
-args - "tcl" and "tcl code" for "tcl" type of widget
-The code should use the wildcard that goes first at a line:
-%C - a command for inserting an item into lwidgets list.
-The "tcl" widget type can be useful to automate the inserting
-a list of similar widgets to the list of widgets.
-See tests/test2_pave.tcl where the "tcl" fills "Color schemes" tab.</span></div></li></ul>
+r2 - variable name for *lwidgets* list
+args - "tcl code" for "tcl", "prc name args" for "prc" type of widget
+Examples of "tcl" and "prc" types - in alited and expagog applications.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#Replace_chooser">Replace_chooser</a><span class=tooltiptext> Replace_chooser : Replaces an item for a chooser with two items.
 r0 - variable name for a widget's name
 r1 - variable name for a current index in *lwidgets* list
@@ -419,7 +414,7 @@ The widgets of widget list can have uppercased names which
 means that the appropriate methods will be created to access
 their full pathes with a command `my Name`.
 This method gets a "normal" name of widget accepted by Tk.
-See also: MakeWidgetName</span></div></li></ul>
+See also: makeWidgetMethod</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#NormalizeName">NormalizeName</a><span class=tooltiptext> NormalizeName : Gets the real name of widget from *.name*.
 refname - variable name for widget name
 refi - variable name for index in widget list
@@ -441,8 +436,8 @@ The name of widget may be partial. In this case it's prepended
 the current dialogue's frame path.
 Useful in "input" dialogue when -method option is present
 or widget names are uppercased.
-See also: MakeWidgetName, input</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#MakeWidgetName">MakeWidgetName</a><span class=tooltiptext> MakeWidgetName : Makes an exported method named after root widget, if it's uppercased.
+See also: makeWidgetMethod, input</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#makeWidgetMethod">makeWidgetMethod</a><span class=tooltiptext> makeWidgetMethod : Makes an exported method named after root widget, if it's uppercased.
 w - name of root widget
 name - name of widget
 an - additional prefix for name (if "-", $w is full/partial name)
@@ -451,7 +446,8 @@ Example:
 fra1.fra2.fra3.Entry1
 => method Entry1 {} {...}
 ...
-my Entry1  ;# instead of .win.fra1.fra2.fra3.Entry1</span></div></li></ul>
+my Entry1  ;# instead of .win.fra1.fra2.fra3.Entry1
+Returns: full widget path.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#AddPopupAttr">AddPopupAttr</a><span class=tooltiptext> AddPopupAttr : Adds the attribute to call a popup menu for an editable widget.
 w - widget's name
 attrsName - variable name for attributes of widget
@@ -1819,10 +1815,9 @@ Docs:
         <font color=#653760>-command</font> {} <font color=#653760>-com</font> {} <font color=#653760>-from</font> {} <font color=#653760>-to</font> {}] cmd cmd2 from to
       <b><font color=#3a6797>append</font></b> cmd <font color=#1b1baa>$cmd2</font>
       <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions attrs <font color=#653760>-tip</font> {} <font color=#653760>-tooltip</font> {}] t1 t2
-      <b><font color=#3a6797>set</font></b> t2 <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>t1<font color=#1b1baa>$</font>t2&quot;</font>
-      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$from</font> ne {} || <font color=#1b1baa>$to</font> ne {}} {
-        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$t2</font> ne {}} {<b><font color=#3a6797>set</font></b> t2 <font color=#8b2a0e>&quot;\n <font color=#1b1baa>$</font>t2&quot;</font>}
-        <b><font color=#3a6797>set</font></b> t2 <font color=#8b2a0e>&quot; <font color=#1b1baa>$</font>from .. <font color=#1b1baa>$</font>to <font color=#1b1baa>$</font>t2&quot;</font>
+      <b><font color=#3a6797>if</font></b> {<font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>from<font color=#1b1baa>$</font>to&quot;</font> ne {} && <font color=#1b1baa>$t2</font> eq {}} {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$t1</font> ne {}} {<b><font color=#3a6797>set</font></b> t1 \n<font color=#1b1baa>$t1</font>}
+        <b><font color=#3a6797>set</font></b> t2 <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>from .. <font color=#1b1baa>$</font>to<font color=#1b1baa>$</font>t1&quot;</font>
       }
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$t2</font> ne {}} {<b><font color=#3a6797>set</font></b> t2 <font color=#8b2a0e>&quot;-tip <font color=#1b1baa>{$</font>t2<font color=#1b1baa>}</font>&quot;</font>}
       <b><font color=#3a6797>append</font></b> attrs <font color=#8b2a0e>&quot; -onReturn <font color=#1b1baa>{$</font>::apave::UFF<font color=#1b1baa>{$</font>cmd<font color=#1b1baa>}</font> <font color=#1b1baa>{$</font>from<font color=#1b1baa>}</font> <font color=#1b1baa>{$</font>to<font color=#1b1baa>}$</font>::apave::UFF<font color=#1b1baa>}</font> <font color=#1b1baa>$</font>t2&quot;</font>
@@ -2531,28 +2526,32 @@ Docs:
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=Replace_Tcl></a>
-<b><font color=#ca14ca>method</font></b> Replace_Tcl {r1 r2 r3 args} {
+<b><font color=#ca14ca>method</font></b> Replace_Tcl {r1 r2 args} {
   <i><font color=#4b5d50># Replaces Tcl code with its resulting items in *lwidgets* list.</font></i>
   <i><font color=#4b5d50>#   r1 - variable name for a current index in *lwidgets* list</font></i>
-  <i><font color=#4b5d50>#   r2 - variable name for a length of *lwidgets* list</font></i>
-  <i><font color=#4b5d50>#   r3 - variable name for *lwidgets* list</font></i>
-  <i><font color=#4b5d50>#   args - &quot;tcl&quot; and &quot;tcl code&quot; for &quot;tcl&quot; type of widget</font></i>
-  <i><font color=#4b5d50># The code should use the wildcard that goes first at a line:</font></i>
-  <i><font color=#4b5d50>#   %C - a command for inserting an item into lwidgets list.</font></i>
-  <i><font color=#4b5d50># The &quot;tcl&quot; widget type can be useful to automate the inserting</font></i>
-  <i><font color=#4b5d50># a list of similar widgets to the list of widgets.</font></i>
-  <i><font color=#4b5d50># See tests/test2_pave.tcl where the &quot;tcl&quot; fills &quot;Color schemes&quot; tab.</font></i>
+  <i><font color=#4b5d50>#   r2 - variable name for *lwidgets* list</font></i>
+  <i><font color=#4b5d50>#   args - &quot;tcl code&quot; for &quot;tcl&quot;, &quot;prc name args&quot; for &quot;prc&quot; type of widget</font></i>
+  <i><font color=#4b5d50># Examples of &quot;tcl&quot; and &quot;prc&quot; types - in alited and expagog applications.</font></i>
 
   <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$args</font> _name _code
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#ca14ca>my</font></b> ownWName <font color=#1b1baa>$_name</font>] ne {tcl}} {<b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$args</font>}
-  <b><font color=#3a6797>upvar</font></b> 1 <font color=#1b1baa>$r1</font> _ii <font color=#1b1baa>$r2</font> _lwlen <font color=#1b1baa>$r3</font> _lwidgets
-; <b><font color=#ca14ca>proc</font></b> lwins {lwName i w} {
-    <b><font color=#3a6797>upvar</font></b> 2 <font color=#1b1baa>$lwName</font> lw
-    <b><font color=#3a6797>set</font></b> lw [<b><font color=#3a6797>linsert</font></b> <font color=#1b1baa>$lw</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$w</font>]
+  <b><font color=#3a6797>switch</font></b> <font color=#653760>-exact</font> -- [<b><font color=#ca14ca>my</font></b> ownWName <font color=#1b1baa>$_name</font>] {
+    tcl {
+      <b><font color=#3a6797>upvar</font></b> 1 <font color=#1b1baa>$r1</font> _i <font color=#1b1baa>$r2</font> _lwidgets
+      ; <b><font color=#ca14ca>proc</font></b> lwins {lwName i w} {
+        <b><font color=#3a6797>upvar</font></b> 2 <font color=#1b1baa>$lwName</font> lw
+        <b><font color=#3a6797>set</font></b> lw [<b><font color=#3a6797>linsert</font></b> <font color=#1b1baa>$lw</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$w</font>]
+      }
+      <b><font color=#3a6797>set</font></b> _lwidgets [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$_lwidgets</font> <font color=#1b1baa>$_i</font> <font color=#1b1baa>$_i</font>]
+      <b><font color=#3a6797>set</font></b> _inext [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$_i</font>-1}]
+      <b><font color=#3a6797>eval</font></b> [<b><font color=#3a6797>string</font></b> map {%C {lwins <font color=#1b1baa>$r2</font> [<b><font color=#3a6797>incr</font></b> _inext] }} <font color=#1b1baa>$_code</font>]
+    }
+    prc {
+      <b><font color=#3a6797>upvar</font></b> 1 <font color=#1b1baa>$r1</font> _i <font color=#1b1baa>$r2</font> _lwidgets
+      <b><font color=#3a6797>set</font></b> _lwidgets [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$_lwidgets</font> <font color=#1b1baa>$_i</font> <font color=#1b1baa>$_i</font>]
+      <b><font color=#3a6797>set</font></b> _lwidgets [{<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$_code</font> <font color=#1b1baa>$_lwidgets</font> [<b><font color=#3a6797>incr</font></b> _i -1]]
+    }
+    <b><font color=#3a6797>default</font></b> {<b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$args</font>}
   }
-  <b><font color=#3a6797>set</font></b> _lwidgets [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$_lwidgets</font> <font color=#1b1baa>$_ii</font> <font color=#1b1baa>$_ii</font>]  ;<i><font color=#4b5d50># removes tcl item</font></i>
-  <b><font color=#3a6797>set</font></b> _inext [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$_ii</font>-1}]
-  <b><font color=#3a6797>eval</font></b> [<b><font color=#3a6797>string</font></b> map {%C {lwins <font color=#1b1baa>$r3</font> [<b><font color=#3a6797>incr</font></b> _inext] }} <font color=#1b1baa>$_code</font>]
   <b><font color=#ca14ca>return</font></b> {}
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -2596,7 +2595,7 @@ Docs:
       <b><font color=#3a6797>set</font></b> lwlen2 [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$lwidgets2</font>]
       <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i2 0} {<font color=#1b1baa>$i2</font> &lt; <font color=#1b1baa>$lwlen2</font>} {} {
         <b><font color=#3a6797>set</font></b> lst2 [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$lwidgets2</font> <font color=#1b1baa>$i2</font>]
-        <b><font color=#3a6797>if</font></b> {[<b><font color=#ca14ca>my</font></b> Replace_Tcl i2 lwlen2 lwidgets2 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$lst2</font>] ne {}} {<b><font color=#3a6797>incr</font></b> i2}
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#ca14ca>my</font></b> Replace_Tcl i2 lwidgets2 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$lst2</font>] ne {}} {<b><font color=#3a6797>incr</font></b> i2}
       }
       <b><font color=#3a6797>incr</font></b> lwlen [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$lwidgets2</font>]
       <b><font color=#3a6797>set</font></b> lwidgets [<b><font color=#3a6797>linsert</font></b> <font color=#1b1baa>$lwidgets</font> [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$i</font>+1}] {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$lwidgets2</font>]
@@ -2627,7 +2626,7 @@ Docs:
       <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$args</font>
     }
   }
-  <b><font color=#3a6797>set</font></b> inname [<b><font color=#ca14ca>my</font></b> MakeWidgetName <font color=#1b1baa>$w</font> <font color=#1b1baa>$name</font> <font color=#1b1baa>$an</font>]
+  <b><font color=#3a6797>set</font></b> inname [<b><font color=#ca14ca>my</font></b> makeWidgetMethod <font color=#1b1baa>$w</font> <font color=#1b1baa>$name</font> <font color=#1b1baa>$an</font>]
   <b><font color=#3a6797>set</font></b> name <font color=#1b1baa>$n</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$view</font> ne {}} {
     <b><font color=#3a6797>set</font></b> tvname <font color=#1b1baa>$inname</font>
@@ -2749,7 +2748,7 @@ Docs:
     <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$args</font>
   }
   <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$args</font> name neighbor posofnei rowspan colspan options1 attrs1
-  <b><font color=#ca14ca>my</font></b> MakeWidgetName <font color=#1b1baa>$w</font> <font color=#1b1baa>$name</font>
+  <b><font color=#ca14ca>my</font></b> makeWidgetMethod <font color=#1b1baa>$w</font> <font color=#1b1baa>$name</font>
   <b><font color=#3a6797>set</font></b> name [<b><font color=#3a6797>lindex</font></b> [<b><font color=#ca14ca>my</font></b> LowercaseWidgetName <font color=#1b1baa>$name</font>] 0]
   <b><font color=#3a6797>set</font></b> wpar {}
   <b><font color=#3a6797>switch</font></b> <font color=#653760>-glob</font> -- [<b><font color=#ca14ca>my</font></b> ownWName <font color=#1b1baa>$name</font>] {
@@ -2861,7 +2860,7 @@ Docs:
           <b><font color=#3a6797>set</font></b> v1 [<b><font color=#ca14ca>my</font></b> Transname <font color=#1b1baa>$but</font> _<font color=#1b1baa>$v1</font>]
           <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is true <font color=#653760>-strict</font> <font color=#1b1baa>$ismeth</font>]} {
             <i><font color=#4b5d50># -method option forces making &quot;WidgetName&quot; method from &quot;widgetName&quot;</font></i>
-            <b><font color=#ca14ca>my</font></b> MakeWidgetName <font color=#1b1baa>$w</font>.<font color=#1b1baa>$name</font> [<b><font color=#3a6797>string</font></b> totitle <font color=#1b1baa>$v1</font> 0 0]
+            <b><font color=#ca14ca>my</font></b> makeWidgetMethod <font color=#1b1baa>$w</font>.<font color=#1b1baa>$name</font> [<b><font color=#3a6797>string</font></b> totitle <font color=#1b1baa>$v1</font> 0 0]
           }
         }
       }
@@ -2882,10 +2881,10 @@ Docs:
     } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$typ</font> eq {menuBar}} {
       ;<i><font color=#4b5d50># menubar: making it here; filling it outside of 'pave window'</font></i>
       <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>incr</font></b> wasmenu]==1} {
-        <b><font color=#3a6797>set</font></b> menupath [<b><font color=#ca14ca>my</font></b> MakeWidgetName <font color=#1b1baa>$winname</font> <font color=#1b1baa>$name</font>]
+        <b><font color=#3a6797>set</font></b> menupath [<b><font color=#ca14ca>my</font></b> makeWidgetMethod <font color=#1b1baa>$winname</font> <font color=#1b1baa>$name</font>]
         <b><font color=#134070>menu</font></b> <font color=#1b1baa>$menupath</font> <font color=#653760>-tearoff</font> 0
       }
-      <b><font color=#3a6797>set</font></b> menuitem [<b><font color=#ca14ca>my</font></b> MakeWidgetName <font color=#1b1baa>$menupath</font> <font color=#1b1baa>$v1</font>]
+      <b><font color=#3a6797>set</font></b> menuitem [<b><font color=#ca14ca>my</font></b> makeWidgetMethod <font color=#1b1baa>$menupath</font> <font color=#1b1baa>$v1</font>]
       <b><font color=#134070>menu</font></b> <font color=#1b1baa>$menuitem</font> <font color=#653760>-tearoff</font> 0
       <b><font color=#3a6797>set</font></b> ampos [<b><font color=#3a6797>string</font></b> first & [<b><font color=#3a6797>string</font></b> trimleft <font color=#1b1baa>$v2</font>  \{]]
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ampos</font>&gt;=0} {<b><font color=#3a6797>append</font></b> v2 <font color=#8b2a0e>&quot; -underline <font color=#1b1baa>$</font>ampos&quot;</font>}
@@ -2990,7 +2989,7 @@ Docs:
   <i><font color=#4b5d50># means that the appropriate methods will be created to access</font></i>
   <i><font color=#4b5d50># their full pathes with a command `my Name`.</font></i>
   <i><font color=#4b5d50># This method gets a &quot;normal&quot; name of widget accepted by Tk.</font></i>
-  <i><font color=#4b5d50># See also: MakeWidgetName</font></i>
+  <i><font color=#4b5d50># See also: makeWidgetMethod</font></i>
 
   <b><font color=#3a6797>set</font></b> root [<b><font color=#ca14ca>my</font></b> ownWName <font color=#1b1baa>$name</font>]
   <b><font color=#3a6797>list</font></b> [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$name</font> 0 [<b><font color=#3a6797>string</font></b> last . <font color=#1b1baa>$name</font>]][<b><font color=#3a6797>string</font></b> tolower <font color=#1b1baa>$root</font> 0 0] <font color=#1b1baa>$root</font>
@@ -3065,14 +3064,14 @@ Docs:
   <i><font color=#4b5d50># the current dialogue's frame path.</font></i>
   <i><font color=#4b5d50># Useful in &quot;input&quot; dialogue when -method option is present</font></i>
   <i><font color=#4b5d50># or widget names are uppercased.</font></i>
-  <i><font color=#4b5d50># See also: MakeWidgetName, input</font></i>
+  <i><font color=#4b5d50># See also: makeWidgetMethod, input</font></i>
 
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$w</font> 0] eq {.}} {<b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$w</font>}
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$Dlgpath</font>.fra.<font color=#1b1baa>$w</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
-<a id=MakeWidgetName></a>
-<b><font color=#ca14ca>method</font></b> MakeWidgetName {w name {an {}}} {
+<a id=makeWidgetMethod></a>
+<b><font color=#ca14ca>method</font></b> makeWidgetMethod {w name {an {}}} {
   <i><font color=#4b5d50># Makes an exported method named after root widget, if it's uppercased.</font></i>
   <i><font color=#4b5d50>#   w - name of root widget</font></i>
   <i><font color=#4b5d50>#   name - name of widget</font></i>
@@ -3083,6 +3082,7 @@ Docs:
   <i><font color=#4b5d50>#   =&gt; method Entry1 {} {...}</font></i>
   <i><font color=#4b5d50>#   ...</font></i>
   <i><font color=#4b5d50>#   my Entry1  ;# instead of .win.fra1.fra2.fra3.Entry1</font></i>
+  <i><font color=#4b5d50># Returns: full widget path.</font></i>
 
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$an</font> eq {-}} {
     <b><font color=#3a6797>set</font></b> wnamefull <font color=#8b2a0e>&quot;\[my DiaWidgetName <font color=#1b1baa>$</font>w\]&quot;</font>
@@ -3327,7 +3327,7 @@ Docs:
             <b><font color=#3a6797>set</font></b> attr [<b><font color=#3a6797>subst</font></b> <font color=#1b1baa>$attr</font>]
             <b><font color=#3a6797>lassign</font></b> [::apave::extractOptions attr <font color=#653760>-tip</font> {} <font color=#653760>-tooltip</font> {} \
               <font color=#653760>-Attrs</font> {}] tip t2 Attrs
-            <b><font color=#3a6797>set</font></b> wt [<b><font color=#ca14ca>my</font></b> MakeWidgetName <font color=#1b1baa>$w</font> <font color=#1b1baa>$fr</font>]
+            <b><font color=#3a6797>set</font></b> wt [<b><font color=#ca14ca>my</font></b> makeWidgetMethod <font color=#1b1baa>$w</font> <font color=#1b1baa>$fr</font>]
             <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match lab* <font color=#1b1baa>$fr</font>]} {
               <b><font color=#3a6797>set</font></b> wid ttk::label
             } <b><font color=#3a6797>elseif</font></b> {[<b><font color=#3a6797>string</font></b> match laB* <font color=#1b1baa>$fr</font>]} {
@@ -4195,7 +4195,7 @@ Docs:
   }
   <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font> &lt; <font color=#1b1baa>$lwlen</font>} {} {
     <b><font color=#3a6797>set</font></b> lst1 [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$lwidgets</font> <font color=#1b1baa>$i</font>]
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#ca14ca>my</font></b> Replace_Tcl i lwlen lwidgets {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$lst1</font>] ne {}} {<b><font color=#3a6797>incr</font></b> i}
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#ca14ca>my</font></b> Replace_Tcl i lwidgets {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$lst1</font>] ne {}} {<b><font color=#3a6797>incr</font></b> i}
   }
   <i><font color=#4b5d50># firstly, normalize all names that are &quot;subwidgets&quot; (.lab for fra.lab)</font></i>
   <i><font color=#4b5d50># also, &quot;+&quot; for previous neighbors</font></i>
@@ -4224,7 +4224,7 @@ Docs:
     }
     <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$lst1</font> name neighbor posofnei rowspan colspan options1 attrs1
     <b><font color=#3a6797>lassign</font></b> [<b><font color=#ca14ca>my</font></b> NormalizeName name i lwidgets] name wname
-    <b><font color=#3a6797>set</font></b> wname [<b><font color=#ca14ca>my</font></b> MakeWidgetName <font color=#1b1baa>$w</font> <font color=#1b1baa>$wname</font>]
+    <b><font color=#3a6797>set</font></b> wname [<b><font color=#ca14ca>my</font></b> makeWidgetMethod <font color=#1b1baa>$w</font> <font color=#1b1baa>$wname</font>]
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$colspan</font> eq {} || <font color=#1b1baa>$colspan</font> eq {-}} {
       <b><font color=#3a6797>set</font></b> colspan 1
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$rowspan</font> eq {} || <font color=#1b1baa>$rowspan</font> eq {-}} {

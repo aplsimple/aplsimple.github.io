@@ -284,6 +284,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> data(lastinvoke) 3
 
   <i><font color=#4b5d50># options of &quot;Find/Replace&quot; dialogue</font></i>
+  <b><font color=#3a6797>set</font></b> data(c0) 0  ;<i><font color=#4b5d50># find by list</font></i>
   <b><font color=#3a6797>set</font></b> data(c1) 0  ;<i><font color=#4b5d50># words only</font></i>
   <b><font color=#3a6797>set</font></b> data(c2) 1  ;<i><font color=#4b5d50># case</font></i>
   <b><font color=#3a6797>set</font></b> data(c3) 0  ;<i><font color=#4b5d50># by blank</font></i>
@@ -393,7 +394,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50>#   mode - if it ends with &quot;2&quot;, the result includes a range of found string.</font></i>
 
   <b><font color=#3a6797>variable</font></b> adelim
-  <b><font color=#ca14ca>return</font></b> [GetCommandOfLine <font color=#1b1baa>$line</font> <font color=#1b1baa>$idx</font> <font color=#1b1baa>$adelim</font> <font color=#1b1baa>$mode</font>]
+  GetCommandOfLine <font color=#1b1baa>$line</font> <font color=#1b1baa>$idx</font> <font color=#1b1baa>$adelim</font> <font color=#1b1baa>$mode</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=find::GetCommandOfText></a>
@@ -797,13 +798,31 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 
   <b><font color=#3a6797>variable</font></b> win
   <b><font color=#3a6797>variable</font></b> data
+  <b><font color=#3a6797>variable</font></b> counts
   <b><font color=#3a6797>lassign</font></b> [FindOptions <font color=#1b1baa>$wtxt</font>] findstr options
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> fnd [<font color=#1b1baa>$wtxt</font> search {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$options</font> <font color=#653760>-count</font> ::alited::find::counts <font color=#653760>-all</font> -- <font color=#1b1baa>$findstr</font> <font color=#1b1baa>$pos</font>]} err]} {
-    alited::msg ok err <font color=#1b1baa>$err</font> <font color=#653760>-ontop</font> yes <font color=#653760>-parent</font> <font color=#1b1baa>$win</font>
-    <b><font color=#3a6797>set</font></b> data(_ERR_) yes
-    <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> 1 {}]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$data(c0)</font>} {
+    <b><font color=#3a6797>set</font></b> findstr [<b><font color=#3a6797>split</font></b> [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$findstr</font>] { }]
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> findstr [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$findstr</font>]
   }
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> 0 <font color=#1b1baa>$fnd</font>]
+  <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>foreach</font></b> find1 <font color=#1b1baa>$findstr</font> {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$find1</font> eq {}} <b><font color=#ca14ca>continue</font></b>
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> fnd [<font color=#1b1baa>$wtxt</font> search {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$options</font> \
+    <font color=#653760>-count</font> ::alited::find::counts <font color=#653760>-all</font> -- <font color=#1b1baa>$find1</font> <font color=#1b1baa>$pos</font>]} err]} {
+      alited::msg ok err <font color=#1b1baa>$err</font> <font color=#653760>-ontop</font> yes <font color=#653760>-parent</font> <font color=#1b1baa>$win</font>
+      <b><font color=#3a6797>set</font></b> data(_ERR_) yes
+      <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> 1 {}]
+    }
+    <b><font color=#3a6797>set</font></b> i 0
+    <b><font color=#3a6797>foreach</font></b> index1 <font color=#1b1baa>$fnd</font> {
+      <b><font color=#3a6797>set</font></b> index2 [<font color=#1b1baa>$wtxt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>index1 + <font color=#1b1baa>[</font>lindex <font color=#1b1baa>$</font>counts <font color=#1b1baa>$</font>i<font color=#1b1baa>]</font>c&quot;</font>]
+      <b><font color=#3a6797>lappend</font></b> res <font color=#1b1baa>$index1</font> <font color=#1b1baa>$index2</font>
+      <b><font color=#3a6797>incr</font></b> i
+    }
+  }
+  <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-real</font> <font color=#653760>-stride</font> 2 <font color=#1b1baa>$res</font>]
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>list</font></b> 0 <font color=#1b1baa>$res</font>]
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=find::Search></a>
@@ -825,10 +844,8 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   SetTags <font color=#1b1baa>$wtxt</font>
   <b><font color=#3a6797>lassign</font></b> [Search1 <font color=#1b1baa>$wtxt</font> 1.0] err fnd
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$err</font>} {<b><font color=#ca14ca>return</font></b> {}}
-  <b><font color=#3a6797>set</font></b> i 0
   <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>list</font></b>]
-  <b><font color=#3a6797>foreach</font></b> index1 <font color=#1b1baa>$fnd</font> {
-    <b><font color=#3a6797>set</font></b> index2 [<font color=#1b1baa>$wtxt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>index1 + <font color=#1b1baa>[</font>lindex <font color=#1b1baa>$</font>counts <font color=#1b1baa>$</font>i<font color=#1b1baa>]</font>c&quot;</font>]
+  <b><font color=#3a6797>foreach</font></b> {index1 index2} <font color=#1b1baa>$fnd</font> {
     <b><font color=#3a6797>if</font></b> {[CheckWord <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$index1</font> <font color=#1b1baa>$index2</font> <font color=#1b1baa>$data(c1)</font>]} {
       <b><font color=#3a6797>set</font></b> strfound [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$index1</font> <font color=#1b1baa>$index2</font>]
       <b><font color=#3a6797>set</font></b> OK yes
@@ -851,7 +868,6 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       }
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$OK</font>} {<b><font color=#3a6797>lappend</font></b> res [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$index1</font> <font color=#1b1baa>$index2</font>]}
     }
-    <b><font color=#3a6797>incr</font></b> i
   }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }
@@ -1224,13 +1240,23 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50># Prepares buttons' label (&quot;in all/selected tabs&quot;).</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obFND obFND
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> llen [<b><font color=#3a6797>llength</font></b> [alited::bar::BAR listFlag s]]]&gt;1} {
-    <b><font color=#3a6797>set</font></b> btext [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$llen</font>] [msgcat::mc {All in %n Files}]]
-  } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>set</font></b> btext [msgcat::mc {All in session}]
+  <b><font color=#3a6797>catch</font></b> {
+    <b><font color=#3a6797>set</font></b> seltabs [alited::bar::BAR cget <font color=#653760>-select</font>]
+    <b><font color=#3a6797>set</font></b> llen [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$seltabs</font>]
+    <b><font color=#3a6797>set</font></b> curtab [alited::bar::CurrentTabID]
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$llen</font> && <font color=#1b1baa>$curtab</font> ni <font color=#1b1baa>$seltabs</font>} {
+      <b><font color=#3a6797>incr</font></b> llen
+    } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$llen</font>==1 && <font color=#1b1baa>$curtab</font> in <font color=#1b1baa>$seltabs</font>} {
+      <b><font color=#3a6797>set</font></b> llen 0
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$llen</font>} {
+      <b><font color=#3a6797>set</font></b> btext [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %n <font color=#1b1baa>$llen</font>] [msgcat::mc {All in %n Files}]]
+    } <b><font color=#3a6797>else</font></b> {
+      <b><font color=#3a6797>set</font></b> btext [msgcat::mc {All in session}]
+    }
+    [<font color=#1b1baa>$obFND</font> But3] configure <font color=#653760>-text</font> <font color=#1b1baa>$btext</font>
+    [<font color=#1b1baa>$obFND</font> But6] configure <font color=#653760>-text</font> <font color=#1b1baa>$btext</font>
   }
-  [<font color=#1b1baa>$obFND</font> But3] configure <font color=#653760>-text</font> <font color=#1b1baa>$btext</font>
-  [<font color=#1b1baa>$obFND</font> But6] configure <font color=#653760>-text</font> <font color=#1b1baa>$btext</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=find::SetCursor></a>
@@ -1565,7 +1591,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50># Checks if a RE2 line has to be skipped.</font></i>
   <i><font color=#4b5d50>#   line - the line</font></i>
 
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>regexp</font></b> {^\s*[<b><font color=#3a6797>*</font></b>]+[^*]+} <font color=#1b1baa>$line</font>]
+  <b><font color=#3a6797>regexp</font></b> {^\s*[<b><font color=#3a6797>*</font></b>]+[^*]+} <font color=#1b1baa>$line</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=find::stopRE2></a>
@@ -1573,7 +1599,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50># Checks if a text line stops RE2 list.</font></i>
   <i><font color=#4b5d50>#   line - the line</font></i>
 
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>regexp</font></b> {^\s*[<b><font color=#3a6797>*</font></b>]+\s*$} <font color=#1b1baa>$line</font>]
+  <b><font color=#3a6797>regexp</font></b> {^\s*[<b><font color=#3a6797>*</font></b>]+\s*$} <font color=#1b1baa>$line</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=find::styleButtonRE2></a>
@@ -1617,8 +1643,10 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <font color=#1b1baa>$obFND</font> makeWindow <font color=#1b1baa>$w</font> <font color=#1b1baa>$al(MC,findreplace)</font> <font color=#653760>-type</font> dialog
   <font color=#1b1baa>$obFND</font> paveWindow <font color=#1b1baa>$w</font> {
     {labB1 - - 1 1    {<font color=#653760>-st</font> es <font color=#653760>-ipadx</font> 0 <font color=#653760>-padx</font> 0 <font color=#653760>-ipady</font> 0 <font color=#653760>-pady</font> 0}  {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Find: &quot;</font> <font color=#653760>-style</font> TLabelFS}}
-    {Cbx1 + L 1 5 {<font color=#653760>-st</font> wes <font color=#653760>-ipadx</font> 0 <font color=#653760>-padx</font> 0 <font color=#653760>-ipady</font> 0 <font color=#653760>-pady</font> 0}
+    {Cbx1 + L 1 4 {<font color=#653760>-st</font> wes <font color=#653760>-ipadx</font> 0 <font color=#653760>-padx</font> 0 <font color=#653760>-ipady</font> 0 <font color=#653760>-pady</font> 0}
       {<font color=#653760>-tvar</font> ::alited::find::data(en1) <font color=#653760>-values</font> {<font color=#1b1baa>$::alited::find::data(vals1)</font>}}}
+    {chb0 + L 1 1 {<font color=#653760>-st</font> ws <font color=#653760>-ipady</font> 0 <font color=#653760>-pady</font> 0} {<font color=#653760>-tip</font> <font color=#8b2a0e>&quot;Find by List&quot;</font>
+      <font color=#653760>-var</font> ::alited::find::data(c0) <font color=#653760>-style</font> TCheckbuttonFS <font color=#653760>-takefocus</font> 0}}
     {labB2 labB1 T 1 1 {<font color=#653760>-st</font> es <font color=#653760>-ipadx</font> 0 <font color=#653760>-padx</font> 0 <font color=#653760>-ipady</font> 0 <font color=#653760>-pady</font> 0}
       {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Replace: &quot;</font> <font color=#653760>-style</font> TLabelFS}}
     {Cbx2 + L 1 4 {<font color=#653760>-st</font> wes <font color=#653760>-cw</font> 1 <font color=#653760>-ipadx</font> 0 <font color=#653760>-padx</font> 0 <font color=#653760>-ipady</font> 0 <font color=#653760>-pady</font> 0}
@@ -1657,7 +1685,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       <font color=#653760>-value</font> 2 <font color=#653760>-style</font> TRadiobuttonFS}}
     {chb4 +  T 1 2 {<font color=#653760>-st</font> w <font color=#653760>-ipadx</font> 0 <font color=#653760>-padx</font> 0 <font color=#653760>-ipady</font> 0 <font color=#653760>-pady</font> 0}
       {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Wrap&quot;</font> <font color=#653760>-var</font> ::alited::find::data(c4) <font color=#653760>-style</font> TCheckbuttonFS}}
-    {sev2 cbx1 L 9 1}
+    {sev2 chb0 L 9 1}
     {But1 + L 1 1 {<font color=#653760>-st</font> wes <font color=#653760>-pady</font> 2} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;Find&quot;</font> <font color=#653760>-com</font> <font color=#8b2a0e>&quot;::alited::find::Find 1&quot;</font>
       <font color=#653760>-style</font> TButtonWestBoldFS}}
     {But2 + T 1 1 {<font color=#653760>-st</font> we <font color=#653760>-pady</font> 0} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;All in text&quot;</font> <font color=#653760>-com</font> <font color=#8b2a0e>&quot;::alited::find::FindInText 2&quot;</font>
@@ -1677,7 +1705,6 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   styleButtonRE2
   <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
   alited::keys::BindAllKeys <font color=#1b1baa>$wtxt</font> yes
-  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;Enter&gt; alited::find::SessionButtons
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;F1&gt; {alited::main::Help find}
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;F3&gt; <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>w.but1 invoke&quot;</font>
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font>.cbx1 &lt;Return&gt; <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>w.but1 invoke&quot;</font>  ;<i><font color=#4b5d50># hotkeys in comboboxes</font></i>

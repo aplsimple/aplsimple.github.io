@@ -385,7 +385,7 @@ padding: 0%;
 <p class='ruff'><img src="https://aplsimple.github.io/en/tcl/baltip/files/btip14.png" class="media" alt=""></p>
 <p class='ruff'>The <code>ttk::treeview</code> can have tips per item and/or column as well as for a whole treeview widget.</p>
 <p class='ruff'><img src="https://aplsimple.github.io/en/tcl/baltip/files/btip15.png" class="media" alt=""></p>
-<p class='ruff'>The <code>-command</code> option allows to display tips in a status bar instead of a balloon.</p>
+<p class='ruff'>The <code>-command</code> option allows to display tips in a status bar instead of a balloon. Or to display texts / images according to the tipped widgets.</p>
 <p class='ruff'><img src="https://aplsimple.github.io/en/tcl/baltip/files/btip16.png" class="media" alt=""></p>
 <p class='ruff'><em>Configurable tips</em>. The tip configuration can be global or local (for a specific tip).</p>
 <p class='ruff'>The configuring can include: font, colors, paddings, border, relief, exposition time, opacity, image (with <code>-compound</code> option), bell.</p>
@@ -517,6 +517,25 @@ this option with baltip instead of BWidget and tklib's tooltip.
 ::baltip::tip .menu <font color=#8b2a0e>&quot;File actions&quot;</font> <font color=#6c3e67>-index</font> 0 <font color=#6c3e67>-command</font> {::Status %t}
 ::baltip::tip .menu <font color=#8b2a0e>&quot;Help, hints, Q&A, about etc.&quot;</font> <font color=#6c3e67>-index</font> 1 <font color=#6c3e67>-command</font> {::Status %t}
 </code><br></pre>
+<p class='ruff'>For the notebook tabs, the command must include the <em>%a</em> argument which will be replaced by <em>baltip</em> with the pair of pathes - the notebook's and the tipped tab's. For example:</p>
+<pre class='ruff'><br><code class="tcl"><i><font color=#4b5d50># This example is taken from apave_tests' test2_pave.tcl</font></i>
+
+<b><font color=#ca14ca>proc</font></b> ::ns::ChangeTab5Tip {args} {
+  <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$args</font> tabpath tabname
+  <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$tabname</font> {
+  f5 {
+    <i><font color=#4b5d50># handle only 5th tab's tip</font></i>
+    <b><font color=#3a6797>set</font></b> tip <font color=#8b2a0e>&quot;Color schemes \n  NOTE: at each exposition - new tip for this tab \n  which may depend on the app's current state: \n  <font color=#1b1baa>$</font>tabname: TIP #<font color=#1b1baa>[</font>incr ::Tab5_tipcnt<font color=#1b1baa>]</font>&quot;</font>
+  }
+  <b><font color=#3a6797>default</font></b> {
+    <i><font color=#4b5d50># others remain unchanged</font></i>
+    <b><font color=#3a6797>set</font></b> tip [::baltip cget <font color=#1b1baa>$tabpath</font> <font color=#6c3e67>-text</font>]
+  }
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$tip</font>
+}
+::baltip tip .notebook.tab5 {Default tip} <font color=#6c3e67>-command</font> <font color=#8b2a0e>&quot;::ns::ChangeTab5Tip %a&quot;</font>
+</code><br></pre>
 <p class='ruff'>Also, this option can be used if you need to fire some code when the mouse pointer enters or leaves a GUI object.</p>
 <p class='ruff'><strong>Note</strong>: the <em>baltip</em> is available for a few of GUI objects that have not &lt;Enter&gt; nor &lt;Leave&gt; bindings.</p>
 <p class='ruff'>The only line</p>
@@ -530,10 +549,11 @@ this option with baltip instead of BWidget and tklib's tooltip.
   <b><font color=#3a6797>puts</font></b> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>::OBJsaved object ID=<font color=#1b1baa>[</font>set ::IDsaved<font color=#1b1baa>]</font> is left... unhighlighted...&quot;</font>
   <b><font color=#3a6797>unset</font></b> ::OBJsaved
   }
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$obj</font> eq {}} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$obj</font> ne {}} {
   <b><font color=#3a6797>set</font></b> ::OBJsaved <font color=#1b1baa>$obj</font>
   <b><font color=#3a6797>set</font></b> ::IDsaved <font color=#1b1baa>$ID</font>
   <b><font color=#3a6797>puts</font></b> <font color=#8b2a0e>&quot;Now processing <font color=#1b1baa>$</font>obj object with ID=<font color=#1b1baa>$</font>ID column=<font color=#1b1baa>$</font>column&quot;</font>
+  }
   <b><font color=#ca14ca>return</font></b> {}  ;<i><font color=#4b5d50># means the proc executed and no tip needed</font></i>
 }
 ::baltip::tip .listbox {Listbox %i} <font color=#6c3e67>-command</font> {::SomeProc {%t}}
@@ -577,7 +597,8 @@ this option with baltip instead of BWidget and tklib's tooltip.
 <li><code>-command</code> - a command to be executed, with <code>%t</code> (tip's text) and <code>%w</code> (widget's path) wildcards</li>
 <li><code>-maxexp</code> - maximum number of tip's expositions</li>
 <li><code>-focus</code> - path to widget to set focus on, after showing a tip</li>
-<li><code>-onmouse</code> - a command to be executed at clicking the balloon, with <code>%b</code> (mouse button number) and alike wildcards</li>
+<li><code>-onmouse</code> - option of <code>baltip::showBalloon</code>: command to be executed at clicking the balloon, with <code>%b</code> (mouse button number) and alike wildcards</li>
+<li><code>-balloonwindow</code> - option of <code>baltip::showBalloon</code>: path to window that is attached to the balloon (&quot;.&quot; is default)</li>
 </ul>
 <p class='ruff'>If <code>-global yes</code> option is used alone, it applies all global options to all registered tips. If <code>-global yes</code> option is used along with other options, only those options are applied to all registered tips.</p>
 <p class='ruff'>Of course, all global options will be applied to all tips to be created after <code>::baltip configuration</code>. For example:</p>
@@ -591,6 +612,7 @@ this option with baltip instead of BWidget and tklib's tooltip.
 <p class='ruff'>There may be useful to define options in <em>text</em> argument of <em>::baltip::tip</em>.</p>
 <p class='ruff'>For this, provide the <em>text</em> argument as a list of pairs of uppercased options' name / value including <em>-BALTIP</em> option for <em>tip</em>. For example:</p>
 <pre class='ruff'><br><code class="tcl">::baltip tip .text <font color=#8b2a0e>&quot;-BALTIP <font color=#1b1baa>{</font>Sort of diary, todos etc.<font color=#1b1baa>}</font> -MAXEXP 1&quot;</font>
+::baltip tip .notebook.tab5 {<font color=#6c3e67>-BALTIP</font> {} <font color=#6c3e67>-COMMAND</font> <font color=#8b2a0e>&quot;::ns::ChangeTab5Tip %w %a&quot;</font>}
 </code><br></pre>
 <p class='ruff'>As seen in the above examples, <em>baltip</em> can be used as Tcl ensemble, so that the commands may be shortened.</p>
 <p class='ruff'>See more examples in <em>test.tcl</em> of <a href="https://chiselapp.com/user/aplsimple/repository/baltip/download" >baltip.zip</a>.</p>
@@ -804,6 +826,10 @@ this option with baltip instead of BWidget and tklib's tooltip.
 
   <b><font color=#3a6797>variable</font></b> my::ttdata
   <b><font color=#3a6797>set</font></b> w .
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>lsearch</font></b> <font color=#6c3e67>-exact</font> <font color=#1b1baa>$args</font> <font color=#6c3e67>-balloonwindow</font>]]&gt;-1} {
+    <b><font color=#3a6797>set</font></b> w [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$args</font> <font color=#1b1baa>$i</font>+1]
+    <b><font color=#3a6797>set</font></b> args [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$args</font> <font color=#1b1baa>$i</font> <font color=#1b1baa>$i</font>+1]
+  }
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> isgeo [<b><font color=#3a6797>dict</font></b> exists <font color=#1b1baa>$args</font> <font color=#6c3e67>-geometry</font>]]} {
     <b><font color=#3a6797>lappend</font></b> args <font color=#6c3e67>-pause</font> 10
   } <b><font color=#3a6797>else</font></b> {
@@ -966,6 +992,7 @@ this option with baltip instead of BWidget and tklib's tooltip.
         } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$nbktab</font> ne {}} {
           <i><font color=#4b5d50># tip for notebook tabs</font></i>
           configure <font color=#6c3e67>-SPECTIP</font><font color=#1b1baa>$nbktab</font> <font color=#1b1baa>$text</font>
+          configure <font color=#1b1baa>$nbktab</font> <font color=#6c3e67>-text</font> <font color=#1b1baa>$text</font> ;<i><font color=#4b5d50># save as default tip</font></i>
           <b><font color=#134070>bind</font></b> Tooltip<font color=#1b1baa>$w</font> &lt;Button-1&gt; <font color=#8b2a0e>&quot;::baltip::my::NbkInfo <font color=#1b1baa>$</font>w %x %y -&quot;</font>
           <b><font color=#134070>bind</font></b> Tooltip<font color=#1b1baa>$w</font> &lt;Motion&gt; <font color=#8b2a0e>&quot;::baltip::my::PrepareNbkTip <font color=#1b1baa>$</font>w %x %y&quot;</font>
         } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$widgetclass</font> eq {Listbox}} {
@@ -1178,10 +1205,11 @@ this option with baltip instead of BWidget and tklib's tooltip.
 </div><br><br><br><h4 class='ruffproc'><a name='::baltip::my::Command'>Command</a><span class='ns_scope'> [<a href="baltip.html#::baltip::my" title="::baltip::my" class='ruff_cmd'>::baltip::my</a>]</span><span class='tinylink'><a href='baltip.html#::baltip::my'>my</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Executes a command set for a window.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>Command</span> <span class='ruff_arg'>w text</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>Command</span> <span class='ruff_arg'>w text ?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code>w</code></td><td class='ruff_defitem'>the widget's path</td></tr>
 <tr><td class='ruff_defitem'><code>text</code></td><td class='ruff_defitem'>the tip text</td></tr>
+<tr><td class='ruff_defitem'><code>args</code></td><td class='ruff_defitem'>command's arguments</td></tr>
 </table>
 <h5 class='ruff'>Description</h5><p class='ruff'>The command allows wildcards:</p>
 <table class='ruff_deflist'>
@@ -1190,10 +1218,11 @@ this option with baltip instead of BWidget and tklib's tooltip.
 </table>
 <p class='ruff'>Returns: list of &quot;yes/no&quot; and a result of the command. The result of the command can be a new tip if &quot;yes&quot; and the result ne {}.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_baltip_my_Command' href="javascript:toggleSource('baltip_my_Command')">Show source</a></p>
-<div id='baltip_my_Command' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::baltip::my::Command {w text} {
+<div id='baltip_my_Command' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::baltip::my::Command {w text args} {
   <i><font color=#4b5d50># Executes a command set for a window.</font></i>
   <i><font color=#4b5d50>#   w - the widget's path</font></i>
   <i><font color=#4b5d50>#   text - the tip text</font></i>
+  <i><font color=#4b5d50>#   args - command's arguments</font></i>
   <i><font color=#4b5d50># The command allows wildcards:</font></i>
   <i><font color=#4b5d50>#   %w - window's path</font></i>
   <i><font color=#4b5d50>#   %t - text of the tip</font></i>
@@ -1201,8 +1230,12 @@ this option with baltip instead of BWidget and tklib's tooltip.
   <i><font color=#4b5d50># The result of the command can be a new tip if &quot;yes&quot; and the result ne {}.</font></i>
 
   <b><font color=#3a6797>variable</font></b> ttdata
-  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists ttdata(command,<font color=#1b1baa>$w</font>)] || <font color=#1b1baa>$ttdata(command,$w)</font> eq {}} {<b><font color=#ca14ca>return</font></b> no}
-  <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %w <font color=#1b1baa>$w</font> %t <font color=#8b2a0e>&quot;<font color=#1b1baa>{$</font>text<font color=#1b1baa>}</font>&quot;</font>] <font color=#1b1baa>$ttdata(command,$w)</font>]
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists ttdata(command,<font color=#1b1baa>$w</font>)] || <font color=#1b1baa>$ttdata(command,$w)</font> eq {} ||
+  [<b><font color=#134070>winfo</font></b> class <font color=#1b1baa>$w</font>] eq {TNotebook} && ![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$args</font>]} {
+    <i><font color=#4b5d50># command is not complete</font></i>
+    <b><font color=#ca14ca>return</font></b> no
+  }
+  <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %w <font color=#1b1baa>$w</font> %t <font color=#8b2a0e>&quot;<font color=#1b1baa>{$</font>text<font color=#1b1baa>}</font>&quot;</font> %a <font color=#1b1baa>$args</font>] <font color=#1b1baa>$ttdata(command,$w)</font>]
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>eval</font></b> <font color=#1b1baa>$com</font>]} e]} {<b><font color=#ca14ca>return</font></b> no}
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$text</font> ne {}} {
     <b><font color=#3a6797>set</font></b> ttdata(text,<font color=#1b1baa>$w</font>) <font color=#1b1baa>$res</font>
@@ -1292,6 +1325,8 @@ this option with baltip instead of BWidget and tklib's tooltip.
   <b><font color=#134070>wm</font></b> overrideredirect <font color=#1b1baa>$win</font> 1
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists data(-ontop)] && <font color=#1b1baa>$data(-ontop)</font>} {
     <b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$win</font> <font color=#6c3e67>-topmost</font> 1
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$win</font> <font color=#6c3e67>-topmost</font> 0 ;<i><font color=#4b5d50># maybe this would work in a new Tk</font></i>
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$data(-relief)</font> eq {}} {<b><font color=#3a6797>set</font></b> data(-relief) solid}
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> imgoptions <font color=#1b1baa>$data(-image)</font>] ne {}} {
@@ -1697,14 +1732,14 @@ this option with baltip instead of BWidget and tklib's tooltip.
     <b><font color=#3a6797>lassign</font></b> [::baltip cget <font color=#6c3e67>-pause</font>] -&gt; pause
     <b><font color=#3a6797>lassign</font></b> [NbkInfo <font color=#1b1baa>$w</font> <font color=#1b1baa>$x</font> <font color=#1b1baa>$y</font>] tab tab2
     <b><font color=#3a6797>set</font></b> nbktab [<b><font color=#3a6797>lindex</font></b> [<font color=#1b1baa>$w</font> tabs] <font color=#1b1baa>$tab</font>]
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tab</font> ne {} && <font color=#1b1baa>$tab2</font> ni <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>tab -&quot;</font>} {
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$nbktab</font> ne {} && <font color=#1b1baa>$tab</font> ne {} && <font color=#1b1baa>$tab2</font> ni <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>tab -&quot;</font>} {
       ::baltip hide <font color=#1b1baa>$w</font>
       <b><font color=#3a6797>lassign</font></b> [::baltip cget <font color=#6c3e67>-SPECTIP</font><font color=#1b1baa>$nbktab</font>] -&gt; tip
-      <b><font color=#3a6797>lassign</font></b> [Command <font color=#1b1baa>$w</font> <font color=#1b1baa>$tip</font>] ans res
+      <b><font color=#3a6797>lassign</font></b> [Command <font color=#1b1baa>$w</font> <font color=#1b1baa>$tip</font> <font color=#1b1baa>$nbktab</font> [<b><font color=#134070>winfo</font></b> name <font color=#1b1baa>$nbktab</font>]] ans res
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ans</font>} {
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> ne {}} {
           <i><font color=#4b5d50># the command should be displayed here (not somewhere else)</font></i>
-          <b><font color=#3a6797>set</font></b> <font color=#1b1baa>$ans</font> no
+          <b><font color=#3a6797>set</font></b> ans no
         }
         <i><font color=#4b5d50># the command redefined the tip's text</font></i>
         <b><font color=#3a6797>set</font></b> tip <font color=#1b1baa>$res</font>
