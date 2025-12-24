@@ -48,7 +48,7 @@ document.write('<'+'script src="'+homeLINK()+'/en/tcl/printer/zoo/this.js">'+'<'
 
 <title>bartabs.tcl</title>
 
-<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#bdd7e7><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>README.md</b></font></div></td></table>
+<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#bdd7e7><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>bartabs.tcl</b></font></div></td></table>
 
 <div id="bodyContent" class="dokuwiki">
 <div id="dw__toc" class="dw__toc">
@@ -356,138 +356,7 @@ TID1 and TID2 must be of the same bar.</span></div></li></ul>
 </div>
 <!-- TOC END -->
 
-<h1><font color=#ca14ca> What's that</font></h1>
-</p><p>
-The <i><font color=#1b1baa>bartabs</font></i> Tcl/Tk package provides a bar widget containing tabs that are
-</p><p>
-<li>scrollable</li>
-<li>markable</li>
-<li>moveable</li>
-<li>closeable</li>
-<li>disabled and enabled</li>
-<li>static and changeable</li>
-<li>selectable and multi-selectable</li>
-<li>configureable</li>
-<li>enhanceable with popup menu</li>
-</p><p>
-The <i><font color=#1b1baa>bartabs</font></i> defines three TclOO classes:
-<li><i><font color=#1b1baa>Tab</font></i> deals with tabs</li>
-<li><i><font color=#1b1baa>Bar</font></i> deals with a bar of tabs</li>
-<li><i><font color=#1b1baa>Bars</font></i> deals with bars of tabs</li>
-</p><p>
-However, only the <i><font color=#1b1baa>Bars</font></i> class is used to create bars along with tabs. It can be also used to deal with any bars and tabs, providing all necessary interface.
-</p><p>
-The <i><font color=#1b1baa>Bar</font></i> does not create a real TclOO object, rather it provides <i><font color=#1b1baa>syntax sugar</font></i> for a convenient access to the bar methods.
-</p><p>
-The <i><font color=#1b1baa>Tab</font></i> does not create a real TclOO object as well. It serves actually for structuring <i><font color=#1b1baa>bartabs</font></i> code as for tab methods. Thus, its methods are accessible through the <i><font color=#1b1baa>Bars</font></i> ("real" TclOO) and <i><font color=#1b1baa>Bar</font></i> ("sugar") objects.
-</p><p>
-<h1><font color=#ca14ca> Work flow</font></h1>
-</p><p>
-A common work flow with <i><font color=#1b1baa>bartabs</font></i> looks like this:
-</p><p>
-Firstly, we create a <i><font color=#1b1baa>Bars</font></i> object, e.g.
-</p><p>
- <code>bartabs::Bars create NS::bars</code>
-</p><p>
-Then we create a <i><font color=#1b1baa>Bar</font></i> object, e.g.
-</p><p>
- <code>NS::bars create NS::bar <font color=#1b1baa>$barOptions</font></code>
-</p><p>
-If a tab of the bar should be displayed (with its possible contents), we show the bar and select the current tab:
-</p><p>
-  <code><b><font color=#3a6797>set</font></b> TID [NS::bar tabID <font color=#8b2a0e>&quot;tab label&quot;</font>]  ;<i><font color=#4b5d50># get the tab's ID by its label</font></i></code>
-</p><p>
-  <code>NS::bar <font color=#1b1baa>$TID</font> show  ;<i><font color=#4b5d50># show the bar and select the tab</font></i></code>
-</p><p>
-or just draw the bar without mind-breaking about a tab:
-</p><p>
-  <code>NS::bar draw  ;<i><font color=#4b5d50># show the bar without selecting a tab</font></i></code>
-</p><p>
-The rest actions include:
-</p><p>
-<li>responses to a selection of tab (through <code><font color=#653760>-csel</font> command</code> option of <i><font color=#1b1baa>Bar</font></i> object)</li>
-<li>responses to a deletion of tab (through <code><font color=#653760>-cdel</font> command</code> option of <i><font color=#1b1baa>Bar</font></i> object)</li>
-<li>responses to a reorganization of bar (through <code><font color=#653760>-cmov</font> command</code> option of <i><font color=#1b1baa>Bar</font></i> object)</li>
-<li>inserting and renaming tabs</li>
-<li>disabling and enabling tabs</li>
-<li>marking tabs with colors or icons</li>
-<li>processing the marked tabs</li>
-<li>processing multiple tabs selected with Ctrl+click</li>
-<li>scrolling tabs to left/right through key bindings</li>
-<li>calling other handlers through key bindings and <i><font color=#1b1baa>bartabs</font></i> menu</li>
-<li>using <code>cget</code> and <code>configure</code> methods to change the bar/tab appearance</li>
-<li>redrawing bars at some events</li>
-<li>removing and creating as much bars as required</li>
-</p><p>
-<h1><font color=#ca14ca> Tab class</font></h1>
-</p><p>
-The methods of <i><font color=#1b1baa>Tab</font></i> class are called from <i><font color=#1b1baa>Bars</font></i> or <i><font color=#1b1baa>Bar</font></i> object
- and are passed: <i><font color=#1b1baa>tab ID (TID), method name, arguments</font></i>. Syntax:
-</p><p>
-<code>OBJECT TID method arguments</code>
-</p><p>
-For example: <code>NS::bars <font color=#1b1baa>$TID</font> close</code> or <code>NS::bar <font color=#1b1baa>$TID</font> show false</code>
-</p><p>
-<h1><font color=#ca14ca> Bar class</font></h1>
-</p><p>
-The methods of <i><font color=#1b1baa>Bar</font></i> class are called from <i><font color=#1b1baa>Bar</font></i> object or (more wordy) from <i><font color=#1b1baa>Bars</font></i> object. Syntax:
-</p><p>
-<code>BAR_OBJECT method arguments</code>
-</p><p>
-<code>BARS_OBJECT BID method arguments</code>
-</p><p>
-For example: <code>NS::bar popList <font color=#1b1baa>$X</font> <font color=#1b1baa>$Y</font></code> or <code>NS::bars <font color=#1b1baa>$BID</font> popList <font color=#1b1baa>$X</font> <font color=#1b1baa>$Y</font></code>
-</p><p>
-<h1><font color=#ca14ca> Bars class</font></h1>
-</p><p>
-The methods of <i><font color=#1b1baa>Bars</font></i> class need no TID nor BID, though not protesting them passed before method name. Syntax:
-</p><p>
-<code>BARS_OBJECT method arguments</code>
-</p><p>
-For example:
-</p><p>
-<code>NS::bars drawAll        ;<i><font color=#4b5d50># good boy</font></i></code>
-</p><p>
-<code>NS::bars tab11 drawAll  ;<i><font color=#4b5d50># bad boy uses the useless tab11 (TID)</font></i></code>
-</p><p>
-<code>NS::bars bar1 drawAll   ;<i><font color=#4b5d50># bad boy's BID is useless as well</font></i></code>
-</p><p>
-<h1><font color=#ca14ca> Virtual methods</font></h1>
-</p><p>
-There are three "virtual" methods:
-</p><p>
-<li><code>NS::bar create NS::tab <font color=#1b1baa>$label</font></code> creates a tab object <i><font color=#1b1baa>NS::tab</font></i> for a tab labeled $label to access the tab methods, e.g. <code>NS::tab show</code></li>
-</p><p>
-<li><code>NS::tab cget <font color=#1b1baa>$option</font></code> gets an option of tab, e.g. <code>NS::tab cget <font color=#653760>-text</font></code></li>
-</p><p>
-<li><code>NS::tab configure <font color=#1b1baa>$option</font> <font color=#1b1baa>$value</font></code> sets an option of tab, e.g. <code>NS::tab configure <font color=#653760>-text</font> <font color=#8b2a0e>&quot;new label&quot;</font></code></li>
-</p><p>
-<h1><font color=#ca14ca> BID and TID</font></h1>
-</p><p>
-Few words about <i><font color=#1b1baa>BID</font></i> and <i><font color=#1b1baa>TID</font></i> mentioned throughout the <i><font color=#1b1baa>bartabs</font></i>.
-</p><p>
-These are identifiers of bars and tabs, of form <code>bar&lt;index&gt;</code> and <code>tab&lt;index&gt;</code> where <code>&lt;index&gt;</code> is integer increased from 0 in order of bar/tab creation. The bars and the tabs of all bars have unique IDs.
-</p><p>
-You can use these literals freely, along with BIDs and TIDs gotten from <i><font color=#1b1baa>bartabs</font></i> methods. For example, if you know that "some tab" was created third, you can show it straightforward:
-</p><p>
-  <code>NS::bar tab2 show ;<i><font color=#4b5d50># show the 3rd tab (TID=tab2)</font></i></code>
-</p><p>
-instead of
-</p><p>
-  <code>NS::bar [NS::bar tabID <font color=#8b2a0e>&quot;some tab&quot;</font>] show ;<i><font color=#4b5d50># find and show the tab by its name</font></i></code>
-</p><p>
-<h1><font color=#ca14ca> Links</font></h1>
-</p><p>
-<a href="https://aplsimple.github.io/en/tcl/bartabs">Documentation</a>
-</p><p>
-<a href="https://aplsimple.github.io/en/tcl/bartabs/bartabs.html">Reference on bartabs</a>
-</p><p>
-<a href="https://aplsimple.github.io/en/tcl/baltip/baltip.html">Reference on baltip</a> (package used by <i><font color=#1b1baa>bartabs</font></i>)
-</p><p>
 
-</p>
-
-<table border=0 cellPadding=4 cellSpacing=0 width=100%>  <td border=0 bgColor=#bdd7e7><div style=text-align:center>  <a href="../../index.html"><font color=#1a1a1a size=6>  <b>bartabs.tcl</b></font></div></td></table>
 
 <pre class="code"><i><font color=#4b5d50>###########################################################<a id=bartabs.tcl></a></font></i>
 <i><font color=#4b5d50># Name:    bartabs.tcl</font></i>

@@ -67,6 +67,10 @@ Returns a list of X, Y coordinates and a character under the cursor.</span></div
 Also, sets the focus on the text (to make this task be possible at all).
 wtxt - text's path
 Returns a list of X and Y coordinates.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#complete::ProcVars">ProcVars</a><span class=tooltiptext> complete::ProcVars : Gets current proc's variables.
+wtxt - text's path
+l1 - starting line of current proc
+l2 - ending line of current proc</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#complete::AllSessionCommands">AllSessionCommands</a><span class=tooltiptext> complete::AllSessionCommands : Gets all commands available in Tcl/Tk and in session files.
 currentTID - ID of a current tab
 idx1 - starting position of the current word
@@ -229,6 +233,124 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
+<a id=complete::ProcVars></a>
+<b><font color=#ca14ca>proc</font></b> complete::ProcVars {wtxt l1 l2} {
+  <i><font color=#4b5d50># Gets current proc's variables.</font></i>
+  <i><font color=#4b5d50>#   wtxt - text's path</font></i>
+  <i><font color=#4b5d50>#   l1 - starting line of current proc</font></i>
+  <i><font color=#4b5d50>#   l2 - ending line of current proc</font></i>
+
+  <b><font color=#3a6797>set</font></b> NS _delete_me_
+  <b><font color=#3a6797>set</font></b> procvars [<b><font color=#3a6797>set</font></b> procbody [<b><font color=#3a6797>list</font></b>]]
+  <b><font color=#3a6797>set</font></b> proccode [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$l1</font>.0 [<b><font color=#3a6797>incr</font></b> l2].0]
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>catch</font></b> {
+    <i><font color=#4b5d50># let method be proc in $NS namespace</font></i>
+    <b><font color=#3a6797>set</font></b> proccode [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$proccode</font>]
+    <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>string</font></b> first { } <font color=#1b1baa>$proccode</font>]
+    <b><font color=#3a6797>set</font></b> proccode [<b><font color=#3a6797>string</font></b> trim [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$proccode</font> <font color=#1b1baa>$i</font> end]]
+    <b><font color=#3a6797>set</font></b> i [<b><font color=#3a6797>string</font></b> first { } <font color=#1b1baa>$proccode</font>]
+    <b><font color=#3a6797>set</font></b> procname <font color=#1b1baa>${NS}</font>::[<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$proccode</font> 0 <font color=#1b1baa>$i</font>-1]
+    <b><font color=#3a6797>set</font></b> proccode [<b><font color=#3a6797>string</font></b> trim [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$proccode</font> <font color=#1b1baa>$i</font> end]]
+    <b><font color=#ca14ca>namespace</font></b> eval <font color=#1b1baa>$NS</font> <font color=#8b2a0e>&quot;proc <font color=#1b1baa>$</font>procname <font color=#1b1baa>$</font>proccode&quot;</font>
+  } e]} {
+    <i><font color=#4b5d50># proc is defined OK</font></i>
+    <b><font color=#3a6797>set</font></b> procbody [<b><font color=#3a6797>info</font></b> body <font color=#1b1baa>$procname</font>]
+    <b><font color=#3a6797>lappend</font></b> procvars {<b><font color=#3a6797>*</font></b>}[<b><font color=#3a6797>info</font></b> args <font color=#1b1baa>$procname</font>]
+    <b><font color=#3a6797>namespace</font></b> delete <font color=#1b1baa>$NS</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <i><font color=#4b5d50># current proc isn't complete</font></i>
+    <b><font color=#3a6797>catch</font></b> {
+      <i><font color=#4b5d50># get variables from current proc's header</font></i>
+      <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$l1</font>.0 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$l1</font>+4}].0] \n] h1 h2 h3 h4 h5 h6 h7
+      <b><font color=#3a6797>foreach</font></b> i {2 3 4 5 6 7} {
+        <b><font color=#3a6797>incr</font></b> l1
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$h1</font> end] eq <font color=#8b2a0e>&quot;\\&quot;</font>} {
+          <b><font color=#3a6797>set</font></b> h1 [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$h1</font> \\]\ [<b><font color=#3a6797>set</font></b> h<font color=#1b1baa>$i</font>]
+        } <b><font color=#3a6797>else</font></b> {
+          <b><font color=#ca14ca>break</font></b>
+        }
+      }
+      <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$h1</font> \{] typ - argums
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$typ</font> in {<b><font color=#ca14ca>proc</font></b> method}} {
+      <b><font color=#3a6797>foreach</font></b> v <font color=#1b1baa>$argums</font> {
+        <b><font color=#3a6797>lappend</font></b> procvars [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$v</font> 0]
+      }
+    }
+    <b><font color=#3a6797>set</font></b> procbody [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$l1</font>.0 [<b><font color=#3a6797>incr</font></b> l2].0]
+  }
+  <i><font color=#4b5d50># get variables from current proc's body (however humble)</font></i>
+  <b><font color=#3a6797>set</font></b> novar [<b><font color=#3a6797>list</font></b> {} \\ : ::]
+  <b><font color=#3a6797>set</font></b> RE {(?:(\$)([:a-zA-Z0-9_]*[\(]*[:a-zA-Z0-9_,\$]*[\)]*))}
+  <b><font color=#3a6797>foreach</font></b> line [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$procbody</font> \n] {
+    <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$line</font> {\{ \\}]
+    <b><font color=#3a6797>set</font></b> line [alited::edit::SqueezeString [<b><font color=#3a6797>string</font></b> trimleft <font color=#1b1baa>$line</font>]]
+    <b><font color=#3a6797>set</font></b> line [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> \[ \{ \] \}] <font color=#1b1baa>$line</font>]
+    <b><font color=#3a6797>foreach</font></b> {- - var} [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-all</font> <font color=#653760>-inline</font> <font color=#1b1baa>$RE</font> <font color=#1b1baa>$line</font>] {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match *(* <font color=#1b1baa>$var</font>] || [<b><font color=#3a6797>string</font></b> match *)* <font color=#1b1baa>$var</font>]} {
+        <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> match *(*) <font color=#1b1baa>$var</font>]} {
+          <b><font color=#3a6797>set</font></b> var [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$var</font> ()]
+        }
+      }
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$var</font> ni <font color=#1b1baa>$novar</font> && <font color=#1b1baa>$var</font> ni <font color=#1b1baa>$procvars</font>} {<b><font color=#3a6797>lappend</font></b> procvars <font color=#1b1baa>$var</font>}
+    }
+    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$line</font> com var var2 var3}]} {
+      <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$line</font>] com var var2 var3
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$com</font> eq <font color=#8b2a0e>&quot;for&quot;</font>} {
+      <b><font color=#3a6797>catch</font></b> {
+        <b><font color=#3a6797>set</font></b> line [alited::edit::SqueezeString [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$line</font>]]
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$line</font> -&gt; com}] && [<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$line</font>\} -&gt; com}]} {
+          <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$line</font>] -&gt; com
+        }
+        <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$com</font>] com var var2
+      }
+    }
+    <b><font color=#3a6797>switch</font></b> <font color=#653760>-exact</font> <font color=#1b1baa>$com</font> {
+      <font color=#8b2a0e>&quot;set&quot;</font> - unset - append - lappend - incr - variable - global - const - parray
+      - lset - lpop - ledit {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$var</font> ni <font color=#1b1baa>$novar</font> && <font color=#1b1baa>$var</font> ni <font color=#1b1baa>$procvars</font>} {
+          <b><font color=#3a6797>lappend</font></b> procvars <font color=#1b1baa>$var</font>
+        }
+      }
+      <font color=#8b2a0e>&quot;lassign&quot;</font> {
+        <b><font color=#3a6797>catch</font></b> {
+          <b><font color=#3a6797>foreach</font></b> var [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$line</font> 2 end] {
+            <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$var</font> ni <font color=#1b1baa>$novar</font> && <font color=#1b1baa>$var</font> ni <font color=#1b1baa>$procvars</font>} {
+              <b><font color=#3a6797>lappend</font></b> procvars <font color=#1b1baa>$var</font>
+            }
+          }
+        }
+      }
+      <font color=#8b2a0e>&quot;foreach&quot;</font> {
+        <b><font color=#3a6797>catch</font></b> {
+          <b><font color=#3a6797>foreach</font></b> {var ls} [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$line</font> 1 end] {
+            <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ls</font> ne {} && <font color=#1b1baa>$var</font> ni <font color=#1b1baa>$novar</font> && <font color=#1b1baa>$var</font> ni <font color=#1b1baa>$procvars</font>} {
+              <b><font color=#3a6797>lappend</font></b> procvars <font color=#1b1baa>$var</font>
+            }
+          }
+        }
+      }
+      <font color=#8b2a0e>&quot;array&quot;</font> {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$var</font> eq {<b><font color=#3a6797>default</font></b>}} {
+          <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$var3</font> ni <font color=#1b1baa>$novar</font> && <font color=#1b1baa>$var3</font> ni <font color=#1b1baa>$procvars</font>} {
+            <b><font color=#3a6797>lappend</font></b> procvars <font color=#1b1baa>$var3</font>
+          }
+        } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$var2</font> ni <font color=#1b1baa>$novar</font> && <font color=#1b1baa>$var2</font> ni <font color=#1b1baa>$procvars</font>} {
+          <b><font color=#3a6797>lappend</font></b> procvars <font color=#1b1baa>$var2</font>
+        }
+      }
+      <font color=#8b2a0e>&quot;dict&quot;</font> {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$var</font> in {<b><font color=#3a6797>append</font></b> lappend set unset incr size update with} \
+        && <font color=#1b1baa>$var2</font> ni <font color=#1b1baa>$novar</font> && <font color=#1b1baa>$var2</font> ni <font color=#1b1baa>$procvars</font>} {
+          <b><font color=#3a6797>lappend</font></b> procvars <font color=#1b1baa>$var2</font>
+        }
+      }
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$procvars</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
 <a id=complete::AllSessionCommands></a>
 <b><font color=#ca14ca>proc</font></b> complete::AllSessionCommands {{currentTID <font color=#8b2a0e>&quot;&quot;</font>} {idx1 0}} {
   <i><font color=#4b5d50># Gets all commands available in Tcl/Tk and in session files.</font></i>
@@ -250,40 +372,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
   <b><font color=#3a6797>lassign</font></b> [alited::favor::CurrentName] itemID name l1 l2
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$l2</font> eq {}} {<b><font color=#3a6797>set</font></b> l1 [<b><font color=#3a6797>set</font></b> l2 0]}
-  <b><font color=#3a6797>catch</font></b> {
-    <i><font color=#4b5d50># get variables from the current proc's header</font></i>
-    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$l1</font>.0 [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$l1</font>+4}].0] \n] h1 h2 h3 h4
-    <b><font color=#3a6797>foreach</font></b> i {2 3 4} {
-      <b><font color=#3a6797>incr</font></b> l1
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$h1</font> end] eq <font color=#8b2a0e>&quot;\\&quot;</font>} {
-        <b><font color=#3a6797>set</font></b> h1 [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$h1</font> \\]\ [<b><font color=#3a6797>set</font></b> h<font color=#1b1baa>$i</font>]
-      } <b><font color=#3a6797>else</font></b> {
-        <b><font color=#ca14ca>break</font></b>
-      }
-    }
-    <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>string</font></b> trimright <font color=#1b1baa>$h1</font> \{] typ - argums
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$typ</font> in {<b><font color=#ca14ca>proc</font></b> method}} {
-      <b><font color=#3a6797>foreach</font></b> v <font color=#1b1baa>$argums</font> {
-        <b><font color=#3a6797>lappend</font></b> res \$[<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$v</font> 0]
-      }
-    }
-  }
-  <i><font color=#4b5d50># get variables from the current proc's body</font></i>
-  <b><font color=#3a6797>set</font></b> RE {(?:(((^\s*|\[\s*|\{\s*)+((set|unset|append|lappend|incr|variable|global)\s+)}
-  <b><font color=#3a6797>append</font></b> RE {)|\$)([:a-zA-Z0-9_]*[\(]*[:a-zA-Z0-9_,\$]*[\)]*))}
-  <b><font color=#3a6797>foreach</font></b> line [<b><font color=#3a6797>split</font></b> [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$l1</font>.0 [<b><font color=#3a6797>incr</font></b> l2].0] \n] {
-    <b><font color=#3a6797>foreach</font></b> {- - - - - - v} [<b><font color=#3a6797>regexp</font></b> <font color=#653760>-all</font> <font color=#653760>-inline</font> <font color=#1b1baa>$RE</font> <font color=#1b1baa>$line</font>] {
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> match *(* <font color=#1b1baa>$v</font>] || [<b><font color=#3a6797>string</font></b> match *)* <font color=#1b1baa>$v</font>]} {
-        <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> match *(*) <font color=#1b1baa>$v</font>]} {
-          <b><font color=#3a6797>set</font></b> v [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$v</font> ()]
-        }
-      }
-      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$v</font> ni {{} : ::} && [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-exact</font> <font color=#1b1baa>$res</font> <font color=#1b1baa>$v</font>]==-1} {
-        <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> match \$* <font color=#1b1baa>$v</font>]} {<b><font color=#3a6797>set</font></b> v \$<font color=#1b1baa>$v</font>}
-        <b><font color=#3a6797>lappend</font></b> res <font color=#1b1baa>$v</font>
-      }
-    }
-  }
+  <b><font color=#3a6797>foreach</font></b> var [ProcVars <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$l1</font> <font color=#1b1baa>$l2</font>] {<b><font color=#3a6797>lappend</font></b> res \$<font color=#1b1baa>$var</font>}
   <b><font color=#3a6797>set</font></b> idx1 [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$wtxt</font> index insert])}].<font color=#1b1baa>$idx1</font>
   <i><font color=#4b5d50># check for $ dollar char</font></i>
   <b><font color=#3a6797>set</font></b> isdol [<b><font color=#3a6797>expr</font></b> {[<font color=#1b1baa>$wtxt</font> get <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>idx1 -1 c&quot;</font>] eq {$}}]
@@ -601,6 +690,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50># Runs auto completion of commands.</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
+  <b><font color=#3a6797>variable</font></b> comms
   <b><font color=#3a6797>variable</font></b> tclcoms
   <b><font color=#3a6797>variable</font></b> wordorig
   <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
@@ -634,6 +724,9 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$com</font>]==2 && [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$com</font> 0] eq {_alited_}} {
       <b><font color=#3a6797>set</font></b> wordorig [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$com</font> 1]
       MatchedCommands <font color=#1b1baa>$wordorig</font> <font color=#1b1baa>$idx1</font> <font color=#1b1baa>$idx2</font>
+      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$comms</font>]} {
+        <b><font color=#3a6797>lassign</font></b> [MatchedCommands] wordorig idx1 idx2
+      }
     } <b><font color=#3a6797>else</font></b> {
       <b><font color=#ca14ca>break</font></b>
     }
