@@ -346,7 +346,7 @@ padding: 0%;
 <p class='ruff'>First called, the popup message is displayed under the mouse pointer. The following messages will be displayed at the same screen coordinates if not reset with an <em>alternative hotkey</em>.</p>
 <p class='ruff'>The popup messages will be hidden at clicking them.</p>
 <p class='ruff'>Also, you can draw on the screen, by means of <a href="https://chiselapp.com/user/aplsimple/repository/drawscreen" >drawscreen</a>.</p>
-<p class='ruff'><em>Note for apave package</em>. The apave's showModal method includes a specific bind of Ctrl-Alt-0 keys to hide the transpops messages with these keys (because a modal window captures any clicks).</p>
+<p class='ruff'><em>Note</em>. Alt-Z and/or Ctrl-Alt-Z (if not set otherwise) force hiding the transpops messages.</p>
 <p class='ruff'><hr></p>
 <p class='ruff'>Runs this way:</p>
 <pre class='ruff'><br><code class="tcl"><b><font color=#3a6797>package</font></b> require transpops
@@ -593,6 +593,12 @@ padding: 0%;
     <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> match &lt;<b><font color=#3a6797>*</font></b>&gt; <font color=#1b1baa>$ev</font>]} {<b><font color=#3a6797>set</font></b> ev &lt;<font color=#1b1baa>$ev</font>&gt;}
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> first <font color=#1b1baa>$sc</font> [<b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font>]]==-1} {
       <b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> <font color=#1b1baa>$ev</font> <font color=#1b1baa>$sc</font>
+    }
+    <i><font color=#4b5d50># Alt+Z and/or Ctrl+Alt+Z (if not set otherwise) force hiding the transpops window</font></i>
+    <b><font color=#3a6797>foreach</font></b> k {Alt-Z Alt-z Control-Alt-Z Control-Alt-z} {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> &lt;<font color=#1b1baa>$k</font>&gt;] eq {}} {
+        <b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font> &lt;<font color=#1b1baa>$k</font>&gt; {<b><font color=#3a6797>set</font></b> ::transpops::my::cntwait 0; <b><font color=#ca14ca>break</font></b>}
+      }
     }
     <b><font color=#3a6797>catch</font></b> {::drawscreen run <font color=#1b1baa>$w</font> <font color=#1b1baa>$draw(events)</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$draw(opts)</font>}
   }
