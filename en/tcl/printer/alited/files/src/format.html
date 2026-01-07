@@ -132,11 +132,13 @@ fform - formatter's name
 ev - the event
 wasacc - if true, -accelerator of $fform menu item was made
 firstin - yes for first check of event</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#format::CreateFormatIcon">CreateFormatIcon</a><span class=tooltiptext> format::CreateFormatIcon : Create icon of formatter in toolbar.
+<ul class=toc><li><div class=tooltip><a href="#format::HandleFormatIcon">HandleFormatIcon</a><span class=tooltiptext> format::HandleFormatIcon : Handles icon of formatter in toolbar.
+mode - "create" for creation, "delete" for deletion
 icon - icon name
 sep - true if separated
 com - command
-fform - formatter file name</span></div></li></ul>
+fform - formatter file name
+ev - bound event or {}</span></div></li></ul>
 <li><b><a href="#EOF">EOF</a></b></li>
 
 </ul>
@@ -1048,7 +1050,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     }
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$icon</font> ne {}} {
-    CreateFormatIcon <font color=#1b1baa>$icon</font> <font color=#1b1baa>$sep</font> <font color=#1b1baa>$com</font> <font color=#1b1baa>$fform</font>
+    HandleFormatIcon create <font color=#1b1baa>$icon</font> <font color=#1b1baa>$sep</font> <font color=#1b1baa>$com</font> <font color=#1b1baa>$fform</font> <font color=#1b1baa>$res</font>
   } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$res</font> eq {}} {
     <i><font color=#4b5d50># no event encountered - run the formatter once</font></i>
     Mode5 <font color=#1b1baa>$cont</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font> <font color=#1b1baa>$modal</font>
@@ -1082,9 +1084,9 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   }
   <b><font color=#3a6797>set</font></b> plugkey FORMATS,<font color=#1b1baa>$fform</font>,<font color=#1b1baa>$ev2</font>
   <b><font color=#3a6797>set</font></b> itemttl [alited::menu::FormatsItemName <font color=#1b1baa>$fform</font>]
+  <b><font color=#3a6797>set</font></b> mnu <font color=#1b1baa>$al(MENUFORMATS)</font>
+  <i><font color=#4b5d50># add -accelerator to Formats menu item of $fform</font></i>
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$wasacc</font>} {
-    <i><font color=#4b5d50># add -accelerator to Formats menu item of $fform</font></i>
-    <b><font color=#3a6797>set</font></b> mnu <font color=#1b1baa>$al(MENUFORMATS)</font>
     alited::edit::PluginAccelerator <font color=#1b1baa>$mnu</font> <font color=#1b1baa>$itemttl</font> <font color=#1b1baa>$ev2</font>
   } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$firstin</font> && [<b><font color=#3a6797>info</font></b> exists al(<font color=#1b1baa>$plugkey</font>)]} {
     <b><font color=#3a6797>set</font></b> msg [msgcat::mc <font color=#8b2a0e>&quot;The pluginable % has been registered.\nCancel the registration?&quot;</font>]
@@ -1096,6 +1098,9 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
           <b><font color=#3a6797>unset</font></b> al(<font color=#1b1baa>$n</font>)
         }
       }
+      <b><font color=#3a6797>unset</font></b> <font color=#653760>-nocomplain</font> cont6(<font color=#1b1baa>$fform</font>)
+      HandleFormatIcon delete <font color=#1b1baa>$itemttl</font>
+      alited::edit::PluginAccelerator <font color=#1b1baa>$mnu</font> <font color=#1b1baa>$itemttl</font> {} {} yes
       <b><font color=#ca14ca>return</font></b> 0
     }
   }
@@ -1103,20 +1108,30 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#ca14ca>return</font></b> yes
 }
 <i><font color=#4b5d50>#_______________________</font></i>
-<a id=format::CreateFormatIcon></a>
-<b><font color=#ca14ca>proc</font></b> format::CreateFormatIcon {icon sep com fform} {
-  <i><font color=#4b5d50># Create icon of formatter in toolbar.</font></i>
+<a id=format::HandleFormatIcon></a>
+<b><font color=#ca14ca>proc</font></b> format::HandleFormatIcon {mode icon {sep <font color=#8b2a0e>&quot;&quot;</font>} {com <font color=#8b2a0e>&quot;&quot;</font>} {fform <font color=#8b2a0e>&quot;&quot;</font>} {ev <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Handles icon of formatter in toolbar.</font></i>
+  <i><font color=#4b5d50>#   mode - &quot;create&quot; for creation, &quot;delete&quot; for deletion</font></i>
   <i><font color=#4b5d50>#   icon - icon name</font></i>
   <i><font color=#4b5d50>#   sep - true if separated</font></i>
   <i><font color=#4b5d50>#   com - command</font></i>
   <i><font color=#4b5d50>#   fform - formatter file name</font></i>
+  <i><font color=#4b5d50>#   ev - bound event or {}</font></i>
 
   <b><font color=#3a6797>variable</font></b> icon6
+  <b><font color=#3a6797>set</font></b> icon [<b><font color=#3a6797>string</font></b> tolower <font color=#1b1baa>$icon</font>]
+  <b><font color=#3a6797>set</font></b> but [alited::tool::ToolButName <font color=#1b1baa>$icon</font>]_2
+  <b><font color=#3a6797>set</font></b> separ <font color=#1b1baa>${but}</font>_sep
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mode</font> eq {delete}} {
+    <b><font color=#3a6797>unset</font></b> <font color=#653760>-nocomplain</font> icon6(<font color=#1b1baa>$icon</font>)
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$but</font>}
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$separ</font>}
+    <b><font color=#ca14ca>return</font></b>
+  }
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists icon6(<font color=#1b1baa>$icon</font>)]} <b><font color=#ca14ca>return</font></b>
   <b><font color=#3a6797>set</font></b> icon6(<font color=#1b1baa>$icon</font>) 1
-  <b><font color=#3a6797>set</font></b> but [alited::tool::ToolButName <font color=#1b1baa>$icon</font>]_2
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$sep</font>} {
-    <b><font color=#3a6797>set</font></b> separ [<b><font color=#134070>ttk::separator</font></b> <font color=#1b1baa>${but}</font>_sep <font color=#653760>-orient</font> vertical]
+    <b><font color=#134070>ttk::separator</font></b> <font color=#1b1baa>$separ</font> <font color=#653760>-orient</font> vertical
     <b><font color=#134070>pack</font></b> <font color=#1b1baa>$separ</font> <font color=#653760>-side</font> left <font color=#653760>-fill</font> y <font color=#653760>-padx</font> 6
   }
   <b><font color=#3a6797>lassign</font></b> [obj csGet] fga fg bga bg
@@ -1130,7 +1145,8 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   }
   <b><font color=#3a6797>set</font></b> attrs [obj toolbarItem_Attrs <font color=#1b1baa>$istext</font> <font color=#1b1baa>$img</font> <font color=#1b1baa>$fontB</font> <font color=#1b1baa>$fg</font> <font color=#1b1baa>$bg</font> <font color=#1b1baa>$fga</font> <font color=#1b1baa>$bga</font>]
   <b><font color=#134070>button</font></b> <font color=#1b1baa>$but</font> <font color=#653760>-text</font> <font color=#1b1baa>$txt</font> <font color=#653760>-command</font> <font color=#1b1baa>$com</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$attrs</font>
-  ::baltip tip <font color=#1b1baa>$but</font> [msgcat::mc Pluginable]\n[alited::menu::FormatsItemName <font color=#1b1baa>$fform</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ev</font> ne {}} {<b><font color=#3a6797>set</font></b> ev \n[<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$ev</font> &lt;&gt;]}
+  ::baltip tip <font color=#1b1baa>$but</font> [msgcat::mc Pluginable]:\ [alited::menu::FormatsItemName <font color=#1b1baa>$fform</font>]<font color=#1b1baa>$ev</font>
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$but</font> &lt;Button-3&gt; {alited::tool::PopupBar %X %Y}
   <b><font color=#134070>pack</font></b> <font color=#1b1baa>$but</font> <font color=#653760>-side</font> left
 }

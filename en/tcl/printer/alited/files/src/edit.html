@@ -205,7 +205,8 @@ wtxt - text's path</span></div></li></ul>
 accelerators used by pluginables.
 mnu - menu path
 itemttl - item's title
-ev - event</span></div></li></ul>
+ev - event
+off - if yes, deletes the accelerator</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#edit::FormatterName">FormatterName</a><span class=tooltiptext> edit::FormatterName : Gets formatter's file name from its full name.
 fname - full name of formatter file</span></div></li></ul>
 <li><b><a href="#EOF">EOF</a></b></li>
@@ -1548,12 +1549,13 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=edit::PluginAccelerator></a>
-<b><font color=#ca14ca>proc</font></b> edit::PluginAccelerator {mnu {itemttl <font color=#8b2a0e>&quot;&quot;</font>} {ev <font color=#8b2a0e>&quot;&quot;</font>} {retlist <font color=#8b2a0e>&quot;&quot;</font>}} {
+<b><font color=#ca14ca>proc</font></b> edit::PluginAccelerator {mnu {itemttl <font color=#8b2a0e>&quot;&quot;</font>} {ev <font color=#8b2a0e>&quot;&quot;</font>} {retlist <font color=#8b2a0e>&quot;&quot;</font>} {off no}} {
   <i><font color=#4b5d50># Adds -accelerator to Formats menu item or returns a list of</font></i>
   <i><font color=#4b5d50># accelerators used by pluginables.</font></i>
   <i><font color=#4b5d50>#   mnu - menu path</font></i>
   <i><font color=#4b5d50>#   itemttl - item's title</font></i>
   <i><font color=#4b5d50>#   ev - event</font></i>
+  <i><font color=#4b5d50>#   off - if yes, deletes the accelerator</font></i>
 
   <b><font color=#3a6797>set</font></b> nitems [<font color=#1b1baa>$mnu</font> index end]
   <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;=<font color=#1b1baa>$nitems</font>} {<b><font color=#3a6797>incr</font></b> i} {
@@ -1562,7 +1564,11 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$typ</font> {
       command {
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$itemttl</font> ne {} && <font color=#1b1baa>$itemttl</font> eq <font color=#1b1baa>$ttl</font>} {
-          <font color=#1b1baa>$mnu</font> entryconfigure <font color=#1b1baa>$i</font> <font color=#653760>-accelerator</font> [::apave::KeyAccelerator <font color=#1b1baa>$ev</font>]
+          <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$off</font>} {
+            <font color=#1b1baa>$mnu</font> entryconfigure <font color=#1b1baa>$i</font> <font color=#653760>-accelerator</font> {}
+          } <b><font color=#3a6797>else</font></b> {
+            <font color=#1b1baa>$mnu</font> entryconfigure <font color=#1b1baa>$i</font> <font color=#653760>-accelerator</font> [::apave::KeyAccelerator <font color=#1b1baa>$ev</font>]
+          }
           <b><font color=#ca14ca>break</font></b> ;<i><font color=#4b5d50># it's call to set an accelerator</font></i>
         }
         <b><font color=#3a6797>set</font></b> acc [<font color=#1b1baa>$mnu</font> entrycget <font color=#1b1baa>$i</font> <font color=#653760>-accelerator</font>]
