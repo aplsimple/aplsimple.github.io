@@ -243,6 +243,9 @@ w - the listbox's path
 optid - option name for saving *idx*
 idx - index of listbox's item
 whole - flag "tip for a whole listbox, not per item"</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#my::CheckIfInteger">CheckIfInteger</a><span class=tooltiptext> my::CheckIfInteger : Checks if a value is strictly integer.
+x - the value to be checked
+errName - error variable's name</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#my::PrepareLbxTip">PrepareLbxTip</a><span class=tooltiptext> my::PrepareLbxTip : Prepares a tip for a listbox.
 w - the listbox's path
 x - X coordinate of pointer
@@ -296,7 +299,7 @@ If "-text" of tip contains %i, the tip is a callback with %i as item index.</spa
 <i><font color=#4b5d50># License: MIT.</font></i>
 <i><font color=#4b5d50>###########################################################</font></i>
 
-<b><font color=#3a6797>package</font></b> provide baltip 1.6.6
+<b><font color=#3a6797>package</font></b> provide baltip 1.6.7
 <a id=Variables></a>
 <i><font color=#4b5d50># ________________________ Variables _________________________ #</font></i>
 
@@ -1356,6 +1359,18 @@ If "-text" of tip contains %i, the tip is a callback with %i as item index.</spa
   } err]} {PutError <font color=#1b1baa>$err</font>}
 }
 <i><font color=#4b5d50>#_______________________</font></i>
+<a id=my::CheckIfInteger></a>
+<b><font color=#ca14ca>proc</font></b> ::baltip::my::CheckIfInteger {x errName} {
+  <i><font color=#4b5d50># Checks if a value is strictly integer.</font></i>
+  <i><font color=#4b5d50>#   x - the value to be checked</font></i>
+  <i><font color=#4b5d50>#   errName - error variable's name</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> is integer <font color=#653760>-strict</font> <font color=#1b1baa>$x</font>]} {<b><font color=#ca14ca>return</font></b> yes}
+  <b><font color=#3a6797>upvar</font></b> 1 <font color=#1b1baa>$errName</font> err
+  <b><font color=#3a6797>set</font></b> err <font color=#8b2a0e>&quot;\&quot;<font color=#1b1baa>$</font>x\&quot; isn't integer&quot;</font>
+  <b><font color=#ca14ca>return</font></b> no
+}
+<i><font color=#4b5d50>#_______________________</font></i>
 <a id=my::PrepareLbxTip></a>
 <b><font color=#ca14ca>proc</font></b> ::baltip::my::PrepareLbxTip {w x y} {
   <i><font color=#4b5d50># Prepares a tip for a listbox.</font></i>
@@ -1366,8 +1381,7 @@ If "-text" of tip contains %i, the tip is a callback with %i as item index.</spa
   <i><font color=#4b5d50># If &quot;-text&quot; of tip doesn't contain %i, the tip is for a whole listbox.</font></i>
   <i><font color=#4b5d50># If &quot;-text&quot; of tip contains %i, the tip is a callback with %i as item index.</font></i>
 
-  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> is integer <font color=#653760>-strict</font> <font color=#1b1baa>$x</font>]} <b><font color=#ca14ca>return</font></b>
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {
+  <b><font color=#3a6797>if</font></b> {![CheckIfInteger <font color=#1b1baa>$x</font> err] || [<b><font color=#3a6797>catch</font></b> {
     <b><font color=#3a6797>set</font></b> idx [<font color=#1b1baa>$w</font> index @<font color=#1b1baa>$x</font>,<font color=#1b1baa>$y</font>]
     <b><font color=#3a6797>lassign</font></b> [::baltip cget <font color=#653760>-pause</font>] -&gt; pause
     <b><font color=#3a6797>set</font></b> optid <font color=#653760>-SPECTIPid</font><font color=#1b1baa>$w</font>
@@ -1476,8 +1490,7 @@ If "-text" of tip contains %i, the tip is a callback with %i as item index.</spa
   <i><font color=#4b5d50># If &quot;-text&quot; of tip doesn't contain %i, the tip is for a whole treeview.</font></i>
   <i><font color=#4b5d50># If &quot;-text&quot; of tip contains %i, the tip is a callback with %i as item index.</font></i>
 
-  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>string</font></b> is integer <font color=#653760>-strict</font> <font color=#1b1baa>$x</font>]} <b><font color=#ca14ca>return</font></b>
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {
+  <b><font color=#3a6797>if</font></b> {![CheckIfInteger <font color=#1b1baa>$x</font> err] || [<b><font color=#3a6797>catch</font></b> {
     <b><font color=#3a6797>set</font></b> id [<font color=#1b1baa>$w</font> identify item <font color=#1b1baa>$x</font> <font color=#1b1baa>$y</font>]
     <b><font color=#3a6797>lassign</font></b> [::baltip cget <font color=#653760>-pause</font>] -&gt; pause
     <b><font color=#3a6797>set</font></b> optid <font color=#653760>-SPECTIPid</font><font color=#1b1baa>$w</font>

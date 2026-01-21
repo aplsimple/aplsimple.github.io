@@ -5206,20 +5206,22 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::edit::PluginAccelerator'>PluginAccelerator</a><span class='ns_scope'> [<a href="alited.html#::alited::edit" title="::alited::edit" class='ruff_cmd'>::alited::edit</a>]</span><span class='tinylink'><a href='alited.html#::alited::edit'>edit</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Adds -accelerator to Formats menu item or returns a list of accelerators used by pluginables.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>PluginAccelerator</span> <span class='ruff_arg'>mnu ?itemttl? ?ev? ?retlist?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>PluginAccelerator</span> <span class='ruff_arg'>mnu ?itemttl? ?ev? ?retlist? ?off?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code>mnu</code></td><td class='ruff_defitem'>menu path</td></tr>
 <tr><td class='ruff_defitem'><code>itemttl</code></td><td class='ruff_defitem'>item's title; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 <tr><td class='ruff_defitem'><code>ev</code></td><td class='ruff_defitem'>event; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
 <tr><td class='ruff_defitem'><code>retlist</code></td><td class='ruff_defitem'>Not documented; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code>off</code></td><td class='ruff_defitem'>if yes, deletes the accelerator; <i>optional, default</i> <code>no</code></td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_edit_PluginAccelerator' href="javascript:toggleSource('alited_edit_PluginAccelerator')">Show source</a></p>
-<div id='alited_edit_PluginAccelerator' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::edit::PluginAccelerator {mnu {itemttl {}} {ev {}} {retlist {}}} {
+<div id='alited_edit_PluginAccelerator' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::edit::PluginAccelerator {mnu {itemttl {}} {ev {}} {retlist {}} {off no}} {
   <i><font color=#4b5d50># Adds -accelerator to Formats menu item or returns a list of</font></i>
   <i><font color=#4b5d50># accelerators used by pluginables.</font></i>
   <i><font color=#4b5d50>#   mnu - menu path</font></i>
   <i><font color=#4b5d50>#   itemttl - item's title</font></i>
   <i><font color=#4b5d50>#   ev - event</font></i>
+  <i><font color=#4b5d50>#   off - if yes, deletes the accelerator</font></i>
 
   <b><font color=#3a6797>set</font></b> nitems [<font color=#1b1baa>$mnu</font> index end]
   <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;=<font color=#1b1baa>$nitems</font>} {<b><font color=#3a6797>incr</font></b> i} {
@@ -5228,7 +5230,11 @@ padding: 0%;
     <b><font color=#3a6797>switch</font></b> <font color=#1b1baa>$typ</font> {
       command {
         <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$itemttl</font> ne {} && <font color=#1b1baa>$itemttl</font> eq <font color=#1b1baa>$ttl</font>} {
-          <font color=#1b1baa>$mnu</font> entryconfigure <font color=#1b1baa>$i</font> <font color=#6c3e67>-accelerator</font> [::apave::KeyAccelerator <font color=#1b1baa>$ev</font>]
+          <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$off</font>} {
+            <font color=#1b1baa>$mnu</font> entryconfigure <font color=#1b1baa>$i</font> <font color=#6c3e67>-accelerator</font> {}
+          } <b><font color=#3a6797>else</font></b> {
+            <font color=#1b1baa>$mnu</font> entryconfigure <font color=#1b1baa>$i</font> <font color=#6c3e67>-accelerator</font> [::apave::KeyAccelerator <font color=#1b1baa>$ev</font>]
+          }
           <b><font color=#ca14ca>break</font></b> ;<i><font color=#4b5d50># it's call to set an accelerator</font></i>
         }
         <b><font color=#3a6797>set</font></b> acc [<font color=#1b1baa>$mnu</font> entrycget <font color=#1b1baa>$i</font> <font color=#6c3e67>-accelerator</font>]
@@ -11264,47 +11270,6 @@ padding: 0%;
   }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }</code><br></pre></div>
-</div><br><br><br><h4 class='ruffproc'><a name='::alited::format::CreateFormatIcon'>CreateFormatIcon</a><span class='ns_scope'> [<a href="alited.html#::alited::format" title="::alited::format" class='ruff_cmd'>::alited::format</a>]</span><span class='tinylink'><a href='alited.html#::alited::format'>format</a>, <a href='#top'>Top</a></span></h4>
-<div style='clear:both;'></div>
-<p class='ruff'>Create icon of formatter in toolbar.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>CreateFormatIcon</span> <span class='ruff_arg'>icon sep com fform</span></div>
-<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
-<tr><td class='ruff_defitem'><code>icon</code></td><td class='ruff_defitem'>icon name</td></tr>
-<tr><td class='ruff_defitem'><code>sep</code></td><td class='ruff_defitem'>true if separated</td></tr>
-<tr><td class='ruff_defitem'><code>com</code></td><td class='ruff_defitem'>command</td></tr>
-<tr><td class='ruff_defitem'><code>fform</code></td><td class='ruff_defitem'>formatter file name</td></tr>
-</table>
-<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_format_CreateFormatIcon' href="javascript:toggleSource('alited_format_CreateFormatIcon')">Show source</a></p>
-<div id='alited_format_CreateFormatIcon' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::format::CreateFormatIcon {icon sep com fform} {
-  <i><font color=#4b5d50># Create icon of formatter in toolbar.</font></i>
-  <i><font color=#4b5d50>#   icon - icon name</font></i>
-  <i><font color=#4b5d50>#   sep - true if separated</font></i>
-  <i><font color=#4b5d50>#   com - command</font></i>
-  <i><font color=#4b5d50>#   fform - formatter file name</font></i>
-
-  <b><font color=#3a6797>variable</font></b> icon6
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists icon6(<font color=#1b1baa>$icon</font>)]} <b><font color=#ca14ca>return</font></b>
-  <b><font color=#3a6797>set</font></b> icon6(<font color=#1b1baa>$icon</font>) 1
-  <b><font color=#3a6797>set</font></b> but [alited::tool::ToolButName <font color=#1b1baa>$icon</font>]_2
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$sep</font>} {
-    <b><font color=#3a6797>set</font></b> separ [<b><font color=#134070>ttk::separator</font></b> <font color=#1b1baa>${but}</font>_sep <font color=#6c3e67>-orient</font> vertical]
-    <b><font color=#134070>pack</font></b> <font color=#1b1baa>$separ</font> <font color=#6c3e67>-side</font> left <font color=#6c3e67>-fill</font> y <font color=#6c3e67>-padx</font> 6
-  }
-  <b><font color=#3a6797>lassign</font></b> [obj csGet] fga fg bga bg
-  <b><font color=#3a6797>set</font></b> fontB [obj boldTextFont 16]
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> img [alited::ini::CreateIcon <font color=#1b1baa>$icon</font>]-big; <b><font color=#134070>image</font></b> inuse <font color=#1b1baa>$img</font>}]} {
-    <b><font color=#3a6797>set</font></b> txt <font color=#1b1baa>$icon</font>
-    <b><font color=#3a6797>set</font></b> istext 1
-  } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>set</font></b> txt {}
-    <b><font color=#3a6797>set</font></b> istext 0
-  }
-  <b><font color=#3a6797>set</font></b> attrs [obj toolbarItem_Attrs <font color=#1b1baa>$istext</font> <font color=#1b1baa>$img</font> <font color=#1b1baa>$fontB</font> <font color=#1b1baa>$fg</font> <font color=#1b1baa>$bg</font> <font color=#1b1baa>$fga</font> <font color=#1b1baa>$bga</font>]
-  <b><font color=#134070>button</font></b> <font color=#1b1baa>$but</font> <font color=#6c3e67>-text</font> <font color=#1b1baa>$txt</font> <font color=#6c3e67>-command</font> <font color=#1b1baa>$com</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$attrs</font>
-  ::baltip tip <font color=#1b1baa>$but</font> [msgcat::mc Pluginable]\n[alited::menu::FormatsItemName <font color=#1b1baa>$fform</font>]
-  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$but</font> &lt;Button-3&gt; {alited::tool::PopupBar %X %Y}
-  <b><font color=#134070>pack</font></b> <font color=#1b1baa>$but</font> <font color=#6c3e67>-side</font> left
-}</code><br></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::format::EventOK'>EventOK</a><span class='ns_scope'> [<a href="alited.html#::alited::format" title="::alited::format" class='ruff_cmd'>::alited::format</a>]</span><span class='tinylink'><a href='alited.html#::alited::format'>format</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Checks if an event is correct (not overlap alited key mapping).</p>
@@ -11342,9 +11307,9 @@ padding: 0%;
   }
   <b><font color=#3a6797>set</font></b> plugkey FORMATS,<font color=#1b1baa>$fform</font>,<font color=#1b1baa>$ev2</font>
   <b><font color=#3a6797>set</font></b> itemttl [alited::menu::FormatsItemName <font color=#1b1baa>$fform</font>]
+  <b><font color=#3a6797>set</font></b> mnu <font color=#1b1baa>$al(MENUFORMATS)</font>
+  <i><font color=#4b5d50># add -accelerator to Formats menu item of $fform</font></i>
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$wasacc</font>} {
-    <i><font color=#4b5d50># add -accelerator to Formats menu item of $fform</font></i>
-    <b><font color=#3a6797>set</font></b> mnu <font color=#1b1baa>$al(MENUFORMATS)</font>
     alited::edit::PluginAccelerator <font color=#1b1baa>$mnu</font> <font color=#1b1baa>$itemttl</font> <font color=#1b1baa>$ev2</font>
   } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$firstin</font> && [<b><font color=#3a6797>info</font></b> exists al(<font color=#1b1baa>$plugkey</font>)]} {
     <b><font color=#3a6797>set</font></b> msg [msgcat::mc <font color=#8b2a0e>&quot;The pluginable % has been registered.\nCancel the registration?&quot;</font>]
@@ -11356,11 +11321,68 @@ padding: 0%;
           <b><font color=#3a6797>unset</font></b> al(<font color=#1b1baa>$n</font>)
         }
       }
+      <b><font color=#3a6797>unset</font></b> <font color=#6c3e67>-nocomplain</font> cont6(<font color=#1b1baa>$fform</font>)
+      HandleFormatIcon delete <font color=#1b1baa>$itemttl</font>
+      alited::edit::PluginAccelerator <font color=#1b1baa>$mnu</font> <font color=#1b1baa>$itemttl</font> {} {} yes
       <b><font color=#ca14ca>return</font></b> 0
     }
   }
   <b><font color=#3a6797>set</font></b> al(FORMATS,<font color=#1b1baa>$fform</font>,<font color=#1b1baa>$ev2</font>) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fullformname</font> <font color=#1b1baa>$ev2</font>]
   <b><font color=#ca14ca>return</font></b> yes
+}</code><br></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::format::HandleFormatIcon'>HandleFormatIcon</a><span class='ns_scope'> [<a href="alited.html#::alited::format" title="::alited::format" class='ruff_cmd'>::alited::format</a>]</span><span class='tinylink'><a href='alited.html#::alited::format'>format</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Handles icon of formatter in toolbar.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>HandleFormatIcon</span> <span class='ruff_arg'>mode icon ?sep? ?com? ?fform? ?ev?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code>mode</code></td><td class='ruff_defitem'>&quot;create&quot; for creation, &quot;delete&quot; for deletion</td></tr>
+<tr><td class='ruff_defitem'><code>icon</code></td><td class='ruff_defitem'>icon name</td></tr>
+<tr><td class='ruff_defitem'><code>sep</code></td><td class='ruff_defitem'>true if separated; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code>com</code></td><td class='ruff_defitem'>command; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code>fform</code></td><td class='ruff_defitem'>formatter file name; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+<tr><td class='ruff_defitem'><code>ev</code></td><td class='ruff_defitem'>bound event or {}; <i>optional, default</i> <code>&quot;&quot;</code></td></tr>
+</table>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_format_HandleFormatIcon' href="javascript:toggleSource('alited_format_HandleFormatIcon')">Show source</a></p>
+<div id='alited_format_HandleFormatIcon' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::format::HandleFormatIcon {mode icon {sep {}} {com {}} {fform {}} {ev {}}} {
+  <i><font color=#4b5d50># Handles icon of formatter in toolbar.</font></i>
+  <i><font color=#4b5d50>#   mode - &quot;create&quot; for creation, &quot;delete&quot; for deletion</font></i>
+  <i><font color=#4b5d50>#   icon - icon name</font></i>
+  <i><font color=#4b5d50>#   sep - true if separated</font></i>
+  <i><font color=#4b5d50>#   com - command</font></i>
+  <i><font color=#4b5d50>#   fform - formatter file name</font></i>
+  <i><font color=#4b5d50>#   ev - bound event or {}</font></i>
+
+  <b><font color=#3a6797>variable</font></b> icon6
+  <b><font color=#3a6797>set</font></b> icon [<b><font color=#3a6797>string</font></b> tolower <font color=#1b1baa>$icon</font>]
+  <b><font color=#3a6797>set</font></b> but [alited::tool::ToolButName <font color=#1b1baa>$icon</font>]_2
+  <b><font color=#3a6797>set</font></b> separ <font color=#1b1baa>${but}</font>_sep
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$mode</font> eq {delete}} {
+    <b><font color=#3a6797>unset</font></b> <font color=#6c3e67>-nocomplain</font> icon6(<font color=#1b1baa>$icon</font>)
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$but</font>}
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$separ</font>}
+    <b><font color=#ca14ca>return</font></b>
+  }
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists icon6(<font color=#1b1baa>$icon</font>)]} <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>set</font></b> icon6(<font color=#1b1baa>$icon</font>) 1
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$sep</font>} {
+    <b><font color=#134070>ttk::separator</font></b> <font color=#1b1baa>$separ</font> <font color=#6c3e67>-orient</font> vertical
+    <b><font color=#134070>pack</font></b> <font color=#1b1baa>$separ</font> <font color=#6c3e67>-side</font> left <font color=#6c3e67>-fill</font> y <font color=#6c3e67>-padx</font> 6
+  }
+  <b><font color=#3a6797>lassign</font></b> [obj csGet] fga fg bga bg
+  <b><font color=#3a6797>set</font></b> fontB [obj boldTextFont 16]
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> img [alited::ini::CreateIcon <font color=#1b1baa>$icon</font>]-big; <b><font color=#134070>image</font></b> inuse <font color=#1b1baa>$img</font>}]} {
+    <b><font color=#3a6797>set</font></b> txt <font color=#1b1baa>$icon</font>
+    <b><font color=#3a6797>set</font></b> istext 1
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> txt {}
+    <b><font color=#3a6797>set</font></b> istext 0
+  }
+  <b><font color=#3a6797>set</font></b> attrs [obj toolbarItem_Attrs <font color=#1b1baa>$istext</font> <font color=#1b1baa>$img</font> <font color=#1b1baa>$fontB</font> <font color=#1b1baa>$fg</font> <font color=#1b1baa>$bg</font> <font color=#1b1baa>$fga</font> <font color=#1b1baa>$bga</font>]
+  <b><font color=#134070>button</font></b> <font color=#1b1baa>$but</font> <font color=#6c3e67>-text</font> <font color=#1b1baa>$txt</font> <font color=#6c3e67>-command</font> <font color=#1b1baa>$com</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$attrs</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ev</font> ne {}} {<b><font color=#3a6797>set</font></b> ev \n[<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$ev</font> &lt;&gt;]}
+  ::baltip tip <font color=#1b1baa>$but</font> [msgcat::mc Pluginable]:\ [alited::menu::FormatsItemName <font color=#1b1baa>$fform</font>]<font color=#1b1baa>$ev</font>
+  <b><font color=#134070>bind</font></b> <font color=#1b1baa>$but</font> &lt;Button-3&gt; {alited::tool::PopupBar %X %Y}
+  <b><font color=#134070>pack</font></b> <font color=#1b1baa>$but</font> <font color=#6c3e67>-side</font> left
 }</code><br></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::format::Help'>Help</a><span class='ns_scope'> [<a href="alited.html#::alited::format" title="::alited::format" class='ruff_cmd'>::alited::format</a>]</span><span class='tinylink'><a href='alited.html#::alited::format'>format</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -11683,7 +11705,7 @@ padding: 0%;
     }
   }
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$icon</font> ne {}} {
-    CreateFormatIcon <font color=#1b1baa>$icon</font> <font color=#1b1baa>$sep</font> <font color=#1b1baa>$com</font> <font color=#1b1baa>$fform</font>
+    HandleFormatIcon create <font color=#1b1baa>$icon</font> <font color=#1b1baa>$sep</font> <font color=#1b1baa>$com</font> <font color=#1b1baa>$fform</font> <font color=#1b1baa>$res</font>
   } <b><font color=#3a6797>elseif</font></b> {<font color=#1b1baa>$res</font> eq {}} {
     <i><font color=#4b5d50># no event encountered - run the formatter once</font></i>
     Mode5 <font color=#1b1baa>$cont</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font> <font color=#1b1baa>$modal</font>
@@ -14119,12 +14141,10 @@ FtcEguWyAAAAAElFTkSuQmCC}
   <i><font color=#4b5d50>#   val - value of option</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
-  <b><font color=#3a6797>switch</font></b> <font color=#6c3e67>-exact</font> -- <font color=#1b1baa>$nam</font> {
-    pluginable {
-      <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$val</font> fullformname ev
-      <b><font color=#3a6797>set</font></b> fform [alited::edit::FormatterName <font color=#1b1baa>$fullformname</font>]
-      <b><font color=#3a6797>set</font></b> al(FORMATS,<font color=#1b1baa>$fform</font>,<font color=#1b1baa>$ev</font>) <font color=#1b1baa>$val</font>
-    }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$nam</font> eq {pluginable}} {
+    <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$val</font> fullformname ev
+    <b><font color=#3a6797>set</font></b> fform [alited::edit::FormatterName <font color=#1b1baa>$fullformname</font>]
+    <b><font color=#3a6797>set</font></b> al(FORMATS,<font color=#1b1baa>$fform</font>,<font color=#1b1baa>$ev</font>) <font color=#1b1baa>$val</font>
   }
 }</code><br></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::ini::ReadIniGeometry'>ReadIniGeometry</a><span class='ns_scope'> [<a href="alited.html#::alited::ini" title="::alited::ini" class='ruff_cmd'>::alited::ini</a>]</span><span class='tinylink'><a href='alited.html#::alited::ini'>ini</a>, <a href='#top'>Top</a></span></h4>
@@ -30148,8 +30168,8 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::Cancel'>Cancel</a><span class='tooltiptext'>Handles pressing Cancel button of Move Descriptions dialogue.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::ChangeTo'>ChangeTo</a><span class='tooltiptext'>At changing the direction, fills 2 texts with &quot;from/to&quot; examples.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::CheckOk'>CheckOk</a><span class='tooltiptext'>Check options of Move Descriptions dialogue.
-</span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::CreateFormatIcon'>CreateFormatIcon</a><span class='tooltiptext'>Create icon of formatter in toolbar.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::EventOK'>EventOK</a><span class='tooltiptext'>Checks if an event is correct (not overlap alited key mapping).
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::HandleFormatIcon'>HandleFormatIcon</a><span class='tooltiptext'>Handles icon of formatter in toolbar.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::Help'>Help</a><span class='tooltiptext'>Handles &quot;Help&quot; button.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::LeafRE'>LeafRE</a><span class='tooltiptext'>Gets the chosen leaf's RE (current or standard, seen by the user).
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::Mode1'>Mode1</a><span class='tooltiptext'>Maps selection by pairs taken from config.file.
