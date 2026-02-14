@@ -1250,13 +1250,23 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     undoIn <font color=#1b1baa>$wtxt</font>
     <font color=#1b1baa>$wtxt</font> tag remove sel 1.0 end
     <b><font color=#3a6797>set</font></b> sels [<b><font color=#3a6797>list</font></b>]
-    <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$al(rectSel,text)</font> {
-      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$line</font> ne {}} {
-        <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$nl</font>.<font color=#1b1baa>$nc</font> <font color=#1b1baa>$line</font>
-        <b><font color=#3a6797>set</font></b> pos2 <font color=#1b1baa>$nl</font>.[<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$nc</font>+[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$line</font>]}]
-        <b><font color=#3a6797>lappend</font></b> sels <font color=#1b1baa>$nl</font>.<font color=#1b1baa>$nc</font> <font color=#1b1baa>$pos2</font>
-        <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists pos1]} {<b><font color=#3a6797>set</font></b> pos1 <font color=#1b1baa>$pos2</font>}
+    <b><font color=#3a6797>set</font></b> maxfl 0
+    <b><font color=#3a6797>foreach</font></b> frline <font color=#1b1baa>$al(rectSel,text)</font> {
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> fl [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$frline</font>]] &gt; <font color=#1b1baa>$maxfl</font>} {
+        <b><font color=#3a6797>set</font></b> maxfl <font color=#1b1baa>$fl</font>
       }
+    }
+    <b><font color=#3a6797>foreach</font></b> frline <font color=#1b1baa>$al(rectSel,text)</font> {
+      <b><font color=#3a6797>set</font></b> toline [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$nl</font>.0 <font color=#1b1baa>$nl</font>.end]
+      <b><font color=#3a6797>set</font></b> fl [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$frline</font>]
+      <b><font color=#3a6797>set</font></b> tl [<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$toline</font>]
+      <b><font color=#3a6797>append</font></b> frline [<b><font color=#3a6797>string</font></b> repeat { } [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$maxfl</font>-<font color=#1b1baa>$fl</font>}]]
+      <b><font color=#3a6797>append</font></b> toline [<b><font color=#3a6797>string</font></b> repeat { } [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$nc</font>-<font color=#1b1baa>$tl</font>}]]
+      <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$nl</font>.0 <font color=#1b1baa>$nl</font>.end <font color=#1b1baa>$toline</font>
+      <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$nl</font>.<font color=#1b1baa>$nc</font> <font color=#1b1baa>$frline</font>
+      <b><font color=#3a6797>set</font></b> pos2 <font color=#1b1baa>$nl</font>.[<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$nc</font>+[<b><font color=#3a6797>string</font></b> length <font color=#1b1baa>$frline</font>]}]
+      <b><font color=#3a6797>lappend</font></b> sels <font color=#1b1baa>$nl</font>.<font color=#1b1baa>$nc</font> <font color=#1b1baa>$pos2</font>
+      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists pos1]} {<b><font color=#3a6797>set</font></b> pos1 <font color=#1b1baa>$pos2</font>}
       <b><font color=#3a6797>incr</font></b> nl
     }
     <b><font color=#3a6797>catch</font></b> {::tk::TextSetCursor <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$pos1</font>}
