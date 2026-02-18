@@ -147,6 +147,7 @@ K - key</span></div></li></ul>
 V - %V wildcard of -validatecommand</span></div></li></ul>
 <li><b><a href="#Files_tab's_procs">Files tab's procs</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#project::SelFiles">SelFiles</a><span class=tooltiptext> project::SelFiles : Checks for a selection of file listbox.
+domsg - yes for error message shown
 Returns: list of listbox's path and the selection or {}.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#project::CurrentFile">CurrentFile</a><span class=tooltiptext> project::CurrentFile : Gets a current file of file listbox.
 Returns file name of first selected file or 1st in the list, if no selection.</span></div></li></ul>
@@ -1166,14 +1167,15 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 <a id=Files_tab's_procs></a>
 <i><font color=#4b5d50># ________________________ Files tab's procs _________________________ #</font></i>
 <a id=project::SelFiles></a>
-<b><font color=#ca14ca>proc</font></b> project::SelFiles {} {
+<b><font color=#ca14ca>proc</font></b> project::SelFiles {{domsg yes}} {
   <i><font color=#4b5d50># Checks for a selection of file listbox.</font></i>
+  <i><font color=#4b5d50>#   domsg - yes for error message shown</font></i>
   <i><font color=#4b5d50># Returns: list of listbox's path and the selection or {}.</font></i>
 
   <b><font color=#3a6797>variable</font></b> obPrj
   <b><font color=#3a6797>set</font></b> lbx [<font color=#1b1baa>$obPrj</font> LbxFlist]
   <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> [<b><font color=#3a6797>set</font></b> selidx [<font color=#1b1baa>$lbx</font> curselection]]]} {
-    Message [msgcat::mc {No selected files}] 4
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$domsg</font>} {Message [msgcat::mc {No selected files}] 4}
     <b><font color=#ca14ca>return</font></b> {}
   }
   <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$lbx</font> <font color=#1b1baa>$selidx</font>
@@ -1184,19 +1186,26 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50># Gets a current file of file listbox.</font></i>
   <i><font color=#4b5d50># Returns file name of first selected file or 1st in the list, if no selection.</font></i>
 
-  <b><font color=#3a6797>variable</font></b> obPrj
-  <b><font color=#3a6797>set</font></b> lbx [<font color=#1b1baa>$obPrj</font> LbxFlist]
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> [<b><font color=#3a6797>set</font></b> selidx [<font color=#1b1baa>$lbx</font> curselection]]]} {
-      <b><font color=#3a6797>set</font></b> idx [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$selidx</font> 0]
-    } <b><font color=#3a6797>else</font></b> {
-      <b><font color=#3a6797>set</font></b> idx 0
-    }
-    <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$lbx</font> get <font color=#1b1baa>$idx</font>]
-  }]} {
+  <b><font color=#3a6797>lassign</font></b> [SelFiles no] lbx idx
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$lbx</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$lbx</font> get [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$idx</font> 0]]
+  } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>set</font></b> res {}
+    <i><font color=#4b5d50># no selected file: try README of project</font></i>
+    <b><font color=#3a6797>set</font></b> dircont [<b><font color=#3a6797>glob</font></b> <font color=#653760>-nocomplain</font> <font color=#653760>-directory</font> <font color=#1b1baa>$::alited::al(prjroot)</font> *]
+    <b><font color=#3a6797>set</font></b> dircont [<b><font color=#3a6797>lsort</font></b> <font color=#653760>-dictionary</font> <font color=#1b1baa>$dircont</font>]
+    <b><font color=#3a6797>foreach</font></b> fname {<b><font color=#3a6797>*</font></b>/README */README.*} {
+      <b><font color=#3a6797>set</font></b> idx [<b><font color=#3a6797>lsearch</font></b> <font color=#653760>-nocase</font> <font color=#1b1baa>$dircont</font> <font color=#1b1baa>$fname</font>]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$idx</font>&gt;=0} {
+        <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$dircont</font> <font color=#1b1baa>$idx</font>]
+        <b><font color=#ca14ca>break</font></b>
+      }
+    }
+    <b><font color=#3a6797>foreach</font></b> fname <font color=#1b1baa>$dircont</font> {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> eq {} && [<b><font color=#3a6797>file</font></b> isfile <font color=#1b1baa>$fname</font>]} {<b><font color=#3a6797>set</font></b> res <font color=#1b1baa>$fname</font>}
+    }
   }
-  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>file</font></b> normalize <font color=#1b1baa>$res</font>]
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=project::OpenFile></a>

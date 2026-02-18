@@ -22174,19 +22174,26 @@ FtcEguWyAAAAAElFTkSuQmCC}
   <i><font color=#4b5d50># Gets a current file of file listbox.</font></i>
   <i><font color=#4b5d50># Returns file name of first selected file or 1st in the list, if no selection.</font></i>
 
-  <b><font color=#3a6797>variable</font></b> obPrj
-  <b><font color=#3a6797>set</font></b> lbx [<font color=#1b1baa>$obPrj</font> LbxFlist]
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {
-    <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> [<b><font color=#3a6797>set</font></b> selidx [<font color=#1b1baa>$lbx</font> curselection]]]} {
-      <b><font color=#3a6797>set</font></b> idx [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$selidx</font> 0]
-    } <b><font color=#3a6797>else</font></b> {
-      <b><font color=#3a6797>set</font></b> idx 0
-    }
-    <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$lbx</font> get <font color=#1b1baa>$idx</font>]
-  }]} {
+  <b><font color=#3a6797>lassign</font></b> [SelFiles no] lbx idx
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$lbx</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$lbx</font> get [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$idx</font> 0]]
+  } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>set</font></b> res {}
+    <i><font color=#4b5d50># no selected file: try README of project</font></i>
+    <b><font color=#3a6797>set</font></b> dircont [<b><font color=#3a6797>glob</font></b> <font color=#6c3e67>-nocomplain</font> <font color=#6c3e67>-directory</font> <font color=#1b1baa>$::alited::al(prjroot)</font> *]
+    <b><font color=#3a6797>set</font></b> dircont [<b><font color=#3a6797>lsort</font></b> <font color=#6c3e67>-dictionary</font> <font color=#1b1baa>$dircont</font>]
+    <b><font color=#3a6797>foreach</font></b> fname {<b><font color=#3a6797>*</font></b>/README */README.*} {
+      <b><font color=#3a6797>set</font></b> idx [<b><font color=#3a6797>lsearch</font></b> <font color=#6c3e67>-nocase</font> <font color=#1b1baa>$dircont</font> <font color=#1b1baa>$fname</font>]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$idx</font>&gt;=0} {
+        <b><font color=#3a6797>set</font></b> res [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$dircont</font> <font color=#1b1baa>$idx</font>]
+        <b><font color=#ca14ca>break</font></b>
+      }
+    }
+    <b><font color=#3a6797>foreach</font></b> fname <font color=#1b1baa>$dircont</font> {
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> eq {} && [<b><font color=#3a6797>file</font></b> isfile <font color=#1b1baa>$fname</font>]} {<b><font color=#3a6797>set</font></b> res <font color=#1b1baa>$fname</font>}
+    }
   }
-  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>file</font></b> normalize <font color=#1b1baa>$res</font>]
 }</code><br></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::project::CurrProject'>CurrProject</a><span class='ns_scope'> [<a href="alited.html#::alited::project" title="::alited::project" class='ruff_cmd'>::alited::project</a>]</span><span class='tinylink'><a href='alited.html#::alited::project'>project</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -23860,17 +23867,22 @@ FtcEguWyAAAAAElFTkSuQmCC}
 }</code><br></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::project::SelFiles'>SelFiles</a><span class='ns_scope'> [<a href="alited.html#::alited::project" title="::alited::project" class='ruff_cmd'>::alited::project</a>]</span><span class='tinylink'><a href='alited.html#::alited::project'>project</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
-<p class='ruff'>Checks for a selection of file listbox. Returns: list of listbox's path and the selection or {}.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>SelFiles</span> </div>
+<p class='ruff'>Checks for a selection of file listbox.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>SelFiles</span> <span class='ruff_arg'>?domsg?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code>domsg</code></td><td class='ruff_defitem'>yes for error message shown; <i>optional, default</i> <code>yes</code></td></tr>
+</table>
+<h5 class='ruff'>Description</h5><p class='ruff'>Returns: list of listbox's path and the selection or {}.</p>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_project_SelFiles' href="javascript:toggleSource('alited_project_SelFiles')">Show source</a></p>
-<div id='alited_project_SelFiles' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::project::SelFiles {} {
+<div id='alited_project_SelFiles' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::project::SelFiles {{domsg yes}} {
   <i><font color=#4b5d50># Checks for a selection of file listbox.</font></i>
+  <i><font color=#4b5d50>#   domsg - yes for error message shown</font></i>
   <i><font color=#4b5d50># Returns: list of listbox's path and the selection or {}.</font></i>
 
   <b><font color=#3a6797>variable</font></b> obPrj
   <b><font color=#3a6797>set</font></b> lbx [<font color=#1b1baa>$obPrj</font> LbxFlist]
   <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> [<b><font color=#3a6797>set</font></b> selidx [<font color=#1b1baa>$lbx</font> curselection]]]} {
-    Message [msgcat::mc {No selected files}] 4
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$domsg</font>} {Message [msgcat::mc {No selected files}] 4}
     <b><font color=#ca14ca>return</font></b> {}
   }
   <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$lbx</font> <font color=#1b1baa>$selidx</font>
@@ -30581,7 +30593,7 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::project::SelectAllFiles'>SelectAllFiles</a><span class='tooltiptext'>Selects all files of listbox.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::project::Selected'>Selected</a><span class='tooltiptext'>Gets a currently selected project's index.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::project::SelectedPrj'>SelectedPrj</a><span class='tooltiptext'>Gets a project name of selected item.
-</span></h4><h4 class='tooltip'><a href='alited.html#::alited::project::SelFiles'>SelFiles</a><span class='tooltiptext'>Checks for a selection of file listbox. Returns: list of listbox's path and the selection or {}.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::project::SelFiles'>SelFiles</a><span class='tooltiptext'>Checks for a selection of file listbox.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::project::SortRems'>SortRems</a><span class='tooltiptext'>Sorts reminders by date.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::project::StdLeafRE'>StdLeafRE</a><span class='tooltiptext'>Sets standard RE for leaf unit.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::project::Tab1'>Tab1</a><span class='tooltiptext'>Creates a main tab of &quot;Project&quot;.
