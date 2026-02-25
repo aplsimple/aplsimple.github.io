@@ -69,6 +69,9 @@ The appearance of dialogue is controled by $ansSave and $firstSave:
 if $ansSave>10, no dialogue at all, meaning the answer = $ansSave
 if $firstSave==-1, no "No ask anymore" (if run by "Close" menu item or "x" icon of tabbar)
 Returns 1 for "yes, needs saving", 2 - "no saving", 0 - "cancel".</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#file::IsCorrectSavedName">IsCorrectSavedName</a><span class=tooltiptext> file::IsCorrectSavedName : Checks if the file name is correct for saving.
+TID -  - ID of the tab
+fname - file name to save</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::MakeThemHighlighted">MakeThemHighlighted</a><span class=tooltiptext> file::MakeThemHighlighted : Sets flag "highlight file(s) anyway".
 tabs - list of tabs to set the flag for
 wtxt - text path (if set, it is flagged only)
@@ -317,6 +320,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 <li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/printer.html">printer.tcl</a> - "Tools / Project Printer" dialogue and procedures.</li>
 <li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/project.html">project.tcl</a> - "Projects" dialogue and procedures.</li>
 <li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/run.html">run.tcl</a> - "Tools / Run..." dialogue and procedures.</li>
+<li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/todolist.html">todolist.tcl</a> - Handles pending TODOs of Projects dialogue.</li>
 <li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/tool.html">tool.tcl</a> - "Tools" menu's procedures.</li>
 <li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/tree.html">tree.tcl</a> - Handles the tree of units and files.</li>
 <li><a href="https://aplsimple.github.io/en/tcl/printer/alited/files/src/unit.html">unit.tcl</a> - Handles the unit tree.</li>
@@ -394,6 +398,35 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$ansSave</font>
   }
   <b><font color=#ca14ca>return</font></b> 2  ;<i><font color=#4b5d50># as if &quot;No&quot; chosen</font></i>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=file::IsCorrectSavedName></a>
+<b><font color=#ca14ca>proc</font></b> file::IsCorrectSavedName {TID fname} {
+  <i><font color=#4b5d50># Checks if the file name is correct for saving.</font></i>
+  <i><font color=#4b5d50>#   TID -  - ID of the tab</font></i>
+  <i><font color=#4b5d50>#   fname - file name to save</font></i>
+
+  <b><font color=#3a6797>if</font></b> {[IsNoName <font color=#1b1baa>$fname</font>]} {
+    <b><font color=#3a6797>set</font></b> res 0
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> res 1
+    <b><font color=#3a6797>foreach</font></b> tab [alited::SessionList 2] {
+      <b><font color=#3a6797>set</font></b> tid [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$tab</font> 0]
+      <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> ne <font color=#1b1baa>$tid</font> && <font color=#1b1baa>$fname</font> eq [alited::bar::FileName <font color=#1b1baa>$tid</font>]} {
+        <i><font color=#4b5d50># file is in tab bar: check if it was open</font></i>
+        <b><font color=#3a6797>if</font></b> {[alited::main::GetWTXT <font color=#1b1baa>$tid</font>] ne {}} {
+          <b><font color=#3a6797>set</font></b> res 0
+          <b><font color=#3a6797>set</font></b> msg [msgcat::mc <font color=#8b2a0e>&quot;%f\nis already open in alited.&quot;</font>]
+          <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %f <font color=#1b1baa>$fname</font>] <font color=#1b1baa>$msg</font>]
+          alited::msg ok err <font color=#1b1baa>$msg</font>
+        } <b><font color=#3a6797>else</font></b> {
+          alited::bar::BAR <font color=#1b1baa>$tid</font> close
+        }
+        <b><font color=#ca14ca>break</font></b>
+      }
+    }
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=file::MakeThemHighlighted></a>
@@ -892,8 +925,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>set</font></b> fname [alited::bar::FileName]
     <b><font color=#3a6797>set</font></b> ar -
   }
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> eq {} || [alited::file::IsNoName <font color=#1b1baa>$fname</font>]} <b><font color=#ca14ca>return</font></b>
-  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>file</font></b> isfile <font color=#1b1baa>$fname</font>]} {
+  <b><font color=#3a6797>if</font></b> {[IsNoName <font color=#1b1baa>$fname</font>] || ![<b><font color=#3a6797>file</font></b> isfile <font color=#1b1baa>$fname</font>]} {
     alited::Balloon1 <font color=#1b1baa>$fname</font>
     <b><font color=#ca14ca>return</font></b>
   }
@@ -903,6 +935,8 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> && <font color=#1b1baa>$name2</font> ne {}} {
     <b><font color=#3a6797>set</font></b> fname2 [<b><font color=#3a6797>file</font></b> join [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname2</font>] <font color=#1b1baa>$name2</font>]
     <b><font color=#3a6797>if</font></b> {![CommandForFile2 copy <font color=#1b1baa>$fname</font> <font color=#1b1baa>$fname2</font>]} <b><font color=#ca14ca>return</font></b>
+    <b><font color=#3a6797>lassign</font></b> [Encoding <font color=#1b1baa>$fname</font>] -&gt; enc
+    Encoding <font color=#1b1baa>$fname2</font> <font color=#1b1baa>$enc</font>
     OpenFile <font color=#1b1baa>$fname2</font>
     <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(TREE,isunits)</font>} {RecreateFileTree; AfterSaving}
   }
@@ -1178,9 +1212,9 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> fname [<font color=#1b1baa>$obPav</font> chooser tk_getSaveFile ::alited::al(TMPfname) <font color=#653760>-initialdir</font> <font color=#1b1baa>$inidir</font> \
     <font color=#653760>-defaultextension</font> <font color=#1b1baa>$defext</font> <font color=#653760>-title</font> [msgcat::mc {Save as}] <font color=#653760>-parent</font> <font color=#1b1baa>$al(WIN)</font>]
   <b><font color=#3a6797>unset</font></b> al(TMPfname)
-  <b><font color=#3a6797>if</font></b> {[IsNoName <font color=#1b1baa>$fname</font>]} {
-    <b><font color=#3a6797>set</font></b> res 0
-  } <b><font color=#3a6797>elseif</font></b> {[<b><font color=#3a6797>set</font></b> res [SaveFileByName <font color=#1b1baa>$TID</font> <font color=#1b1baa>$fname</font>]]} {
+  <b><font color=#3a6797>set</font></b> res 0
+  <b><font color=#3a6797>if</font></b> {[IsCorrectSavedName <font color=#1b1baa>$TID</font> <font color=#1b1baa>$fname</font>] && [SaveFileByName <font color=#1b1baa>$TID</font> <font color=#1b1baa>$fname</font>]} {
+    <b><font color=#3a6797>set</font></b> res 1
     AddRecent <font color=#1b1baa>$fnameorig</font>
     RenameFile <font color=#1b1baa>$TID</font> <font color=#1b1baa>$fname</font>
     AfterSaving
@@ -1504,8 +1538,8 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   SourceDetach
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fnames</font> eq {} || <font color=#1b1baa>$TID</font> ne {}} {
-    <b><font color=#3a6797>set</font></b> fnames [alited::bar::FileName <font color=#1b1baa>$TID</font>]
-    <b><font color=#3a6797>if</font></b> {[alited::file::IsNoName <font color=#1b1baa>$fnames</font>] && ![SaveFileAs <font color=#1b1baa>$TID</font>]} <b><font color=#ca14ca>return</font></b>
+    <b><font color=#3a6797>set</font></b> fname [alited::bar::FileName <font color=#1b1baa>$TID</font>]
+    <b><font color=#3a6797>if</font></b> {[IsNoName <font color=#1b1baa>$fname</font>] && ![SaveFileAs <font color=#1b1baa>$TID</font>]} <b><font color=#ca14ca>return</font></b>
     <b><font color=#3a6797>set</font></b> fnames [<b><font color=#3a6797>list</font></b> [alited::bar::FileName <font color=#1b1baa>$TID</font>]]
   }
   alited::detached::_run <font color=#1b1baa>$fnames</font>
@@ -1857,7 +1891,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> fname [<b><font color=#3a6797>lindex</font></b> [<font color=#1b1baa>$wtree</font> item <font color=#1b1baa>$ID</font> <font color=#653760>-values</font>] 1]
   <b><font color=#3a6797>set</font></b> TID [alited::bar::FileTID <font color=#1b1baa>$fname</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> ne <font color=#8b2a0e>&quot;&quot;</font>} {
-    <b><font color=#ca14ca>return</font></b> [alited::file::CloseAndDelete <font color=#1b1baa>$TID</font>]
+    <b><font color=#ca14ca>return</font></b> [CloseAndDelete <font color=#1b1baa>$TID</font>]
   }
   <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %f <font color=#1b1baa>$name</font>] <font color=#1b1baa>$al(MC,delfile)</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font>&lt;11} {
