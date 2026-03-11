@@ -102,7 +102,7 @@ See also: bar::ColorBar</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::SbhText">SbhText</a><span class=tooltiptext> file::SbhText : Shows/hides the horizontal scrollbar of the text.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::WrapLines">WrapLines</a><span class=tooltiptext> file::WrapLines : Switches wrap word mode for a current text.
 wrapnone - yes, if 'none' wrapping is needed</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#file::Encoding">Encoding</a><span class=tooltiptext> file::Encoding : Gets/sets a file's encoding.
+<ul class=toc><li><div class=tooltip><a href="#file::EncodingOpt">EncodingOpt</a><span class=tooltiptext> file::EncodingOpt : Gets/sets a file's encoding option.
 fname - file's name
 enc - if "", gets the encoding, otherwise sets the encoding of the file.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::EOL">EOL</a><span class=tooltiptext> file::EOL : Gets/sets a file's translation.
@@ -175,7 +175,7 @@ inidir - initial dir</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::SaveText">SaveText</a><span class=tooltiptext> file::SaveText : Saves text buffer to file.
 wtxt - text's path
 fname - file name
-enc - encoding options</span></div></li></ul>
+encopt - encoding option</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#file::SaveFileByName">SaveFileByName</a><span class=tooltiptext> file::SaveFileByName : Saves a file.
 TID - ID of tab
 fname - file name
@@ -676,9 +676,9 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   alited::ini::SaveIni
 }
 <i><font color=#4b5d50>#_______________________</font></i>
-<a id=file::Encoding></a>
-<b><font color=#ca14ca>proc</font></b> file::Encoding {{fname <font color=#8b2a0e>&quot;&quot;</font>} {enc <font color=#8b2a0e>&quot;&quot;</font>}} {
-  <i><font color=#4b5d50># Gets/sets a file's encoding.</font></i>
+<a id=file::EncodingOpt></a>
+<b><font color=#ca14ca>proc</font></b> file::EncodingOpt {{fname <font color=#8b2a0e>&quot;&quot;</font>} {enc <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Gets/sets a file's encoding option.</font></i>
   <i><font color=#4b5d50>#   fname - file's name</font></i>
   <i><font color=#4b5d50>#   enc - if &quot;&quot;, gets the encoding, otherwise sets the encoding of the file.</font></i>
 
@@ -934,8 +934,8 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> && <font color=#1b1baa>$name2</font> ne {}} {
     <b><font color=#3a6797>set</font></b> fname2 [<b><font color=#3a6797>file</font></b> join [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname2</font>] <font color=#1b1baa>$name2</font>]
     <b><font color=#3a6797>if</font></b> {![CommandForFile2 copy <font color=#1b1baa>$fname</font> <font color=#1b1baa>$fname2</font>]} <b><font color=#ca14ca>return</font></b>
-    <b><font color=#3a6797>lassign</font></b> [Encoding <font color=#1b1baa>$fname</font>] -&gt; enc
-    Encoding <font color=#1b1baa>$fname2</font> <font color=#1b1baa>$enc</font>
+    <b><font color=#3a6797>lassign</font></b> [EncodingOpt <font color=#1b1baa>$fname</font>] -&gt; enc
+    EncodingOpt <font color=#1b1baa>$fname2</font> <font color=#1b1baa>$enc</font>
     OpenFile <font color=#1b1baa>$fname2</font>
     <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(TREE,isunits)</font>} {RecreateFileTree; AfterSaving}
   }
@@ -976,10 +976,12 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50># Returns the file's contents.</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
-  <b><font color=#3a6797>set</font></b> enc [Encoding <font color=#1b1baa>$fname</font>]
-  <b><font color=#3a6797>append</font></b> enc { } [EOL <font color=#1b1baa>$fname</font>]
-  <b><font color=#3a6797>set</font></b> filecont [readTextFile <font color=#1b1baa>$fname</font> {} <font color=#1b1baa>$doErr</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$enc</font>]
-  <b><font color=#3a6797>set</font></b> al(_unittree,<font color=#1b1baa>$TID</font>) [alited::unit::GetUnits <font color=#1b1baa>$TID</font> <font color=#1b1baa>$filecont</font>]
+  <b><font color=#3a6797>set</font></b> encopt [EncodingOpt <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>append</font></b> encopt { } [EOL <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>set</font></b> filecont [readTextFile <font color=#1b1baa>$fname</font> {} <font color=#1b1baa>$doErr</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$encopt</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$TID</font> ne {}} {
+    <b><font color=#3a6797>set</font></b> al(_unittree,<font color=#1b1baa>$TID</font>) [alited::unit::GetUnits <font color=#1b1baa>$TID</font> <font color=#1b1baa>$filecont</font>]
+  }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$filecont</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
@@ -1118,15 +1120,15 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=file::SaveText></a>
-<b><font color=#ca14ca>proc</font></b> file::SaveText {wtxt fname {enc <font color=#8b2a0e>&quot;&quot;</font>}} {
+<b><font color=#ca14ca>proc</font></b> file::SaveText {wtxt fname {encopt <font color=#8b2a0e>&quot;&quot;</font>}} {
   <i><font color=#4b5d50># Saves text buffer to file.</font></i>
   <i><font color=#4b5d50>#   wtxt - text's path</font></i>
   <i><font color=#4b5d50>#   fname - file name</font></i>
-  <i><font color=#4b5d50>#   enc - encoding options</font></i>
+  <i><font color=#4b5d50>#   encopt - encoding option</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   <b><font color=#3a6797>set</font></b> fcont [<font color=#1b1baa>$wtxt</font> get 1.0 <font color=#8b2a0e>&quot;end - 1 chars&quot;</font>]  ;<i><font color=#4b5d50># last \n excluded</font></i>
-  <b><font color=#3a6797>if</font></b> {![writeTextFile <font color=#1b1baa>$fname</font> fcont 0 1 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$enc</font>]} {
+  <b><font color=#3a6797>if</font></b> {![writeTextFile <font color=#1b1baa>$fname</font> fcont 0 1 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$encopt</font>]} {
     alited::msg ok err [::apave::error <font color=#1b1baa>$fname</font>] <font color=#653760>-w</font> 50 <font color=#653760>-text</font> 1
     <b><font color=#3a6797>unset</font></b> <font color=#653760>-nocomplain</font> al(_NO_OUTWARD_)
     <b><font color=#ca14ca>return</font></b> 0
@@ -1143,20 +1145,20 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists al(THIS-ENCODING)]} {
-    <b><font color=#3a6797>set</font></b> enc <font color=#8b2a0e>&quot;-encoding <font color=#1b1baa>$</font>al(THIS-ENCODING)&quot;</font> ;<i><font color=#4b5d50># at saving &quot;no name&quot;</font></i>
+    <b><font color=#3a6797>set</font></b> encopt <font color=#8b2a0e>&quot;-encoding <font color=#1b1baa>$</font>al(THIS-ENCODING)&quot;</font> ;<i><font color=#4b5d50># at saving &quot;no name&quot;</font></i>
   } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>set</font></b> enc [Encoding <font color=#1b1baa>$fname</font>]
+    <b><font color=#3a6797>set</font></b> encopt [EncodingOpt <font color=#1b1baa>$fname</font>]
   }
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists al(THIS-EOL)]} {
     <b><font color=#3a6797>set</font></b> eol <font color=#8b2a0e>&quot;-translation <font color=#1b1baa>$</font>al(THIS-EOL)&quot;</font> ;<i><font color=#4b5d50># at saving &quot;no name&quot;</font></i>
   } <b><font color=#3a6797>else</font></b> {
     <b><font color=#3a6797>set</font></b> eol [EOL <font color=#1b1baa>$fname</font>]
   }
-  <b><font color=#3a6797>append</font></b> enc <font color=#8b2a0e>&quot; <font color=#1b1baa>$</font>eol&quot;</font>
+  <b><font color=#3a6797>append</font></b> encopt <font color=#8b2a0e>&quot; <font color=#1b1baa>$</font>eol&quot;</font>
   <b><font color=#3a6797>set</font></b> al(_NO_OUTWARD_) {}
   <b><font color=#3a6797>set</font></b> wtxt [alited::main::GetWTXT <font color=#1b1baa>$TID</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(prjtrailwhite)</font>} {alited::edit::RemoveTrailWhites <font color=#1b1baa>$TID</font> yes <font color=#1b1baa>$doit</font>}
-  <b><font color=#3a6797>if</font></b> {![SaveText <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$enc</font>]} {
+  <b><font color=#3a6797>if</font></b> {![SaveText <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$encopt</font>]} {
     <b><font color=#ca14ca>return</font></b> 0
   }
   <b><font color=#3a6797>unset</font></b> al(_NO_OUTWARD_)
@@ -1369,7 +1371,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   }
   <b><font color=#3a6797>set</font></b> fname [alited::bar::FileName]
   <b><font color=#3a6797>set</font></b> pos [<font color=#1b1baa>$wtxt</font> index insert]
-  Encoding <font color=#1b1baa>$fname</font> <font color=#1b1baa>$enc</font>
+  EncodingOpt <font color=#1b1baa>$fname</font> <font color=#1b1baa>$enc</font>
   DisplayFile <font color=#1b1baa>$TID</font> <font color=#1b1baa>$fname</font> <font color=#1b1baa>$wtxt</font> yes
   <b><font color=#3a6797>catch</font></b> {::tk::TextSetCursor <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$pos</font>}
   alited::main::UpdateProjectInfo
