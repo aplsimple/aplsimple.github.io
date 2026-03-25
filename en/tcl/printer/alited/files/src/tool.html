@@ -947,14 +947,22 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50>#   runs - list of commands</font></i>
 
   <b><font color=#3a6797>set</font></b> runs [::alited::ProcEOL <font color=#1b1baa>$runs</font> in]
+  <b><font color=#3a6797>set</font></b> run1 {}
   <b><font color=#3a6797>foreach</font></b> run [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$runs</font> \n] {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> run [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$run</font>]] ne {} && [<b><font color=#3a6797>string</font></b> first # <font color=#1b1baa>$run</font>]!=0} {
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>eval</font></b> <font color=#1b1baa>$run</font>} e]} {
-        <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>exec</font></b> -- {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$run</font>} e2
-        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$e2</font> ne {}} {<b><font color=#3a6797>set</font></b> e <font color=#1b1baa>$e2</font>} {<b><font color=#3a6797>append</font></b> e <font color=#8b2a0e>&quot; / OS ?&quot;</font>}
+      <b><font color=#3a6797>set</font></b> run1 [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$run1</font>]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$run</font> end] eq <font color=#8b2a0e>&quot;\\&quot;</font>} {
+        <b><font color=#3a6797>append</font></b> run1 { } [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$run</font> 0 end-1]
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>append</font></b> run1 { } <font color=#1b1baa>$run</font>
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>eval</font></b> <font color=#1b1baa>$run1</font>} e]} {
+          <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>exec</font></b> -- {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$run1</font>} e2
+          <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$e2</font> ne {}} {<b><font color=#3a6797>set</font></b> e <font color=#1b1baa>$e2</font>} {<b><font color=#3a6797>append</font></b> e <font color=#8b2a0e>&quot; / OS ?&quot;</font>}
+        }
+        alited::info::Put <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>mc\&quot;<font color=#1b1baa>$</font>run1\&quot; -&gt; <font color=#1b1baa>$</font>e&quot;</font>
+        <b><font color=#3a6797>update</font></b>
+        <b><font color=#3a6797>set</font></b> run1 {}
       }
-      alited::info::Put <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>mc\&quot;<font color=#1b1baa>$</font>run\&quot; -&gt; <font color=#1b1baa>$</font>e&quot;</font>
-      <b><font color=#3a6797>update</font></b>
     }
   }
 }

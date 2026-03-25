@@ -14667,6 +14667,18 @@ FtcEguWyAAAAAElFTkSuQmCC}
   <i><font color=#4b5d50># Saves a current configuration of alited.</font></i>
   <i><font color=#4b5d50>#   newproject - flag &quot;for a new project&quot;</font></i>
 
+  SaveIniFile
+  SaveIniPrj <font color=#1b1baa>$newproject</font>
+  SaveIniGlob
+}</code><br></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::ini::SaveIniFile'>SaveIniFile</a><span class='ns_scope'> [<a href="alited.html#::alited::ini" title="::alited::ini" class='ruff_cmd'>::alited::ini</a>]</span><span class='tinylink'><a href='alited.html#::alited::ini'>ini</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Saves alited.ini file.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>SaveIniFile</span> </div>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_ini_SaveIniFile' href="javascript:toggleSource('alited_ini_SaveIniFile')">Show source</a></p>
+<div id='alited_ini_SaveIniFile' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::ini::SaveIniFile {} {
+  <i><font color=#4b5d50># Saves alited.ini file.</font></i>
+
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
   <b><font color=#3a6797>namespace</font></b> upvar ::alited::pref em_Num em_Num em_ico em_ico em_inf em_inf
   <b><font color=#3a6797>namespace</font></b> upvar ::alited::project prjlist prjlist prjinfo prjinfo
@@ -14866,8 +14878,6 @@ FtcEguWyAAAAAElFTkSuQmCC}
   }
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;fontdetach=<font color=#1b1baa>$</font>al(fontdetach)&quot;</font>
   <b><font color=#3a6797>close</font></b> <font color=#1b1baa>$chan</font>
-  SaveIniPrj <font color=#1b1baa>$newproject</font>
-  SaveIniGlob
 }</code><br></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::ini::SaveIniGlob'>SaveIniGlob</a><span class='ns_scope'> [<a href="alited.html#::alited::ini" title="::alited::ini" class='ruff_cmd'>::alited::ini</a>]</span><span class='tinylink'><a href='alited.html#::alited::ini'>ini</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -24524,12 +24534,7 @@ README.md}
   <i><font color=#4b5d50># Validates values of alited.ini.</font></i>
   <i><font color=#4b5d50>#   V - %V wildcard of -validatecommand</font></i>
 
-  <b><font color=#3a6797>variable</font></b> saveini
-  <b><font color=#3a6797>set</font></b> saveini yes
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$V</font> eq {focusout}} {
-    alited::ini::SaveIni
-    <b><font color=#3a6797>set</font></b> saveini no
-  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$V</font> eq {focusout}} alited::ini::SaveIniFile
   <b><font color=#ca14ca>return</font></b> 1
 }</code><br></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::project::ValidProject'>ValidProject</a><span class='ns_scope'> [<a href="alited.html#::alited::project" title="::alited::project" class='ruff_cmd'>::alited::project</a>]</span><span class='tinylink'><a href='alited.html#::alited::project'>project</a>, <a href='#top'>Top</a></span></h4>
@@ -26158,14 +26163,22 @@ README.md}
   <i><font color=#4b5d50>#   runs - list of commands</font></i>
 
   <b><font color=#3a6797>set</font></b> runs [::alited::ProcEOL <font color=#1b1baa>$runs</font> in]
+  <b><font color=#3a6797>set</font></b> run1 {}
   <b><font color=#3a6797>foreach</font></b> run [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$runs</font> \n] {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> run [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$run</font>]] ne {} && [<b><font color=#3a6797>string</font></b> first # <font color=#1b1baa>$run</font>]!=0} {
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>eval</font></b> <font color=#1b1baa>$run</font>} e]} {
-        <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>exec</font></b> -- {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$run</font>} e2
-        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$e2</font> ne {}} {<b><font color=#3a6797>set</font></b> e <font color=#1b1baa>$e2</font>} {<b><font color=#3a6797>append</font></b> e <font color=#8b2a0e>&quot; / OS ?&quot;</font>}
+      <b><font color=#3a6797>set</font></b> run1 [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$run1</font>]
+      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>string</font></b> index <font color=#1b1baa>$run</font> end] eq <font color=#8b2a0e>&quot;\\&quot;</font>} {
+        <b><font color=#3a6797>append</font></b> run1 { } [<b><font color=#3a6797>string</font></b> range <font color=#1b1baa>$run</font> 0 end-1]
+      } <b><font color=#3a6797>else</font></b> {
+        <b><font color=#3a6797>append</font></b> run1 { } <font color=#1b1baa>$run</font>
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>eval</font></b> <font color=#1b1baa>$run1</font>} e]} {
+          <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>exec</font></b> -- {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$run1</font>} e2
+          <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$e2</font> ne {}} {<b><font color=#3a6797>set</font></b> e <font color=#1b1baa>$e2</font>} {<b><font color=#3a6797>append</font></b> e <font color=#8b2a0e>&quot; / OS ?&quot;</font>}
+        }
+        alited::info::Put <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>mc\&quot;<font color=#1b1baa>$</font>run1\&quot; -&gt; <font color=#1b1baa>$</font>e&quot;</font>
+        <b><font color=#3a6797>update</font></b>
+        <b><font color=#3a6797>set</font></b> run1 {}
       }
-      alited::info::Put <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>mc\&quot;<font color=#1b1baa>$</font>run\&quot; -&gt; <font color=#1b1baa>$</font>e&quot;</font>
-      <b><font color=#3a6797>update</font></b>
     }
   }
 }</code><br></pre></div>
@@ -30308,6 +30321,7 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::ini::ReadPrjTabs'>ReadPrjTabs</a><span class='tooltiptext'>Gets tabs of project.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::ini::SaveCurrentIni'>SaveCurrentIni</a><span class='tooltiptext'>Saves a current configuration of alited on various events.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::ini::SaveIni'>SaveIni</a><span class='tooltiptext'>Saves a current configuration of alited.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::ini::SaveIniFile'>SaveIniFile</a><span class='tooltiptext'>Saves alited.ini file.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::ini::SaveIniGlob'>SaveIniGlob</a><span class='tooltiptext'>Save 3 lines of global configuration of alited: current .ini file, current project's path, list of config dirs
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::ini::SaveIniPrj'>SaveIniPrj</a><span class='tooltiptext'>Saves settings of project.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::ini::TipToolHotkeys'>TipToolHotkeys</a><span class='tooltiptext'>Adds hotkeys to toolbar tips.
