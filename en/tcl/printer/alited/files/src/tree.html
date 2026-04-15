@@ -146,6 +146,8 @@ item - ID of the item to be deleted.</span></div></li></ul>
 The problem occurs if Frame's width is less than Tree's + Scrollbar's, as
 then the scrollbar is squeezed. Thus the Tree's width should be adjusted.
 The restart of alited will fully repair this.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tree::ViewNSimage">ViewNSimage</a><span class=tooltiptext> tree::ViewNSimage : Sets image of "View NS" button of unit toolbar.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#tree::SwitchViewNS">SwitchViewNS</a><span class=tooltiptext> tree::SwitchViewNS : Switches mode of viewing proc/method's namespaces.</span></div></li></ul>
 <li><b><a href="#Buttons_handlers">Buttons handlers</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#tree::ShowPopupMenu">ShowPopupMenu</a><span class=tooltiptext> tree::ShowPopupMenu : Creates and opens a popup menu at right clicking the tree.
 ID - ID of clicked item
@@ -733,7 +735,9 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#134070>pack</font></b> forget [<font color=#1b1baa>$obPav</font> BtTRenT] ;<i><font color=#4b5d50># hide file buttons for unit tree</font></i>
     <b><font color=#134070>pack</font></b> forget [<font color=#1b1baa>$obPav</font> BtTCloT]
     <b><font color=#134070>pack</font></b> forget [<font color=#1b1baa>$obPav</font> BtTOpen]
+    <b><font color=#134070>pack</font></b> [<font color=#1b1baa>$obPav</font> BtTTagT] <font color=#653760>-side</font> left <font color=#653760>-after</font> [<font color=#1b1baa>$obPav</font> BtTUpdT]
   } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#134070>pack</font></b> forget [<font color=#1b1baa>$obPav</font> BtTTagT]
     <b><font color=#134070>pack</font></b> [<font color=#1b1baa>$obPav</font> BtTRenT] <font color=#653760>-side</font> left <font color=#653760>-after</font> [<font color=#1b1baa>$obPav</font> BtTAddT]  ;<i><font color=#4b5d50># show file buttons</font></i>
     <b><font color=#134070>pack</font></b> [<font color=#1b1baa>$obPav</font> BtTCloT] <font color=#653760>-side</font> left <font color=#653760>-after</font> [<font color=#1b1baa>$obPav</font> BtTDelT]
     <b><font color=#134070>pack</font></b> [<font color=#1b1baa>$obPav</font> BtTOpen] <font color=#653760>-side</font> left <font color=#653760>-after</font> [<font color=#1b1baa>$obPav</font> BtTCloT]
@@ -783,6 +787,12 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   baltip::tip [<font color=#1b1baa>$obPav</font> BtTDelT] <font color=#1b1baa>$al(MC,unitsdel)</font>
   baltip::tip [<font color=#1b1baa>$obPav</font> BtTUp] <font color=#1b1baa>$al(MC,moveupU)</font>
   baltip::tip [<font color=#1b1baa>$obPav</font> BtTDown] <font color=#1b1baa>$al(MC,movedownU)</font>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(TREE,viewNS)</font>} {
+    <b><font color=#3a6797>set</font></b> vNS [msgcat::mc <font color=#8b2a0e>&quot;Short namespaces\nof procs / methods&quot;</font>]
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> vNS [msgcat::mc <font color=#8b2a0e>&quot;Full namespaces\nof procs / methods&quot;</font>]
+  }
+  baltip::tip [<font color=#1b1baa>$obPav</font> BtTTagT] <font color=#1b1baa>$vNS</font>
   <font color=#1b1baa>$wtree</font> heading #0 <font color=#653760>-text</font> [alited::bar::CurrentTab 1]
   <font color=#1b1baa>$wtree</font> heading #1 <font color=#653760>-text</font> [msgcat::mc Row]
   <b><font color=#3a6797>set</font></b> parents [<b><font color=#3a6797>list</font></b> {}]
@@ -1015,6 +1025,26 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> ws2 [<b><font color=#134070>winfo</font></b> width [<font color=#1b1baa>$obPav</font> SbvFavor]]
   <b><font color=#3a6797>set</font></b> w2 [[<font color=#1b1baa>$obPav</font> Tree] column #1 <font color=#653760>-width</font>]
   [<font color=#1b1baa>$obPav</font> Tree] column #0 <font color=#653760>-width</font> [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$wpf</font>-<font color=#1b1baa>$w2</font>-<font color=#1b1baa>$ws2</font>-4}]
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tree::ViewNSimage></a>
+<b><font color=#ca14ca>proc</font></b> tree::ViewNSimage {} {
+  <i><font color=#4b5d50># Sets image of &quot;View NS&quot; button of unit toolbar.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(TREE,viewNS)</font>} {<b><font color=#3a6797>set</font></b> img tagoff} {<b><font color=#3a6797>set</font></b> img tag}
+  [<font color=#1b1baa>$obPav</font> BtTTagT] configure <font color=#653760>-image</font> alimg_<font color=#1b1baa>$img</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=tree::SwitchViewNS></a>
+<b><font color=#ca14ca>proc</font></b> tree::SwitchViewNS {} {
+  <i><font color=#4b5d50># Switches mode of viewing proc/method's namespaces.</font></i>
+
+  <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav
+  <b><font color=#3a6797>set</font></b> al(TREE,viewNS) [<b><font color=#3a6797>expr</font></b> {!<font color=#1b1baa>$al(TREE,viewNS)</font>}]
+  ViewNSimage
+  RecreateTree
+  ::baltip repaint [<font color=#1b1baa>$obPav</font> BtTTagT]
 }
 <a id=Buttons_handlers></a>
 <i><font color=#4b5d50># ________________________ Buttons handlers _________________________ #</font></i>

@@ -249,6 +249,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> al(TREE,isunits) yes  ;<i><font color=#4b5d50># current mode of tree: units/files</font></i>
   <b><font color=#3a6797>set</font></b> al(TREE,units) no     ;<i><font color=#4b5d50># flag &quot;is a unit tree created&quot;</font></i>
   <b><font color=#3a6797>set</font></b> al(TREE,files) no     ;<i><font color=#4b5d50># flag &quot;is a file tree created&quot;</font></i>
+  <b><font color=#3a6797>set</font></b> al(TREE,viewNS) yes    ;<i><font color=#4b5d50># flag &quot;show full namespaces for units</font></i>
   <b><font color=#3a6797>set</font></b> al(TREE,cw0) 200      ;<i><font color=#4b5d50># tree column #0 width</font></i>
   <b><font color=#3a6797>set</font></b> al(TREE,cw1) 70       ;<i><font color=#4b5d50># tree column #1 width</font></i>
   <b><font color=#3a6797>set</font></b> al(TREE,showinfo) 0   ;<i><font color=#4b5d50># flag &quot;show info on a file in tips&quot;</font></i>
@@ -627,6 +628,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       <b><font color=#3a6797>set</font></b> al(TREE,cw0) <font color=#1b1baa>$val</font>
     }
     treecw1        {<b><font color=#3a6797>set</font></b> al(TREE,cw1) <font color=#1b1baa>$val</font>}
+    viewNS         {<b><font color=#3a6797>set</font></b> al(TREE,viewNS) <font color=#1b1baa>$val</font>}
     runGeometry    {<b><font color=#3a6797>set</font></b> al(runGeometry) <font color=#1b1baa>$val</font>}
     fontdetach     {<b><font color=#3a6797>set</font></b> al(fontdetach) <font color=#1b1baa>$val</font>}
     detach*        {
@@ -1292,6 +1294,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> al(TREE,cw1) [<font color=#1b1baa>$wtree</font> column #1 <font color=#653760>-width</font>]
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;treecw0=<font color=#1b1baa>$</font>al(TREE,cw0)&quot;</font>
   <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;treecw1=<font color=#1b1baa>$</font>al(TREE,cw1)&quot;</font>
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$chan</font> <font color=#8b2a0e>&quot;viewNS=<font color=#1b1baa>$</font>al(TREE,viewNS)&quot;</font>
   <b><font color=#3a6797>foreach</font></b> v {Pan PanL PanR PanBM PanTop} {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists al(width<font color=#1b1baa>$v</font>)]} {
       <b><font color=#3a6797>set</font></b> w <font color=#1b1baa>$al(width$v)</font>
@@ -1570,12 +1573,12 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     <b><font color=#3a6797>set</font></b> pobj alitedObjToDel
     ::apave::APave create <font color=#1b1baa>$pobj</font>
   }
-  <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$pobj</font> input {} <font color=#1b1baa>$al(MC,chini1)</font> \
-    [<b><font color=#3a6797>list</font></b> \
-      diR1 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$al(MC,chini3)</font> {} [<b><font color=#3a6797>list</font></b> <font color=#653760>-title</font> <font color=#1b1baa>$al(MC,chini3)</font> <font color=#653760>-w</font> 50 \
-        <font color=#653760>-values</font> <font color=#1b1baa>$configs</font> <font color=#653760>-clearcom</font> {alited::main::ClearCbx %w ::alited::ini::configs}]] \
-        <font color=#8b2a0e>&quot;<font color=#1b1baa>{$</font>::alited::CONFIGDIR<font color=#1b1baa>}</font>&quot;</font> \
-    ] <font color=#653760>-head</font> <font color=#1b1baa>$head</font> <font color=#653760>-help</font> alited::ini::Help <font color=#653760>-resizable</font> no {<b><font color=#3a6797>*</font></b>}[obj basicTextFont]]
+  <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$pobj</font> input {} <font color=#1b1baa>$al(MC,chini1)</font> [<b><font color=#3a6797>list</font></b> \
+    diR1 [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$al(MC,chini3)</font> {} [<b><font color=#3a6797>list</font></b> <font color=#653760>-title</font> <font color=#1b1baa>$al(MC,chini3)</font> <font color=#653760>-w</font> 50 \
+      <font color=#653760>-values</font> <font color=#1b1baa>$configs</font> <font color=#653760>-clearcom</font> {alited::main::ClearCbx %w \
+      ::alited::ini::configs}]] <font color=#8b2a0e>&quot;<font color=#1b1baa>{$</font>::alited::CONFIGDIR<font color=#1b1baa>}</font>&quot;</font> \
+    ] <font color=#653760>-head</font> <font color=#1b1baa>$head</font> <font color=#653760>-focus</font> *cbx* <font color=#653760>-help</font> alited::ini::Help \
+    <font color=#653760>-resizable</font> no {<b><font color=#3a6797>*</font></b>}[obj basicTextFont]]
   <b><font color=#3a6797>catch</font></b> {alitedObjToDel destroy}
   <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$res</font> ok confdir
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ok</font>} {
@@ -1869,7 +1872,8 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   TipToolHotkeys
   <b><font color=#3a6797>foreach</font></b> {icon} {none gulls heart add change delete up down paste plus minus retry \
   misc previous previous2 next next2 folder file OpenFile SaveFile saveall undo redo \
-  box replace ok color date help run e_menu other trash actions paste copy more} {
+  box replace ok color date help run e_menu other trash actions paste copy more
+  tag tagoff} {
     <b><font color=#3a6797>set</font></b> img [CreateIcon <font color=#1b1baa>$icon</font>]
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$icon</font> in {<b><font color=#3a6797>file</font></b> OpenFile SaveFile saveall box undo redo replace \
     ok color date help run e_menu other}} {

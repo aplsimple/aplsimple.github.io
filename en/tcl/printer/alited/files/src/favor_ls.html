@@ -293,6 +293,8 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>foreach</font></b> it <font color=#1b1baa>$args</font> {
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$text</font> ne {}} {
       <b><font color=#3a6797>append</font></b> text \n
+    }
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$currents</font> ne {}} {
       <b><font color=#3a6797>append</font></b> currents <font color=#1b1baa>$::alited::EOL</font>
     }
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$isfiles</font>} {
@@ -335,7 +337,9 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <i><font color=#4b5d50># See also: ComposeText, DisplayText</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al
-  DisplayText [ComposeText <font color=#1b1baa>$al(FAV,IsFavor)</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
+  <b><font color=#3a6797>set</font></b> text [ComposeText <font color=#1b1baa>$al(FAV,IsFavor)</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>]
+  DisplayText <font color=#1b1baa>$text</font>
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$text</font>
 }
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=favor_ls::Selected></a>
@@ -448,12 +452,18 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> tall [alited::SessionTclList 2]
   <b><font color=#3a6797>set</font></b> isel [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$tsel</font>]
   <b><font color=#3a6797>set</font></b> iall [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$tall</font>]
+  <b><font color=#3a6797>set</font></b> fsel [alited::SessionList 1]  ;<i><font color=#4b5d50># all selected bar tabs</font></i>
+  <b><font color=#3a6797>set</font></b> ifil [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$fsel</font>]
   <b><font color=#3a6797>set</font></b> msgNoTcl {No .tcl files found in the session}
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$iall</font>&lt;1} {
-    Message <font color=#1b1baa>$msgNoTcl</font> 4
-    <b><font color=#ca14ca>return</font></b>
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$iall</font>&lt;1 || <font color=#1b1baa>$ifil</font>&gt;1} {
+    <b><font color=#3a6797>set</font></b> tsel <font color=#1b1baa>$fsel</font>
+    <b><font color=#3a6797>set</font></b> isel <font color=#1b1baa>$ifil</font>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$isel</font>&lt;2} {
+      Message <font color=#1b1baa>$msgNoTcl</font> 4
+      <b><font color=#ca14ca>return</font></b>
+    }
   }
-  <b><font color=#3a6797>set</font></b> msg [msgcat::mc <font color=#8b2a0e>&quot;\n Save as favorites list: selected (%s) or all (%a) files?\n&quot;</font>]
+  <b><font color=#3a6797>set</font></b> msg [msgcat::mc <font color=#8b2a0e>&quot;\n Save as favorites list: selected (%s) or all (%a) Tcl files?\n&quot;</font>]
   <b><font color=#3a6797>set</font></b> msg [<b><font color=#3a6797>string</font></b> map [<b><font color=#3a6797>list</font></b> %s <font color=#1b1baa>$isel</font> %a <font color=#1b1baa>$iall</font>] <font color=#1b1baa>$msg</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$isel</font>&gt;1} {<b><font color=#3a6797>set</font></b> res 1} {<b><font color=#3a6797>set</font></b> res 2}
   <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$obFav</font> misc ques <font color=#1b1baa>$al(MC,question)</font> <font color=#1b1baa>$msg</font> {Selected 1 {All files} 2 Cancel 0} <font color=#1b1baa>$res</font>]
@@ -652,7 +662,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       <font color=#653760>-tip</font> <font color=#8b2a0e>&quot;Delete a list of favorites&quot;</font> <font color=#653760>-image</font> alimg_delete-big}}
     {.fra.v_ - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> top <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> y}}
     {.fra.btTFil - - - - {<b><font color=#134070>pack</font></b> <font color=#1b1baa>$forget</font> <font color=#653760>-side</font> top} {<font color=#653760>-com</font> ::alited::favor_ls::AddFiles
-      <font color=#653760>-tip</font> <font color=#8b2a0e>&quot;Add .tcl files of current session\nas the favorites&quot;</font>
+      <font color=#653760>-tip</font> <font color=#8b2a0e>&quot;Add files of current session\nas the favorites&quot;</font>
       <font color=#653760>-image</font> alimg_plus-big}}
     {.fra.btTCur - - - - {<b><font color=#134070>pack</font></b> <font color=#1b1baa>$forget</font> <font color=#653760>-side</font> top} {
       <font color=#653760>-com</font> ::alited::favor_ls::DisplayFavorText
@@ -660,7 +670,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
     {.LbxFav - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both}
       {<font color=#653760>-h</font> 10 <font color=#653760>-w</font> 40 <font color=#653760>-lvar</font> ::alited::favor_ls::favlist <font color=#653760>-onevent</font> {
       &lt;&lt;ListboxSelect&gt;&gt; ::alited::favor_ls::Select
-      &lt;FocusIn&gt; ::alited::favor_ls::Select
+      &lt;&lt;FocusIn&gt;&gt; ::alited::favor_ls::Select
       &lt;Double-Button-1&gt; ::alited::favor_ls::DoubleClick
       &lt;Return&gt; ::alited::favor_ls::DoubleClick}}}
     {.sbvFavs + L - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-fill</font> y} {}}
@@ -684,7 +694,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       <font color=#653760>-tip</font> <font color=#8b2a0e>&quot;Closes all tabs without favorites\nat choosing Favorites' list&quot;</font>}}
     {LabMess fra2 T 1 2 {<font color=#653760>-st</font> nsew <font color=#653760>-pady</font> 0 <font color=#653760>-padx</font> 3} {<font color=#653760>-style</font> TLabelFS}}
     {fra3 + T 1 2 {<font color=#653760>-st</font> nswe}}
-    {.ButHelp - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,help)</font>} <font color=#653760>-tip</font> F1 <font color=#653760>-com</font> ::alited::favor_ls::Help}}
+    {.ButHelp - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left} {<font color=#653760>-t</font> {<font color=#1b1baa>$al(MC,help)</font>} <font color=#653760>-tip</font> F1 <font color=#653760>-com</font> ::alited::favor_ls::Help <font color=#653760>-takefocus</font> 0}}
     {.h_ - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-expand</font> 1 <font color=#653760>-fill</font> both <font color=#653760>-padx</font> 4}}
     {.ButOK - - - - {<b><font color=#134070>pack</font></b> <font color=#1b1baa>$forget</font> <font color=#653760>-side</font> left} {<font color=#653760>-t</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>al(MC,select)&quot;</font> <font color=#653760>-com</font> ::alited::favor_ls::Ok}}
     {.ButOpenFile - - - - {<b><font color=#134070>pack</font></b> <font color=#653760>-side</font> left <font color=#653760>-padx</font> 2} {<font color=#653760>-t</font> Open...
@@ -695,16 +705,19 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   }
   <b><font color=#3a6797>set</font></b> fav {}
   <b><font color=#3a6797>set</font></b> lbx [<font color=#1b1baa>$obFav</font> LbxFav]
-  DisplayFavorText
+  <b><font color=#3a6797>set</font></b> text [DisplayFavorText]
   Restore_favlist
-  <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$al(FAV,IsFavor)</font>} {<b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;alited::favor_ls::Select 0 ; focus <font color=#1b1baa>$</font>lbx&quot;</font>}
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;F1&gt; <font color=#8b2a0e>&quot;<font color=#1b1baa>[$</font>obFav ButHelp<font color=#1b1baa>]</font> invoke&quot;</font>
   <b><font color=#134070>bind</font></b> [<font color=#1b1baa>$obFav</font> LabMess] &lt;Button-1&gt; alited::favor_ls::ProcMessage
   <b><font color=#3a6797>after</font></b> 500 ::alited::favor_ls::HelpMe ;<i><font color=#4b5d50># show an introduction after a short pause</font></i>
   <b><font color=#3a6797>set</font></b> geo {<font color=#653760>-resizable</font> 1 <font color=#653760>-minsize</font> {600 400}}
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$favgeometry</font> ne {}} {<b><font color=#3a6797>append</font></b> geo <font color=#8b2a0e>&quot; -geometry <font color=#1b1baa>$</font>favgeometry&quot;</font>}
-  <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$obFav</font> showModal <font color=#1b1baa>$win</font> <font color=#653760>-onclose</font> ::alited::favor_ls::Cancel \
-    <font color=#653760>-focus</font> [<font color=#1b1baa>$obFav</font> EntFav] {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$geo</font>]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al(FAV,IsFavor)</font> && <font color=#1b1baa>$text</font> ne {}} {
+    <b><font color=#3a6797>append</font></b> geo <font color=#8b2a0e>&quot; -focus <font color=#1b1baa>[$</font>obFav EntFav<font color=#1b1baa>]</font>&quot;</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> after 300 <font color=#8b2a0e>&quot;focus <font color=#1b1baa>$</font>lbx; alited::favor_ls::Select 0&quot;</font>]
+  }
+  <b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$obFav</font> showModal <font color=#1b1baa>$win</font> <font color=#653760>-onclose</font> ::alited::favor_ls::Cancel {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$geo</font>]
   <b><font color=#3a6797>set</font></b> favgeometry [<b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font>]
   baltip::configure {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$tipson</font>
   <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$win</font>}
