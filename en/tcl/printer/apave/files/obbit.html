@@ -265,6 +265,20 @@ ch - character(s)</span></div></li></ul>
 wt - text's path
 where - where to set</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#apave::DefaultCS">DefaultCS</a><span class=tooltiptext> apave::DefaultCS : Gets default color scheme counting current background of Tk root window.</span></div></li></ul>
+<li><b><a href="#Locale">&nbsp;&nbsp;Locale</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#apave::DefaultLocale">DefaultLocale</a><span class=tooltiptext> apave::DefaultLocale : Gets a default locale currently used in a system.</span></div></li></ul>
+<li><b><a href="#Clock">&nbsp;&nbsp;Clock</a></b></li>
+<ul class=toc><li><div class=tooltip><a href="#apave::minYear">minYear</a><span class=tooltiptext> apave::minYear : Gets minimal year that is correct.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#apave::maxYear">maxYear</a><span class=tooltiptext> apave::maxYear : Gets maximal year that is correct.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#apave::firstWeekDay">firstWeekDay</a><span class=tooltiptext> apave::firstWeekDay : Gets 1st date of week.
+dt - clock time</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#apave::currentYearMonthDay">currentYearMonthDay</a><span class=tooltiptext> apave::currentYearMonthDay : Gets current year, month, day.
+Returns a list of current year, month, day.</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#apave::months">months</a><span class=tooltiptext> apave::months : Gets a list of months according to a locale.
+loc - the locale</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#apave::weekdays">weekdays</a><span class=tooltiptext> apave::weekdays : Gets a list of week days according to a locale.
+loc - the locale
+Return list of weekdays and week format (%u or %w)</span></div></li></ul>
 <li><b><a href="#ObjectProperty">ObjectProperty</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#constructor">constructor</a><span class=tooltiptext> constructor</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#destructor">destructor</a><span class=tooltiptext> destructor</span></div></li></ul>
@@ -526,6 +540,22 @@ Docs:
     <b><font color=#3a6797>set</font></b> m2 [<b><font color=#3a6797>string</font></b> map {& {}} <font color=#1b1baa>$m</font>]
     <b><font color=#3a6797>set</font></b> ::apave::_MC_(<font color=#1b1baa>$m2</font>) [<b><font color=#3a6797>string</font></b> map {& {}} [msgcat::mc <font color=#1b1baa>$m</font>]]
   }
+}
+
+<i><font color=#4b5d50># locale 1st day of week: %u means Mon (default), %w means Sun</font></i>
+<b><font color=#3a6797>variable</font></b> LOCALES
+<b><font color=#3a6797>array</font></b> set LOCALES {
+  en_uk %u
+  en_us %w
+  ru %u
+  ru_ru %u
+  ru_ua %u
+  uk %u
+  ua %u
+  uk_ua %u
+  ua_ua %u
+  by %u
+  be_by %u
 }
 <a id=CS_-_color_schemes></a>
 <i><font color=#4b5d50># ________________________ CS - color schemes _________________________ #</font></i>
@@ -1520,6 +1550,88 @@ Docs:
     <b><font color=#3a6797>set</font></b> res 23 ;<i><font color=#4b5d50># dark</font></i>
   }
   <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<a id=Locale></a>
+<i><font color=#4b5d50>## ________________________ Locale _________________________ ##</font></i>
+<a id=apave::DefaultLocale></a>
+<b><font color=#ca14ca>proc</font></b> ::apave::DefaultLocale {} {
+  <i><font color=#4b5d50># Gets a default locale currently used in a system.</font></i>
+
+  <b><font color=#3a6797>lindex</font></b> [::msgcat::mcpreferences] 0
+}
+<a id=Clock></a>
+<i><font color=#4b5d50>## ________________________ Clock _________________________ ##</font></i>
+<a id=apave::minYear></a>
+<b><font color=#ca14ca>proc</font></b> ::apave::minYear {} {
+  <i><font color=#4b5d50># Gets minimal year that is correct.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> 1753
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=apave::maxYear></a>
+<b><font color=#ca14ca>proc</font></b> ::apave::maxYear {} {
+  <i><font color=#4b5d50># Gets maximal year that is correct.</font></i>
+
+  <b><font color=#ca14ca>return</font></b> 9999
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=apave::firstWeekDay></a>
+<b><font color=#ca14ca>proc</font></b> ::apave::firstWeekDay {dt} {
+  <i><font color=#4b5d50># Gets 1st date of week.</font></i>
+  <i><font color=#4b5d50>#   dt - clock time</font></i>
+
+  <b><font color=#3a6797>set</font></b> wd [<b><font color=#3a6797>clock</font></b> format <font color=#1b1baa>$dt</font> <font color=#653760>-format</font> %u]
+  <b><font color=#3a6797>clock</font></b> add <font color=#1b1baa>$dt</font> -[<b><font color=#3a6797>incr</font></b> wd -1] day
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=apave::currentYearMonthDay></a>
+<b><font color=#ca14ca>proc</font></b> ::apave::currentYearMonthDay {} {
+  <i><font color=#4b5d50># Gets current year, month, day.</font></i>
+  <i><font color=#4b5d50># Returns a list of current year, month, day.</font></i>
+
+  <b><font color=#3a6797>set</font></b> cl [<b><font color=#3a6797>clock</font></b> seconds]
+  <b><font color=#3a6797>foreach</font></b> d {Y N e} {<b><font color=#3a6797>lappend</font></b> res {<b><font color=#3a6797>*</font></b>}[<b><font color=#3a6797>clock</font></b> format <font color=#1b1baa>$cl</font> <font color=#653760>-format</font> %<font color=#1b1baa>$d</font>]}
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=apave::months></a>
+<b><font color=#ca14ca>proc</font></b> ::apave::months {{loc <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Gets a list of months according to a locale.</font></i>
+  <i><font color=#4b5d50>#   loc - the locale</font></i>
+
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$loc</font> eq {}} {<b><font color=#3a6797>set</font></b> loc [DefaultLocale]}
+  <b><font color=#3a6797>set</font></b> months [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>foreach</font></b> i {01 02 03 04 05 06 07 08 09 10 11 12} {
+    <b><font color=#3a6797>lappend</font></b> months [<b><font color=#3a6797>clock</font></b> format [<b><font color=#3a6797>clock</font></b> scan <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>i/01/2021&quot;</font> \
+      <font color=#653760>-format</font> %D <font color=#653760>-locale</font> <font color=#1b1baa>$loc</font>] <font color=#653760>-format</font> %B <font color=#653760>-locale</font> <font color=#1b1baa>$loc</font>]
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$months</font>
+}
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=apave::weekdays></a>
+<b><font color=#ca14ca>proc</font></b> ::apave::weekdays {{loc <font color=#8b2a0e>&quot;&quot;</font>}} {
+  <i><font color=#4b5d50># Gets a list of week days according to a locale.</font></i>
+  <i><font color=#4b5d50>#   loc - the locale</font></i>
+  <i><font color=#4b5d50># Return list of weekdays and week format (%u or %w)</font></i>
+
+  <b><font color=#3a6797>variable</font></b> LOCALES
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$loc</font> eq {}} {<b><font color=#3a6797>set</font></b> loc [DefaultLocale]}
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>array</font></b> names LOCALES <font color=#1b1baa>$loc</font>] ne {}} {
+    <b><font color=#3a6797>set</font></b> wformat <font color=#1b1baa>$LOCALES($loc)</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> wformat %u  ;<i><font color=#4b5d50># by default, 1st day of week is Monday</font></i>
+  }
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wformat</font> eq {%u}} {  ;<i><font color=#4b5d50># Sunday be the last day of week</font></i>
+    <b><font color=#3a6797>set</font></b> wdays {1 2 3 4 5 6 7}
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> wdays {0 1 2 3 4 5 6}
+  }
+  <b><font color=#3a6797>set</font></b> days [<b><font color=#3a6797>list</font></b>]
+  <b><font color=#3a6797>foreach</font></b> i <font color=#1b1baa>$wdays</font> {
+    <b><font color=#3a6797>lappend</font></b> days [<b><font color=#3a6797>clock</font></b> format [<b><font color=#3a6797>clock</font></b> scan <font color=#8b2a0e>&quot;03/<font color=#1b1baa>[</font>expr <font color=#1b1baa>{</font>14+<font color=#1b1baa>$</font>i<font color=#1b1baa>}]</font>/2021&quot;</font> \
+      <font color=#653760>-format</font> %D <font color=#653760>-locale</font> <font color=#1b1baa>$loc</font>] <font color=#653760>-format</font> %a <font color=#653760>-locale</font> <font color=#1b1baa>$loc</font>]
+  }
+  <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$days</font> <font color=#1b1baa>$wformat</font>
 }
 <a id=ObjectProperty></a>
 <i><font color=#4b5d50># ________________________ ObjectProperty _________________________ #</font></i>

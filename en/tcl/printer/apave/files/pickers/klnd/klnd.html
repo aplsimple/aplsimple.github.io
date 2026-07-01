@@ -112,17 +112,7 @@ i - button index</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#my::InitSettings">InitSettings</a><span class=tooltiptext> my::InitSettings : Gets initial settings, once only.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#my::InitCalendar">InitCalendar</a><span class=tooltiptext> my::InitCalendar : Initializes the settings of the calendar.</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#my::MainWidgets">MainWidgets</a><span class=tooltiptext> my::MainWidgets : Forms main widgets of calendar.</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#my::DefaultLocale">DefaultLocale</a><span class=tooltiptext> my::DefaultLocale : Gets a default locale currently used in a system.</span></div></li></ul>
 <li><b><a href="#UI">UI</a></b></li>
-<ul class=toc><li><div class=tooltip><a href="#klnd::minYear">minYear</a><span class=tooltiptext> klnd::minYear : Gets minimal year that is correct.</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#klnd::maxYear">maxYear</a><span class=tooltiptext> klnd::maxYear : Gets maximal year that is correct.</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#klnd::currentYearMonthDay">currentYearMonthDay</a><span class=tooltiptext> klnd::currentYearMonthDay : Gets current year, month, day.
-Returns a list of current year, month, day.</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#klnd::months">months</a><span class=tooltiptext> klnd::months : Gets a list of months according to a locale.
-loc - the locale</span></div></li></ul>
-<ul class=toc><li><div class=tooltip><a href="#klnd::weekdays">weekdays</a><span class=tooltiptext> klnd::weekdays : Gets a list of week days according to a locale.
-loc - the locale
-Return list of weekdays and week format (%u or %w)</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#klnd::clearup">clearup</a><span class=tooltiptext> klnd::clearup : Clearance for klnd data (variable my::p).</span></div></li></ul>
 <ul class=toc><li><div class=tooltip><a href="#klnd::clearArgs">clearArgs</a><span class=tooltiptext> klnd::clearArgs : Removes specific options from args.
 args - list of options</span></div></li></ul>
@@ -251,21 +241,6 @@ A command of <code><font color=#653760>-tip</font></code> option can use wildcar
     <b><font color=#3a6797>variable</font></b> msgdir [<b><font color=#3a6797>file</font></b> normalize [<b><font color=#3a6797>file</font></b> join [<b><font color=#3a6797>file</font></b> dirname [<b><font color=#3a6797>info</font></b> script]] msgs]]
     <b><font color=#3a6797>variable</font></b> p
     <b><font color=#3a6797>variable</font></b> red #ff4a4a
-    <b><font color=#3a6797>variable</font></b> locales
-    <i><font color=#4b5d50># locale 1st day of week: %u means Mon (default), %w means Sun</font></i>
-    <b><font color=#3a6797>array</font></b> set locales [<b><font color=#3a6797>list</font></b> \
-      en_uk %u \
-      en_us %w \
-      ru %u \
-      ru_ru %u \
-      ru_ua %u \
-      uk %u \
-      ua %u \
-      uk_ua %u \
-      ua_ua %u \
-      by %u \
-      be_by %u \
-    ]
   }
 }
 
@@ -425,7 +400,6 @@ A command of <code><font color=#653760>-tip</font></code> option can use wildcar
   <b><font color=#3a6797>set</font></b> p(mvis) <font color=#1b1baa>$m</font>  ;<i><font color=#4b5d50># month & year currently visible</font></i>
   <b><font color=#3a6797>set</font></b> p(yvis) <font color=#1b1baa>$y</font>
 }
-
 <i><font color=#4b5d50>#_______________________</font></i>
 <a id=my::fgMayHL></a>
 <b><font color=#ca14ca>proc</font></b> ::klnd::my::fgMayHL {fg1 y m d} {
@@ -442,17 +416,15 @@ A command of <code><font color=#653760>-tip</font></code> option can use wildcar
   <b><font color=#3a6797>set</font></b> m [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$m</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$d</font> ni {0 <font color=#8b2a0e>&quot;&quot;</font>}} {
     <b><font color=#3a6797>set</font></b> fmt %Y/%N/%e
-    <b><font color=#3a6797>set</font></b> day1 <font color=#1b1baa>$y</font>/<font color=#1b1baa>$m</font>/<font color=#1b1baa>$d</font>
-    <b><font color=#3a6797>set</font></b> week1 [<b><font color=#3a6797>clock</font></b> format [<b><font color=#3a6797>clock</font></b> scan <font color=#1b1baa>$y</font>/<font color=#1b1baa>$m</font>/<font color=#1b1baa>$d</font> <font color=#653760>-format</font> <font color=#1b1baa>$fmt</font>] <font color=#653760>-format</font> %V]
+    <b><font color=#3a6797>set</font></b> day1 [<b><font color=#3a6797>clock</font></b> scan <font color=#1b1baa>$y</font>/<font color=#1b1baa>$m</font>/<font color=#1b1baa>$d</font> <font color=#653760>-format</font> <font color=#1b1baa>$fmt</font>]
     <b><font color=#3a6797>foreach</font></b> day <font color=#1b1baa>$p(hllist)</font> {
       <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$day</font> /] y2 m2 d2
       <b><font color=#3a6797>set</font></b> y2 [<b><font color=#3a6797>string</font></b> range 20<font color=#1b1baa>$y2</font> end-3 end]
       <b><font color=#3a6797>set</font></b> m2 [<b><font color=#3a6797>string</font></b> trimleft <font color=#1b1baa>$m2</font> 0]
       <b><font color=#3a6797>set</font></b> d2 [<b><font color=#3a6797>string</font></b> trimleft <font color=#1b1baa>$d2</font> 0]
-      <b><font color=#3a6797>set</font></b> day2 <font color=#1b1baa>$y2</font>/<font color=#1b1baa>$m2</font>/<font color=#1b1baa>$d2</font>
+      <b><font color=#3a6797>set</font></b> day2 [<b><font color=#3a6797>clock</font></b> scan <font color=#1b1baa>$y2</font>/<font color=#1b1baa>$m2</font>/<font color=#1b1baa>$d2</font> <font color=#653760>-format</font> <font color=#1b1baa>$fmt</font>]
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$p(hlweeks)</font>} {
-        <b><font color=#3a6797>set</font></b> week2 [<b><font color=#3a6797>clock</font></b> format [<b><font color=#3a6797>clock</font></b> scan <font color=#1b1baa>$day2</font> <font color=#653760>-format</font> <font color=#1b1baa>$fmt</font>] <font color=#653760>-format</font> %V]
-        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$week1</font> eq <font color=#1b1baa>$week2</font> && <font color=#1b1baa>$y</font>==<font color=#1b1baa>$y2</font>} {
+        <b><font color=#3a6797>if</font></b> {[::apave::firstWeekDay <font color=#1b1baa>$day1</font>] eq [::apave::firstWeekDay <font color=#1b1baa>$day2</font>]} {
           <b><font color=#3a6797>set</font></b> fgw <font color=#1b1baa>$red</font>
           <b><font color=#ca14ca>break</font></b>
         }
@@ -646,7 +618,6 @@ A command of <code><font color=#653760>-tip</font></code> option can use wildcar
   <i><font color=#4b5d50># Initializes the settings of the calendar.</font></i>
 
   <b><font color=#3a6797>variable</font></b> p
-  <b><font color=#3a6797>variable</font></b> locales
   InitSettings
   <b><font color=#3a6797>lassign</font></b> [::apave::parseOptions <font color=#1b1baa>$args</font> <font color=#653760>-locale</font> [::msgcat::mclocale] \
   <font color=#653760>-title</font> {} <font color=#653760>-value</font> {} <font color=#653760>-tvar</font> {} <font color=#653760>-parent</font> {} <font color=#653760>-dateformat</font> %D <font color=#653760>-weeks</font> 0 \
@@ -659,9 +630,9 @@ A command of <code><font color=#653760>-tip</font></code> option can use wildcar
     p(width) p(hlweeks)
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$com2</font> eq {}} {<b><font color=#3a6797>set</font></b> p(com) <font color=#1b1baa>$com1</font>} {<b><font color=#3a6797>set</font></b> p(com) <font color=#1b1baa>$com2</font>}
   <i><font color=#4b5d50># get localized week day names</font></i>
-  <b><font color=#3a6797>lassign</font></b> [::klnd::weekdays <font color=#1b1baa>$loc</font>] p(days) p(weekday)
+  <b><font color=#3a6797>lassign</font></b> [::apave::weekdays <font color=#1b1baa>$loc</font>] p(days) p(weekday)
   <i><font color=#4b5d50># get localized month names</font></i>
-  <b><font color=#3a6797>set</font></b> p(months) [::klnd::months <font color=#1b1baa>$loc</font>]
+  <b><font color=#3a6797>set</font></b> p(months) [::apave::months <font color=#1b1baa>$loc</font>]
   <b><font color=#3a6797>set</font></b> p(loc) <font color=#1b1baa>$loc</font>
   <b><font color=#3a6797>set</font></b> p(tvar) <font color=#1b1baa>$tvar</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$tvar</font> ne {}} {
@@ -745,79 +716,8 @@ A command of <code><font color=#653760>-tip</font></code> option can use wildcar
     }}
   }
 }
-<i><font color=#4b5d50>#_______________________</font></i>
-<a id=my::DefaultLocale></a>
-<b><font color=#ca14ca>proc</font></b> ::klnd::my::DefaultLocale {} {
-  <i><font color=#4b5d50># Gets a default locale currently used in a system.</font></i>
-
-  <b><font color=#ca14ca>return</font></b> [<b><font color=#3a6797>lindex</font></b> [::msgcat::mcpreferences] 0]
-}
 <a id=UI></a>
 <i><font color=#4b5d50># ________________________ UI _________________________ #</font></i>
-<a id=klnd::minYear></a>
-<b><font color=#ca14ca>proc</font></b> ::klnd::minYear {} {
-  <i><font color=#4b5d50># Gets minimal year that is correct.</font></i>
-
-  <b><font color=#ca14ca>return</font></b> 1753
-}
-<i><font color=#4b5d50>#_______________________</font></i>
-<a id=klnd::maxYear></a>
-<b><font color=#ca14ca>proc</font></b> ::klnd::maxYear {} {
-  <i><font color=#4b5d50># Gets maximal year that is correct.</font></i>
-
-  <b><font color=#ca14ca>return</font></b> 9999
-}
-<i><font color=#4b5d50>#_______________________</font></i>
-<a id=klnd::currentYearMonthDay></a>
-<b><font color=#ca14ca>proc</font></b> ::klnd::currentYearMonthDay {} {
-  <i><font color=#4b5d50># Gets current year, month, day.</font></i>
-  <i><font color=#4b5d50># Returns a list of current year, month, day.</font></i>
-
-  <b><font color=#3a6797>set</font></b> cl [<b><font color=#3a6797>clock</font></b> seconds]
-  <b><font color=#3a6797>foreach</font></b> d {Y N e} {<b><font color=#3a6797>lappend</font></b> res {<b><font color=#3a6797>*</font></b>}[<b><font color=#3a6797>clock</font></b> format <font color=#1b1baa>$cl</font> <font color=#653760>-format</font> %<font color=#1b1baa>$d</font>]}
-  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
-}
-<i><font color=#4b5d50>#_______________________</font></i>
-<a id=klnd::months></a>
-<b><font color=#ca14ca>proc</font></b> ::klnd::months {{loc <font color=#8b2a0e>&quot;&quot;</font>}} {
-  <i><font color=#4b5d50># Gets a list of months according to a locale.</font></i>
-  <i><font color=#4b5d50>#   loc - the locale</font></i>
-
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$loc</font> eq {}} {<b><font color=#3a6797>set</font></b> loc [my::DefaultLocale]}
-  <b><font color=#3a6797>set</font></b> months [<b><font color=#3a6797>list</font></b>]
-  <b><font color=#3a6797>foreach</font></b> i {01 02 03 04 05 06 07 08 09 10 11 12} {
-    <b><font color=#3a6797>lappend</font></b> months [<b><font color=#3a6797>clock</font></b> format [<b><font color=#3a6797>clock</font></b> scan <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>i/01/2021&quot;</font> \
-      <font color=#653760>-format</font> %D <font color=#653760>-locale</font> <font color=#1b1baa>$loc</font>] <font color=#653760>-format</font> %B <font color=#653760>-locale</font> <font color=#1b1baa>$loc</font>]
-  }
-  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$months</font>
-}
-<i><font color=#4b5d50>#_______________________</font></i>
-<a id=klnd::weekdays></a>
-<b><font color=#ca14ca>proc</font></b> ::klnd::weekdays {{loc <font color=#8b2a0e>&quot;&quot;</font>}} {
-  <i><font color=#4b5d50># Gets a list of week days according to a locale.</font></i>
-  <i><font color=#4b5d50>#   loc - the locale</font></i>
-  <i><font color=#4b5d50># Return list of weekdays and week format (%u or %w)</font></i>
-
-  <b><font color=#3a6797>variable</font></b> my::locales
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$loc</font> eq {}} {<b><font color=#3a6797>set</font></b> loc [my::DefaultLocale]}
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>array</font></b> names my::locales <font color=#1b1baa>$loc</font>] ne {}} {
-    <b><font color=#3a6797>set</font></b> wformat <font color=#1b1baa>$my::locales($loc)</font>
-  } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>set</font></b> wformat %u  ;<i><font color=#4b5d50># by default, 1st day of week is Monday</font></i>
-  }
-  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wformat</font> eq {%u}} {  ;<i><font color=#4b5d50># Sunday be the last day of week</font></i>
-    <b><font color=#3a6797>set</font></b> wdays {1 2 3 4 5 6 7}
-  } <b><font color=#3a6797>else</font></b> {
-    <b><font color=#3a6797>set</font></b> wdays {0 1 2 3 4 5 6}
-  }
-  <b><font color=#3a6797>set</font></b> days [<b><font color=#3a6797>list</font></b>]
-  <b><font color=#3a6797>foreach</font></b> i <font color=#1b1baa>$wdays</font> {
-    <b><font color=#3a6797>lappend</font></b> days [<b><font color=#3a6797>clock</font></b> format [<b><font color=#3a6797>clock</font></b> scan <font color=#8b2a0e>&quot;03/<font color=#1b1baa>[</font>expr <font color=#1b1baa>{</font>14+<font color=#1b1baa>$</font>i<font color=#1b1baa>}]</font>/2021&quot;</font> \
-      <font color=#653760>-format</font> %D <font color=#653760>-locale</font> <font color=#1b1baa>$loc</font>] <font color=#653760>-format</font> %a <font color=#653760>-locale</font> <font color=#1b1baa>$loc</font>]
-  }
-  <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$days</font> <font color=#1b1baa>$wformat</font>
-}
-<i><font color=#4b5d50>#_______________________</font></i>
 <a id=klnd::clearup></a>
 <b><font color=#ca14ca>proc</font></b> ::klnd::clearup {} {
   <i><font color=#4b5d50># Clearance for klnd data (variable my::p).</font></i>
