@@ -105,6 +105,9 @@ See also: BeforeFormatting</span></div></li></ul>
 <li><b><a href="#map">&nbsp;&nbsp;map</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#format::Mode1">Mode1</a><span class=tooltiptext> format::Mode1 : Maps selection by pairs taken from config.file.
 cont - list of config.file's lines (pairs from-to)</span></div></li></ul>
+<ul class=toc><li><div class=tooltip><a href="#format::GetSelection">GetSelection</a><span class=tooltiptext> format::GetSelection : Gets a text selection as positions or as text.
+posOnly - yes for getting positions of selection
+If no text is selected, make the current line selected.</span></div></li></ul>
 <li><b><a href="#commands">&nbsp;&nbsp;commands</a></b></li>
 <ul class=toc><li><div class=tooltip><a href="#format::Mode2">Mode2</a><span class=tooltiptext> format::Mode2 : Applies a command to selection/current line.
 cont - list of config.file's lines</span></div></li></ul>
@@ -117,7 +120,8 @@ cont - list of config.file's lines
 The selection (or lines of selection) is saved to a temporary file
 that is processed by commands.</span></div></li></ul>
 <li><b><a href="#insertions">&nbsp;&nbsp;insertions</a></b></li>
-<ul class=toc><li><div class=tooltip><a href="#format::Mode5">Mode5</a><span class=tooltiptext> format::Mode5 : Inserts a string at the current cursor position.
+<ul class=toc><li><div class=tooltip><a href="#format::Mode5">Mode5</a><span class=tooltiptext> format::Mode5 : Inserts a string at the current cursor position
+or, if a text is selected, replaces the selection.
 Or does something without changing the text (if commands return "").
 cont - list of config.file's lines or variable name containing it
 args - contains the edited file name etc.</span></div></li></ul>
@@ -821,6 +825,30 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   }
   AfterFormatting <font color=#1b1baa>$wtxt</font> <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font> <font color=#1b1baa>$value</font>
 }
+<i><font color=#4b5d50>#_______________________</font></i>
+<a id=format::GetSelection></a>
+<b><font color=#ca14ca>proc</font></b> format::GetSelection {{posOnly no}} {
+  <i><font color=#4b5d50># Gets a text selection as positions or as text.</font></i>
+  <i><font color=#4b5d50>#   posOnly - yes for getting positions of selection</font></i>
+  <i><font color=#4b5d50># If no text is selected, make the current line selected.</font></i>
+
+  <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> [<font color=#1b1baa>$wtxt</font> tag ranges sel]]} {
+    <b><font color=#3a6797>set</font></b> pos0 [<font color=#1b1baa>$wtxt</font> index insert]
+    <b><font color=#3a6797>set</font></b> pos1 [<font color=#1b1baa>$wtxt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos0 linestart&quot;</font>]
+    <b><font color=#3a6797>set</font></b> pos2 [<font color=#1b1baa>$wtxt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos0 lineend&quot;</font>]
+    <font color=#1b1baa>$wtxt</font> tag add sel <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font>
+  }
+  <b><font color=#3a6797>set</font></b> positions [<font color=#1b1baa>$wtxt</font> tag ranges sel]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$posOnly</font>} {
+    <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$positions</font>
+  }
+  <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$positions</font> pos1 pos2
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font>]}]} {
+    <b><font color=#3a6797>set</font></b> res {}
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}
 <a id=commands></a>
 <i><font color=#4b5d50>## ________________________ commands _________________________ ##</font></i>
 <a id=format::Mode2></a>
@@ -832,13 +860,7 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
   <b><font color=#3a6797>set</font></b> err 0
   <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$cont</font> {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> com [alited::edit::IniParameter command <font color=#1b1baa>$line</font>]] ne {}} {
-      <b><font color=#3a6797>set</font></b> selection [<font color=#1b1baa>$wtxt</font> tag ranges sel]
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$selection</font>]==0} {
-        <b><font color=#3a6797>set</font></b> pos [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$wtxt</font> index insert])}]
-        <b><font color=#3a6797>set</font></b> pos1 <font color=#1b1baa>$pos</font>.0
-        <b><font color=#3a6797>set</font></b> pos2 <font color=#1b1baa>$pos</font>.end
-        <b><font color=#3a6797>set</font></b> selection [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font>]
-      }
+      <b><font color=#3a6797>set</font></b> selection [GetSelection yes]
       <i><font color=#4b5d50># Mode=2 allows a rectangular selection,</font></i>
       <i><font color=#4b5d50># so we should apply the command ($com)</font></i>
       <i><font color=#4b5d50># to each line of the rectangular selection</font></i>
@@ -947,7 +969,8 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
 <i><font color=#4b5d50>## ________________________ insertions _________________________ ##</font></i>
 <a id=format::Mode5></a>
 <b><font color=#ca14ca>proc</font></b> format::Mode5 {cont args} {
-  <i><font color=#4b5d50># Inserts a string at the current cursor position.</font></i>
+  <i><font color=#4b5d50># Inserts a string at the current cursor position</font></i>
+  <i><font color=#4b5d50># or, if a text is selected, replaces the selection.</font></i>
   <i><font color=#4b5d50># Or does something without changing the text (if commands return &quot;&quot;).</font></i>
   <i><font color=#4b5d50>#   cont - list of config.file's lines or variable name containing it</font></i>
   <i><font color=#4b5d50>#   args - contains the edited file name etc.</font></i>
@@ -969,16 +992,8 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$ending</font>} {
         <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>join</font></b> [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$cont</font> <font color=#1b1baa>$il</font> end] \n]
       }
-      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> [<font color=#1b1baa>$wtxt</font> tag ranges sel]] && [<b><font color=#3a6797>string</font></b> first %v <font color=#1b1baa>$com</font>]&gt;-1} {
-        <i><font color=#4b5d50># command needs selection - if none, select current line</font></i>
-        <b><font color=#3a6797>set</font></b> pos0 [<font color=#1b1baa>$wtxt</font> index insert]
-        <b><font color=#3a6797>set</font></b> pos1 [<font color=#1b1baa>$wtxt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos0 linestart&quot;</font>]
-        <b><font color=#3a6797>set</font></b> pos2 [<font color=#1b1baa>$wtxt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos0 lineend&quot;</font>]
-        <font color=#1b1baa>$wtxt</font> tag add sel <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font>
-      }
       <b><font color=#3a6797>set</font></b> selection [<font color=#1b1baa>$wtxt</font> tag ranges sel]
-      <b><font color=#3a6797>set</font></b> lsel [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$selection</font>]
-      <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$lsel</font>} {
+      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$selection</font>]} {
         <b><font color=#3a6797>set</font></b> value {}
       }
       <i><font color=#4b5d50># map format's own and template's woildcards</font></i>
@@ -994,7 +1009,9 @@ Some additional alited's files are also contained in <a href="https://aplsimple.
       <b><font color=#3a6797>set</font></b> value [<b><font color=#3a6797>eval</font></b> <font color=#1b1baa>$com</font>]
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$value</font> ne {}} {
         <b><font color=#3a6797>set</font></b> value [alited::edit::UnEscapeValue <font color=#1b1baa>$value</font>]
-        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$lsel</font>} {
+        <i><font color=#4b5d50># formatter can reset the text selection</font></i>
+        <b><font color=#3a6797>set</font></b> selection [<font color=#1b1baa>$wtxt</font> tag ranges sel]
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$selection</font>]} {
           <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$selection</font> pos1 pos2
           <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font> <font color=#1b1baa>$value</font>
           <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>wtxt tag add sel <font color=#1b1baa>$</font>pos1 <font color=#1b1baa>$</font>pos2&quot;</font>
