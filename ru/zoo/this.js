@@ -17,7 +17,6 @@ function writeHeader() {
         <a href='+prntdir+'index.html id=tohome title="до дому, до хаты"><img id="flagimg" height=14 width=14 src="'+homeLINK+'/zoo/favicon.jpg"> \
         <span id=flagcont>&nbsp;Домой</span></a> \
         <a href="'+prntdir+'misc/news/news.html"       id=nav1   title="Вести с полей">Новости</a> \
-        <a href="'+prntdir+'misc/links/links.html"     id=nav2   title="Авторские сайты">Авторы</a> \
         <a href="'+prntdir+'misc/self/self.html"       id=nav2   title="\'Я пиит\'... от слова \'пить\'">Отсебятина</a> \
         <a href="'+prntdir+'misc/stream/stream.html"   id=nav2   title="Типа бложика">Стремнина</a> \
         <a href="'+prntdir+'misc/running/running.html" id=nav2   title="Бегу и прочей ерунде посвящается">etc.</a> \
