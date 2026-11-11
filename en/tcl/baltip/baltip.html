@@ -1334,6 +1334,10 @@ this option with baltip instead of BWidget and tklib's tooltip.
   }
   <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$force</font> && <font color=#1b1baa>$geo</font> eq {}} {
     <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists ttdata(on,<font color=#1b1baa>$w</font>)] || !<font color=#1b1baa>$ttdata(on,$w)</font>} <b><font color=#ca14ca>return</font></b>
+    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$widgetclass</font> ne {Menu} && [<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$win</font>] && ![<b><font color=#134070>winfo</font></b> ismapped <font color=#1b1baa>$win</font>]} {
+      <i><font color=#4b5d50># a tip never shown (its pending show was cancelled) mustn't block this one</font></i>
+      <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$win</font>}
+    }
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$widgetclass</font> ne {Menu} &&  ([<b><font color=#134070>winfo</font></b> exists <font color=#1b1baa>$win</font>] || ![<b><font color=#3a6797>string</font></b> match <font color=#1b1baa>$w</font>* [<b><font color=#134070>winfo</font></b> containing <font color=#1b1baa>$px</font> <font color=#1b1baa>$py</font>]])} {
       <b><font color=#ca14ca>return</font></b>
     }
@@ -1357,6 +1361,7 @@ this option with baltip instead of BWidget and tklib's tooltip.
   <b><font color=#3a6797>set</font></b> ttdata(REGISTERED) <font color=#1b1baa>$w</font>
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$data(-fg)</font> eq {}} {<b><font color=#3a6797>set</font></b> data(-fg) black}
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$data(-bg)</font> eq {}} {<b><font color=#3a6797>set</font></b> data(-bg) #FBFB95}
+  <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>after</font></b> cancel <font color=#1b1baa>$ttdata(fading,$win)</font>}  ;<i><font color=#4b5d50># the fading of the tip being replaced</font></i>
   <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>destroy</font></b> <font color=#1b1baa>$win</font>}
   <b><font color=#134070>toplevel</font></b> <font color=#1b1baa>$win</font> <font color=#6c3e67>-bg</font> <font color=#1b1baa>$data(-bg)</font> <font color=#6c3e67>-class</font> Tooltip<font color=#1b1baa>$w</font>
   <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>wm</font></b> withdraw <font color=#1b1baa>$win</font>}
@@ -1476,9 +1481,13 @@ this option with baltip instead of BWidget and tklib's tooltip.
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$show</font> && [<b><font color=#3a6797>info</font></b> exists ttdata(maxexp,<font color=#1b1baa>$w</font>)] &&  [<b><font color=#3a6797>string</font></b> is integer <font color=#6c3e67>-strict</font> <font color=#1b1baa>$ttdata(maxexp,$w)</font>]} {
       <b><font color=#3a6797>incr</font></b> ttdata(maxexp,<font color=#1b1baa>$w</font>) -1
     }
-    <b><font color=#3a6797>update</font></b>
-    <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>after</font></b> cancel <font color=#1b1baa>$ttdata(after)</font>}
-    <b><font color=#3a6797>set</font></b> ttdata(after) [<b><font color=#3a6797>after</font></b> idle [<b><font color=#3a6797>list</font></b> after <font color=#1b1baa>$aint</font>  [<b><font color=#3a6797>list</font></b> ::baltip::my::<font color=#1b1baa>${Un}</font>FadeNext <font color=#1b1baa>$win</font> <font color=#1b1baa>$aint</font> <font color=#1b1baa>$fint</font> <font color=#1b1baa>$icount</font> <font color=#1b1baa>$alpha</font> <font color=#1b1baa>$show</font> <font color=#1b1baa>$geo</font> <font color=#1b1baa>$geos</font>]]]
+    <i><font color=#4b5d50># idle tasks only: a full update would run pending events (clicks, &lt;Enter&gt;</font></i>
+    <i><font color=#4b5d50># on other widgets...) from inside this timer</font></i>
+    <b><font color=#3a6797>update</font></b> idletasks
+    <i><font color=#4b5d50># a timer of its own per tip: ttdata(after) holds the pending show of the</font></i>
+    <i><font color=#4b5d50># hovered widget, which a fading tip (e.g. an eternal one) mustn't cancel</font></i>
+    <b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>after</font></b> cancel <font color=#1b1baa>$ttdata(fading,$win)</font>}
+    <b><font color=#3a6797>set</font></b> ttdata(fading,<font color=#1b1baa>$win</font>) [<b><font color=#3a6797>after</font></b> <font color=#1b1baa>$aint</font>  [<b><font color=#3a6797>list</font></b> ::baltip::my::<font color=#1b1baa>${Un}</font>FadeNext <font color=#1b1baa>$win</font> <font color=#1b1baa>$aint</font> <font color=#1b1baa>$fint</font> <font color=#1b1baa>$icount</font> <font color=#1b1baa>$alpha</font> <font color=#1b1baa>$show</font> <font color=#1b1baa>$geo</font> <font color=#1b1baa>$geos</font>]]
   }
 }</code><br></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::baltip::my::FadeNext'>FadeNext</a><span class='ns_scope'> [<a href="baltip.html#::baltip::my" title="::baltip::my" class='ruff_cmd'>::baltip::my</a>]</span><span class='tinylink'><a href='baltip.html#::baltip::my'>my</a>, <a href='#top'>Top</a></span></h4>
@@ -1510,6 +1519,7 @@ this option with baltip instead of BWidget and tklib's tooltip.
   <i><font color=#4b5d50># See also: Fade</font></i>
 
   <b><font color=#3a6797>variable</font></b> ttdata
+  <b><font color=#3a6797>unset</font></b> <font color=#6c3e67>-nocomplain</font> ttdata(fading,<font color=#1b1baa>$w</font>)
   <b><font color=#3a6797>incr</font></b> icount -1
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$show</font>} {ShowWindow <font color=#1b1baa>$w</font>}
   <b><font color=#3a6797>set</font></b> show 0
@@ -1991,12 +2001,13 @@ this option with baltip instead of BWidget and tklib's tooltip.
   <b><font color=#3a6797>set</font></b> w [<b><font color=#134070>winfo</font></b> parent <font color=#1b1baa>$win</font>]
   <b><font color=#3a6797>set</font></b> px [<b><font color=#134070>winfo</font></b> pointerx .]
   <b><font color=#3a6797>set</font></b> py [<b><font color=#134070>winfo</font></b> pointery .]
+  <b><font color=#3a6797>set</font></b> py0 <font color=#1b1baa>$py</font>
   <b><font color=#3a6797>set</font></b> width [<b><font color=#134070>winfo</font></b> reqwidth <font color=#1b1baa>$win</font>.label]
   <b><font color=#3a6797>set</font></b> height [<b><font color=#134070>winfo</font></b> reqheight <font color=#1b1baa>$win</font>.label]
   <b><font color=#3a6797>set</font></b> ady 0
-  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> wheight [<b><font color=#134070>winfo</font></b> height <font color=#1b1baa>$w</font>]}]} {
-    <b><font color=#3a6797>set</font></b> wheight 0
-  } <b><font color=#3a6797>else</font></b> {
+  <i><font color=#4b5d50># the widget's bottom matters only for a tip under the widget (or a balloon):</font></i>
+  <i><font color=#4b5d50># for a tip under the pointer, it costs a &quot;winfo containing&quot; per pixel for nothing</font></i>
+  <b><font color=#3a6797>if</font></b> {(<font color=#1b1baa>$geo</font> ne {} || <font color=#1b1baa>$under</font>&gt;=0) && ![<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> wheight [<b><font color=#134070>winfo</font></b> height <font color=#1b1baa>$w</font>]}]} {
     <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$wheight</font>} {<b><font color=#3a6797>incr</font></b> i} {  ;<i><font color=#4b5d50># find the widget's bottom</font></i>
       <b><font color=#3a6797>incr</font></b> py
       <b><font color=#3a6797>incr</font></b> ady
@@ -2007,7 +2018,7 @@ this option with baltip instead of BWidget and tklib's tooltip.
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$shiftX</font> ne {}} {
       <b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$px</font> + <font color=#1b1baa>$shiftX</font>}]
     } <b><font color=#3a6797>else</font></b> {
-      <b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> {max(1,<font color=#1b1baa>$px</font> - round(<font color=#1b1baa>$width</font> / 2.0))}]
+      <b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$px</font> - round(<font color=#1b1baa>$width</font> / 2.0)}]
     }
     <b><font color=#3a6797>set</font></b> y [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$under</font>&gt;=0 ? (<font color=#1b1baa>$py</font> + <font color=#1b1baa>$under</font>) : (<font color=#1b1baa>$py</font> - <font color=#1b1baa>$under</font> - <font color=#1b1baa>$ady</font>)}]
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$shiftY</font> ne {}} {<b><font color=#3a6797>incr</font></b> y <font color=#1b1baa>$shiftY</font>}
@@ -2016,13 +2027,27 @@ this option with baltip instead of BWidget and tklib's tooltip.
     <b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> [<b><font color=#3a6797>string</font></b> map <font color=#8b2a0e>&quot;W <font color=#1b1baa>$</font>width&quot;</font> <font color=#1b1baa>$x</font>]]  ;<i><font color=#4b5d50># W to shift horizontally</font></i>
     <b><font color=#3a6797>set</font></b> y [<b><font color=#3a6797>expr</font></b> [<b><font color=#3a6797>string</font></b> map <font color=#8b2a0e>&quot;H <font color=#1b1baa>$</font>height&quot;</font> <font color=#1b1baa>$y</font>]] ;<i><font color=#4b5d50># H to shift vertically</font></i>
   }
-  <i><font color=#4b5d50># check for edges of screen incl. decors</font></i>
-  <b><font color=#3a6797>set</font></b> scrw [<b><font color=#134070>winfo</font></b> vrootwidth .]
-  <b><font color=#3a6797>set</font></b> scrh [<b><font color=#134070>winfo</font></b> vrootheight .]
-  <b><font color=#3a6797>if</font></b> {(<font color=#1b1baa>$x</font> + <font color=#1b1baa>$width</font>) &gt; <font color=#1b1baa>$scrw</font>}  {<b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$scrw</font> - <font color=#1b1baa>$width</font> - 1}]}
-  <b><font color=#3a6797>if</font></b> {(<font color=#1b1baa>$y</font> + <font color=#1b1baa>$height</font>) &gt; <font color=#1b1baa>$scrh</font>} {<b><font color=#3a6797>set</font></b> y [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$py</font> - <font color=#1b1baa>$height</font> - 16}]}
-  <b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> {max(0,<font color=#1b1baa>$x</font>)}]
-  <b><font color=#3a6797>set</font></b> y [<b><font color=#3a6797>expr</font></b> {max(0,<font color=#1b1baa>$y</font>)}]
+  <i><font color=#4b5d50># check for edges of screen incl. decors; the virtual root may not cover all</font></i>
+  <i><font color=#4b5d50># monitors (on macOS, it's the main screen only): outside of it, the screen's</font></i>
+  <i><font color=#4b5d50># edges are unknown to Tk</font></i>
+  <b><font color=#3a6797>set</font></b> vx [<b><font color=#134070>winfo</font></b> vrootx .]
+  <b><font color=#3a6797>set</font></b> vy [<b><font color=#134070>winfo</font></b> vrooty .]
+  <b><font color=#3a6797>set</font></b> scrw [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$vx</font> + [<b><font color=#134070>winfo</font></b> vrootwidth .]}]
+  <b><font color=#3a6797>set</font></b> scrh [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$vy</font> + [<b><font color=#134070>winfo</font></b> vrootheight .]}]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$geo</font> ne {} || (<font color=#1b1baa>$px</font>&gt;=<font color=#1b1baa>$vx</font> && <font color=#1b1baa>$px</font>&lt;<font color=#1b1baa>$scrw</font> && <font color=#1b1baa>$py0</font>&gt;=<font color=#1b1baa>$vy</font> && <font color=#1b1baa>$py0</font>&lt;<font color=#1b1baa>$scrh</font>)} {
+    <b><font color=#3a6797>if</font></b> {(<font color=#1b1baa>$x</font> + <font color=#1b1baa>$width</font>) &gt; <font color=#1b1baa>$scrw</font>}  {<b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$scrw</font> - <font color=#1b1baa>$width</font> - 1}]}
+    <b><font color=#3a6797>if</font></b> {(<font color=#1b1baa>$y</font> + <font color=#1b1baa>$height</font>) &gt; <font color=#1b1baa>$scrh</font>} {<b><font color=#3a6797>set</font></b> y [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$py</font> - <font color=#1b1baa>$height</font> - 16}]}
+    <b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> {max(<font color=#1b1baa>$vx</font>,<font color=#1b1baa>$x</font>)}]
+    <b><font color=#3a6797>set</font></b> y [<b><font color=#3a6797>expr</font></b> {max(<font color=#1b1baa>$vy</font>,<font color=#1b1baa>$y</font>)}]
+  } <b><font color=#3a6797>elseif</font></b> {![<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> top [<b><font color=#134070>winfo</font></b> toplevel <font color=#1b1baa>$w</font>]}]} {
+    <i><font color=#4b5d50># the host's toplevel stands for the pointer's screen</font></i>
+    <b><font color=#3a6797>set</font></b> tx [<b><font color=#134070>winfo</font></b> rootx <font color=#1b1baa>$top</font>]
+    <b><font color=#3a6797>set</font></b> tr [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$tx</font> + [<b><font color=#134070>winfo</font></b> width <font color=#1b1baa>$top</font>]}]
+    <b><font color=#3a6797>set</font></b> tb [<b><font color=#3a6797>expr</font></b> {[<b><font color=#134070>winfo</font></b> rooty <font color=#1b1baa>$top</font>] + [<b><font color=#134070>winfo</font></b> height <font color=#1b1baa>$top</font>]}]
+    <b><font color=#3a6797>if</font></b> {(<font color=#1b1baa>$x</font> + <font color=#1b1baa>$width</font>) &gt; <font color=#1b1baa>$tr</font>} {<b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$tr</font> - <font color=#1b1baa>$width</font> - 1}]}
+    <b><font color=#3a6797>set</font></b> x [<b><font color=#3a6797>expr</font></b> {max(<font color=#1b1baa>$tx</font>,<font color=#1b1baa>$x</font>)}]
+    <b><font color=#3a6797>if</font></b> {(<font color=#1b1baa>$y</font> + <font color=#1b1baa>$height</font>) &gt; <font color=#1b1baa>$tb</font>} {<b><font color=#3a6797>set</font></b> y [<b><font color=#3a6797>expr</font></b> {<font color=#1b1baa>$py</font> - <font color=#1b1baa>$height</font> - 16}]}
+  }
   <b><font color=#134070>wm</font></b> geometry <font color=#1b1baa>$win</font> [<b><font color=#3a6797>join</font></b>  <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>width x <font color=#1b1baa>$</font>height + <font color=#1b1baa>$</font>x + <font color=#1b1baa>$</font>y&quot;</font> {}]
   <b><font color=#3a6797>catch</font></b> {<b><font color=#134070>wm</font></b> deiconify <font color=#1b1baa>$win</font> ; <b><font color=#134070>raise</font></b> <font color=#1b1baa>$win</font>}
 }</code><br></pre></div>
@@ -2139,6 +2164,8 @@ this option with baltip instead of BWidget and tklib's tooltip.
   <i><font color=#4b5d50>#   geos - not used (here just for compliance with Fade)</font></i>
   <i><font color=#4b5d50># See also: Fade</font></i>
 
+  <b><font color=#3a6797>variable</font></b> ttdata
+  <b><font color=#3a6797>unset</font></b> <font color=#6c3e67>-nocomplain</font> ttdata(fading,<font color=#1b1baa>$w</font>)
   <b><font color=#3a6797>incr</font></b> icount
   <b><font color=#3a6797>set</font></b> al [<b><font color=#3a6797>expr</font></b> {min(<font color=#1b1baa>$alpha</font>,<font color=#1b1baa>$icount</font>*1.5/<font color=#1b1baa>$fint</font>)}]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$al</font>&lt;<font color=#1b1baa>$alpha</font> && [<b><font color=#3a6797>catch</font></b> {<b><font color=#134070>wm</font></b> attributes <font color=#1b1baa>$w</font> <font color=#6c3e67>-alpha</font> <font color=#1b1baa>$al</font>}]} {<b><font color=#3a6797>set</font></b> al 1}

@@ -7546,7 +7546,8 @@ padding: 0%;
   }
   <b><font color=#3a6797>set</font></b> fname2 [CloneFileName <font color=#1b1baa>$fname</font>]
   <b><font color=#3a6797>set</font></b> name [<b><font color=#3a6797>file</font></b> tail <font color=#1b1baa>$fname2</font>]
-  <b><font color=#3a6797>lassign</font></b> [InputFileName <font color=#1b1baa>$al(MC,clonefile)</font> <font color=#1b1baa>$name</font> <font color=#1b1baa>$undermouse</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$ar</font>] res name2
+  <b><font color=#3a6797>set</font></b> dname [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname</font>]
+  <b><font color=#3a6797>lassign</font></b> [InputFileName <font color=#1b1baa>$al(MC,clonefile)</font> <font color=#1b1baa>$name</font> <font color=#1b1baa>$dname</font> <font color=#1b1baa>$undermouse</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$ar</font>] res name2
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> && <font color=#1b1baa>$name2</font> ne {}} {
     <b><font color=#3a6797>set</font></b> fname2 [<b><font color=#3a6797>file</font></b> join [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname2</font>] <font color=#1b1baa>$name2</font>]
     <b><font color=#3a6797>if</font></b> {![CommandForFile2 copy <font color=#1b1baa>$fname</font> <font color=#1b1baa>$fname2</font>]} <b><font color=#ca14ca>return</font></b>
@@ -8226,18 +8227,20 @@ padding: 0%;
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::file::InputFileName'>InputFileName</a><span class='ns_scope'> [<a href="alited.html#::alited::file" title="::alited::file" class='ruff_cmd'>::alited::file</a>]</span><span class='tinylink'><a href='alited.html#::alited::file'>file</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Dialogue to input a file name.</p>
-<div class='ruff_synopsis'><span class='ruff_cmd'>InputFileName</span> <span class='ruff_arg'>title name undermouse ?args?</span></div>
+<div class='ruff_synopsis'><span class='ruff_cmd'>InputFileName</span> <span class='ruff_arg'>title name dname undermouse ?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code>title</code></td><td class='ruff_defitem'>title of the dialogue</td></tr>
 <tr><td class='ruff_defitem'><code>name</code></td><td class='ruff_defitem'>current file name</td></tr>
+<tr><td class='ruff_defitem'><code>dname</code></td><td class='ruff_defitem'>current directory name</td></tr>
 <tr><td class='ruff_defitem'><code>undermouse</code></td><td class='ruff_defitem'>yes if open under the mouse pointer</td></tr>
 <tr><td class='ruff_defitem'><code>args</code></td><td class='ruff_defitem'>options for query</td></tr>
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_file_InputFileName' href="javascript:toggleSource('alited_file_InputFileName')">Show source</a></p>
-<div id='alited_file_InputFileName' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::file::InputFileName {title name undermouse args} {
+<div id='alited_file_InputFileName' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::file::InputFileName {title name dname undermouse args} {
   <i><font color=#4b5d50># Dialogue to input a file name.</font></i>
   <i><font color=#4b5d50>#   title - title of the dialogue</font></i>
   <i><font color=#4b5d50>#   name - current file name</font></i>
+  <i><font color=#4b5d50>#   dname - current directory name</font></i>
   <i><font color=#4b5d50>#   undermouse - yes if open under the mouse pointer</font></i>
   <i><font color=#4b5d50>#   args - options for query</font></i>
 
@@ -8250,7 +8253,10 @@ padding: 0%;
       <b><font color=#3a6797>set</font></b> args {}
     }
   }
+  <b><font color=#3a6797>set</font></b> pwd [<b><font color=#3a6797>pwd</font></b>]
+  <b><font color=#3a6797>cd</font></b> <font color=#1b1baa>$dname</font>
   <b><font color=#3a6797>lassign</font></b> [<font color=#1b1baa>$obDl2</font> input {} <font color=#1b1baa>$title</font> [<b><font color=#3a6797>list</font></b>  fis <font color=#8b2a0e>&quot;<font color=#1b1baa>{}</font> <font color=#1b1baa>{</font>-pady 16 -padx 8<font color=#1b1baa>}</font> <font color=#1b1baa>{</font>-w 50<font color=#1b1baa>}</font>&quot;</font> <font color=#8b2a0e>&quot;<font color=#1b1baa>{$</font>name<font color=#1b1baa>}</font>&quot;</font>]  <font color=#6c3e67>-head</font> \n\ [msgcat::mc {File name:}] {<b><font color=#3a6797>*</font></b>}[obj basicTextFont] {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] res name
+  <b><font color=#3a6797>cd</font></b> <font color=#1b1baa>$pwd</font>
   <b><font color=#3a6797>list</font></b> <font color=#1b1baa>$res</font> <font color=#1b1baa>$name</font>
 }</code><br></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::file::InsertRecent'>InsertRecent</a><span class='ns_scope'> [<a href="alited.html#::alited::file" title="::alited::file" class='ruff_cmd'>::alited::file</a>]</span><span class='tinylink'><a href='alited.html#::alited::file'>file</a>, <a href='#top'>Top</a></span></h4>
@@ -9040,7 +9046,7 @@ padding: 0%;
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al obPav obPav obDl2 obDl2
   <b><font color=#3a6797>lassign</font></b> [TreeFilename] wtree name fname ID TID
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$fname</font> eq {}} <b><font color=#ca14ca>return</font></b>
-  <b><font color=#3a6797>lassign</font></b> [InputFileName <font color=#1b1baa>$al(MC,renamefile)</font> <font color=#1b1baa>$name</font> <font color=#1b1baa>$undermouse</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] res name2
+  <b><font color=#3a6797>lassign</font></b> [InputFileName <font color=#1b1baa>$al(MC,renamefile)</font> <font color=#1b1baa>$name</font> . <font color=#1b1baa>$undermouse</font> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$args</font>] res name2
   <b><font color=#3a6797>set</font></b> name2 [<b><font color=#3a6797>string</font></b> trim <font color=#1b1baa>$name2</font>]
   <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$res</font> && <font color=#1b1baa>$name2</font> ne {} && <font color=#1b1baa>$name2</font> ne <font color=#1b1baa>$name</font>} {
     <b><font color=#3a6797>set</font></b> fname2 [<b><font color=#3a6797>file</font></b> join [<b><font color=#3a6797>file</font></b> dirname <font color=#1b1baa>$fname</font>] <font color=#1b1baa>$name2</font>]
@@ -9523,7 +9529,7 @@ padding: 0%;
   <b><font color=#134070>bind</font></b> <font color=#1b1baa>$w</font>.cbx2 &lt;Return&gt; <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>w.but4 invoke&quot;</font>
   <b><font color=#3a6797>foreach</font></b> k {f F} {<b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;Control-<font color=#1b1baa>$k</font>&gt; {alited::find::LastInvoke; <b><font color=#ca14ca>break</font></b>}}
   <b><font color=#3a6797>foreach</font></b> k {r R} {<b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;Control-<font color=#1b1baa>$k</font>&gt; {alited::find::btTPaste; <b><font color=#ca14ca>break</font></b>}}
-  <b><font color=#3a6797>foreach</font></b> k {t T} {<b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;Control-<font color=#1b1baa>$k</font>&gt; <font color=#8b2a0e>&quot;focusByForce <font color=#1b1baa>$</font>wtxt&quot;</font>}
+  <b><font color=#3a6797>foreach</font></b> k {t T} {<b><font color=#134070>bind</font></b> <font color=#1b1baa>$win</font> &lt;Control-<font color=#1b1baa>$k</font>&gt; alited::FocusText}
   FocusCbx
   <b><font color=#3a6797>set</font></b> but [<font color=#1b1baa>$obFND</font> But1]
   <b><font color=#3a6797>lassign</font></b> [<b><font color=#3a6797>split</font></b> [<b><font color=#134070>winfo</font></b> geometry <font color=#1b1baa>$but</font>] x+] w h
@@ -11390,6 +11396,37 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> al(FORMATS,<font color=#1b1baa>$fform</font>,<font color=#1b1baa>$ev2</font>) [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$fullformname</font> <font color=#1b1baa>$ev2</font>]
   <b><font color=#ca14ca>return</font></b> yes
 }</code><br></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::format::GetSelection'>GetSelection</a><span class='ns_scope'> [<a href="alited.html#::alited::format" title="::alited::format" class='ruff_cmd'>::alited::format</a>]</span><span class='tinylink'><a href='alited.html#::alited::format'>format</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Gets a text selection as positions or as text.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>GetSelection</span> <span class='ruff_arg'>?posOnly?</span></div>
+<h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
+<tr><td class='ruff_defitem'><code>posOnly</code></td><td class='ruff_defitem'>yes for getting positions of selection; <i>optional, default</i> <code>no</code></td></tr>
+</table>
+<h5 class='ruff'>Description</h5><p class='ruff'>If no text is selected, make the current line selected.</p>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_format_GetSelection' href="javascript:toggleSource('alited_format_GetSelection')">Show source</a></p>
+<div id='alited_format_GetSelection' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::format::GetSelection {{posOnly no}} {
+  <i><font color=#4b5d50># Gets a text selection as positions or as text.</font></i>
+  <i><font color=#4b5d50>#   posOnly - yes for getting positions of selection</font></i>
+  <i><font color=#4b5d50># If no text is selected, make the current line selected.</font></i>
+
+  <b><font color=#3a6797>set</font></b> wtxt [alited::main::CurrentWTXT]
+  <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> [<font color=#1b1baa>$wtxt</font> tag ranges sel]]} {
+    <b><font color=#3a6797>set</font></b> pos0 [<font color=#1b1baa>$wtxt</font> index insert]
+    <b><font color=#3a6797>set</font></b> pos1 [<font color=#1b1baa>$wtxt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos0 linestart&quot;</font>]
+    <b><font color=#3a6797>set</font></b> pos2 [<font color=#1b1baa>$wtxt</font> index <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>pos0 lineend&quot;</font>]
+    <font color=#1b1baa>$wtxt</font> tag add sel <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font>
+  }
+  <b><font color=#3a6797>set</font></b> positions [<font color=#1b1baa>$wtxt</font> tag ranges sel]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$posOnly</font>} {
+    <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$positions</font>
+  }
+  <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$positions</font> pos1 pos2
+  <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>catch</font></b> {<b><font color=#3a6797>set</font></b> res [<font color=#1b1baa>$wtxt</font> get <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font>]}]} {
+    <b><font color=#3a6797>set</font></b> res {}
+  }
+  <b><font color=#ca14ca>return</font></b> <font color=#1b1baa>$res</font>
+}</code><br></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::format::HandleFormatIcon'>HandleFormatIcon</a><span class='ns_scope'> [<a href="alited.html#::alited::format" title="::alited::format" class='ruff_cmd'>::alited::format</a>]</span><span class='tinylink'><a href='alited.html#::alited::format'>format</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
 <p class='ruff'>Handles icon of formatter in toolbar.</p>
@@ -11528,13 +11565,7 @@ padding: 0%;
   <b><font color=#3a6797>set</font></b> err 0
   <b><font color=#3a6797>foreach</font></b> line <font color=#1b1baa>$cont</font> {
     <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>set</font></b> com [alited::edit::IniParameter command <font color=#1b1baa>$line</font>]] ne {}} {
-      <b><font color=#3a6797>set</font></b> selection [<font color=#1b1baa>$wtxt</font> tag ranges sel]
-      <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$selection</font>]==0} {
-        <b><font color=#3a6797>set</font></b> pos [<b><font color=#3a6797>expr</font></b> {int([<font color=#1b1baa>$wtxt</font> index insert])}]
-        <b><font color=#3a6797>set</font></b> pos1 <font color=#1b1baa>$pos</font>.0
-        <b><font color=#3a6797>set</font></b> pos2 <font color=#1b1baa>$pos</font>.end
-        <b><font color=#3a6797>set</font></b> selection [<b><font color=#3a6797>list</font></b> <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font>]
-      }
+      <b><font color=#3a6797>set</font></b> selection [GetSelection yes]
       <i><font color=#4b5d50># Mode=2 allows a rectangular selection,</font></i>
       <i><font color=#4b5d50># so we should apply the command ($com)</font></i>
       <i><font color=#4b5d50># to each line of the rectangular selection</font></i>
@@ -11654,7 +11685,7 @@ padding: 0%;
 }</code><br></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::format::Mode5'>Mode5</a><span class='ns_scope'> [<a href="alited.html#::alited::format" title="::alited::format" class='ruff_cmd'>::alited::format</a>]</span><span class='tinylink'><a href='alited.html#::alited::format'>format</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
-<p class='ruff'>Inserts a string at the current cursor position. Or does something without changing the text (if commands return &quot;&quot;).</p>
+<p class='ruff'>Inserts a string at the current cursor position or, if a text is selected, replaces the selection. Or does something without changing the text (if commands return &quot;&quot;).</p>
 <div class='ruff_synopsis'><span class='ruff_cmd'>Mode5</span> <span class='ruff_arg'>cont ?args?</span></div>
 <h5 class='ruff'>Parameters</h5><table class='ruff_deflist'>
 <tr><td class='ruff_defitem'><code>cont</code></td><td class='ruff_defitem'>list of config.file's lines or variable name containing it</td></tr>
@@ -11662,13 +11693,15 @@ padding: 0%;
 </table>
 <div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_format_Mode5' href="javascript:toggleSource('alited_format_Mode5')">Show source</a></p>
 <div id='alited_format_Mode5' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::format::Mode5 {cont args} {
-  <i><font color=#4b5d50># Inserts a string at the current cursor position.</font></i>
+  <i><font color=#4b5d50># Inserts a string at the current cursor position</font></i>
+  <i><font color=#4b5d50># or, if a text is selected, replaces the selection.</font></i>
   <i><font color=#4b5d50># Or does something without changing the text (if commands return &quot;&quot;).</font></i>
   <i><font color=#4b5d50>#   cont - list of config.file's lines or variable name containing it</font></i>
   <i><font color=#4b5d50>#   args - contains the edited file name etc.</font></i>
 
   <b><font color=#3a6797>namespace</font></b> upvar ::alited al al DIR DIR
   <b><font color=#3a6797>lassign</font></b> [BeforeFormatting] wtxt value
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$wtxt</font> eq {}} <b><font color=#ca14ca>return</font></b>
   <b><font color=#3a6797>set</font></b> value [alited::edit::EscapeValue <font color=#1b1baa>$value</font>]
   <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$args</font> fn1 fn2 modal
   <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>info</font></b> exists <font color=#1b1baa>$cont</font>]} {
@@ -11684,17 +11717,20 @@ padding: 0%;
         <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>join</font></b> [<b><font color=#3a6797>lrange</font></b> <font color=#1b1baa>$cont</font> <font color=#1b1baa>$il</font> end] \n]
       }
       <b><font color=#3a6797>set</font></b> selection [<font color=#1b1baa>$wtxt</font> tag ranges sel]
-      <b><font color=#3a6797>set</font></b> lsel [<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$selection</font>]
-      <b><font color=#3a6797>if</font></b> {!<font color=#1b1baa>$lsel</font>} {
+      <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$selection</font>]} {
         <b><font color=#3a6797>set</font></b> value {}
       }
       <i><font color=#4b5d50># map format's own and template's woildcards</font></i>
       <b><font color=#3a6797>set</font></b> com [alited::Map {}  <font color=#1b1baa>$com</font> %W <font color=#1b1baa>$wtxt</font> %v <font color=#1b1baa>$value</font> %f [alited::bar::FileName]  %d <font color=#1b1baa>$al(TPL,%d)</font>  %t <font color=#1b1baa>$al(TPL,%t)</font>  %u <font color=#1b1baa>$al(TPL,%u)</font>  %U <font color=#1b1baa>$al(TPL,%U)</font>  %w <font color=#1b1baa>$al(TPL,%w)</font>  %A <font color=#1b1baa>$DIR</font>  %M <font color=#1b1baa>$al(EM,mnudir)</font>]
       <b><font color=#3a6797>set</font></b> value [<b><font color=#3a6797>eval</font></b> <font color=#1b1baa>$com</font>]
       <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$value</font> ne {}} {
-        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$lsel</font>} {
+        <b><font color=#3a6797>set</font></b> value [alited::edit::UnEscapeValue <font color=#1b1baa>$value</font>]
+        <i><font color=#4b5d50># formatter can reset the text selection</font></i>
+        <b><font color=#3a6797>set</font></b> selection [<font color=#1b1baa>$wtxt</font> tag ranges sel]
+        <b><font color=#3a6797>if</font></b> {[<b><font color=#3a6797>llength</font></b> <font color=#1b1baa>$selection</font>]} {
           <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$selection</font> pos1 pos2
           <font color=#1b1baa>$wtxt</font> replace <font color=#1b1baa>$pos1</font> <font color=#1b1baa>$pos2</font> <font color=#1b1baa>$value</font>
+          <b><font color=#3a6797>after</font></b> idle <font color=#8b2a0e>&quot;<font color=#1b1baa>$</font>wtxt tag add sel <font color=#1b1baa>$</font>pos1 <font color=#1b1baa>$</font>pos2&quot;</font>
         } <b><font color=#3a6797>else</font></b> {
           <font color=#1b1baa>$wtxt</font> insert <font color=#1b1baa>$pos</font> <font color=#1b1baa>$value</font>
         }
@@ -18632,7 +18668,7 @@ FtcEguWyAAAAAElFTkSuQmCC}
         <b><font color=#3a6797>lassign</font></b> <font color=#1b1baa>$data(em_inf,$i)</font> em2 idx2 item2
         <b><font color=#3a6797>set</font></b> em1 [<b><font color=#3a6797>file</font></b> rootname <font color=#1b1baa>$em1</font>]  ;<i><font color=#4b5d50># for compatibility</font></i>
         <b><font color=#3a6797>set</font></b> em2 [<b><font color=#3a6797>file</font></b> rootname <font color=#1b1baa>$em2</font>]  ;<i><font color=#4b5d50># with old &quot;.mnu&quot; extension</font></i>
-        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$em_mnu($i)</font> ne <font color=#1b1baa>$data(em_mnu,$i)</font> ||  <font color=#1b1baa>$em_ico($i)</font> ne <font color=#1b1baa>$data(em_ico,$i)</font> ||  <font color=#1b1baa>$em1</font> ne <font color=#1b1baa>$em2</font> || <font color=#1b1baa>$idx1</font> ne <font color=#1b1baa>$idx2</font> || <font color=#1b1baa>$item1</font> ne <font color=#1b1baa>$item2</font>} {
+        <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$em_mnu($i)</font> ne <font color=#1b1baa>$data(em_mnu,$i)</font>  || <font color=#1b1baa>$em_ico($i)</font> ne <font color=#1b1baa>$data(em_ico,$i)</font>  || <font color=#1b1baa>$em1</font> ne <font color=#1b1baa>$em2</font> || <font color=#1b1baa>$idx1</font> ne <font color=#1b1baa>$idx2</font> || <font color=#1b1baa>$item1</font> ne <font color=#1b1baa>$item2</font>} {
           <b><font color=#3a6797>set</font></b> ischanged yes
         }
       }
@@ -18852,7 +18888,7 @@ FtcEguWyAAAAAElFTkSuQmCC}
     <b><font color=#3a6797>set</font></b> tt {{.labTT .labTcl T 1 1 {<font color=#6c3e67>-st</font> e <font color=#6c3e67>-pady</font> 1 <font color=#6c3e67>-padx</font> 3} {<font color=#6c3e67>-t</font> <font color=#8b2a0e>&quot;Linux terminal:&quot;</font>}}
       {.cbxTT + L 1 1 {<font color=#6c3e67>-st</font> swe <font color=#6c3e67>-pady</font> 5} {<font color=#6c3e67>-tvar</font> ::alited::al(EM,tt=) <font color=#6c3e67>-w</font> 45 <font color=#6c3e67>-values</font>
       {<font color=#1b1baa>$al(TTLIST)</font>} <font color=#6c3e67>-clearcom</font> {alited::main::ClearCbx %w ::alited::al(TTLIST)}}}
-      {.butOK + L 1 1 {<font color=#6c3e67>-pady</font> 5} {<font color=#6c3e67>-t</font> Test <font color=#6c3e67>-com</font> {alited::tool::_run 5}}}}
+      {.butOK + L 1 1 {<font color=#6c3e67>-pady</font> 5} {<font color=#6c3e67>-t</font> Test <font color=#6c3e67>-com</font> alited::pref::TestLinuxTerminal}}}
   }
   <b><font color=#3a6797>linsert</font></b> <font color=#1b1baa>$res</font> 5 {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$tt</font>
 }</code><br></pre></div>
@@ -19090,10 +19126,9 @@ FtcEguWyAAAAAElFTkSuQmCC}
   <i><font color=#4b5d50>#   upd - if yes, displays the widgets of bar-menu settings.</font></i>
   fetchVars
   <b><font color=#3a6797>for</font></b> {<b><font color=#3a6797>set</font></b> i 0} {<font color=#1b1baa>$i</font>&lt;<font color=#1b1baa>$em_Num</font>} {<b><font color=#3a6797>incr</font></b> i} {
-    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists em_inf(<font color=#1b1baa>$i</font>)]} {
+    <b><font color=#3a6797>if</font></b> {![<b><font color=#3a6797>info</font></b> exists em_inf(<font color=#1b1baa>$i</font>)] || <font color=#1b1baa>$em_ico($i)</font> eq {none}} {
       <b><font color=#3a6797>lassign</font></b> {} em_inf(<font color=#1b1baa>$i</font>) em_mnu(<font color=#1b1baa>$i</font>) em_ico(<font color=#1b1baa>$i</font>)
     }
-    <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$em_ico($i)</font> eq {none}} {<b><font color=#3a6797>set</font></b> em_ico(<font color=#1b1baa>$i</font>) {}}
     <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$upd</font>} {
       [<font color=#1b1baa>$obPrf</font> ButMnu<font color=#1b1baa>$i</font>] configure <font color=#6c3e67>-text</font> <font color=#1b1baa>$em_mnu($i)</font>
       <b><font color=#3a6797>set</font></b> ico [<font color=#1b1baa>$obPrf</font> OpcIco<font color=#1b1baa>$i</font>]
@@ -20285,6 +20320,24 @@ FtcEguWyAAAAAElFTkSuQmCC}
   <b><font color=#3a6797>set</font></b> al(EM,CS) [GetCS 2]
   alited::tool::e_menu o=0 t=[::asKDE] TEST_ALITED
   <b><font color=#3a6797>set</font></b> al(EM,CS) <font color=#1b1baa>$cs</font>
+}</code><br></pre></div>
+</div><br><br><br><h4 class='ruffproc'><a name='::alited::pref::TestLinuxTerminal'>TestLinuxTerminal</a><span class='ns_scope'> [<a href="alited.html#::alited::pref" title="::alited::pref" class='ruff_cmd'>::alited::pref</a>]</span><span class='tinylink'><a href='alited.html#::alited::pref'>pref</a>, <a href='#top'>Top</a></span></h4>
+<div style='clear:both;'></div>
+<p class='ruff'>Runs Linux terminal of Tools tab.</p>
+<div class='ruff_synopsis'><span class='ruff_cmd'>TestLinuxTerminal</span> </div>
+<div class='ruff_source'><p class='ruff_source_link'><a id='l_alited_pref_TestLinuxTerminal' href="javascript:toggleSource('alited_pref_TestLinuxTerminal')">Show source</a></p>
+<div id='alited_pref_TestLinuxTerminal' class='ruff_dyn_src'><pre><br><code class="tcl"><b><font color=#ca14ca>proc</font></b> ::alited::pref::TestLinuxTerminal {} {
+  <i><font color=#4b5d50># Runs Linux terminal of Tools tab.</font></i>
+
+  <b><font color=#3a6797>set</font></b> comline [<b><font color=#3a6797>split</font></b> <font color=#1b1baa>$::alited::al(EM,tt=)</font>]
+  <b><font color=#3a6797>set</font></b> com [apave::autoexec [<b><font color=#3a6797>lindex</font></b> <font color=#1b1baa>$comline</font> 0]]
+  <b><font color=#3a6797>if</font></b> {<font color=#1b1baa>$com</font> eq {}} {
+    <b><font color=#3a6797>set</font></b> com <font color=#1b1baa>$comline</font>
+  } <b><font color=#3a6797>else</font></b> {
+    <b><font color=#3a6797>set</font></b> com [<b><font color=#3a6797>lreplace</font></b> <font color=#1b1baa>$comline</font> 0 0 <font color=#1b1baa>$com</font>]
+  }
+  <b><font color=#3a6797>puts</font></b> <font color=#1b1baa>$com</font>
+  <b><font color=#3a6797>exec</font></b> {<b><font color=#3a6797>*</font></b>}<font color=#1b1baa>$com</font> &
 }</code><br></pre></div>
 </div><br><br><br><h4 class='ruffproc'><a name='::alited::pref::Text_Default'>Text_Default</a><span class='ns_scope'> [<a href="alited.html#::alited::pref" title="::alited::pref" class='ruff_cmd'>::alited::pref</a>]</span><span class='tinylink'><a href='alited.html#::alited::pref'>pref</a>, <a href='#top'>Top</a></span></h4>
 <div style='clear:both;'></div>
@@ -30330,6 +30383,7 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::ChangeTo'>ChangeTo</a><span class='tooltiptext'>At changing the direction, fills 2 texts with &quot;from/to&quot; examples.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::CheckOk'>CheckOk</a><span class='tooltiptext'>Check options of Move Descriptions dialogue.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::EventOK'>EventOK</a><span class='tooltiptext'>Checks if an event is correct (not overlap alited key mapping).
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::GetSelection'>GetSelection</a><span class='tooltiptext'>Gets a text selection as positions or as text.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::HandleFormatIcon'>HandleFormatIcon</a><span class='tooltiptext'>Handles icon of formatter in toolbar.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::Help'>Help</a><span class='tooltiptext'>Handles &quot;Help&quot; button.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::LeafRE'>LeafRE</a><span class='tooltiptext'>Gets the chosen leaf's RE (current or standard, seen by the user).
@@ -30337,7 +30391,7 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::Mode2'>Mode2</a><span class='tooltiptext'>Applies a command to selection/current line.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::Mode3'>Mode3</a><span class='tooltiptext'>Applies command(s) to lines of selection.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::Mode4'>Mode4</a><span class='tooltiptext'>Applies external command(s) to selection or lines of selection.
-</span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::Mode5'>Mode5</a><span class='tooltiptext'>Inserts a string at the current cursor position. Or does something without changing the text (if commands return &quot;&quot;).
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::Mode5'>Mode5</a><span class='tooltiptext'>Inserts a string at the current cursor position or, if a text is selected, replaces the selection. Or does something without changing the text (if commands return &quot;&quot;).
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::Mode6'>Mode6</a><span class='tooltiptext'>Runs a pluginable formatter.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::MoveInside'>MoveInside</a><span class='tooltiptext'>Move a unit description outside the unit.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::format::MoveOut'>MoveOut</a><span class='tooltiptext'>Move a unit description outside the unit.
@@ -30592,6 +30646,7 @@ README.md}
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::pref::Tcl_Default'>Tcl_Default</a><span class='tooltiptext'>Sets default colors to highlight Tcl.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::pref::Template_Tab'>Template_Tab</a><span class='tooltiptext'>Serves to layout &quot;Template&quot; tab.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::pref::Test_e_menu'>Test_e_menu</a><span class='tooltiptext'>Tests a_menu settings.
+</span></h4><h4 class='tooltip'><a href='alited.html#::alited::pref::TestLinuxTerminal'>TestLinuxTerminal</a><span class='tooltiptext'>Runs Linux terminal of Tools tab.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::pref::Text_Default'>Text_Default</a><span class='tooltiptext'>Sets defaults for plain text.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::pref::TextIcons'>TextIcons</a><span class='tooltiptext'>Returns a list of letters to be toolbar &quot;icons&quot;.
 </span></h4><h4 class='tooltip'><a href='alited.html#::alited::pref::Tkcon_Default'>Tkcon_Default</a><span class='tooltiptext'>Sets defaults for &quot;Tools/Tkcon&quot; tab.
